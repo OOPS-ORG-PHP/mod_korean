@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.22 2002-08-14 10:32:20 oops Exp $
+  $Id: krparse.c,v 1.23 2002-08-14 10:51:54 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -344,7 +344,7 @@ PHP_FUNCTION(autolink_lib)
 	}
 
 	convert_to_string_ex(arg1);
-	ret = autoLink(Z_STRVAL_PP(arg1));
+	ret = estrdup(autoLink(Z_STRVAL_PP(arg1)));
 
 	if (ret)
    	{
@@ -419,8 +419,6 @@ PHP_FUNCTION(substr_lib)
 	/* check multibyte whether last return charactor */
 	if(multibyte_check(tmpstr, f + l)) { l++; }
 
-	//l = result_except_ksx_1001(tmpstr, f, l);
-
 	if (utf == 1)
    	{
 		tmpstr[f+l] = '\0';
@@ -471,8 +469,8 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = (unsigned char *) kr_regex_replace("/Mo.+MSIE ([^;]+);.+/i", "\\1", agent_o);
-		agent_v = (unsigned char *) kr_regex_replace("[a-z]", "", buf);
+		buf = estrdup((unsigned char *) kr_regex_replace("/Mo.+MSIE ([^;]+);.+/i", "\\1", agent_o));
+		agent_v = estrdup((unsigned char *) kr_regex_replace("[a-z]", "", buf));
 		add_assoc_string(return_value, "vr", agent_v, 1);
 	}
 	
@@ -501,7 +499,7 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = (unsigned char *) kr_regex_replace("/Opera\\/([0-9.]+).*/i","\\1", agent_o);
+		buf = estrdup((unsigned char *) kr_regex_replace("/Opera\\/([0-9.]+).*/i","\\1", agent_o));
 		add_assoc_string(return_value, "vr", buf, 1);
 
 		/* get language */
@@ -544,8 +542,8 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = (unsigned char *) kr_regex_replace("/Mozi[^(]+\\([^;]+;[^;]+;[^;]+;[^;]+;([^)]+)\\).*/i","\\1", agent_o);
-		agent_v = (unsigned char *) kr_regex_replace("/rv:| /i", "", buf);
+		buf = estrdup((unsigned char *) kr_regex_replace("/Mozi[^(]+\\([^;]+;[^;]+;[^;]+;[^;]+;([^)]+)\\).*/i","\\1", agent_o));
+		agent_v = estrdup((unsigned char *) kr_regex_replace("/rv:| /i", "", buf));
 		add_assoc_string(return_value, "vr", agent_v, 1);
 
 		/* get language */
@@ -584,7 +582,7 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = (unsigned char *) kr_regex_replace("/.*Konqueror\\/([0-9.]+).*/i","\\1", agent_o);
+		buf = estrdup((unsigned char *) kr_regex_replace("/.*Konqueror\\/([0-9.]+).*/i","\\1", agent_o));
 		add_assoc_string(return_value, "vr", buf, 1);
 	}
 
@@ -595,7 +593,7 @@ PHP_FUNCTION(agentinfo_lib)
 		add_assoc_string(return_value, "co", "TextBR", 1);
 
 		/* get version */
-		buf = (unsigned char *) kr_regex_replace("/Lynx\\/([^ ]+).*/i","\\1", agent_o);
+		buf = estrdup((unsigned char *) kr_regex_replace("/Lynx\\/([^ ]+).*/i","\\1", agent_o));
 		add_assoc_string(return_value, "vr", buf, 1);
 	}
 
@@ -606,7 +604,7 @@ PHP_FUNCTION(agentinfo_lib)
 		add_assoc_string(return_value, "co", "TextBR", 1);
 
 		/* get version */
-		buf = (unsigned char *) kr_regex_replace("/w3m\\/([0-9.]+).*/i","\\1", agent_o);
+		buf = estrdup((unsigned char *) kr_regex_replace("/w3m\\/([0-9.]+).*/i","\\1", agent_o));
 		add_assoc_string(return_value, "vr", buf, 1);
 	}
 
@@ -631,7 +629,7 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = (unsigned char *) kr_regex_replace("/Links \\(([^;]+);.*/i","\\1", agent_o);
+		buf = estrdup((unsigned char *) kr_regex_replace("/Links \\(([^;]+);.*/i","\\1", agent_o));
 		add_assoc_string(return_value, "vr", buf, 1);
 	}
 
@@ -697,7 +695,7 @@ PHP_FUNCTION(agentinfo_lib)
 unsigned char *autoLink (unsigned char *str_o)
 {
 	unsigned int array_no = 19, agent_o;
-	unsigned char *tmp;
+	unsigned char tmp[512];
 	unsigned char file_s[] = "(\\.(gz|tgz|tar|gzip|zip|rar|mpeg|mpg|exe|rpm|dep|rm|ram|asf|ace|viv|avi|mid|gif|jpg|png|bmp|eps|mov)\") TARGET=\"_blank\"";
 	unsigned char http[] = "(http|https|ftp|telnet|news|mms):\\/\\/(([[:alnum:]\xA1-\xFE:_\\-]+\\.[[:alnum:]\xA1-\xFE,:;&#=_~%\\[\\]?\\/.,+\\-]+)([.]*[\\/a-z0-9\\[\\]]|=[\xA1-\xFE]+))";
 	unsigned char mail[] = "([[:alnum:]\xA1-\xFE_.-]+)@([[:alnum:]\xA1-\xFE_-]+\\.[[:alnum:]\xA1-\xFE._-]*[a-z]{2,3}(\\?[[:alnum:]\xA1-\xFE=&\\?]+)*)";
@@ -716,9 +714,9 @@ unsigned char *autoLink (unsigned char *str_o)
 	src[1] = "/<([^<>\n]*)\n([^\n<>]*)>/i";
 	tar[1] = "<\\1\\2>";
 
-	tmp = emalloc(350);
 	sprintf(tmp, "/<(A|IMG)[^>]*(HREF|SRC)[^=]*=[ '\"\n]*(%s|mailto:%s)[^>]*>/i", http,mail);
-	src[2] = tmp;
+	tmp[strlen(tmp)] = '\0';
+	src[2] = estrdup(tmp);
 	tar[2] = "<\\1 \\2=\"\\3\">";
 
 	/* email 형식이나 URL 에 포함될 경우 URL 보호를 위해 @ 을 치환 */
@@ -729,30 +727,30 @@ unsigned char *autoLink (unsigned char *str_o)
 	src[4] = "/&(quot|gt|lt)/i";
 	tar[4] = "!\\1";
 
-	tmp = emalloc(350);
 	sprintf(tmp, "/<a([^>]*)href=[\"' ]*(%s)[\"']*[^>]*>/i", http);
-	src[5] = tmp;
+	tmp[strlen(tmp)] = '\0';
+	src[5] = estrdup(tmp);
 	tar[5] = "<A\\1HREF=\"\\3_orig://\\4\" TARGET=\"_blank\">";
 
-	tmp = emalloc(350);
 	sprintf(tmp, "/href=[\"' ]*mailto:(%s)[\"']*>/i", mail);
-	src[6] = tmp;
+	tmp[strlen(tmp)] = '\0';
+	src[6] = estrdup(tmp);
 	tar[6] = "HREF=\"mailto:\\2#-#\\3\">";
 
-	tmp = emalloc(350);
 	sprintf(tmp, "/<([^>]*)(background|codebase|src)[ \n]*=[\n\"' ]*(%s)[\"']*/i", http);
-	src[7] = tmp;
+	tmp[strlen(tmp)] = '\0';
+	src[7] = estrdup(tmp);
 	tar[7] = "<\\1\\2=\"\\4_orig://\\5\"";
 
 	/* 링크가 안된 url및 email address 자동링크 */
-	tmp = emalloc(350);
 	sprintf(tmp, "/((SRC|HREF|BASE|GROUND)[ ]*=[ ]*|[^=]|^)(%s)/i", http);
-	src[8] = tmp;
+	tmp[strlen(tmp)] = '\0';
+	src[8] = estrdup(tmp);
 	tar[8] = "\\1<A HREF=\"\\3\" TARGET=\"_blank\">\\3</a>";
 
-	tmp = emalloc(350);
 	sprintf(tmp, "/(%s)/i", mail);
-	src[9] = tmp;
+	tmp[strlen(tmp)] = '\0';
+	src[9] = estrdup(tmp);
 	tar[9] = "<A HREF=\"mailto:\\1\">\\1</a>";
 	src[10] = "/<A HREF=[^>]+>(<A HREF=[^>]+>)/i";
 	tar[10] = "\\1";
@@ -767,9 +765,9 @@ unsigned char *autoLink (unsigned char *str_o)
 	src[14] = "'#-#'";
 	tar[14] = "@";
 
-	tmp = emalloc(350);
 	sprintf(tmp, "/%s/i", file_s);
-	src[15] = tmp;
+	tmp[strlen(tmp)] = '\0';
+	src[15] = estrdup(tmp);
 	tar[15] = "\\1";
 
 	/* email 주소를 변형한 뒤 URL 속의 @ 을 복구 */
@@ -792,9 +790,8 @@ unsigned char *autoLink (unsigned char *str_o)
 		tar[18] = "";
 	}
 	
-	buf = (unsigned char *) kr_regex_replace_arr (src, tar, str_o, array_no);
+	buf = estrdup((unsigned char *) kr_regex_replace_arr (src, tar, str_o, array_no));
 
-	efree(tmp);
 	return buf;
 }
 /* }}} */
@@ -1226,7 +1223,7 @@ unsigned char *get_useragent()
 	unsigned char *ptr;
 	TSRMLS_FETCH();
 	
-    ptr = sapi_getenv("HTTP_USER_AGENT", 15 TSRMLS_CC);
+    ptr = estrdup(sapi_getenv("HTTP_USER_AGENT", 15 TSRMLS_CC));
 	if ( !ptr ) { ptr = getenv("HTTP_USER_AGENT"); }
 	if ( !ptr ) { ptr = get_serverenv("HTTP_USER_AGENT"); }
 	if (!ptr) { ptr = ""; }
