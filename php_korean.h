@@ -15,7 +15,7 @@
   | Author:                                                              |
   +----------------------------------------------------------------------+
 
-  $Id: php_korean.h,v 1.28 2002-12-09 07:30:11 oops Exp $
+  $Id: php_korean.h,v 1.29 2002-12-09 13:13:30 oops Exp $
 */
 
 #ifndef PHP_KOREAN_H
@@ -71,8 +71,8 @@ ZEND_END_MODULE_GLOBALS(korean)
 #define KOREAN_G(v) (korean_globals.v)
 #endif
 
-#define BUILDNO "200212091630"
-#define BUILDVER "0.0.2-dev"
+#define BUILDNO "200212092213"
+#define BUILDVER "0.0.2"
 
 #endif	/* PHP_KOREAN_H */
 
