@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.14 2002-07-25 21:47:00 oops Exp $
+  $Id: krparse.c,v 1.15 2002-07-25 22:12:34 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -849,7 +849,7 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
  * convert utf8 string */
 unsigned char *convUTF8(unsigned char *str_o, int type)
 {
-	unsigned long i;
+	unsigned long i = 0, start = 0;
 	size_t len = strlen(str_o);
 	int ncr;
 	unsigned char var[5], *byte[4], *bin[3], *rc, *strs, *ret = NULL;
@@ -877,7 +877,13 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 		/* utf8 -> unicode */
 		case 4:
 			rc = emalloc(8);
-			for( i=0 ; i<len ; i++ ) {
+
+			/* if exists utf8 init charactor */
+			if (str_o[0] == 0xef && str_o[1] == 0xbb && str_o[2] == 0xbf ) {
+				start = 3;
+			}
+			
+			for( i=start ; i<len ; i++ ) {
 				if ( str_o[i] & 0x80 ) {
 					/* 2byte 의 utf8 문자를 각 byte 별의 2진수로 변환 */
 					sprintf(var,"%x",str_o[i]);
