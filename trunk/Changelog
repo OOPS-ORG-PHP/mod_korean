@@ -3,7 +3,8 @@ PHP Korean Extexsions Changelog
 * Wed Dec 12 2002
   by JoungKyun Kim <http://www.oops.org>
     - fixed readfile function on krfile.c
-	- fixed case of null string return on readfile_lib
+    - fixed case of null string return on readfile_lib
+    - fixed realpath under win32 on getfile_lib and putfile_lib
 
 * Mon Dec 10 2002
   by JoungKyun Kim <http://www.oops.org>
