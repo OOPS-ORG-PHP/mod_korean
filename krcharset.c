@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.4 2002-11-28 10:21:50 oops Exp $
+  $Id: krcharset.c,v 1.5 2002-11-28 10:44:07 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -199,7 +199,8 @@ PHP_FUNCTION(uniencode_lib)
 	string = uniConv(str, 0, 0, start, end);
 
 	if ( string == NULL ) { RETURN_FALSE; }
-	RETURN_STRING(string,1);
+	RETVAL_STRING(string,1);
+	efree (string);
 }
 
 /* }}} */
@@ -294,7 +295,8 @@ PHP_FUNCTION(unidecode_lib)
 	string = uniConv(str, type, subtype, start, end);
 
 	if ( string == NULL ) { RETURN_FALSE; }
-	RETURN_STRING(string,1);
+	RETVAL_STRING(string,1);
+	efree (string);
 }
 
 /* }}} */
@@ -327,7 +329,6 @@ PHP_FUNCTION(utf8encode_lib)
 			WRONG_PARAM_COUNT;
 	}
 
-
 	convert_to_string_ex(src);
 
 	if( !Z_STRLEN_PP(src) )
@@ -344,10 +345,7 @@ PHP_FUNCTION(utf8encode_lib)
 	}
 	else
 	{
-		if (!strcasecmp(Z_STRVAL_PP(characterset), "CP949")) { charactersetcode = XU_CONV_CP949; }
-		else if (!strcasecmp(Z_STRVAL_PP(characterset), "EUC-KR")) { charactersetcode = XU_CONV_CP949; }
-		else if (!strcasecmp(Z_STRVAL_PP(characterset), "KOR")) { charactersetcode = XU_CONV_CP949; }
-		else if (!strcasecmp(Z_STRVAL_PP(characterset), "ENG")) { charactersetcode = XU_CONV_CP949; }
+		if (!strcasecmp(Z_STRVAL_PP(characterset), "EUC-KR")) { charactersetcode = XU_CONV_CP949; }
 		else if (!strcasecmp(Z_STRVAL_PP(characterset), "BIG5")) { charactersetcode = XU_CONV_BIG5; }
 		else if (!strcasecmp(Z_STRVAL_PP(characterset), "CHI")) { charactersetcode = XU_CONV_BIG5; }
 		else if (!strcasecmp(Z_STRVAL_PP(characterset), "SJIS")) { charactersetcode = XU_CONV_SJIS; }
@@ -387,9 +385,6 @@ PHP_FUNCTION(utf8decode_lib)
 	newstr = (char *)emalloc(srclenth*6);
 
 	if (!strcasecmp(Z_STRVAL_PP(characterset), "EUC-KR")) { charactersetcode = XU_CONV_CP949; }
-	else if (!strcasecmp(Z_STRVAL_PP(characterset), "CP949")) { charactersetcode = XU_CONV_CP949; }
-	else if (!strcasecmp(Z_STRVAL_PP(characterset), "KOR")) { charactersetcode = XU_CONV_CP949; }
-	else if (!strcasecmp(Z_STRVAL_PP(characterset), "ENG")) { charactersetcode = XU_CONV_CP949; }
 	else if (!strcasecmp(Z_STRVAL_PP(characterset), "CHI")) { charactersetcode = XU_CONV_BIG5; }
 	else if (!strcasecmp(Z_STRVAL_PP(characterset), "BIG5")) { charactersetcode = XU_CONV_BIG5; }
 	else if (!strcasecmp(Z_STRVAL_PP(characterset), "JPN")) { charactersetcode = XU_CONV_SJIS; }
