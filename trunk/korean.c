@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.19 2002-09-01 06:15:46 oops Exp $
+  $Id: korean.c,v 1.20 2002-09-01 06:23:32 oops Exp $
 */
 
 /*
@@ -132,7 +132,7 @@ PHP_MINFO_FUNCTION(korean)
 #if HAVE_KRLIBGD
 	php_info_print_table_row(2, "Image function", "enabled");
 #else
-	php_info_print_table_row(2, "Image function", "disabled, required --with-gd option");
+	php_info_print_table_row(2, "Image function", "disabled, required --enable-korean-gd option");
 #endif
 	php_info_print_table_row(2, "Mail function", "enabled");
 	php_info_print_table_row(2, "Parse function", "enabled");
