@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.2 2002-08-06 17:50:51 oops Exp $ 
+  $Id: krmail.c,v 1.3 2002-08-08 19:17:47 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -587,8 +587,9 @@ unsigned char * body_encode (unsigned char *str)
 
 unsigned char *generate_mime (unsigned char *filename)
 {
-	unsigned char *ext, *mime;
-	if ( (ext = strrchr(filename, '.')) == NULL ) { ext = ""; }
+	unsigned char *tmpext, *ext,  *mime;
+	if ( (tmpext = strrchr(filename, '.')) == NULL ) { ext = ""; }
+	ext = estrdup(&filename[tmpext - filename + 1]);
 
 	if (!strcmp("ez", ext)) { mime = "application/andrew-inset"; }
 	else if (!strcmp("hqx", ext)) { mime = "application/mac-binhex40"; }

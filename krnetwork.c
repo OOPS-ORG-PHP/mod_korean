@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.6 2002-08-08 18:11:56 oops Exp $
+  $Id: krnetwork.c,v 1.7 2002-08-08 19:17:47 oops Exp $
 */
 
 /*
@@ -505,4 +505,3 @@ void debug_msg (unsigned char *msg, int info, int bar)
  * vim600: noet sw=4 ts=4 fdm=marker
  * vim<600: noet sw=4 ts=4
  */
-
