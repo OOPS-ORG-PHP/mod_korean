@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krerror.c,v 1.1.1.1 2002-05-14 09:50:50 oops Exp $ 
+  $Id: krerror.c,v 1.2 2002-05-15 19:02:04 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -141,13 +141,19 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 	    agent_o = getenv("HTTP_USER_AGENT");
 		refer_o = getenv("HTTP_REFERER");
 #else
+	if(sapi_module.getenv) {
 	    agent_o = sapi_module.getenv("HTTP_USER_AGENT", 15 TSRMLS_CC);
 		refer_o = sapi_module.getenv("HTTP_REFERER",12 TSRMLS_CC);
+	} else {
+		agent_o = refer_o = NULL;
+	}
 #endif
 
 	/* text browser check */
-	if (strstr(agent_o,"Lynx") || strstr(agent_o,"Links") || strstr(agent_o,"w3m")) {
-		textBR = 1;
+	if(agent_o != NULL) {
+		if (strstr(agent_o,"Lynx") || strstr(agent_o,"Links") || strstr(agent_o,"w3m")) {
+			textBR = 1;
+		}
 	}
 
 	if ( java_o == 0 || textBR == 1 || agent_o == NULL ) {
@@ -166,9 +172,7 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 			result = emalloc(sizeof(char) * (strlen(buf) + 2));
 			sprintf (result,"%s\n",buf);
 		}
-	}
-	
-	else {
+	} else {
 		buf_str = kr_regex_replace_arr (reg,rep,str_o,2);
 		
 		buf = emalloc(sizeof(char) * (strlen(buf_str) + 60));
