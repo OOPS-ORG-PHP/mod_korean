@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.5 2002-08-09 10:48:25 oops Exp $ 
+  $Id: krmail.c,v 1.6 2002-08-11 06:30:03 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -209,7 +209,9 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 		unsigned int template_len = strlen(bound) + strlen(mimetype) + (strlen(filename) * 2) + strlen(base64text) + 107;
 		unsigned char template[template_len];
 
-		sprintf(template, "--%s\r\nContent-Type: %s; name=\"%s\"\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: inline; filename=\"%s\"\r\n\r\n%s\r\n", bound, mimetype, filename, filename, base64text);
+		sprintf(template, "--%s\r\nContent-Type: %s; name=\"%s\"\r\nContent-Transfer-Encoding: " \
+				          "base64\r\nContent-Disposition: inline; filename=\"%s\"\r\n\r\n%s\r\n",
+				bound, mimetype, filename, filename, base64text);
 
 		fencode = estrdup(template);
 	}
@@ -240,7 +242,11 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 			unsigned int tmp_body_len = plainlen + htmllen + (strlen(bset) * 2) + (strlen(bboundary) * 3) +182;
 			unsigned char tmp_body[tmp_body_len];
 
-			sprintf(tmp_body, "\r\n--%s\r\nContent-Type: text/plain; charset=%s\r\nContent-Transfer-Encoding: base64\r\n\r\n%s\r\n\r\n--%s\r\nContent-Type: text/html; charset=%s\r\nContent-Transfer-Encoding: base64\r\n\r\n%s\r\n\r\n--%s--\r\n", bboundary, bset, base64plain, bboundary, bset, base64html, bboundary);
+			sprintf(tmp_body, "\r\n--%s\r\nContent-Type: text/plain; charset=%s\r\n" \
+							  "Content-Transfer-Encoding: base64\r\n\r\n%s\r\n\r\n--%s\r\n" \
+							  "Content-Type: text/html; charset=%s\r\nContent-Transfer-Encoding: " \
+							  "base64\r\n\r\n%s\r\n\r\n--%s--\r\n",
+					bboundary, bset, base64plain, bboundary, bset, base64html, bboundary);
 
 			rbody = estrdup(tmp_body);
 		}
@@ -269,7 +275,10 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 	{
 		unsigned int buflen = strlen(mailid) + strlen(from) + strlen(datehead) + strlen(to) + strlen(subject) + strlen(boundary) + strlen(mimetype) + 125;
 		unsigned char buf[buflen];
-		sprintf(buf, "Message-ID: <%s>\r\nFrom: %s\r\nMIME-Version: 1.0\r\nDate: %s\r\nTo: %s\r\nSubject: %s\r\nContent-Type: multipart/%s;\r\n              boundary=\"%s\"\r\n\r\n", mailid, from, datehead, to, subject, mimetype, boundary);
+		sprintf(buf, "Message-ID: <%s>\r\nFrom: %s\r\nMIME-Version: 1.0\r\nDate: %s\r\n" \
+					 "To: %s\r\nSubject: %s\r\nContent-Type: multipart/%s;\r\n              " \
+					 "boundary=\"%s\"\r\n\r\n",
+				mailid, from, datehead, to, subject, mimetype, boundary);
 		rheader = (char *) estrdup(buf);
 	}
 
@@ -701,9 +710,13 @@ unsigned char *generate_mime (unsigned char *filename)
 	else if (!strcmp("jpeg", ext) || !strcmp("jpg", ext) || !strcmp("jpe", ext)) { mime = "image/jpeg"; }
 	else if (!strcmp("msh", ext) || !strcmp("mesh", ext) || !strcmp("silo", ext)) { mime = "model/mesh"; }
 	else if (!strcmp("mpeg", ext) || !strcmp("mpg", ext) || !strcmp("mpe", ext)) { mime = "video/mpeg"; }
+	else { mime = "application/octet-stream"; }
+	/*
 	else if (!strcmp("bin", ext) || !strcmp("dms", ext) || !strcmp("lha", ext) ||
-			 !strcmp("lzh", ext) || !strcmp("exe", ext) || !strcmp("class", ext)) { mime = "application/octet-stream"; }
+			 !strcmp("lzh", ext) || !strcmp("exe", ext) || !strcmp("class", ext))
+	{ mime = "application/octet-stream"; }
 	else { mime = "file/unknown"; }
+	*/
 
 	return mime;
 }

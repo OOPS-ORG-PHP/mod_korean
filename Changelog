@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Sun Aug 11 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - changed mime type on generate_attach() function
+
 * Sat Aug 10 2002
   by JoungKyun Kim <http://www.oops.org>
     - supported apache 2
