@@ -112,6 +112,10 @@ SOURCE=.\krparse.c
 # End Source File
 # Begin Source File
 
+OURCE=.\krcharset.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\krmail.c
 # End Source File
 # Begin Source File
@@ -169,6 +173,11 @@ SOURCE=.\php_krparse.h
 # End Source File
 # Begin Source File
 
+
+SOURCE=.\php_krcharset.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\php_krmail.h
 # End Source File
 # Begin Source File
@@ -189,7 +198,27 @@ SOURCE=.\krregex.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\unicode_cp949_ncr_table.h
+SOURCE=.\charset\big5.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\charset\gb2312.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\charset\iso8859.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\charset\jis0208.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\charset\koi8r.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\charset\ksc5601.h
 # End Source File
 # Begin Source File
 
