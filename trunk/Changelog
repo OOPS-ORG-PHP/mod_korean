@@ -6,6 +6,7 @@ PHP Korean Extexsions Changelog
       use --enable-korean-gd instead of --with-gd for image function
     - fixed segment fault error on sockhttp function
     - changed start charctor and end charactor of unicode transfer function
+    - removed include pcre.h header
 
 * Thu Aug 29 2002
   by JoungKyun Kim <http://www.oops.org>
