@@ -7,6 +7,7 @@ PHP Korean Extexsions Changelog
     - fixed segment fault error on sockhttp function
     - changed start charctor and end charactor of unicode transfer function
     - removed include pcre.h header
+    - support apache 2
 
 * Thu Aug 29 2002
   by JoungKyun Kim <http://www.oops.org>
