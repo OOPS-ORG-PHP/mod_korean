@@ -14,13 +14,14 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krparse.h,v 1.6 2002-08-18 15:40:41 oops Exp $
+$Id: php_krparse.h,v 1.7 2002-08-21 16:01:17 oops Exp $
 */
 
 #ifndef PHP_KRPARSE_H
 #define PHP_KRPARSE_H
 
 PHP_FUNCTION(ncrencode_lib);
+PHP_FUNCTION(ncrdecode_lib);
 PHP_FUNCTION(uniencode_lib);
 PHP_FUNCTION(unidecode_lib);
 PHP_FUNCTION(utf8encode_lib);
@@ -30,8 +31,10 @@ PHP_FUNCTION(autolink_lib);
 PHP_FUNCTION(substr_lib);
 
 unsigned char *krNcrEncode (unsigned char *str_o, int type);
+unsigned char *krNcrDecode (unsigned char *str_o);
 unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end);
 unsigned int getNcrIDX (unsigned char str1, unsigned char str2);
+unsigned int getNcrArrayNo (unsigned int key);
 unsigned int getUniIDX (unsigned int key);
 unsigned int hex2dec (unsigned char *str_o, unsigned int type);
 int comp (const void *s1, const void *s2);

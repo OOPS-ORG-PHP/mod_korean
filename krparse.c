@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.32 2002-08-18 15:40:41 oops Exp $
+  $Id: krparse.c,v 1.33 2002-08-21 16:01:17 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -31,6 +31,7 @@
 #include "unicode_cp949_ncr_table.h"
 
 #include <math.h>
+#include <search.h>
 
 /* {{{ proto string ncrencode_lib (string str [, int type])
    Return ncr code from euc-kr */
@@ -71,6 +72,38 @@ PHP_FUNCTION(ncrencode_lib)
    	{
 		string = krNcrEncode(Z_STRVAL_PP(arg1), type);
 		RETURN_STRING(string, 1);
+	}
+   	else { RETURN_EMPTY_STRING(); }
+}
+
+/* }}} */
+
+/* {{{ proto string ncrencode_lib (string str [, int type])
+   Return ncr code from euc-kr */
+PHP_FUNCTION(ncrdecode_lib)
+{
+	pval **arg1;
+	int argc;
+
+	argc = ZEND_NUM_ARGS();
+
+	switch(argc)
+   	{
+		case 1:
+			if(zend_get_parameters_ex(1, &arg1) == FAILURE)
+		   	{
+				WRONG_PARAM_COUNT;
+			}
+			break;
+		default:
+			WRONG_PARAM_COUNT;
+	}
+
+	convert_to_string_ex(arg1);
+
+	if (strlen(Z_STRVAL_PP(arg1)) > 0)
+   	{
+		RETURN_STRING(krNcrDecode(Z_STRVAL_PP(arg1)), 1);
 	}
    	else { RETURN_EMPTY_STRING(); }
 }
@@ -873,6 +906,76 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 }
 /* }}} */
 
+/* {{{ unsigned char *krNcrDecode (unsigned char *str_o) */
+unsigned char *krNcrDecode (unsigned char *str_o)
+{
+	unsigned int slen, i = 0, tmp, first, second;
+	unsigned char *ret = NULL, rc[3], tmpstr[8], *strs;
+
+	ENTRY entry, *eresult;
+	ENTRY chk_entry, *chk_result;
+	unsigned int uni_cp949_ncr_table_no = 31934;
+
+	if ( str_o == NULL ) { return NULL; }
+	else { slen = strlen(str_o); }
+
+	for (i=0; i<slen; i++)
+	{
+		if (str_o[i] == '&' && str_o[i+1] == '#' && str_o[i+7] == ';')
+		{
+			sprintf(tmpstr, "%c%c%c%c%c", str_o[i+2], str_o[i+3], str_o[i+4], str_o[i+5], str_o[i+6]);
+			tmp = atoi(tmpstr);
+
+			tmp = getNcrArrayNo(tmp);
+
+			first = tmp >> 8;
+			second = tmp & 0x00FF;
+
+			/* if converted charactor is first byte of 2byte charactor */
+			if ( first & 0x80 )
+			{
+				memset(rc, first, 1);
+				memset(rc + 1, second, 1);
+				memset(rc + 2, '\0', 1);
+				i += 7;
+			}
+			else
+			{
+				memset(rc, str_o[i], 1);
+				memset(rc + 1, '\0', 1);
+			}
+		}
+		else
+		{
+			memset(rc, str_o[i], 1);
+			memset(rc + 1, '\0', 1);
+		}
+
+		if (strlen(rc) != 0)
+		{
+			unsigned int rc_len = strlen(rc);
+			if (ret != NULL)
+			{
+				unsigned ret_len = strlen(ret);
+				ret = erealloc(ret,sizeof(char) * (ret_len + rc_len + 1));
+				memmove(ret + ret_len, rc, rc_len);
+				memset(ret + ret_len + rc_len, '\0', 1);
+			}
+			else
+			{
+				ret = erealloc(NULL,sizeof(char) * (rc_len + 1));
+				memmove(ret, rc, rc_len);
+				memset(ret + rc_len, '\0', 1);
+			}
+		}
+	}
+
+	strs = (unsigned char *) estrndup(ret, strlen(ret));
+	efree(ret);
+	return strs;
+}
+/* }}} */
+
 /* {{{ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end)
  * Convert EUC-KR/CP940 to unicode
  * unsigned char *str_o   => convert string (euc-kr, cp949, unicode)
@@ -1168,6 +1271,23 @@ unsigned int getNcrIDX (unsigned char str1, unsigned char str2)
 	idx -= 33089;
 
 	return idx;
+}
+/* }}} */
+
+/* {{{ unsigned int getNcrArrayNo (unsigned char str1, unsigned char str2) */
+unsigned int getNcrArrayNo (unsigned int key)
+{
+	unsigned int i = 0, array_no;
+	for(i=0; i<31934; i++)
+	{
+		if ( uni_cp949_ncr_table[i] == key )
+		{
+			array_no = i;
+			break;
+		}
+	}
+
+	return array_no + 33089;
 }
 /* }}} */
 
