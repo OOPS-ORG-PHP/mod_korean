@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.40 2002-09-18 10:14:10 oops Exp $
+  $Id: krparse.c,v 1.41 2002-09-18 10:47:19 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -473,7 +473,7 @@ PHP_FUNCTION(agentinfo_lib)
 {
 	unsigned char *agent_o, *agent_v, *buf;
 
-    agent_o = get_useragent();
+	agent_o = get_useragent();
 	if ( !agent_o ) { RETURN_FALSE; }
 
 	if (array_init(return_value) == FAILURE)
