@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.16 2002-11-30 16:57:14 oops Exp $ 
+  $Id: krfile.c,v 1.17 2002-11-30 20:03:35 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -424,22 +424,22 @@ unsigned char *human_file_size (double size_o, int sub_o)
    	{
 		if (size_o < 1048576 )
 	   	{
-			res = size_o/1024;
+			res = (float) size_o/1024;
 			danwe = "KB";
 		}
 	   	else if (size_o < 1073741827)
 	   	{
-			res = size_o/1048576;
+			res = (float) size_o/1048576;
 			danwe = "MB";
 		}
 	   	else if (size_o < 1099511627776)
 	   	{
-			res = size_o/1073741827;
+			res = (float) size_o/1073741827;
 			danwe = "GB";
 		}
 		else
 		{
-			res = size_o/1099511627776;
+			res = (float) size_o/1099511627776;
 			danwe = "TB";
 		}
 
@@ -487,7 +487,7 @@ unsigned char *includePath (unsigned char *filepath)
 	unsigned char *token, chkfile[512];
 	unsigned char *includetmp, *includepath;
 	int exists = 1;
-	void ***tsrm_ls;
+	static void ***tsrm_ls;
 
 	includetmp = PG(include_path);
 	includepath = (includetmp == NULL) ? "" : estrdup(includetmp);

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.14 2002-11-27 10:52:26 oops Exp $
+  $Id: krmail.c,v 1.15 2002-11-30 20:03:35 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -258,7 +258,7 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 							   unsigned char *bptext)
 {
 	static unsigned char *rbody;
-	unsigned char *plain, *base64html, *base64plain, *htmlplain;
+	unsigned char *plain, *base64html, *base64plain;
 	unsigned int plainlen = 0, htmllen = 0;
 
 	if ( strlen(btext) > 0 )
@@ -478,14 +478,12 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 		}
 	}
 
-	if ( to != NULL )
-	{
-		return to;
-	}
-	else
+	if ( to == NULL )
 	{
 		php_error(E_ERROR, "Don't exist valid TO address.");
 	}
+
+	return to;
 }
 
 unsigned char * generate_title (unsigned char *title, unsigned char *set)

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.5 2002-11-28 10:44:07 oops Exp $
+  $Id: krcharset.c,v 1.6 2002-11-30 20:03:35 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -603,7 +603,7 @@ unsigned char *krNcrDecode (unsigned char *str_o)
 unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end)
 {
 	unsigned long i;
-	unsigned int ncr, aryno;
+	unsigned int aryno;
 	size_t len;
 	unsigned char rc[256], *strs;
 	unsigned char *ret = NULL;
