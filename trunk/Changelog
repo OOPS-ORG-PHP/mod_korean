@@ -2,6 +2,7 @@ PHP Korean Extexsions Changelog
 
 * Thu Dec 13 2002
   by JoungKyun Kim <http://www.oops.org>
+    - release 0.0.3
     - fixed bad useful variables with realpath
     - fixed gabage return value
 
