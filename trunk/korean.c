@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.6 2002-07-24 10:14:20 oops Exp $
+  $Id: korean.c,v 1.7 2002-07-24 15:51:12 oops Exp $
 */
 
 /*
@@ -41,6 +41,8 @@
 #include "php_krimage.h"
 #include "ext/pcre/php_pcre.h"
 
+#define MAKEDATE "200207250037"
+
 /* If you declare any globals in php_korean.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(korean)
 */
@@ -53,6 +55,7 @@ static int le_korean;
  * Every user visible function must have an entry in korean_functions[].
  */
 function_entry korean_functions[] = {
+	PHP_FE(builddate_lib,	NULL)
 	PHP_FE(ncrencode_lib,	NULL)
 	PHP_FE(uniencode_lib,	NULL)
 	PHP_FE(unidecode_lib,	NULL)
@@ -115,7 +118,7 @@ PHP_MINFO_FUNCTION(korean)
 {
 	php_info_print_table_start();
 	php_info_print_table_header(2, "korean extension support", "Value");
-	php_info_print_table_row(2, "Build Date", "200207241914");
+	php_info_print_table_row(2, "Build Date", MAKEDATE);
 	php_info_print_table_row(2, "URL", "http://devel.oops.org");
 	php_info_print_table_row(2, "Charset function", "NCR code,Unicode 2.0,UTF8,EUC-KR,CP949");
 	php_info_print_table_row(2, "Check function", "enabled");
@@ -128,6 +131,13 @@ PHP_MINFO_FUNCTION(korean)
 	php_info_print_table_row(2, "Image function", "disabled, required --with-gd option");
 #endif
 	php_info_print_table_end();
+}
+/* }}} */
+
+/* {{{ proto unsigned char krversion_lib(void)
+ *  print korean extension version */
+PHP_FUNCTION(builddate_lib) {
+	RETURN_STRING (MAKEDATE,1);
 }
 /* }}} */
 
