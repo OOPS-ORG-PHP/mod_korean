@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krcheck.c,v 1.11 2002-10-24 14:34:51 oops Exp $
+  $Id: krcheck.c,v 1.12 2002-11-30 17:10:31 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +29,7 @@
 #include "php_krcheck.h"
 #include "krregex.h"
 
-
+/* {{{ unsigned int checkAddr(unsigned char *addr, int type) */
 unsigned int checkAddr(unsigned char *addr, int type)
 {
 	regex_t preg;
@@ -53,7 +53,9 @@ unsigned int checkAddr(unsigned char *addr, int type)
 	if(regRet == 0) { return 1; }
 	else { return 0; }
 }
+/* }}} */
 
+/* {{{ unsigned int chkMetaChar (unsigned char *str, int type) */
 unsigned int chkMetaChar (unsigned char *str, int type)
 {
 	regex_t preg;
@@ -77,7 +79,9 @@ unsigned int chkMetaChar (unsigned char *str, int type)
 	if(regRet == 0) { return 1; }
 	else { return 0; }
 }
+/* }}} */
 
+/* {{{ unsigned int check_table (unsigned char *str) */
 unsigned int check_table (unsigned char *str)
 {
 	const char delimiters[] = "\n";
@@ -140,7 +144,9 @@ unsigned int check_table (unsigned char *str)
 
 	return res;
 }
+/* }}} */
 
+/* {{{ unsigned int multibyte_check(unsigned char *str_o, unsigned int p) */
 unsigned int multibyte_check(unsigned char *str_o, unsigned int p)
 {
 	unsigned char *start_p;
@@ -177,7 +183,9 @@ unsigned int multibyte_check(unsigned char *str_o, unsigned int p)
 
 	return 0;
 }
+/* }}} */
 
+/* {{{ unsigned int check_windows(unsigned int type)
 /* type 1 => check of webserver. if iis, return 1. if not return 0
  * type 0 => check of os. if windows, return 1. if not return 0 */
 unsigned int check_windows(unsigned int type)
@@ -197,7 +205,7 @@ unsigned int check_windows(unsigned int type)
 
 	}
 }
-
+/* }}} */
 
 /* {{{ proto string check_uristr_lib(string str)
  *    check uri value that include meta charactors. if include, return 1 nor return 0 */
