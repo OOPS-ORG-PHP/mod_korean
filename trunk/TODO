@@ -1,0 +1,4 @@
+sockmail_lib()
+  - to 가 여러개일 때의 처리
+  - ipaddress 로 발송할 때의 처리
+
