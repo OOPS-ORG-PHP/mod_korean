@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.14 2002-11-27 10:52:26 oops Exp $ 
+  $Id: krfile.c,v 1.15 2002-11-30 15:46:50 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -368,6 +368,7 @@ void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_
 }
 /* }}} */
 
+/* {{{ unsigned char *readfile(unsigned char *filename, size_t filesize) */
 unsigned char *readfile(unsigned char *filename, size_t filesize)
 {
 	struct stat filebuf;
@@ -406,7 +407,9 @@ unsigned char *readfile(unsigned char *filename, size_t filesize)
 	
 	return ret;
 }
+/* }}} */
 
+/* {{{ unsigned char *human_file_size (double size_o, int sub_o) */
 unsigned char *human_file_size (double size_o, int sub_o)
 {
 	unsigned int res;
@@ -454,7 +457,9 @@ unsigned char *human_file_size (double size_o, int sub_o)
 
 	return return_val;
 }
+/* }}} */
 
+/* {{{ unsigned int round_value (double size_o) */
 unsigned int round_value (double size_o)
 {
 	unsigned int f, ret;
@@ -467,7 +472,9 @@ unsigned int round_value (double size_o)
 
 	return ret;
 }
+/* }}} */
 
+/* {{{ unsigned int check_filedev (unsigned char *path_f, unsigned char *filename) */
 unsigned int check_filedev (unsigned char *path_f, unsigned char *filename)
 {
 	struct stat s;
@@ -485,7 +492,9 @@ unsigned int check_filedev (unsigned char *path_f, unsigned char *filename)
 	else if ( S_ISLNK(s.st_mode) ) { return RETURN_LINK_TYPE; }
 	else { return 0; }
 }
+/* }}} */
 
+/* {{{ unsigned char *includePath (unsigned char *filepath) */
 unsigned char *includePath (unsigned char *filepath)
 {
 	const char delimiters[] = ":";
@@ -541,6 +550,7 @@ unsigned char *includePath (unsigned char *filepath)
 
 	return filename;
 }
+/* }}} */
 
 /*
  * Local variables:
