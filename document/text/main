@@ -30,6 +30,38 @@ korean extension 은 PHP4 4.2 이상 버전에서 작동하는 한국어 환경의 개발에 필요한
 
 PHP Korean Extexsions Changelog About CVS
 
+* Sun Dec  1 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - rewrite human_fsize_lib function
+    - rewrite check_table function
+    - fixed segmentation falut on krNcrEncode, krNcrDecode function
+
+* Wed Nov 30 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - modified project file of MSVC
+
+* Wed Nov 27 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - rewrite unicode ncrcode function
+
+* Wed Nov 27 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - rewrite utf8encode_lib, utf8decode_lib function
+    - fixed memory free problems
+    - removed convUTF8 function in krcharset.c
+
+* Tue Nov 26 2002
+  by HyunSoo Choi <http://baby.web119.com>
+        - added new utf8 function
+
+* Thu Oct 24 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - added memory free for estrdup variables
+
+* Sun Sep 22 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - added memory free some variables
+
 * Thu Sep 19 2002
   by JoungKyun Kim <http://www.oops.org>
     - release 0.0.1
