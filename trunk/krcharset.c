@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.10 2002-12-09 07:44:02 oops Exp $
+  $Id: krcharset.c,v 1.11 2002-12-09 08:10:04 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -1541,7 +1541,6 @@ int XUutf8Decode(char* dest, int max, const XUChar* text, int length)
 /* {{{ int XUutf8CharDecode(char* dest, int max, XUChar ch) */
 int XUutf8CharDecode(char* dest, int max, XUChar ch)
 {
-	php_printf("%c", ch);
 	if(ch < 0x0080) 
 	{
 	   if(max >= 1) dest[0] = (char)ch;
