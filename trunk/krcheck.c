@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krcheck.c,v 1.1.1.1 2002-05-14 09:50:50 oops Exp $
+  $Id: krcheck.c,v 1.2 2002-07-24 10:11:23 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -106,7 +106,7 @@ unsigned int check_table (unsigned char *str)
 								"\n"
 								};
 
-	buf = kr_regex_replace_arr (regex,replace,str,(sizeof (regex) / sizeof (regex[0])));
+	buf = (unsigned char *) kr_regex_replace_arr (regex,replace,str,(sizeof (regex) / sizeof (regex[0])));
 
 	token = strtok(buf, delimiters);
 	while(token != NULL) {
