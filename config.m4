@@ -1,4 +1,4 @@
-dnl $Id: config.m4,v 1.19 2003-07-14 04:30:22 oops Exp $
+dnl $Id: config.m4,v 1.20 2004-05-31 13:56:11 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -17,6 +17,7 @@ if test "$PHP_KOREAN" != "no"; then
   PHP_SUBST(CPPFLAGS)
 
   AC_MSG_CHECKING(whether to enable gd functoin)
+
   AC_ARG_ENABLE(korean-gd, [  --enable-korean-gd      Enable external gd functoin [ default=buildin ] ],[
     if test "$enable_korean_gd" != "no" ; then
       AC_MSG_RESULT(external)
@@ -24,11 +25,33 @@ if test "$PHP_KOREAN" != "no"; then
       AC_MSG_RESULT(builtin)
     fi ], [ AC_MSG_RESULT(builtin) ])
 
+  if test -z "$PHP_JPEG_DIR"; then
+    PHP_ARG_WITH(jpeg-dir, for the location of libjpeg,
+    [  --with-jpeg-dir[=DIR]     Set the path to libjpeg install prefix.], "/usr", no)
+  fi
+
+  if test -z "$PHP_PNG_DIR"; then
+    PHP_ARG_WITH(png-dir, for the location of libpng,
+    [  --with-png-dir[=DIR]      Set the path to libpng install prefix.], "/usr", no)
+  fi
+
+  if test -z "$PHP_ZLIB_DIR"; then
+    PHP_ARG_WITH(zlib-dir, for the location of libz,
+    [  --with-zlib-dir[=DIR]     Set the path to libz install prefix.], "/usr", no)
+  fi
 
   AC_DEFINE(KOEAN_GD, 1, [ ])
 
   if test -z "$enable_korean_gd" ; then
     enable_korean_gd=no
+  fi
+
+  if test -z "$with_png_dir"; then
+    with_png_dir=no
+  fi
+
+  if test -z "$with_zlib_dir"; then
+    with_zlib_dir=no
   fi
 
   if test "$enable_korean_gd" != "no" ; then
@@ -69,11 +92,96 @@ if test "$PHP_KOREAN" != "no"; then
       include_gdlib="yes"
     fi
 
+    dnl JPEG Libaray Check
+    for i in $with_jpeg_dir /usr/local /usr; do
+      test -f $i/lib/libjpeg.$SHLIB_SUFFIX_NAME -o -f $i/lib/libjpeg.a && KR_JPEG_DIR=$i && break
+    done
+
+
+    if test -z "$KR_JPEG_DIR" ; then
+      AC_MSG_ERROR([libjpeg.(a|so) not found.])
+    fi
+
+    PHP_CHECK_LIBRARY(jpeg,jpeg_read_header,
+    [
+      PHP_ADD_INCLUDE($KR_JPEG_DIR/include)
+      PHP_ADD_LIBRARY_WITH_PATH(jpeg, $KR_JPEG_DIR/lib, KOREAN_SHARED_LIBADD)
+    ],[
+      AC_MSG_ERROR([Problem with libjpeg.(a|so). Please check config.log for more information.]) 
+    ],[
+      -L$KR_JPEG_DIR/lib
+    ])
+
+    dnl PNG Libaray Check
+    for i in $with_png_dir /usr/local /usr; do
+      test -f $i/lib/libpng.$SHLIB_SUFFIX_NAME -o -f $i/lib/libpng.a && KR_PNG_DIR=$i && break
+    done
+
+    if test -z "$KR_PNG_DIR" ; then
+      AC_MSG_ERROR([libpng.(a|so) not found.])
+    fi
+
+    if test ! -f $KR_PNG_DIR/include/png.h; then
+      AC_MSG_ERROR([png.h not found.])
+    fi
+
+    if test ! -f $KR_PNG_DIR/include/png.h; then
+      AC_MSG_ERROR([png.h not found.])
+    fi
+
+    dnl ZLIB Libaray Check
+    if test "$PHP_ZLIB_DIR" = "no"; then
+      for i in /usr/local /usr $PHP_ZLIB_DIR; do
+        test -f $i/lib/libz.$SHLIB_SUFFIX_NAME -o -f $i/lib/libz.a && KR_ZLIB_DIR=$i && break
+      done
+
+      if test -z "$KR_ZLIB_DIR"; then
+        AC_MSG_ERROR([PNG support requires ZLIB. Use --with-zlib-dir=<DIR>])
+      fi
+
+      if test -z "$KR_ZLIB_DIR" ; then
+        AC_MSG_ERROR([libz.(a|so) not found.])
+      fi
+
+      if test ! -f $KR_ZLIB_DIR/include/png.h; then
+        AC_MSG_ERROR([zlib.h not found.])
+      fi
+
+      if test ! -f $KR_ZLIB_DIR/include/png.h; then
+        AC_MSG_ERROR([zlib.h not found.])
+      fi
+    else
+      KR_ZLIB_DIR=$PHP_ZLIB_DIR
+
+      if test -z "$KR_ZLIB_DIR" ; then
+        AC_MSG_ERROR([libz.(a|so) not found.])
+      fi
+
+      if test ! -f $KR_ZLIB_DIR/include/png.h; then
+        AC_MSG_ERROR([zlib.h not found.])
+      fi
+
+      if test ! -f $KR_ZLIB_DIR/include/png.h; then
+        AC_MSG_ERROR([zlib.h not found.])
+      fi
+    fi
+
+    PHP_CHECK_LIBRARY(png,png_write_image,
+    [
+      PHP_ADD_INCLUDE($KR_PNG_DIR/include)
+      PHP_ADD_LIBRARY_WITH_PATH(z, $KR_ZLIB_DIR/lib, KOREAN_SHARED_LIBADD)
+      PHP_ADD_LIBRARY_WITH_PATH(png, $KR_PNG_DIR/lib, KOREAN_SHARED_LIBADD)
+    ],[
+      AC_MSG_ERROR([Problem with libpng.(a|so) or libz.(a|so). Please check config.log for more information.]) 
+    ],[
+      -L$KR_ZLIB_DIR/lib -lz -L$KR_PNG_DIR/lib
+    ])
+
     KR_MODULE_TYPE=builtin
     if test "$include_gdlib" = "yes"; then
       krextra_sources="libgd/gd.c libgd/gd_png.c libgd/gd_jpeg.c libgd/gd_gif_in.c libgd/gd_io.c \
                        libgd/gd_gif_out.c libgd/gd_io_file.c libgd/gd_ss.c libgd/gd_io_ss.c \
-                       libgd/gdtables.c libgd/gdhelpers.c"
+                       libgd/gdtables.c libgd/gdhelpers.c libgd/gd_io_dp.c"
     fi
 
     dnl These are always available with bundled library

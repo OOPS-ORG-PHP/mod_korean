@@ -1,6 +1,10 @@
 #ifndef GD_H
 #define GD_H 1
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -576,6 +580,7 @@ void gdImageSaveAlpha(gdImagePtr im, int saveAlphaArg);
 
 gdIOCtx* gdNewFileCtx(FILE*);
 gdIOCtx* gdNewDynamicCtx(int, void*);
+gdIOCtx *gdNewDynamicCtxEx(int size, void *data, int freeFlag);
 gdIOCtx* gdNewSSCtx(gdSourcePtr in, gdSinkPtr out);
 void* gdDPExtractData(struct gdIOCtx* ctx, int *size);
 

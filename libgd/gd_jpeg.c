@@ -34,7 +34,7 @@ typedef int ssize_t;
 #include "gd.h"
 /* TBB: move this up so include files are not brought in */
 /* JCE: arrange HAVE_LIBJPEG so that it can be set in gd.h */
-#ifdef HAVE_LIBJPEG
+#ifdef HAVE_GD_JPEG
 #include "gdhelpers.h"
 #undef HAVE_STDLIB_H
 
