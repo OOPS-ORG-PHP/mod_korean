@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.14 2004-09-14 08:58:51 oops Exp $
+  $Id: krcharset.c,v 1.15 2004-09-14 09:02:11 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -33,7 +33,7 @@
 #include "php_krcharset.h"
 #include "php_krcheck.h"
 #include "krregex.h"
-#include "krparse.h"
+#include "php_krparse.h"
 #include "SAPI.h"
 
 /* include charset */
