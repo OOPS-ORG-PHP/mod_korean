@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.14 2002-08-23 10:58:17 oops Exp $ 
+  $Id: krimage.c,v 1.15 2002-09-01 05:19:40 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -166,7 +166,8 @@ PHP_FUNCTION(imgresize_lib)
 	{
 		unsigned char *urlimage;
 		time_t now = time(0);
-		size_t len = 0, *retSize;
+		size_t len = 0, *retSize, retSize_t = 0;
+		retSize = &retSize_t;
 
 		/* get random temp file name */
 		srand(now);

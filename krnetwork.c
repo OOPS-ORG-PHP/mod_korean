@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.21 2002-08-28 15:37:25 oops Exp $
+  $Id: krnetwork.c,v 1.22 2002-09-01 05:19:40 oops Exp $
 */
 
 /*
@@ -191,7 +191,9 @@ PHP_FUNCTION(readfile_lib)
 	zval **arg1, **arg2;
 	unsigned char *filepath, *filename, *get, *string;
 	int use_include_path=0, issock=0;
-	size_t *retSize;
+	size_t *retSize, retSize_t = 0;
+
+	retSize = &retSize_t;
 
 	/* check args */
 	switch (ZEND_NUM_ARGS())

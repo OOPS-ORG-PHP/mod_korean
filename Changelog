@@ -1,5 +1,11 @@
 PHP Korean Extexsions Changelog
 
+* Sun Sep  1 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - modified config.m4 for phpize
+      use --enable-korean-gd instead of --with-gd for image function
+    - fixed segment fault error on sockhttp function
+
 * Thu Aug 29 2002
   by JoungKyun Kim <http://www.oops.org>
     - supported cygwin
