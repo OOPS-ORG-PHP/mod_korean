@@ -33,6 +33,74 @@ korean extension 의 buildno 가 200212410255 부터는 php 4.3.0 부터 컴파일이 가능
 
 PHP Korean Extexsions Changelog About CVS
 
+* Tue Jan  7 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed gdSinT undefined error when don't include gd extension
+    - modified phpinfo data
+    - enabled to use on account mode
+
+* Mon Jan  6 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - added script version of korean extension
+
+* Wed Jan  1 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - added gd version check rutine on krimage.c
+    - fixed setment fault of mailsource_lib function
+    - modified html_to_plain function on krmail.c
+
+* Mon Dec 30 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - added small gd library
+    - update krimage.c
+    - modified config.m4
+
+* Sat Dec 29 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - added small gd library
+    - modified config.m4
+    - limits under 4.3.0
+
+* Sat Dec 28 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - added PHP_NEW_EXTENSION in config.m4 for over 4.2.x
+
+* Thu Dec 26 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed typo in agentinfo_lib function
+
+* Sun Dec 22 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed segment error on readfile function
+
+* Thu Dec 13 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - release 0.0.3
+    - fixed bad useful variables with realpath
+    - fixed gabage return value
+
+* Wed Dec 12 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed readfile function on krfile.c
+    - fixed case of null string return on readfile_lib
+    - fixed realpath under win32
+    - updated doucments
+
+* Mon Dec 10 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - removed unuseless variables
+    - changed system function to file stream function on readfile function
+
+* Mon Dec  9 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - release 0.0.2
+    - changed file stream function to row system function on readfile_lib functoin
+    - fixed segment falut of mail function
+    - fixed bug that changed addr variable in get_hostname_lib function
+    - changed upper case to lower case start charactors of unicode function
+    - fixed segment fault on sutstr_lib function
+    - update document
+
 * Sun Dec  1 2002
   by JoungKyun Kim <http://www.oops.org>
     - rewrite human_fsize_lib function
