@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.36 2002-12-12 02:55:03 oops Exp $
+  $Id: krnetwork.c,v 1.37 2002-12-12 17:13:17 oops Exp $
 */
 
 /*
@@ -201,6 +201,7 @@ PHP_FUNCTION(get_hostname_lib)
 
 	check = Z_LVAL_PP(reverse) ? kr_gethostbyaddr(host) : "";
 
+	memset (ret, '\0', sizeof(ret));
 	if ( strlen(check) > 0 ) { memmove (ret, check, strlen(check)); }
 	else { memmove (ret, host, strlen(host)); }
 	efree(host);
