@@ -1,0 +1,23 @@
+<FONT ID=title>is_hangul_lib()</FONT>
+
+(required korean module)
+
+is_hangul_lib -- 문자 또는 문자열의 첫 바이트가 한글인지를 검사.
+
+<FONT ID=RE>설명</FONT>
+
+<B>int is_hangul_lib (char charactor)</B>
+
+이 함수에 들어온 문자 또는 문자열의 첫바이트가 한글의 범위 내 (0xA1A1 - 0xFEFE) 에
+들어 있는 문자가 존재 하는지를 테스트하여 존재하면 1을 반환한다. 없으면 0을 반환한다.
+
+<FONT ID=RE>예제</FONT>
+
+$str = &quot;abcde한fg&quot;;
+
+for($i=0;$i<strlen($str);$i++) {
+  if (is_hangul_lib($str[$i])) {
+    $hangul_exists = 1;
+  }
+}
+
