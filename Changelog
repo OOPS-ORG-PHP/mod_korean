@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Sun Dec  1 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - rewrite human_fsize_lib function
+
 * Wed Nov 30 2002
   by JoungKyun Kim <http://www.oops.org>
     - modified project file of MSVC

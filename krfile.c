@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.15 2002-11-30 15:46:50 oops Exp $ 
+  $Id: krfile.c,v 1.16 2002-11-30 16:57:14 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -70,8 +70,7 @@ PHP_FUNCTION(human_fsize_lib)
 	convert_to_double_ex(fsize);
 
 	ret = human_file_size(Z_DVAL_PP(fsize), sub);
-	RETVAL_STRING(ret, 1);
-	efree (ret);
+	RETURN_STRING(ret, 1);
 }
 /* }}} */
 
@@ -412,63 +411,49 @@ unsigned char *readfile(unsigned char *filename, size_t filesize)
 /* {{{ unsigned char *human_file_size (double size_o, int sub_o) */
 unsigned char *human_file_size (double size_o, int sub_o)
 {
-	unsigned int res;
-	static unsigned char *ret = NULL, *return_val;
+	float res;
+	static unsigned char ret[32];
 	unsigned char *danwe, *dot = ".", *fdot = ",";
 	unsigned char *BYTES_C = (char *) kr_math_number_format(size_o, 0, '.', ',');
 
 	if(size_o < 1024)
 	{
-		ret = emalloc(sizeof(char) * (7 + strlen(BYTES_C)));
 		sprintf(ret, "%s Bytes", BYTES_C);
 	}
    	else
    	{
 		if (size_o < 1048576 )
 	   	{
-			res = round_value(size_o/1024);
+			res = size_o/1024;
 			danwe = "KB";
 		}
 	   	else if (size_o < 1073741827)
 	   	{
-			res = round_value(size_o/1048576);
+			res = size_o/1048576;
 			danwe = "MB";
 		}
-	   	else
+	   	else if (size_o < 1099511627776)
 	   	{
-			res = round_value(size_o/1073741827);
+			res = size_o/1073741827;
 			danwe = "GB";
 		}
+		else
+		{
+			res = size_o/1099511627776;
+			danwe = "TB";
+		}
 
-		ret = emalloc(sizeof(char) * (18 + strlen(BYTES_C) + strlen(danwe)));
 		if(sub_o)
 	   	{
-			sprintf(ret, "%d %s (%s Bytes)", res, danwe, BYTES_C);
+			sprintf(ret, "%.2f %s (%s Bytes)", res, danwe, BYTES_C);
 		}
 	   	else
 	   	{
-			sprintf(ret, "%d %s", res, danwe);
+			sprintf(ret, "%.2f %s", res, danwe);
 		}
 	}
 
-	return_val = estrndup(ret, strlen(ret));
-	efree(ret);
 	efree(BYTES_C);
-
-	return return_val;
-}
-/* }}} */
-
-/* {{{ unsigned int round_value (double size_o) */
-unsigned int round_value (double size_o)
-{
-	unsigned int f, ret;
-
-	size_o *= 10;
-	f = (int) size_o - 10 * ((int) size_o / 10);
-
-	if (f < 5) { ret = (int) size_o / 10; }
-	else { ret = (int) size_o / 10 + 1; }
 
 	return ret;
 }
