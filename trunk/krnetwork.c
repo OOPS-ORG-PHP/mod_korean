@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.3 2002-05-31 14:13:07 oops Exp $
+  $Id: krnetwork.c,v 1.4 2002-07-02 18:19:44 oops Exp $
 */
 
 /*
@@ -114,8 +114,9 @@ PHP_FUNCTION(get_hostname_lib)
  *    Return a file or a URL */
 PHP_FUNCTION(readfile_lib)
 {
-	zval **arg1;
+	zval **arg1, **arg2;
 	FILE *fp;
+	int use_include_path=0;
 	int issock=0, socketd=0;
 	int rsrc_id, len, i=0;
 
@@ -128,6 +129,12 @@ PHP_FUNCTION(readfile_lib)
 				WRONG_PARAM_COUNT;
 			}
 			break;
+		case 2:
+			if (zend_get_parameters_ex(2, &arg1, &arg2) == FAILURE) {
+				WRONG_PARAM_COUNT;
+			}
+			convert_to_long_ex(arg2);
+			use_include_path = Z_LVAL_PP(arg2);
 		default:
 			WRONG_PARAM_COUNT;
 	}
@@ -137,7 +144,7 @@ PHP_FUNCTION(readfile_lib)
 	 * We need a better way of returning error messages from
 	 * php_fopen_wrapper().
 	 */
-	fp = php_fopen_wrapper(Z_STRVAL_PP(arg1), "rb", 0 | ENFORCE_SAFE_MODE, &issock, &socketd, NULL TSRMLS_CC);
+	fp = php_fopen_wrapper(Z_STRVAL_PP(arg1), "rb", use_include_path | ENFORCE_SAFE_MODE, &issock, &socketd, NULL TSRMLS_CC);
 	if (!fp && !socketd) {
 		if (issock != BAD_URL) {
 			char *tmp = estrndup(Z_STRVAL_PP(arg1), Z_STRLEN_PP(arg1));
