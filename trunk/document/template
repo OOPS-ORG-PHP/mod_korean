@@ -95,7 +95,7 @@ OOPS Development Organization <A HREF=http://www.oops.org><FONT STYLE="color:#ff
 </TR>
 <TR>
 <TD ALIGN=right COLSPAN=2>
-Last updated : 2003.02.21<BR>
+Last updated : <?=$updates?><BR>
 </TD>
 </TR>
 </TABLE>
