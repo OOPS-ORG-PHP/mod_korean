@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.26 2002-11-27 10:52:26 oops Exp $
+  $Id: korean.c,v 1.27 2002-12-22 14:47:46 oops Exp $
 */
 
 /*
@@ -129,7 +129,7 @@ PHP_MINFO_FUNCTION(korean)
 	php_info_print_table_row(2, "URL", "http://devel.oops.org/");
 	php_info_print_table_header(2, "Function", "Support");
 	php_info_print_table_row(2, "Check function", "enabled");
-	php_info_print_table_row(2, "Charset function", "NCR code, Unicode 2.0, UTF-8, EUC-KR, CP949");
+	php_info_print_table_row(2, "Charset function", "NCR code, Naked Unicode 2.0, UTF-8, EUC-KR, CP949");
 	php_info_print_table_row(2, "Filesystem function", "enabled");
 	php_info_print_table_row(2, "HTML function", "enabled");
 #if HAVE_KRLIBGD
