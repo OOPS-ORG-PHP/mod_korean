@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.30 2003-07-14 03:06:48 oops Exp $ 
+  $Id: krfile.c,v 1.31 2003-07-14 03:57:40 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -41,15 +41,16 @@
 
 struct stat filestat;
 
-/* {{{ proto int human_fsize_lib(int filesize, int pt, int unit)
+/* {{{ proto int human_fsize_lib(int filesize, int pt, int unit, int cunit)
  * filesize => init value (byte or bit)
  * pt       => whether print origianl value (ex: 7.5 MB (7,500,000 bytes))
  * unit     => bit or byte (0: byte, 1: bit)
+ * cunit    => byte or bit unit
  * print move action to url */
 PHP_FUNCTION(human_fsize_lib)
 {
-	pval **fsize, **pt, **units;
-	unsigned int sub = 0, unit = 0;
+	pval **fsize, **pt, **units, **cunits;
+	unsigned int sub = 0, unit = 0, cunit = 1024;
 	unsigned char *ret;
 
 	switch(ZEND_NUM_ARGS())
@@ -78,12 +79,25 @@ PHP_FUNCTION(human_fsize_lib)
 			convert_to_long_ex(units);
 			unit = Z_LVAL_PP(units);
 			break;
+		case 4:
+			if(zend_get_parameters_ex(4, &fsize, &pt, &units, &cunits) == FAILURE)
+		   	{
+				WRONG_PARAM_COUNT;
+			}
+			convert_to_long_ex(pt);
+			sub = Z_LVAL_PP(pt);
+			convert_to_long_ex(units);
+			unit = Z_LVAL_PP(units);
+			convert_to_long_ex(cunits);
+			cunit = Z_LVAL_PP(cunits);
+			break;
+			break;
 		default:
 			WRONG_PARAM_COUNT;
 	}
 	convert_to_double_ex(fsize);
 
-	ret = human_file_size(Z_DVAL_PP(fsize), sub, unit);
+	ret = human_file_size(Z_DVAL_PP(fsize), sub, unit, cunit);
 	RETURN_STRING(ret, 1);
 }
 /* }}} */
@@ -517,8 +531,8 @@ unsigned char *readfile(unsigned char *filename)
 }
 /* }}} */
 
-/* {{{ unsigned char *human_file_size (double size_o, int sub_o, int unit) */
-unsigned char *human_file_size (double size_o, int sub_o, int unit)
+/* {{{ unsigned char *human_file_size (double size_o, int sub_o, int unit, int cunit) */
+unsigned char *human_file_size (double size_o, int sub_o, int unit, int cunit)
 {
 	float res;
 	static unsigned char ret[32];
@@ -536,30 +550,30 @@ unsigned char *human_file_size (double size_o, int sub_o, int unit)
 		ssunit = 'b';
 	}
 
-	if(size_o < 1024)
+	if(size_o < cunit)
 	{
 		sprintf(ret, "%s %s", BYTES_C, sunit);
 	}
    	else
    	{
-		if (size_o < 1048576 )
+		if (size_o < ( cunit * cunit ))
 	   	{
-			res = (float) size_o/1024;
+			res = (float) size_o / cunit;
 			memset (danwe, 'K', 1);
 		}
-	   	else if (size_o < 1073741827)
+	   	else if (size_o < ( cunit * cunit * cunit ) )
 	   	{
-			res = (float) size_o/1048576;
+			res = (float) size_o / (cunit * cunit);
 			memset (danwe, 'M', 1);
 		}
-	   	else if (size_o < 1099511627776)
+	   	else if (size_o < ( cunit * cunit * cunit * cunit ))
 	   	{
-			res = (float) size_o/1073741827;
+			res = (float) size_o / ( cunit * cunit * cunit );
 			memset (danwe, 'G', 1);
 		}
 		else
 		{
-			res = (float) size_o/1099511627776;
+			res = (float) size_o / ( cunit * cunit * cunit * cunit );
 			memset (danwe, 'T', 1);
 		}
 		memset (danwe + 1, ssunit, 1);
