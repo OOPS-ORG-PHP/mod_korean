@@ -1,4 +1,5 @@
 <?
+$phpversion = "4.3.1";
 $version = "0.0.5";
 $updates = "2003.03.02"
 

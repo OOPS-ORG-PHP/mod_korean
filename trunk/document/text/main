@@ -31,10 +31,11 @@ korean extension 의 buildno 가 200212410255 부터는 php 4.3.0 부터 컴파일이 가능
 <A NAME=changelog>
 <FONT id=title>Changelog</FONT>
 
-PHP Korean Extexsions Changelog About CVS
+PHP Korean Extexsions Changelog About Version <?=$version?>
 
 * Sun Mar  2 2003
   by JoungKyun Kim <http://www.oops.org>
+    - release 0.0.5
     - fixed failure of static compile
     - registed new gd library file
 
@@ -52,228 +53,6 @@ PHP Korean Extexsions Changelog About CVS
     - fixed gdSinT undefined error when don't include gd extension
     - modified phpinfo data
     - enabled to use on account mode
-
-* Mon Jan  6 2003
-  by JoungKyun Kim <http://www.oops.org>
-    - added script version of korean extension
-
-* Wed Jan  1 2003
-  by JoungKyun Kim <http://www.oops.org>
-    - added gd version check rutine on krimage.c
-    - fixed setment fault of mailsource_lib function
-    - modified html_to_plain function on krmail.c
-
-* Mon Dec 30 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - added small gd library
-    - update krimage.c
-    - modified config.m4
-
-* Sat Dec 29 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - added small gd library
-    - modified config.m4
-    - limits under 4.3.0
-
-* Sat Dec 28 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - added PHP_NEW_EXTENSION in config.m4 for over 4.2.x
-
-* Thu Dec 26 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - fixed typo in agentinfo_lib function
-
-* Sun Dec 22 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - fixed segment error on readfile function
-
-* Thu Dec 13 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - release 0.0.3
-    - fixed bad useful variables with realpath
-    - fixed gabage return value
-
-* Wed Dec 12 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - fixed readfile function on krfile.c
-    - fixed case of null string return on readfile_lib
-    - fixed realpath under win32
-    - updated doucments
-
-* Mon Dec 10 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - removed unuseless variables
-    - changed system function to file stream function on readfile function
-
-* Mon Dec  9 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - release 0.0.2
-    - changed file stream function to row system function on readfile_lib functoin
-    - fixed segment falut of mail function
-    - fixed bug that changed addr variable in get_hostname_lib function
-    - changed upper case to lower case start charactors of unicode function
-    - fixed segment fault on sutstr_lib function
-    - update document
-
-* Sun Dec  1 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - rewrite human_fsize_lib function
-    - rewrite check_table function
-    - fixed segmentation falut on krNcrEncode, krNcrDecode function
-
-* Wed Nov 30 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - modified project file of MSVC
-
-* Wed Nov 27 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - rewrite unicode ncrcode function
-
-* Wed Nov 27 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - rewrite utf8encode_lib, utf8decode_lib function
-    - fixed memory free problems
-    - removed convUTF8 function in krcharset.c
-
-* Tue Nov 26 2002
-  by HyunSoo Choi <http://baby.web119.com>
-        - added new utf8 function
-
-* Thu Oct 24 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - added memory free for estrdup variables
-
-* Sun Sep 22 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - added memory free some variables
-
-* Thu Sep 19 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - release 0.0.1
-    - fixed postposition_lib functoin
-    - fixed mailresource_lib function overflow error on windows envionment
-
-* Wed Sep 18 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - supported windows
-
-* Sun Sep  8 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - fixed get_hostname_lib returns null value if reverse value is 0
-    - fixed proxy type on get_hostname_lib
-
-* Tue Sep  5 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - added postposition_lib function
-
-* Tue Sep  3 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - removed unuseless variables
-
-* Sun Sep  1 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - modified config.m4 for phpize
-      use --enable-korean-gd instead of --with-gd for image function
-    - fixed segment fault error on sockhttp function
-    - changed start charctor and end charactor of unicode transfer function
-    - removed include pcre.h header
-    - support apache 2
-
-* Thu Aug 29 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - supported cygwin
-      cygwin doesn't support gd and shared extension mode.
-
-* Thu Aug 23 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - supported php 4.3
-    - patched read file function that can't read binary file
-
-* Sun Aug 12 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - changed mime type on generate_attach() function
-    - added rutine of 2 byte charactor except range of KSX 1001 on substr_lib() function
-    - added rutine of 2 byte NCR code except range of KSX 1001 on substr_lib() function
-
-* Sat Aug 10 2002
-  by JoungKyun Kim <http://www.oops.org>
-    - supported apache 2
-
-* Wed Aug  9 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed mime type of attach file on mailsource_lib() function
-    - changed us-ascii from iso-8859-1 on mailsource_lib() function
-    - added sockmail_lib() function
-    - add php mime type with attach file on mailsource_lib() function
-    - fixed Segmentation fault on sockmail_lib() function
-    - changed variable type of mxrecord on sockmail_lib() function for FreeBSD
-
-* Wed Aug  7 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added mailsource_lib() function
-
-* Fri Jul 25 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added remove rutine of utf 8 init charactors on utf8_decode function
-    - changed print value of php_info()
-    - changed name of builddate_lib function to buildno_lib
-    - added version_lib function ( print version of korean extension )
-
-* Fri Jul 18 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed problem of null new_type parameter in imgresize_lib function
-
-* Wed Jul  3 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added include_path option on readfile_lib function
-
-* Sun Jun 30 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - enable to control of remote image on imgResize_lib function
-
-* Wed Jun 19 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - modified information of php.ini
-
-* Sat Jun 15 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added other browser in get_agent_lib function
-
-* Thu Jun 14 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added gd libaray if installed gd is no regular library directory
-
-* Thu Jun 13 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - modified config.m4 for supported gd for other OS except Redhat
-
-* Fri Jun  7 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed reallocation error in uniencode_lib function
-
-* Mon Jun  3 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added imgresize_lib function (added krimage.c, php_krimage.h)
-      supported thumbnail image
-
-* Fri May 24 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed typo in convUTF6 function
-
-* Thu May 23 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed segmentation fault utf8decod function
-    - added operation of utf8 in substr_lib
-
-* Thu May 16 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed segmentation fault when use perror_lib or pnotice_lib in shell
-
-* Tue May 14 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - Release 0.1.1
-    - fixed duplicated regist krerror.c in Makefile.in
-
 
 <A NAME=install>
 <FONT id=title>Installation</FONT>
@@ -309,7 +88,7 @@ find /usr -name phpize 를 실행했을 경우 phpize 의 path 를 찾을 수 있을 경우에는
 다음의 방법을 이용하여 설치를 한다. 만약 찾지 못할 경우에는 2번 항목을 참고한다.
 
 $ cd /tmp
-$ tar xvfpz korean-2002xxxx.tar.g
+$ tar xvfpz korean-<?=$versoin?>.tar.g
 $ cd korean
 $ /path/phpize
 $ ./configure --with-php-config=/usr/local/bin/php-config
@@ -337,13 +116,13 @@ $ find /usr -name apxs
 $ cd /tmp
 
 # gz 파일을 받았을 경우
-$ tar xvfpz php-4.3.0.tar.gz
+$ tar xvfpz php-4.3.1.tar.gz
 
 # bzip2 파일을 받았을 경우
-$ bzip -cd php-4.3.0.tar.bz2 | tar xvf -
+$ bzip -cd php-4.3.1.tar.bz2 | tar xvf -
 
-$ cd php-4.3.0/ext
-$ tar xvfpz korean-20020xxx.tar.gz
+$ cd php-4.3.1/ext
+$ tar xvfpz korean-<?=$version?>.tar.gz
 $ cd ../
 $ ./buildconf
 
@@ -355,7 +134,7 @@ $ .......
 $ cd ext/korean
 $ make
 
-까지 하면 php-4.3.0/modules 에 korea.so 가 생성이 된다. 이 파일을 php extension
+까지 하면 php-4.3.1/modules 에 korea.so 가 생성이 된다. 이 파일을 php extension
 이 존재하는 디렉토리에 넣어주고, php.ini 에서
 
 extension=korean.so
@@ -370,7 +149,7 @@ extension=korean.so
 
 3. 정적으로 컴파일 하기
 
-php source 의 ext 디렉토리에 korean-2002xxxx.tar.gz 의 압축을 풀고 php source의
+php source 의 ext 디렉토리에 korean-<?=$version?>.tar.gz 의 압축을 풀고 php source의
 top path 에서 ./buildconf 를 한번 실행을 하여 configure 파일을 재작성 한 후, 이
 configure 에 --enable-korean 이 등록이 되었는지 확인을 한 후에, configure 에서
 --enable-korean 옵션을 추가하여 설치를 하면 된다.
