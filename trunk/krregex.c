@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krregex.c,v 1.1.1.1 2002-05-14 09:50:50 oops Exp $ 
+  $Id: krregex.c,v 1.2 2002-05-14 10:46:44 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -72,7 +72,7 @@ unsigned int checkReg(unsigned char *str, unsigned char *regex_o)
 		return 0;
 	}
 
-	if (regexc(&preg,str,0,NULL,0) == 0) {
+	if (regexec(&preg,str,0,NULL,0) == 0) {
 		regfree(&preg);
 		return 1;
 	} else {
