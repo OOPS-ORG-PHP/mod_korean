@@ -112,7 +112,7 @@ SOURCE=.\krparse.c
 # End Source File
 # Begin Source File
 
-OURCE=.\krcharset.c
+SOURCE=.\krcharset.c
 # End Source File
 # Begin Source File
 
@@ -172,7 +172,6 @@ SOURCE=.\php_krerror.h
 SOURCE=.\php_krparse.h
 # End Source File
 # Begin Source File
-
 
 SOURCE=.\php_krcharset.h
 # End Source File
