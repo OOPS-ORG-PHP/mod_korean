@@ -1,5 +1,11 @@
 PHP Korean Extexsions Changelog
 
+* Tue Dec 30 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - added small gd library
+    - update krimage.c
+    - modified config.m4
+
 * Sat Dec 29 2002
   by JoungKyun Kim <http://www.oops.org>
     - added small gd library
