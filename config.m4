@@ -1,4 +1,4 @@
-dnl $Id: config.m4,v 1.20 2004-05-31 13:56:11 oops Exp $
+dnl $Id: config.m4,v 1.21 2004-07-27 08:51:49 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -54,6 +54,8 @@ if test "$PHP_KOREAN" != "no"; then
     with_zlib_dir=no
   fi
 
+  dnl In this case given --enable-korean-gd option
+  dnl
   if test "$enable_korean_gd" != "no" ; then
     if test "$enable_korean_gd" = "yes"; then
       GD_SEARCH_PATHS="/usr/local /usr"
@@ -82,13 +84,37 @@ if test "$PHP_KOREAN" != "no"; then
     PHP_ADD_INCLUDE($KOREAN_INCLUDE)
   else
 
+  dnl
+  dnl In this case, don't be given --enable-korean-gd option.
+  dnl This case use built in gd library.
+  dnl
+
+    dnl case of static build
     if test "$ext_shared" = "no"; then
       if test "$PHP_GD" = "no"; then
         include_gdlib="yes"
       else
         include_gdlib="no"
       fi
+    dnl case of dynamic build
     else
+      dnl if exists gd bundle library?
+      AC_MSG_CHECKING(check gd bundle library for korean extension)
+      if test "$PHP_GD" = "no"; then
+        AC_MSG_RESULT(needless)
+      elif test -d "ext/gd/libgd" ; then
+        pushd ext/korean > /dev/null 2>&1
+        if test ! -L "./libgd"; then
+          mv libgd needless.libgd
+          ln -sf ../gd/libgd ./libgd
+          AC_MSG_RESULT(link complete)
+        else
+          AC_MSG_RESULT(already linked)
+        fi
+        popd > /dev/null 2>&1
+      else
+        AC_MSG_RESULT(needless)
+      fi
       include_gdlib="yes"
     fi
 
@@ -187,8 +213,8 @@ if test "$PHP_KOREAN" != "no"; then
     dnl These are always available with bundled library
     AC_DEFINE(KRGD_BUILTIN,             1, [ ])
     AC_DEFINE(HAVE_GD2,                 1, [ ])
-    AC_DEFINE(HAVE_GD_PNG,              1, [ ])
-    AC_DEFINE(HAVE_GD_JPEG,             1, [ ])
+    AC_DEFINE(HAVE_LIBPNG,              1, [ ])
+    AC_DEFINE(HAVE_LIBJPEG,             1, [ ])
 
     if test "$include_gdlib" = "yes"; then
       KOREAN_LIB="./libgd"
