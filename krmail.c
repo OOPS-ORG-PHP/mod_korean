@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.21 2003-02-21 10:44:38 oops Exp $
+  $Id: krmail.c,v 1.22 2003-09-15 07:20:14 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <locale.h>
 
 #ifdef PHP_WIN32
 	#include "win32/time.h"
@@ -326,10 +327,6 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 		efree(buf);
 	}
 
-#ifndef PHP_WIN32
-	efree(datehead); 
-#endif
-
 	return rheader;
 }
 
@@ -513,7 +510,13 @@ unsigned char * generate_title (unsigned char *title, unsigned char *set)
 char * generate_date () {
 	time_t now = time(NULL);
 	char buf[64], *rdate;
+	int len = 0;
+	static char retbuf[128];
 
+	memset (buf, 0, sizeof (buf));
+	memset (retbuf, 0, sizeof (retbuf));
+
+	setlocale (LC_TIME, "C");
 	loctime = localtime(&now);
 	strftime(buf, 64, "%a, %d %b %Y %H:%M:%S %Z", loctime);
 
@@ -523,7 +526,14 @@ char * generate_date () {
 	rdate = estrdup(buf);
 #endif
 
-	return rdate;
+	len = strlen (rdate);
+
+	if ( len < 128 ) strcpy (retbuf, rdate);
+	else strncpy (retbuf, rdate, 127);
+
+	free (rdate);
+
+	return retbuf;
 }
 
 char * generate_mail_id (char *id)
