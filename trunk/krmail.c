@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.3 2002-08-08 19:17:47 oops Exp $ 
+  $Id: krmail.c,v 1.4 2002-08-08 20:33:01 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -110,7 +110,7 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
    	{
 		o_ln[i] = tolower(o_ln[i]);
 	}
-	charset = !strcmp(o_ln,"ko") ? "EUC-KR" : "iso-8859-1";
+	charset = !strcmp(o_ln,"ko") ? "EUC-KR" : "US-ASCII";
 
 	/* make from */
 	from = generate_from(o_from, charset);
