@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.29 2004-09-14 10:01:06 oops Exp $
+  $Id: krmail.c,v 1.30 2004-09-14 12:15:18 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -316,7 +316,8 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 								 char *boundary, unsigned char *is_attach)
 {
 	char *mailid, *datehead, *mimetype;
-	static unsigned char *rheader;
+	unsigned int buflen;
+	unsigned char * buf;
 
 	if (strlen(is_attach) > 0) { mimetype = "mixed"; }
 	else { mimetype = "alternative"; }
@@ -325,20 +326,15 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 	mailid = generate_mail_id( (char *) kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", from) );
 	datehead = generate_date();
 
-	{
-		unsigned int buflen = strlen(mailid) + strlen(from) + strlen(datehead) + strlen(to) + strlen(subject) + strlen(boundary) + strlen(mimetype) + 256;
-		unsigned char *buf;
-		buf = emalloc( sizeof(char) * (buflen + 1) );
+	buflen = strlen(mailid) + strlen(from) + strlen(datehead) + strlen(to) + strlen(subject) + strlen(boundary) + strlen(mimetype) + 256;
+	buf = emalloc( sizeof(char) * buflen );
 
-		sprintf(buf, "Message-ID: <%s>\r\nFrom: %s\r\nMIME-Version: 1.0\r\nDate: %s\r\n" \
-					 "To: %s\r\nSubject: %s\r\nContent-Type: multipart/%s;\r\n              " \
-					 "boundary=\"%s\"\r\n\r\n",
-				mailid, from, datehead, to, subject, mimetype, boundary);
-		rheader = (char *) estrdup(buf);
-		safe_efree(buf);
-	}
+	sprintf(buf, "Message-ID: <%s>\r\nFrom: %s\r\nMIME-Version: 1.0\r\nDate: %s\r\n" \
+				 "To: %s\r\nSubject: %s\r\nContent-Type: multipart/%s;\r\n              " \
+				 "boundary=\"%s\"\r\n\r\n",
+			mailid, from, datehead, to, subject, mimetype, boundary);
 
-	return rheader;
+	return buf;
 }
 
 unsigned char * generate_from (unsigned char *email, char *set)
