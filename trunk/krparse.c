@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.47 2002-11-28 10:04:12 oops Exp $
+  $Id: krparse.c,v 1.48 2002-11-28 10:21:50 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -30,7 +30,6 @@
 #include "krregex.h"
 #include "SAPI.h"
 #include "charset/ksc5601.h"
-//#include "charset/unicode_cp949_ncr_table.h"
 
 #include <math.h>
 

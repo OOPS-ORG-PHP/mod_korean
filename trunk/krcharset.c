@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.3 2002-11-28 10:04:12 oops Exp $
+  $Id: krcharset.c,v 1.4 2002-11-28 10:21:50 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -42,8 +42,6 @@
 #include "charset/jis0208.h"
 #include "charset/gb2312.h"
 #include "charset/big5.h"
-//#include "charset/cp949_table.h"
-//#include "charset/unicode_cp949_ncr_table.h"
 
 static XUChar table_rev_latin2 [ 1024];
 static XUChar table_rev_koi8r_1[ 1024];
