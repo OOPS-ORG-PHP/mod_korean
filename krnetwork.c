@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.1.1.1 2002-05-14 09:50:50 oops Exp $
+  $Id: krnetwork.c,v 1.2 2002-05-22 18:09:01 oops Exp $
 */
 
 /*
@@ -36,10 +36,8 @@
 #include "SAPI.h"
 #include "fopen_wrappers.h"
 #include "ext/standard/dns.c"
-//#include "ext/standard/fsock.h"
-//#include "ext/standard/file.c"
 
-//#include "php_krnetwork.h"
+#include "php_krnetwork.h"
 
 #define PROXYSIZE 7
 

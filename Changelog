@@ -1,7 +1,11 @@
 PHP Korean Extexsions Changelog
 
+* Thu May 23 2002
+- fixed segmentation fault utf8decod function
+
 * Thu May 16 2002
 - fixed segmentation fault when use perror_lib or pnotice_lib in shell
 
 * Tue May 14 2002
 - fixed duplicated regist krerror.c in Makefile.in
+
