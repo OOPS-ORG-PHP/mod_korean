@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.6 2002-08-11 06:30:03 oops Exp $ 
+  $Id: krmail.c,v 1.7 2002-08-13 12:58:16 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -145,9 +145,11 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 		unsigned int tmp_return_mail_len = strlen(return_header) + strlen(return_body) + strlen(return_attach) + strlen(attbound) + athead_len + 59;
 		unsigned char tmp_return_mail[tmp_return_mail_len];
 
-		sprintf(tmp_attach_header, "\r\n--%s\r\nContent-Type: multipart/alternative;\r\n              boundary=\"%s\"\r\n\r\n", attbound, boundary);
+		sprintf(tmp_attach_header, "\r\n--%s\r\nContent-Type: multipart/alternative;\r\n" \
+								   "              boundary=\"%s\"\r\n\r\n", attbound, boundary);
 
-		sprintf(tmp_return_mail, "%s\r\nThis is a multi-part message in MIME format.\r\n%s%s\r\n%s\r\n--%s--\r\n",
+		sprintf(tmp_return_mail, "%s\r\nThis is a multi-part message in MIME format.\r\n" \
+				                 "%s%s\r\n%s\r\n--%s--\r\n",
 			   	return_header, tmp_attach_header, return_body, return_attach, attbound);
 		return_mail = estrdup(tmp_return_mail);
 	}
@@ -156,7 +158,8 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 		unsigned int tmp_return_mail_len = strlen(return_header) + strlen(return_body) + 51;
 		unsigned char tmp_return_mail[tmp_return_mail_len];
 
-		sprintf(tmp_return_mail, "%s\r\nThis is a multi-part message in MIME format.\r\n%s\r\n", return_header, return_body);
+		sprintf(tmp_return_mail, "%s\r\nThis is a multi-part message in MIME format." \
+								 "\r\n%s\r\n", return_header, return_body);
 		return_mail = estrdup(tmp_return_mail);
 	}
 
@@ -363,7 +366,8 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 			else
 			{
 				unsigned char t_to[setlen + maillen + namelen  + 11];
-				cname = (unsigned char *) php_base64_encode(t_name, namelen, &namelen);
+				unsigned char *tmpstr;
+				cname = estrdup( (unsigned char *) php_base64_encode(t_name, namelen, &namelen) );
 				sprintf(t_to, "=?%s?B?%s?= <%s>", set, cname, t_mail);
 				to = estrdup(t_to);
 			}
@@ -399,7 +403,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 					}
 					else
 					{
-						sub_cname = (unsigned char *) php_base64_encode(s_name, snlen, &namelen);
+						sub_cname = estrdup ((unsigned char *) php_base64_encode(s_name, snlen, &namelen));
 						sprintf(s_to, "=?%s?B?%s?= <%s>", set, sub_cname, s_mail);
 					}
 

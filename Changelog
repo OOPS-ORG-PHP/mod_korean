@@ -3,6 +3,7 @@ PHP Korean Extexsions Changelog
 * Tue Aug 13 2002
   by JoungKyun Kim <http://www.oops.org>
     - changed duplicate name of array variables with /ext/standard/image.c
+    - arranged string variables
 
 * Sun Aug 11 2002
   by JoungKyun Kim <http://www.oops.org>
