@@ -83,7 +83,7 @@ $attach = &quot;/dev/shm/test.html&quot;;
 
 $mailmsg = mailsource_lib($ln,$from,$to,$subject,$body,&quot;&quot;,$attach);
 
-$ret = sockmail_lib($mailmsg);
+$ret = sockmail_lib($mailmsg, $from, $to);
 
 if ($ret) {
   switch ($ret) {
