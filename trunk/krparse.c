@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.17 2002-08-05 19:20:51 oops Exp $
+  $Id: krparse.c,v 1.18 2002-08-10 07:13:08 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -329,7 +329,6 @@ PHP_FUNCTION(utf8decode_lib)
 PHP_FUNCTION(autolink_lib)
 {
 	pval **arg1;
-	unsigned int agent_v;
 	unsigned char *ret;
 
 	switch(ZEND_NUM_ARGS())
@@ -345,7 +344,6 @@ PHP_FUNCTION(autolink_lib)
 	}
 
 	convert_to_string_ex(arg1);
-
 	ret = autoLink(Z_STRVAL_PP(arg1));
 
 	if (ret)
@@ -438,11 +436,10 @@ PHP_FUNCTION(substr_lib)
 PHP_FUNCTION(agentinfo_lib)
 {
 	unsigned char *agent_o, *agent_v, *buf;
-#ifdef PHP_WIN32
-	agent_o = getenv("HTTP_USER_AGENT");
-#else
-	agent_o = sapi_module.getenv("HTTP_USER_AGENT", 15 TSRMLS_CC);
-#endif
+	unsigned char *ptr;
+
+    agent_o = get_useragent();
+	if ( !agent_o ) { RETURN_FALSE; }
 
 	if (array_init(return_value) == FAILURE)
    	{
@@ -702,13 +699,11 @@ unsigned char *autoLink (unsigned char *str_o)
 	unsigned char http[] = "(http|https|ftp|telnet|news|mms):\\/\\/(([[:alnum:]\xA1-\xFE:_\\-]+\\.[[:alnum:]\xA1-\xFE,:;&#=_~%\\[\\]?\\/.,+\\-]+)([.]*[\\/a-z0-9\\[\\]]|=[\xA1-\xFE]+))";
 	unsigned char mail[] = "([[:alnum:]\xA1-\xFE_.-]+)@([[:alnum:]\xA1-\xFE_-]+\\.[[:alnum:]\xA1-\xFE._-]*[a-z]{2,3}(\\?[[:alnum:]\xA1-\xFE=&\\?]+)*)";
 	unsigned char *src[array_no], *tar[array_no];
-	unsigned char *buf;
+	unsigned char *buf, *ptr;
 
-#ifdef PHP_WIN32
-	agent_o = strstr(getenv("HTTP_USER_AGENT"), "MSIE") ? 1 : 0; 
-#else
-	agent_o = strstr(sapi_module.getenv("HTTP_USER_AGENT", 15 TSRMLS_CC), "MSIE") ? 1 : 0; 
-#endif
+	ptr = get_useragent();
+	if ( ptr ) { agent_o = strstr(ptr, "MSIE") ? 1 : 0; }
+	else { agent_o = 0; }
 
 	/* &lt; 로 시작해서 3줄뒤에 &gt; 가 나올 경우와
 	 * IMG tag 와 A tag 의 경우 링크가 여러줄에 걸쳐 이루어져 있을 경우
@@ -1293,6 +1288,52 @@ int comp(const void *s1, const void *s2)
 }
 /* }}} */
 
+/* {{{ unsigned char *get_useragent(void) */
+unsigned char *get_useragent()
+{
+	unsigned char *ptr;
+	TSRMLS_FETCH();
+	
+    ptr = sapi_getenv("HTTP_USER_AGENT", 15 TSRMLS_CC);
+	if ( !ptr ) { ptr = getenv("HTTP_USER_AGENT"); }
+	if ( !ptr ) { ptr = get_serverenv("HTTP_USER_AGENT"); }
+	if (!ptr) { ptr = ""; }
+
+	return ptr;
+}
+/* }}} */
+
+/* {{{ unsigned char *get_serverenv(unsigned char *para) */
+unsigned char *get_serverenv(unsigned char *para)
+{
+	zval **data, **tmp, tmps;
+	char *string_key;
+	ulong num_key;
+	unsigned char *parameters = NULL;
+	TSRMLS_FETCH();
+
+	zend_hash_find(&EG(symbol_table), "_SERVER", 8, (void **) &data);
+	zend_hash_internal_pointer_reset(Z_ARRVAL_PP(data));
+	while (zend_hash_get_current_data(Z_ARRVAL_PP(data), (void **) &tmp) == SUCCESS)
+	{
+		if (zend_hash_get_current_key(Z_ARRVAL_PP(data), &string_key, &num_key, 0) == HASH_KEY_IS_STRING)
+		{
+			if ( !strcasecmp (string_key, para) ) {
+				tmps = **tmp;
+				zval_copy_ctor(&tmps);
+				convert_to_string(&tmps);
+				parameters = Z_STRVAL(tmps);
+				zval_dtor(&tmps);
+				break;
+			}
+		}
+		zend_hash_move_forward(Z_ARRVAL_PP(data));
+	}
+
+	if (!parameters) { parameters = ""; }
+	return parameters;
+}
+/* }}} */
 /*
  * Local variables:
  * tab-width: 4
