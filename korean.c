@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.13 2002-08-06 17:50:51 oops Exp $
+  $Id: korean.c,v 1.14 2002-08-08 18:11:56 oops Exp $
 */
 
 /*
@@ -85,6 +85,7 @@ function_entry korean_functions[] = {
 	PHP_FE(readfile_lib,	NULL)
 	PHP_FE(imgresize_lib,	NULL)
 	PHP_FE(mailsource_lib,	NULL)
+	PHP_FE(sockmail_lib,	NULL)
 	{NULL, NULL, NULL}
 };
 /* }}} */
