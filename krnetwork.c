@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.7 2002-08-08 19:17:47 oops Exp $
+  $Id: krnetwork.c,v 1.8 2002-08-08 21:59:45 oops Exp $
 */
 
 /*
@@ -216,13 +216,14 @@ PHP_FUNCTION(readfile_lib)
 PHP_FUNCTION(sockmail_lib)
 {
 	zval **mail, **from, **to, **debugs;
-	unsigned char *addr, *text, *faddr, *taddr, *tmpfrom, *tmpto;
+	unsigned char delimiters[] = ",";
+	unsigned char *text, *faddr, *taddr, *tmpfrom, *tmpto, *mailserver;
 	int sock, debug = 0, len = 0, failcode = 0;
 
 	struct sockaddr_in sinfo;
 	struct hostent *hostinfo;
 
-	/* check args */
+	/* {{{ check args */
 	switch (ZEND_NUM_ARGS())
    	{
 		case 1:
@@ -275,6 +276,7 @@ PHP_FUNCTION(sockmail_lib)
 		default:
 			WRONG_PARAM_COUNT;
 	}
+	/* }}} */
 
 	/* mail context */
 	convert_to_string_ex(mail);
@@ -296,72 +298,27 @@ PHP_FUNCTION(sockmail_lib)
 
 	if (strlen(tmpto) < 1)
 	{
-		unsigned char *src[3] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i", "/[^<]+<([^>]+)>/i" };
-		unsigned char *des[3] = { "!!ENTER!!", "\\1", "\\1" };
+		unsigned char *src[4] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i", "/[^,<]+<([^>]+)>/i", "/[\\s]/" };
+		unsigned char *des[4] = { "!!ENTER!!", "\\1", "\\1", "" };
 		taddr = (unsigned char *) kr_regex_replace_arr(src, des, text, (sizeof (src) / sizeof (src[0])));
 	}
 	else
 	{
-		unsigned char *src[1] = { "/[^<]+<([^>]+)>/i" };
-		unsigned char *des[1] = { "\\1" };
+		unsigned char *src[2] = { "/[^,<]+<([^>]+)>/i", "/[\\s]/" };
+		unsigned char *des[2] = { "\\1", "" };
 		taddr = (unsigned char *) kr_regex_replace_arr(src, des, tmpto, (sizeof (src) / sizeof (src[0])));
 	}
 
-	/* get mx record from 'to address' */
-	addr = get_mx_record(taddr);
-
-	/* check server address */
-	if ( !(hostinfo = gethostbyname(addr)) )
-	{
-		if ( debug == 1 )
-		{
-			php_error(E_WARNING, "host name \"%s\" not found\n", addr);
-		}
-		RETURN_FALSE;
+	if ( (mailserver = strtok(taddr, delimiters)) != NULL ) {
+		do {
+			if (sock_sendmail(faddr, mailserver, text, debug) == 1) { RETURN_FALSE; }
+		} while ( (mailserver = strtok(NULL, delimiters)) != NULL );
 	}
 
-	/* specify connect server information */
-	sinfo.sin_family = AF_INET;
-	sinfo.sin_port = ntohs(25);
-	sinfo.sin_addr = *(struct in_addr *) *hostinfo->h_addr_list;
-	len = sizeof(sinfo);
-
-	/* create socket */
-	if ( (sock = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
-	{
-		if ( debug == 1 )
-		{
-			php_error(E_WARNING, "Failed to create socket\n");
-		}
-		RETURN_FALSE;
-	}
-
-	/* connect to server in 25 port */
-	if ( connect (sock, (struct sockaddr *) &sinfo, len) == -1 )
-	{
-		if ( debug == 1 )
-		{
-			php_error(E_WARNING, "Failed connect %s\n", addr);
-		}
-		RETURN_FALSE;
-	}
-
-	failcode = socksend (sock, debug, "HELO localhost", "helo");
-	if ( failcode == 1 ) { RETURN_FALSE; }
-	failcode = socksend (sock, debug, faddr, "mail");
-	if ( failcode == 1 ) { RETURN_FALSE; }
-	failcode = socksend (sock, debug, taddr, "rcpt");
-	if ( failcode == 1 ) { RETURN_FALSE; }
-	failcode = socksend (sock, debug, "data", "data");
-	if ( failcode == 1 ) { RETURN_FALSE; }
-	failcode = socksend (sock, debug, text, "body");
-	if ( failcode == 1 ) { RETURN_FALSE; }
-	failcode = socksend (sock, debug, "quit", "quit");
-	if ( failcode == 1 ) { RETURN_FALSE; }
-
-	close (sock);
-
+	/*
+	if ( sock_sendmail (faddr, taddr, text, debug) == 1 ) { RETURN_FALSE; }
 	RETURN_TRUE;
+	*/
 }
 /* }}} */
 
@@ -455,7 +412,7 @@ int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 	unsigned char *cmd, msg[1024];
 	int rlen = 0, failed = 1, bar = 0, add = 3, tmplen = strlen(var);
 
-	if ( strcasecmp(target, "body") ) { add = 4; }
+	if ( strcasecmp(target, "body") ) { add = 6; }
 
 	{
 		unsigned char tmpcmd[tmplen + add];
@@ -497,6 +454,94 @@ void debug_msg (unsigned char *msg, int info, int bar)
 		}
 	}
 }
+
+
+int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char *text, int debug)
+{
+	int len, sock, failcode;
+	unsigned char *addr;
+	struct sockaddr_in sinfo;
+	struct hostent *hostinfo;
+
+	/* get mx record from 'to address' */
+	addr = get_mx_record(toaddr);
+
+	if ( !(hostinfo = gethostbyname(addr)) )
+	{
+		if ( debug == 1 )
+		{
+			php_error(E_WARNING, "host name \"%s\" not found\n", addr);
+		}
+		return 1;
+	}
+
+	/* specify connect server information */
+	sinfo.sin_family = AF_INET;
+	sinfo.sin_port = ntohs(25);
+	sinfo.sin_addr = *(struct in_addr *) *hostinfo->h_addr_list;
+	len = sizeof(sinfo);
+
+	/* create socket */
+	if ( (sock = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
+	{
+		if ( debug == 1 )
+		{
+			php_error(E_WARNING, "Failed to create socket\n");
+		}
+		return 1;
+	}
+
+	/* connect to server in 25 port */
+	if ( connect (sock, (struct sockaddr *) &sinfo, len) == -1 )
+	{
+		if ( debug == 1 )
+		{
+			close (sock);
+			php_error(E_WARNING, "Failed connect %s\n", addr);
+		}
+		return 1;
+	}
+
+	failcode = socksend (sock, debug, "HELO localhost", "helo");
+    if ( failcode == 1 )
+   	{
+	   	close(sock);
+	   	return 1;
+   	}
+	failcode = socksend (sock, debug, fromaddr, "mail");
+	if ( failcode == 1 )
+   	{
+	   	close(sock);
+	   	return 1;
+   	}
+	failcode = socksend (sock, debug, toaddr, "rcpt");
+	if ( failcode == 1 )
+   	{
+	   	close(sock);
+	   	return 1;
+   	}
+	failcode = socksend (sock, debug, "data", "data");
+	if ( failcode == 1 )
+   	{
+	   	close(sock);
+	   	return 1;
+   	}
+	failcode = socksend (sock, debug, text, "body");
+	if ( failcode == 1 )
+   	{
+	   	close(sock);
+	   	return 1;
+   	}
+	failcode = socksend (sock, debug, "quit", "quit");
+	if ( failcode == 1 )
+   	{
+	   	close(sock);
+	   	return 1;
+   	}
+
+	return 0;
+}
+
 /*
  * Local variables:
  * tab-width: 4
