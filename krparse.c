@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.52 2002-12-26 13:12:31 oops Exp $
+  $Id: krparse.c,v 1.53 2003-01-06 12:54:02 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -722,7 +722,7 @@ int get_postposition (unsigned char *str)
 		else { return 1; }
 	}
 	/* if ÇÑa */
-	else if ( first != second && (first > 127) && (second < 123 && second > 96) )
+	else if ( first != second && first > 127 && (second < 123 && second > 96) )
 	{
 		if ( second == 114 || (second > 108 && second < 111) ) { return 0; }
 		else { return 1; }
