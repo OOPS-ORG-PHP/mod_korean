@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.23 2002-12-12 16:56:30 oops Exp $ 
+  $Id: krfile.c,v 1.24 2002-12-22 14:44:23 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -393,10 +393,12 @@ unsigned char *readfile(unsigned char *filename)
 		 return NULL;
 	}
 
-	text = emalloc(sizeof(char) * filesize);
+	text = emalloc(sizeof(char) * (filesize + 32));
+	memset (tmptext, '\0', sizeof(tmptext));
 
 	while ( (len = fread(tmptext, sizeof(char), FILEBUFS, fp)) > 0 )
 	{
+		tmptext[len] = '\0';
 		memmove (text + strlength, tmptext, len);
 		strlength += len;
 	}
