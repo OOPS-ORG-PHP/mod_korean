@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.53 2003-01-06 12:54:02 oops Exp $
+  $Id: krparse.c,v 1.54 2003-07-16 10:58:59 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -551,7 +551,7 @@ unsigned char *autoLink (unsigned char *str_o)
 	src[1] = "/<([^<>\n]*)\n([^\n<>]*)>/i";
 	tar[1] = "<\\1\\2>";
 
-	sprintf(tmp, "/<(A|IMG)[^>]*(HREF|SRC)[^=]*=[ '\"\n]*(%s|mailto:%s)[^>]*>/i", http,mail);
+	sprintf(tmp, "/<(A|IMG)[^>=]*(HREF|SRC)[^=]*=[ '\"\n]*(%s|mailto:%s)[^>]*>/i", http,mail);
 	tmp[strlen(tmp)] = '\0';
 	src[2] = estrdup(tmp);
 	tar[2] = "<\\1 \\2=\"\\3\">";
