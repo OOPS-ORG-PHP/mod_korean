@@ -14,8 +14,10 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: krregex.h,v 1.5 2003-03-01 11:17:59 oops Exp $
+$Id: krregex.h,v 1.6 2003-03-01 12:37:53 oops Exp $
 */
+#ifndef KRREGEX_H
+#define KRREGEX_H
 
 /*************************************************
 *       Perl-Compatible Regular Expressions      *
@@ -155,3 +157,5 @@ unsigned char *kr_regex_replace(unsigned char *regex_o, unsigned char *replace_o
 unsigned char *kr_regex_replace_arr(unsigned char *regex[], unsigned char *replace[], unsigned char *str, unsigned int regex_no);
 unsigned int checkReg(unsigned char *str, unsigned char *regex_o);
 unsigned char * strtrim(unsigned char *str);
+
+#endif /* KRREGEX_H */
