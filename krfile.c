@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.26 2003-05-13 19:14:41 oops Exp $ 
+  $Id: krfile.c,v 1.27 2003-05-26 08:37:50 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -41,12 +41,15 @@
 
 struct stat filestat;
 
-/* {{{ proto int human_fsize_lib(int filesize, int pt)
+/* {{{ proto int human_fsize_lib(int filesize, int pt, int unit)
+ * filesize => init value (byte or bit)
+ * pt       => whether print origianl value (ex: 7.5 MB (7,500,000 bytes))
+ * unit     => bit or byte (0: byte, 1: bit)
  * print move action to url */
 PHP_FUNCTION(human_fsize_lib)
 {
-	pval **fsize, **pt;
-	unsigned int sub = 0;
+	pval **fsize, **pt, **units;
+	unsigned int sub = 0, unit = 0;
 	unsigned char *ret;
 
 	switch(ZEND_NUM_ARGS())
@@ -65,12 +68,22 @@ PHP_FUNCTION(human_fsize_lib)
 			convert_to_long_ex(pt);
 			sub = Z_LVAL_PP(pt);
 			break;
+		case 3:
+			if(zend_get_parameters_ex(3, &fsize, &pt, &units) == FAILURE)
+		   	{
+				WRONG_PARAM_COUNT;
+			}
+			convert_to_long_ex(pt);
+			sub = Z_LVAL_PP(pt);
+			convert_to_long_ex(units);
+			unit = Z_LVAL_PP(units);
+			break;
 		default:
 			WRONG_PARAM_COUNT;
 	}
 	convert_to_double_ex(fsize);
 
-	ret = human_file_size(Z_DVAL_PP(fsize), sub);
+	ret = human_file_size(Z_DVAL_PP(fsize), sub, unit);
 	RETURN_STRING(ret, 1);
 }
 /* }}} */
@@ -501,43 +514,55 @@ unsigned char *readfile(unsigned char *filename)
 /* }}} */
 
 /* {{{ unsigned char *human_file_size (double size_o, int sub_o) */
-unsigned char *human_file_size (double size_o, int sub_o)
+unsigned char *human_file_size (double size_o, int sub_o, int unit)
 {
 	float res;
 	static unsigned char ret[32];
-	unsigned char *danwe, *dot = ".", *fdot = ",";
+	unsigned char *dot = ".", *fdot = ",", sunit[6], ssunit, danwe[3];
 	unsigned char *BYTES_C = (char *) kr_math_number_format(size_o, 0, '.', ',');
+
+	memset (sunit, '\0', sizeof(sunit));
+	memset (danwe, '\0', sizeof(danwe));
+
+	if (unit != 1) {
+		strcpy (sunit, "Bytes");
+		ssunit = 'B';
+	} else {
+		strcpy (sunit, "Bits");
+		ssunit = 'b';
+	}
 
 	if(size_o < 1024)
 	{
-		sprintf(ret, "%s Bytes", BYTES_C);
+		sprintf(ret, "%s %s", BYTES_C, sunit);
 	}
    	else
    	{
 		if (size_o < 1048576 )
 	   	{
 			res = (float) size_o/1024;
-			danwe = "KB";
+			memset (danwe, 'K', 1);
 		}
 	   	else if (size_o < 1073741827)
 	   	{
 			res = (float) size_o/1048576;
-			danwe = "MB";
+			memset (danwe, 'M', 1);
 		}
 	   	else if (size_o < 1099511627776)
 	   	{
 			res = (float) size_o/1073741827;
-			danwe = "GB";
+			memset (danwe, 'G', 1);
 		}
 		else
 		{
 			res = (float) size_o/1099511627776;
-			danwe = "TB";
+			memset (danwe, 'T', 1);
 		}
+		memset (danwe + 1, ssunit, 1);
 
 		if(sub_o)
 	   	{
-			sprintf(ret, "%.2f %s (%s Bytes)", res, danwe, BYTES_C);
+			sprintf(ret, "%.2f %s (%s %s)", res, danwe, BYTES_C, sunit);
 		}
 	   	else
 	   	{
