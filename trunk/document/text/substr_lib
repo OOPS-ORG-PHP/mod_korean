@@ -16,7 +16,14 @@ substr_lib -- 2 byte 를 처리하는 substr() 함수
 
 주의할 것은 utf8 파라미터는 cp949 와 euc-kr 일때만 지원이 된다.
 
-$str = substr_lib($str,0,80);
+$str = &quot;한글a 와 똠방각하&quot;;
+echo substr_lib($str, 0, 10).&quot;\n&quot;;
+
+$str = &quot;한글a 와 똠방각하&quot;;
+$str = utf8encode_lib($str);
+$str = substr_lib($str, 0, 10, 1);
+echo utf8decode_lib($str, &quot;cp949&quot;);
+
 
 <FONT ID=RE>참고</FONT>
 <A HREF=http://www.php.net/manual/kr/function.substr.php TARGET=_blank>substr</A>()
