@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krcheck.c,v 1.13 2002-11-30 18:07:51 oops Exp $
+  $Id: krcheck.c,v 1.14 2002-11-30 18:11:07 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -84,65 +84,39 @@ unsigned int chkMetaChar (unsigned char *str, int type)
 /* {{{ unsigned int check_table (unsigned char *str) */
 unsigned int check_table (unsigned char *str)
 {
-	const char delimiters[] = "\n";
-	unsigned int res;
-	unsigned int table_o = 0, tr_o = 0, td_o = 0, th_o = 0, iframe_o = 0;
-	unsigned int table_p = 0, tr_p = 0, td_p = 0, th_p = 0, iframe_p = 0;
-	unsigned char *buf, *token;
-	unsigned char *regex[9] =
-					{
-						"/>[^<]*</i",
-						"/#|@/i",
-						"/<(\\/?(TABLE|TR|TD|TH))[^>]*>/i",
-						"/^[^#]*/i",
-						"/(TABLEEMARK@)[^#]*(#TABLESMARK)/i",
-						"/<[^>]*>/i",
-						"/#TABLESMARK#/i",
-						"/@TABLEEMARK@/i",
-						"/(\r?\n)+/i"
-					};
-	unsigned char *replace[9] =
-					{
-						">\n<",
-						"",
-						"\n#TABLESMARK#\\1@TABLEEMARK@\n",
-						"",
-						"\\1\\2",
-						"",
-						"\n<",
-						">\n",
-						"\n"
-					};
-
-	buf = estrdup((unsigned char *) kr_regex_replace_arr (regex,replace,str, (sizeof (regex) / sizeof (regex[0]))));
-
-	token = strtok(buf, delimiters);
-	while(token != NULL)
+	unsigned char *buf;
+	unsigned char *regex[] =
 	{
-		if(!strcasecmp(token,"<TABLE>")) { table_o++; }
-		else if(!strcasecmp(token,"</TABLE>")) { table_p++; }
-		else if(!strcasecmp(token,"<TH>")) { th_o++; }
-		else if(!strcasecmp(token,"</TH>")) { th_p++; }
-		else if(!strcasecmp(token,"<TR>")) { tr_o++; }
-		else if(!strcasecmp(token,"</TR>")) { tr_p++; }
-		else if(!strcasecmp(token,"<TD>")) { td_o++; }
-		else if(!strcasecmp(token,"</TD>")) { td_p++; }
-		else if(!strcasecmp(token,"<IFRAME>")) { iframe_o++; }
-		else if(!strcasecmp(token,"</IFRAME>")) { iframe_p++; }
+		";[\\d]+;",
+		";<(/?)(TABLE|TH|TR|TD)[^>]*>;i",
+		";<TABLE>;i",
+		";<TR>;i",
+		";<TH>;i",
+		";<TD>;i",
+		";</TD>;i",
+		";</TH>;i",
+		";</TR>;i",
+		";</TABLE>;i",
+		";[\\D]+;"
+	};
+	unsigned char *replace[] = { "", "<\\1\\2>", "1", "2", "3", "4", "94", "93", "92", "91", "" };
 
-		token = strtok (NULL, delimiters);
+	if ( !checkReg(str, "</?[tT][aA][bB][lL][eE][^>]*>") ) return 0;
+
+	buf = (unsigned char *) kr_regex_replace_arr (regex, replace, str, (sizeof (regex) / sizeof (regex[0])));
+
+	if ( strlen(buf) % 3 != 0 ) { efree(buf); return 1; }
+	if ( !checkReg(buf, "^12(3|4).+9291$") ) { efree(buf); return 2; }
+
+	while ( checkReg(buf, "([1-4])9\\1") )
+	{
+		buf = kr_regex_replace ("/([\\d])9\\1/", "", buf);
 	}
 
-	if (table_o != table_p) { res = 1; }
-	else if (tr_o != tr_p) { res = 1; }
-	else if (td_o != td_p) { res = 1; }
-	else if (th_o != th_p) { res = 1; }
-	else if (iframe_o != iframe_p) { res = 1; }
-	else { res = 0; }
+	if (strlen(buf) > 0) { efree(buf); return 3; }
 
 	efree(buf);
-
-	return res;
+	return 0;
 }
 /* }}} */
 
