@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.25 2004-09-14 08:11:53 oops Exp $
+  $Id: krmail.c,v 1.26 2004-09-14 08:32:29 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -417,69 +417,73 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 
 		// whether vaild or invalid email form
 		if ( checkAddr(t_mail, 0) ) {
+			unsigned char *t_to;
+			int to_lenth;
+
 			if ( namelen < 1 ) {
-				to = estrdup((unsigned char *) strtrim(token));
+				t_to = strtrim(token);
+				to_lenth = strlen (t_to);
+				to = emalloc ( sizeof (char) * (to_lenth + 1));
+				sprintf (to, "<%s>", t_to);
 			} else {
-				int to_lenth = setlen + maillen + namelen + 32;
-				unsigned char *t_to;
+				to_lenth = setlen + maillen + namelen + 32;
 				t_to = emalloc( sizeof(char) * (to_lenth + 1) );
 				cname = estrdup( (unsigned char *) php_base64_encode(t_name, namelen, &namelen) );
 				sprintf(t_to, "=?%s?B?%s?= <%s>", set, cname, t_mail);
 				to = estrdup(t_to);
-				efree(t_to);
 			}
+			efree(t_to);
 
 		}
 		efree (t_mail);
 		efree (_t_name);
 
 		while ( (token = strtok_r (NULL, delimiters, &btoken)) != NULL ) {
-			{
-				unsigned char *s_name, *s_mail, *sub_cname, *_s_name;
-				unsigned int snlen = 0, smlen = 0;
+			unsigned char *s_name, *s_mail, *sub_cname, *_s_name;
+			unsigned int snlen = 0, smlen = 0;
 
-				_s_name = NULL;
+			_s_name = NULL;
 
-				// get email address on NAME <email@address> form
-				if ( strchr(token,'<') != NULL ) {
-					s_mail = strtrim( (unsigned char *) kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", token) );
-					_s_name = strtrim( (unsigned char *) kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", token) );
-					s_name = _s_name;
-					smlen = strlen(s_mail);
-					snlen = strlen(s_name);
-				} else {
-					s_mail = strtrim( (unsigned char *) token);
-					s_name = "";
-				}
-
-				// whether vaild or invalid email form
-				if ( checkAddr(s_mail, 0) ) {
-					unsigned char s_to[200];
-					if ( snlen < 1 ) {
-						memset(s_to, '\0', 20);
-						memmove(s_to, s_mail, strlen(s_mail));
-					} else {
-						sub_cname = (unsigned char *) php_base64_encode(s_name, snlen, &namelen);
-						sprintf(s_to, "=?%s?B?%s?= <%s>", set, sub_cname, s_mail);
-					}
-
-					if ( to == NULL ) {
-						to = estrdup(s_to);
-					} else {
-						unsigned int add_to_len = strlen(s_to) + 3;
-						unsigned char *add_to;
-						add_to = emalloc( sizeof(char) * (add_to_len + 1) );
-						sprintf(add_to, ", %s", s_to);
-						to = (unsigned char *) erealloc(to, strlen(to) + add_to_len);
-						strcat(to, add_to);
-						efree(add_to);
-					}
-				}
-
-				efree (s_mail);
-				if ( _s_name != NULL )
-					efree (_s_name);
+			// get email address on NAME <email@address> form
+			if ( strchr(token,'<') != NULL ) {
+				s_mail = strtrim( (unsigned char *) kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", token) );
+				_s_name = strtrim( (unsigned char *) kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", token) );
+				s_name = _s_name;
+				smlen = strlen(s_mail);
+				snlen = strlen(s_name);
+			} else {
+				s_mail = strtrim( (unsigned char *) token);
+				s_name = "";
 			}
+
+			// whether vaild or invalid email form
+			if ( checkAddr(s_mail, 0) ) {
+				unsigned char s_to[200];
+
+				if ( snlen < 1 ) {
+					memset(s_to, '\0', 200);
+					sprintf (s_to, "<%s>", s_mail);
+				} else {
+					sub_cname = (unsigned char *) php_base64_encode(s_name, snlen, &namelen);
+					sprintf(s_to, "=?%s?B?%s?= <%s>", set, sub_cname, s_mail);
+				}
+
+				if ( to == NULL ) {
+					to = estrdup(s_to);
+				} else {
+					unsigned int add_to_len = strlen(s_to) + 3;
+					unsigned char *add_to;
+					add_to = emalloc( sizeof(char) * (add_to_len + 1) );
+					sprintf(add_to, ", %s", s_to);
+					to = (unsigned char *) erealloc(to, strlen(to) + add_to_len);
+					strcat(to, add_to);
+					efree(add_to);
+				}
+			}
+
+			efree (s_mail);
+			if ( _s_name != NULL )
+				efree (_s_name);
 		}
 	}
 
