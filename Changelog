@@ -4,6 +4,8 @@ PHP Korean Extexsions Changelog
   by JoungKyun Kim <http://www.oops.org>
     - fixed bug that changed addr variable in get_hostname_lib function
     - changed upper case to lower case start charactors of unicode function
+    - fixed segment fault on sutstr_lib function
+    - update document
 
 * Sun Dec  1 2002
   by JoungKyun Kim <http://www.oops.org>
