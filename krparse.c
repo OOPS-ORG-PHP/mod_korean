@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.1.1.1 2002-05-14 09:50:50 oops Exp $
+  $Id: krparse.c,v 1.2 2002-05-22 18:09:01 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -923,8 +923,11 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 	}
 
 	strs = estrndup(ret,strlen(ret));
-	efree(rc);
-	efree(ret);
+
+	if (type != 1 && type != 2 && type != 3) {
+		efree(rc);
+		efree(ret);
+	}
 	return ret;
 }
 
