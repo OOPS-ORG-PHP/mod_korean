@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.46 2002-11-27 10:52:26 oops Exp $
+  $Id: krparse.c,v 1.47 2002-11-28 10:04:12 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +29,8 @@
 #include "php_krcharset.h"
 #include "krregex.h"
 #include "SAPI.h"
-#include "charset/unicode_cp949_ncr_table.h"
+#include "charset/ksc5601.h"
+//#include "charset/unicode_cp949_ncr_table.h"
 
 #include <math.h>
 
@@ -454,6 +455,8 @@ PHP_FUNCTION(postposition_lib)
 		memmove (str, Z_STRVAL_PP(string), slength);
 		memmove (josa, Z_STRVAL_PP(posts), plength);
 	}
+	memset(str + slength, '\0', 1);
+	memset(josa + plength, '\0', 1);
 
 	/* check korean postposition */
 	if ( strlen(josa) < 1 )
@@ -695,8 +698,11 @@ int get_postposition (unsigned char *str)
 	{
 		unsigned int ncr;
 
-		ncr = getNcrIDX(str[0], str[1]);
-		if ( ((uni_cp949_ncr_table[ncr] - 16) % 28 ) == 0 ) { return 1; }
+		if(str[1] > 0x7a) str[1] -= 6;
+		if(str[1] > 0x5a) str[1] -= 6;
+		ncr = (str[0] - 0x81) * 178 + (str[0+1] - 0x41);
+
+		if ( (table_ksc5601[ncr] - 16) % 28 == 0 ) { return 1; }
 		else { return 0; }
 	}
 	/* number area */

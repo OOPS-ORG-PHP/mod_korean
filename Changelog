@@ -2,6 +2,10 @@ PHP Korean Extexsions Changelog
 
 * Wed Nov 27 2002
   by JoungKyun Kim <http://www.oops.org>
+	- rewrite unicode ncrcode function
+
+* Wed Nov 27 2002
+  by JoungKyun Kim <http://www.oops.org>
 	- rewrite utf8encode_lib, utf8decode_lib function
 	- fixed memory free problems
 	- removed convUTF8 function in krcharset.c
