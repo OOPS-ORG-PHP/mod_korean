@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.24 2002-10-24 14:34:51 oops Exp $
+  $Id: korean.c,v 1.25 2002-11-26 08:49:23 oops Exp $
 */
 
 /*
@@ -40,6 +40,7 @@
 #include "php_krnetwork.h"
 #include "php_krimage.h"
 #include "php_krmail.h"
+#include "php_krcharset.h"
 
 /* If you declare any globals in php_korean.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(korean)
@@ -53,42 +54,44 @@ static int le_korean;
  * Every user visible function must have an entry in korean_functions[].
  */
 function_entry korean_functions[] = {
-	PHP_FE(buildno_lib,	NULL)
-	PHP_FE(version_lib,	NULL)
-	PHP_FE(ncrencode_lib,	NULL)
-	PHP_FE(ncrdecode_lib,	NULL)
-	PHP_FE(uniencode_lib,	NULL)
-	PHP_FE(unidecode_lib,	NULL)
-	PHP_FE(utf8encode_lib,	NULL)
-	PHP_FE(utf8decode_lib,	NULL)
+	PHP_FE(buildno_lib,			NULL)
+	PHP_FE(version_lib,			NULL)
+	PHP_FE(ncrencode_lib,		NULL)
+	PHP_FE(ncrdecode_lib,		NULL)
+	PHP_FE(uniencode_lib,		NULL)
+	PHP_FE(unidecode_lib,		NULL)
+	PHP_FE(utf8encode_lib,		NULL)
+	PHP_FE(utf8decode_lib,		NULL)
 	PHP_FE(postposition_lib,	NULL)
 	PHP_FE(check_uristr_lib,	NULL)
 	PHP_FE(check_filename_lib,	NULL)
 	PHP_FE(check_htmltable_lib,	NULL)
-	PHP_FE(is_iis_lib,	NULL)
-	PHP_FE(is_windows_lib,	NULL)
-	PHP_FE(is_email_lib,	NULL)
-	PHP_FE(is_url_lib,	NULL)
-	PHP_FE(is_hangul_lib,	NULL)
-	PHP_FE(autolink_lib,	NULL)
-	PHP_FE(substr_lib,	NULL)
-	PHP_FE(perror_lib,	NULL)
-	PHP_FE(pnotice_lib,	NULL)
-	PHP_FE(movepage_lib,	NULL)
-	PHP_FE(human_fsize_lib,	NULL)
+	PHP_FE(is_iis_lib,			NULL)
+	PHP_FE(is_windows_lib,		NULL)
+	PHP_FE(is_email_lib,		NULL)
+	PHP_FE(is_url_lib,			NULL)
+	PHP_FE(is_hangul_lib,		NULL)
+	PHP_FE(autolink_lib,		NULL)
+	PHP_FE(substr_lib,			NULL)
+	PHP_FE(perror_lib,			NULL)
+	PHP_FE(pnotice_lib,			NULL)
+	PHP_FE(movepage_lib,		NULL)
+	PHP_FE(human_fsize_lib,		NULL)
 	PHP_FE(get_microtime_lib,	NULL)
-	PHP_FE(getfiletype_lib,	NULL)
-	PHP_FE(getfile_lib,	NULL)
-	PHP_FE(putfile_lib,	NULL)
-	PHP_FE(filelist_lib,	NULL)
-	PHP_FE(agentinfo_lib,	NULL)
+	PHP_FE(getfiletype_lib,		NULL)
+	PHP_FE(getfile_lib,			NULL)
+	PHP_FE(putfile_lib,			NULL)
+	PHP_FE(filelist_lib,		NULL)
+	PHP_FE(agentinfo_lib,		NULL)
 	PHP_FE(get_hostname_lib,	NULL)
-	PHP_FE(readfile_lib,	NULL)
+	PHP_FE(readfile_lib,		NULL)
 #if HAVE_KRLIBGD
-	PHP_FE(imgresize_lib,	NULL)
+	PHP_FE(imgresize_lib,		NULL)
 #endif
-	PHP_FE(mailsource_lib,	NULL)
-	PHP_FE(sockmail_lib,	NULL)
+	PHP_FE(mailsource_lib,		NULL)
+	PHP_FE(sockmail_lib,		NULL)
+	PHP_FE(getutf8,				NULL)
+	PHP_FE(getcharacterset,		NULL)
 	{NULL, NULL, NULL}
 };
 /* }}} */
