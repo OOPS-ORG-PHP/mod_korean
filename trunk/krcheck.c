@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krcheck.c,v 1.9 2002-09-02 16:07:01 oops Exp $
+  $Id: krcheck.c,v 1.10 2002-09-18 10:14:10 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -27,6 +27,7 @@
 #include "SAPI.h"
 
 #include "php_krcheck.h"
+#include "krregex.h"
 
 
 unsigned int checkAddr(unsigned char *addr, int type)

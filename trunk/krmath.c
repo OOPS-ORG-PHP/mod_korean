@@ -4,7 +4,7 @@
 #include <math.h>
 #include <float.h>
 
-PHPAPI char *kr_math_number_format(double d, int dec, char dec_point, char thousand_sep)
+char *kr_math_number_format(double d, int dec, char dec_point, char thousand_sep)
 {
 	char *tmpbuf, *resbuf;
 	char *s, *t;  /* source, target */

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krerror.c,v 1.6 2002-08-16 02:18:09 oops Exp $ 
+  $Id: krerror.c,v 1.7 2002-09-18 10:14:10 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -25,6 +25,8 @@
 #include "php.h"
 #include "php_ini.h"
 #include "php_krerror.h"
+#include "php_krparse.h"
+#include "krregex.h"
 #include "SAPI.h"
 
 /* {{{ proto void perror_lib(string str [, int use_java [, string move_page [, int move second ] ] ])

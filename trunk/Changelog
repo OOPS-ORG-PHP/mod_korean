@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Wed Sep 18 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - supported windows
+
 * Sun Sep  8 2002
   by JoungKyun Kim <http://www.oops.org>
     - fixed get_hostname_lib returns null value if reverse value is 0

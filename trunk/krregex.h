@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: krregex.h,v 1.3 2002-09-01 06:15:46 oops Exp $
+$Id: krregex.h,v 1.4 2002-09-18 10:14:10 oops Exp $
 */
 
 /*************************************************
@@ -137,7 +137,7 @@ extern const char *pcre_version(void);
 #endif
 
 PHPAPI char *php_pcre_replace(char *regex,   int regex_len, char *subject, int subject_len, zval *replace_val, int is_callable_replace, int *result_len, int limit TSRMLS_DC);
-PHPAPI pcre* pcre_get_compiled_regex(char *regex, pcre_extra **extra, int *options);
+PHPAPI pcre *pcre_get_compiled_regex(char *regex, pcre_extra **extra, int *options);
 
 extern zend_module_entry pcre_module_entry;
 #define pcre_module_ptr &pcre_module_entry

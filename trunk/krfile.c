@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.11 2002-09-02 16:07:01 oops Exp $ 
+  $Id: krfile.c,v 1.12 2002-09-18 10:14:10 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -26,14 +26,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#ifndef PHP_WIN32
-#include <dirent.h>
+#ifdef PHP_WIN32
+	#include "win32/readdir.h"
+#else
+	#include <dirent.h>
 #endif
 
 #include "php.h"
 #include "php_ini.h"
 #include "zend_API.h"
 #include "php_krfile.h"
+#include "php_krmath.h"
 
 struct stat filestat;
 
@@ -474,9 +477,9 @@ unsigned int check_filedev (unsigned char *path_f, unsigned char *filename)
 	ret = lstat(fullpath, &s);
 	efree(fullpath);
 
-	if ( S_ISLNK(s.st_mode) ) { return RETURN_LINK_TYPE; }
-	else if ( S_ISDIR(s.st_mode) ) { return RETURN_DIR_TYPE; }
+	if ( S_ISDIR(s.st_mode) ) { return RETURN_DIR_TYPE; }
 	else if ( S_ISREG(s.st_mode) ) { return RETURN_FILE_TYPE; }
+	else if ( S_ISLNK(s.st_mode) ) { return RETURN_LINK_TYPE; }
 	else { return 0; }
 }
 
