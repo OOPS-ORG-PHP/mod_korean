@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.26 2004-09-14 08:32:29 oops Exp $
+  $Id: krmail.c,v 1.27 2004-09-14 08:50:44 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -111,14 +111,14 @@ PHP_FUNCTION(mailsource_lib)
 	ret = generate_mail(c_ln, c_from, c_to, c_title, c_text, c_ptext, attachfile);
 	RETVAL_STRING(ret,1);
 
-	efree (c_ptext);
-	efree (c_attach);
-	efree (c_ln);
-	efree (c_from);
-	efree (c_to);
-	efree (c_title);
-	efree (c_text);
-	efree (ret);
+	safe_efree (c_ptext);
+	safe_efree (c_attach);
+	safe_efree (c_ln);
+	safe_efree (c_from);
+	safe_efree (c_to);
+	safe_efree (c_title);
+	safe_efree (c_text);
+	safe_efree (ret);
 }
 /* }}} */
 
@@ -183,8 +183,8 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 				                 "%s%s\r\n%s\r\n--%s--\r\n",
 			   	return_header, tmp_attach_header, return_body, return_attach, attbound);
 
-		efree(return_attach);
-		efree(tmp_attach_header);
+		safe_efree(return_attach);
+		safe_efree(tmp_attach_header);
 	}
 	else
 	{
@@ -195,11 +195,11 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 								 "\r\n%s\r\n", return_header, return_body);
 	}
 
-	efree (to);
-	efree (from);
-	efree (title);
-	efree (return_body);
-	efree (return_header);
+	safe_efree (to);
+	safe_efree (from);
+	safe_efree (title);
+	safe_efree (return_body);
+	safe_efree (return_header);
 
 	return return_mail;
 }
@@ -259,9 +259,9 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 			          "base64\r\nContent-Disposition: inline; filename=\"%s\"\r\n\r\n%s\r\n\0",
 			bound, mimetype, filename, filename, base64text);
 
-	efree(base64text);
-	efree(filename);
-	efree(contents);
+	safe_efree(base64text);
+	safe_efree(filename);
+	safe_efree(contents);
 
 	return fencode;
 }
@@ -297,12 +297,12 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 					bboundary, bset, base64plain, bboundary, bset, base64html, bboundary);
 
 			rbody = estrdup(tmp_body);
-			efree(tmp_body);
+			safe_efree(tmp_body);
 		}
 
-		efree (plain);
-		efree (base64plain);
-		efree (base64html);
+		safe_efree (plain);
+		safe_efree (base64plain);
+		safe_efree (base64html);
 	}
 	else
 	{
@@ -335,7 +335,7 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 					 "boundary=\"%s\"\r\n\r\n",
 				mailid, from, datehead, to, subject, mimetype, boundary);
 		rheader = (char *) estrdup(buf);
-		efree(buf);
+		safe_efree(buf);
 	}
 
 	return rheader;
@@ -354,8 +354,12 @@ unsigned char * generate_from (unsigned char *email, char *set)
 	}
 
 	// get email address on NAME <email@address> form
-	mail = (unsigned char *) strtrim((unsigned char *) kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", email));
-	maillen = strlen(mail);
+	if ( strchr (email, '<' ) != NULL ) {
+		mail = (unsigned char *) strtrim((unsigned char *) kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", email));
+	} else {
+		mail = strtrim (email);
+	}
+	maillen = strlen (mail);
 
 	// get name on NAME <email@address> form
 	if ( strchr(email,'<') != NULL ) {
@@ -368,21 +372,21 @@ unsigned char * generate_from (unsigned char *email, char *set)
 	}
 	
 	if ( strlen(name) < 1 ) {
-		rfrom = estrndup(mail, maillen);
+		rfrom = emalloc ( sizeof (char) * ( maillen + 3) );
+		sprintf (rfrom, "<%s>", mail);
 	} else {
+		int from_len;
+		unsigned char *tmp_from;
 		cname = (unsigned char *) php_base64_encode(name, strlen(name), &namelen);
-		{
-			int from_lenth = setlen + maillen + namelen + 11;
-			unsigned char *tmp_from;
-			tmp_from = emalloc( sizeof(char) * (from_lenth + 1) );
-			sprintf(tmp_from, "=?%s?B?%s?= <%s>", set, cname, mail);
-			rfrom = estrndup( tmp_from, strlen(tmp_from) );
-			efree(tmp_from);
-		}
+
+		from_len = setlen + maillen + namelen + 11;
+
+		rfrom = emalloc (sizeof (char) * (from_len + 1));
+		sprintf (rfrom, "=?%s?B?%s?= <%s>", set, cname, mail);
 	}
 
-	efree (mail);
-	efree (name_t);
+	safe_efree (mail);
+	safe_efree (name_t);
 
 	return rfrom;
 }
@@ -432,11 +436,11 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 				sprintf(t_to, "=?%s?B?%s?= <%s>", set, cname, t_mail);
 				to = estrdup(t_to);
 			}
-			efree(t_to);
+			safe_efree(t_to);
 
 		}
-		efree (t_mail);
-		efree (_t_name);
+		safe_efree (t_mail);
+		safe_efree (_t_name);
 
 		while ( (token = strtok_r (NULL, delimiters, &btoken)) != NULL ) {
 			unsigned char *s_name, *s_mail, *sub_cname, *_s_name;
@@ -477,13 +481,13 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 					sprintf(add_to, ", %s", s_to);
 					to = (unsigned char *) erealloc(to, strlen(to) + add_to_len);
 					strcat(to, add_to);
-					efree(add_to);
+					safe_efree(add_to);
 				}
 			}
 
-			efree (s_mail);
+			safe_efree (s_mail);
 			if ( _s_name != NULL )
-				efree (_s_name);
+				safe_efree (_s_name);
 		}
 	}
 
