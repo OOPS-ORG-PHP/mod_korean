@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.8 2002-08-16 02:18:09 oops Exp $ 
+  $Id: krmail.c,v 1.9 2002-08-28 15:37:25 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -500,12 +500,20 @@ char * make_boundary ()
 	int sec, usec, len, i;
 	char bid[14], bound[40], *rbound;
 	char first[2], second[9], third[9];
+#if defined(__CYGWIN__)
+    struct timespec tv;
+#else
     struct timeval tv;
+#endif
 
 	/* make uniq id */
 	gettimeofday((struct timeval *) &tv, (struct timezone *) NULL);
 	sec = (int) tv.tv_sec;
+#if defined(__CYGWIN__)
+	usec = (int) (tv.tv_nsec % 1000000);
+#else
 	usec = (int) (tv.tv_usec % 1000000);
+#endif
 	sprintf(bid,"%07x%05x",sec,usec);
 
 	/* get lenth of uniq id */

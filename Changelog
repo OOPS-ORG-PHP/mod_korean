@@ -1,5 +1,10 @@
 PHP Korean Extexsions Changelog
 
+* Thu Aug 29 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - supported cygwin
+      cygwin doesn't support gd and shared extension mode.
+
 * Thu Aug 23 2002
   by JoungKyun Kim <http://www.oops.org>
     - supported php 4.3

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.20 2002-08-23 10:58:17 oops Exp $
+  $Id: krnetwork.c,v 1.21 2002-08-28 15:37:25 oops Exp $
 */
 
 /*
@@ -64,6 +64,45 @@
 #include <netdb.h>
 #if HAVE_ARPA_NAMESER_H
 #include <arpa/nameser.h>
+#else
+	typedef struct {
+		unsigned	id :16;	/* query identification number */
+		#if BYTE_ORDER == BIG_ENDIAN
+				/* fields in third byte */
+		unsigned	qr: 1;		/* response flag */
+		unsigned	opcode: 4;	/* purpose of message */
+		unsigned	aa: 1;		/* authoritive answer */
+		unsigned	tc: 1;		/* truncated message */
+		unsigned	rd: 1;		/* recursion desired */
+				/* fields in fourth byte */
+		unsigned	ra: 1;		/* recursion available */
+		unsigned	unused :1;	/* unused bits (MBZ as of 4.9.3a3) */
+		unsigned	ad: 1;		/* authentic data from named */
+		unsigned	cd: 1;		/* checking disabled by resolver */
+		unsigned	rcode :4;	/* response code */
+		#endif
+		#if BYTE_ORDER == LITTLE_ENDIAN || BYTE_ORDER == PDP_ENDIAN
+				/* fields in third byte */
+		unsigned	rd :1;		/* recursion desired */
+		unsigned	tc :1;		/* truncated message */
+		unsigned	aa :1;		/* authoritive answer */
+		unsigned	opcode :4;	/* purpose of message */
+		unsigned	qr :1;		/* response flag */
+				/* fields in fourth byte */
+		unsigned	rcode :4;	/* response code */
+		unsigned	cd: 1;		/* checking disabled by resolver */
+		unsigned	ad: 1;		/* authentic data from named */
+		unsigned	unused :1;	/* unused bits (MBZ as of 4.9.3a3) */
+		unsigned	ra :1;		/* recursion available */
+		#endif
+				/* remaining bytes */
+		unsigned	qdcount :16;	/* number of question entries */
+		unsigned	ancount :16;	/* number of answer entries */
+		unsigned        nscount :16;	/* number of authority entries */
+		unsigned        arcount :16;	/* number of resource entries */
+	} HEADER;
+	#define T_MX		15
+	#define C_IN		1
 #endif
 #if HAVE_RESOLV_H
 #include <resolv.h>
