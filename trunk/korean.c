@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.9 2002-07-26 00:20:35 oops Exp $
+  $Id: korean.c,v 1.10 2002-07-26 00:24:02 oops Exp $
 */
 
 /*
@@ -54,6 +54,7 @@ static int le_korean;
  */
 function_entry korean_functions[] = {
 	PHP_FE(buildno_lib,	NULL)
+	PHP_FE(version_lib,	NULL)
 	PHP_FE(ncrencode_lib,	NULL)
 	PHP_FE(uniencode_lib,	NULL)
 	PHP_FE(unidecode_lib,	NULL)
@@ -135,9 +136,16 @@ PHP_MINFO_FUNCTION(korean)
 /* }}} */
 
 /* {{{ proto unsigned char buildno_lib(void)
- *  print korean extension version */
+ *  print korean extension build number */
 PHP_FUNCTION(buildno_lib) {
 	RETURN_STRING (BUILDNO,1);
+}
+/* }}} */
+
+/* {{{ proto unsigned char version_lib(void)
+ *  print korean extension version */
+PHP_FUNCTION(version_lib) {
+	RETURN_STRING (BUILDVER,1);
 }
 /* }}} */
 
