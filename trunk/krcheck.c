@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krcheck.c,v 1.12 2002-11-30 17:10:31 oops Exp $
+  $Id: krcheck.c,v 1.13 2002-11-30 18:07:51 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
