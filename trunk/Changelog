@@ -2,6 +2,10 @@ PHP Korean Extexsions Changelog
 
 * 0.0.6
 --------------------------------------------------------------------------------
+Thu Sep  4 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - changed to int type from void on putfile_lib function
+
 Sun Aug 31 2003
   by JoungKyun Kim <http://www.oops.org>
     - fixed miss free on pcre_match function
