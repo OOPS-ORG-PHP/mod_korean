@@ -1,4 +1,4 @@
-dnl $Id: config.m4,v 1.18 2003-03-01 19:46:05 oops Exp $
+dnl $Id: config.m4,v 1.19 2003-07-14 04:30:22 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -71,7 +71,9 @@ if test "$PHP_KOREAN" != "no"; then
 
     KR_MODULE_TYPE=builtin
     if test "$include_gdlib" = "yes"; then
-      krextra_sources="libgd/gd.c libgd/gd_png.c libgd/gd_jpeg.c libgd/gd_gif_in.c libgd/gd_io.c libgd/gd_io_file.c libgd/gd_ss.c libgd/gd_io_ss.c libgd/gdtables.c libgd/gdhelpers.c"
+      krextra_sources="libgd/gd.c libgd/gd_png.c libgd/gd_jpeg.c libgd/gd_gif_in.c libgd/gd_io.c \
+                       libgd/gd_gif_out.c libgd/gd_io_file.c libgd/gd_ss.c libgd/gd_io_ss.c \
+                       libgd/gdtables.c libgd/gdhelpers.c"
     fi
 
     dnl These are always available with bundled library
