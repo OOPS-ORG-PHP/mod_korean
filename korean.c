@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.15 2002-08-16 02:18:09 oops Exp $
+  $Id: korean.c,v 1.16 2002-08-18 10:42:50 oops Exp $
 */
 
 /*
@@ -82,7 +82,9 @@ function_entry korean_functions[] = {
 	PHP_FE(agentinfo_lib,	NULL)
 	PHP_FE(get_hostname_lib,	NULL)
 	PHP_FE(readfile_lib,	NULL)
+#if HAVE_KRLIBGD
 	PHP_FE(imgresize_lib,	NULL)
+#endif
 	PHP_FE(mailsource_lib,	NULL)
 	PHP_FE(sockmail_lib,	NULL)
 	{NULL, NULL, NULL}
