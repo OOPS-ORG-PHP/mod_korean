@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.15 2002-08-16 02:18:09 oops Exp $
+  $Id: krnetwork.c,v 1.16 2002-08-21 17:19:39 oops Exp $
 */
 
 /*
@@ -29,24 +29,48 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef PHP_WIN32
-#include <winsock.h>
-#include "netdb.h"
-#include "arpa/inet.h"
-#else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <resolv.h>
-#endif
-
 #include "php.h"
 #include "php_ini.h"
 #include "SAPI.h"
 #include "fopen_wrappers.h"
 
+#if HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+#ifdef PHP_WIN32
+#if HAVE_LIBBIND
+#ifndef WINNT
+#define WINNT 1
+#endif
+/* located in www.php.net/extra/bindlib.zip */
+#if HAVE_ARPA_INET_H
+#include "arpa/inet.h"
+#endif
+#include "netdb.h"
+#if HAVE_ARPA_NAMESERV_H
+#include "arpa/nameser.h"
+#endif
+#if HAVE_RESOLV_H
+#include "resolv.h"
+#endif
+#endif
+#include <winsock.h>
+#else
+#include <netinet/in.h>
+#if HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
+#include <netdb.h>
+#if HAVE_ARPA_NAMESER_H
+#include <arpa/nameser.h>
+#endif
+#if HAVE_RESOLV_H
+#include <resolv.h>
+#endif
+#endif
+
 #include "php_krnetwork.h"
+
 
 #define PROXYSIZE 7
 
