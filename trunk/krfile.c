@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.25 2003-02-21 10:44:38 oops Exp $ 
+  $Id: krfile.c,v 1.26 2003-05-13 19:14:41 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -322,6 +322,95 @@ PHP_FUNCTION(getfiletype_lib)
 	} else {
 		RETURN_STRING(&files_o[files-files_o+1], 1);
 	}
+}
+/* }}} */
+
+/* {{{ proto string pcregrep_lib(string text) */
+PHP_FUNCTION(pcregrep_lib)
+{
+	pval **getregex, **gettext, **getopt;
+	char *regex, *text, *token, *bufstr, buf[4096];
+	char *str, tmpbuf[4096];
+	int opt = 0, retval = 0, len = 0, buflen = 0;
+	const char delimiters[] = "\n";
+
+	switch(ZEND_NUM_ARGS())
+	{
+		case 2:
+			if(zend_get_parameters_ex(2, &getregex, &gettext) == FAILURE) {
+				WRONG_PARAM_COUNT;
+			}
+			break;
+		case 3:
+			if(zend_get_parameters_ex(3, &getregex, &gettext, &getopt) == FAILURE) {
+				WRONG_PARAM_COUNT;
+			}
+			convert_to_long_ex(getopt);
+			opt = Z_LVAL_PP(getopt);
+			break;
+		default:
+			WRONG_PARAM_COUNT;
+	}
+
+	convert_to_string_ex(getregex);
+	regex = Z_STRVAL_PP(getregex);
+	convert_to_string_ex(gettext);
+	text = Z_STRVAL_PP(gettext);
+
+	if (strlen(text) < 1) {
+		RETURN_EMPTY_STRING();
+	}
+
+	bufstr = estrdup (text);
+	token = strtok (bufstr, delimiters);
+
+	while (token != NULL) {
+		memset (buf, '\0', sizeof(buf));
+		memmove (buf, token, strlen(token));
+
+		retval = pcre_match (regex, buf);
+		if (retval < 0) {
+			RETURN_FALSE;
+		}
+
+		if (opt != 0) {
+			if (retval == 0) {
+				memset (tmpbuf, '\0', sizeof(tmpbuf));
+				sprintf (tmpbuf, "%s\n", buf);
+				buflen = strlen(tmpbuf);
+
+				if (len < 1) {
+					str = emalloc (sizeof(char) * (buflen));
+				} else {
+					str = erealloc (str, sizeof(char) * (len + buflen));
+				}
+
+				memmove (str + len, tmpbuf, buflen);
+				len += buflen;
+			}
+		} else {
+			if (retval > 0) {
+				memset (tmpbuf, '\0', sizeof(tmpbuf));
+				sprintf (tmpbuf, "%s\n", buf);
+				buflen = strlen(tmpbuf);
+				if (len < 1) {
+					str = emalloc (sizeof(char) * (buflen));
+				} else {
+					str = erealloc (str, sizeof(char) * (len + buflen));
+				}
+
+				memmove (str + len, tmpbuf, buflen);
+				len += buflen;
+			}
+		}
+
+		token = strtok (NULL, delimiters);
+	}
+
+	RETVAL_STRINGL(str, len - 1, 1);
+
+	efree (bufstr);
+	efree (str);
 }
 /* }}} */
 

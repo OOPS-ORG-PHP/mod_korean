@@ -14,13 +14,14 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krfile.h,v 1.10 2003-02-21 10:44:38 oops Exp $
+$Id: php_krfile.h,v 1.11 2003-05-13 19:14:41 oops Exp $
 */
 #ifndef PHP_KRFILE_H
 #define PHP_KRFILE_H
 
 PHP_FUNCTION(human_fsize_lib);
 PHP_FUNCTION(getfiletype_lib);
+PHP_FUNCTION(pcregrep_lib);
 PHP_FUNCTION(getfile_lib);
 PHP_FUNCTION(putfile_lib);
 PHP_FUNCTION(filelist_lib);

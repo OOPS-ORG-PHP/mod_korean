@@ -29,6 +29,7 @@ $filesystem[2] = "getfile_lib";
 $filesystem[3] = "getfiletype_lib";
 $filesystem[4] = "putfile_lib";
 $filesystem[5] = "readfile_lib";
+$filesystem[6] = "pcregrep_lib";
 
 $html[1] = "agentinfo_lib";
 $html[2] = "autolink_lib";

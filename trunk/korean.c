@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.28 2003-01-07 11:50:19 oops Exp $
+  $Id: korean.c,v 1.29 2003-05-13 19:14:41 oops Exp $
 */
 
 /*
@@ -79,6 +79,7 @@ function_entry korean_functions[] = {
 	PHP_FE(human_fsize_lib,		NULL)
 	PHP_FE(get_microtime_lib,	NULL)
 	PHP_FE(getfiletype_lib,		NULL)
+	PHP_FE(pcregrep_lib,		NULL)
 	PHP_FE(getfile_lib,			NULL)
 	PHP_FE(putfile_lib,			NULL)
 	PHP_FE(filelist_lib,		NULL)
