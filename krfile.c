@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.33 2003-09-04 09:23:15 oops Exp $ 
+  $Id: krfile.c,v 1.34 2003-12-02 12:09:55 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -356,7 +356,7 @@ PHP_FUNCTION(getfiletype_lib)
 PHP_FUNCTION(pcregrep_lib)
 {
 	pval **getregex, **gettext, **getopt;
-	char *regex, *text, *token, *bufstr, buf[4096];
+	char *regex, *text, *token, *btoken, *bufstr, buf[4096];
 	char *str, tmpbuf[4096];
 	int opt = 0, retval = 0, len = 0, buflen = 0;
 	const char delimiters[] = "\n";
@@ -388,50 +388,32 @@ PHP_FUNCTION(pcregrep_lib)
 		RETURN_EMPTY_STRING();
 	}
 
+	str = emalloc ( sizeof (char) );
 	bufstr = estrdup (text);
-	token = strtok (bufstr, delimiters);
+	token = strtok_r (bufstr, delimiters, &btoken);
 
 	while (token != NULL) {
-		memset (buf, '\0', sizeof(buf));
+		memset (buf, 0, 4096);
 		memmove (buf, token, strlen(token));
+		buflen = strlen (buf);
 
 		retval = pcre_match (regex, buf);
-		if (retval < 0) {
-			RETURN_FALSE;
+		if (retval < 0) { RETURN_FALSE; }
+
+		/* print matched */
+		if ( opt )
+			retval = !retval ? 1 : 0;
+
+		if ( retval ) {
+			str = erealloc ( str, sizeof (char) * (len + buflen + 3) );
+			memcpy ( str + len, buf, buflen);
+			len += buflen;
+			memset (str + len, '\n', 1);
+			len++;
+			memset (str + len, 0, 1);
 		}
 
-		if (opt != 0) {
-			if (retval == 0) {
-				memset (tmpbuf, '\0', sizeof(tmpbuf));
-				sprintf (tmpbuf, "%s\n", buf);
-				buflen = strlen(tmpbuf);
-
-				if (len < 1) {
-					str = emalloc (sizeof(char) * (buflen));
-				} else {
-					str = erealloc (str, sizeof(char) * (len + buflen));
-				}
-
-				memmove (str + len, tmpbuf, buflen);
-				len += buflen;
-			}
-		} else {
-			if (retval > 0) {
-				memset (tmpbuf, '\0', sizeof(tmpbuf));
-				sprintf (tmpbuf, "%s\n", buf);
-				buflen = strlen(tmpbuf);
-				if (len < 1) {
-					str = emalloc (sizeof(char) * (buflen));
-				} else {
-					str = erealloc (str, sizeof(char) * (len + buflen));
-				}
-
-				memmove (str + len, tmpbuf, buflen);
-				len += buflen;
-			}
-		}
-
-		token = strtok (NULL, delimiters);
+		token = strtok_r (NULL, delimiters, &btoken);
 	}
 
 	efree (bufstr);
