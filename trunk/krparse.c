@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.45 2002-11-26 08:49:23 oops Exp $
+  $Id: krparse.c,v 1.46 2002-11-27 10:52:26 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -58,12 +58,12 @@ PHP_FUNCTION(autolink_lib)
 }
 /* }}} */
 
-/* {{{ proto string substr_lib(string str, int start [, int length])
+/* {{{ proto string substr_lib(string str, int start [, int length [, int utf8] ])
  *    Returns part of a multibyte string */
 PHP_FUNCTION(substr_lib)
 {
 	zval **str, **from, **len, **utf8;
-	unsigned char *cstr, *tmpstr, *string;
+	static unsigned char *tmpstr, *utfstr;
 	int l, f, lenth, utf = 0;
 	int argc = ZEND_NUM_ARGS();
 
@@ -74,16 +74,25 @@ PHP_FUNCTION(substr_lib)
 	convert_to_string_ex(str);
 	convert_to_long_ex(from);
 
+	tmpstr = (unsigned char *) emalloc (sizeof(char) * Z_STRLEN_PP(str) * 6);
+
 	if (argc == 4)
    	{
 		convert_to_long_ex(utf8);
 		utf = Z_LVAL_PP(utf8);
-		tmpstr = convUTF8 (Z_STRVAL_PP(str), 2);
+
+		if ( utf == 1 )
+		{
+			XUCodeConv ( tmpstr, Z_STRLEN_PP(str) * 6, XU_CONV_CP949, Z_STRVAL_PP(str), Z_STRLEN_PP(str), XU_CONV_UTF8 );
+		}
+		else
+		{
+			strcpy (tmpstr, krNcrDecode(Z_STRVAL_PP(str)));
+		}
 	}
    	else
 	{
-		cstr = krNcrDecode(Z_STRVAL_PP(str));
-		tmpstr = cstr;
+		strcpy(tmpstr, krNcrDecode(Z_STRVAL_PP(str)));
 	}
 
 	if (argc > 2)
@@ -126,15 +135,19 @@ PHP_FUNCTION(substr_lib)
 	if(multibyte_check(tmpstr, f + l)) { l++; }
 
 	tmpstr[f+l] = '\0';
-	string = &tmpstr[f];
+
 	if (utf == 1)
    	{
-		RETURN_STRING(convUTF8(string, 0), 1);
+		utfstr = (unsigned char *) emalloc(sizeof(char) * strlen(tmpstr + f) * 6);
+		XUCodeConv (utfstr, strlen(tmpstr + f) * 6, XU_CONV_UTF8, tmpstr + f, strlen(tmpstr + f), XU_CONV_CP949);
+		RETVAL_STRINGL(utfstr, strlen(utfstr), 1);
+		efree (utfstr);
 	}
    	else
    	{
-		RETURN_STRING(krNcrEncode(string, 1), 1);
+		RETVAL_STRING(krNcrEncode(tmpstr + f, 1), 1);
 	}
+	efree(tmpstr);
 }
 /* }}} */
 
@@ -399,9 +412,9 @@ PHP_FUNCTION(agentinfo_lib)
 PHP_FUNCTION(postposition_lib)
 {
 	pval **string, **posts, **utf;
-	unsigned char *str, *post, *josa, *chkjosa[2];
-	unsigned char *chkstr;
-	int position, chkutf;
+	static unsigned char *str, josa[8], *chkjosa[2];
+	static unsigned char *chkstr, utfpost[4], post[3];
+	int slength = 0, plength = 0, position, chkutf = 0;
 
 	switch(ZEND_NUM_ARGS())
    	{
@@ -426,15 +439,20 @@ PHP_FUNCTION(postposition_lib)
 	convert_to_string_ex(string);
 	convert_to_string_ex(posts);
 
+	slength = Z_STRLEN_PP(string);
+	plength = Z_STRLEN_PP(posts);
+
+	str = (unsigned char *) emalloc (sizeof(char) * slength * 6);
+
 	if (chkutf == 1)
 	{
-		str = convUTF8( Z_STRVAL_PP(string), 2);
-		josa = convUTF8( Z_STRVAL_PP(posts), 2);
+		XUCodeConv (str, slength * 6, XU_CONV_CP949, Z_STRVAL_PP(string), slength, XU_CONV_UTF8);
+		XUCodeConv (josa, plength * 6, XU_CONV_CP949, Z_STRVAL_PP(posts), plength, XU_CONV_UTF8);
 	}
 	else
 	{
-		str = Z_STRVAL_PP(string);
-		josa = Z_STRVAL_PP(posts);
+		memmove (str, Z_STRVAL_PP(string), slength);
+		memmove (josa, Z_STRVAL_PP(posts), plength);
 	}
 
 	/* check korean postposition */
@@ -474,7 +492,8 @@ PHP_FUNCTION(postposition_lib)
 
 	if (strlen(str) > 1)
 	{
-	    chkstr = &str[strlen(str) - 2];
+		int chkstrlen = strlen(str) - 2;
+		chkstr = estrdup(str + chkstrlen);
 	}
 	else if (strlen(str) > 0)
 	{
@@ -486,11 +505,17 @@ PHP_FUNCTION(postposition_lib)
 	}
 
 	position = (int) get_postposition(chkstr);
-	post = ( position == 1 ) ? estrdup(chkjosa[1]) : estrdup(chkjosa[0]);
+	if ( position == 1 ) { memmove (post, chkjosa[1], 2); }
+	else { memmove (post, chkjosa[0], 2); }
 
 	efree(chkstr);
+	efree(str);
 
-	if (chkutf == 1) { RETURN_STRING( convUTF8(post, 0), 1); }
+	if (chkutf == 1)
+	{
+		XUCodeConv ( utfpost, 12, XU_CONV_UTF8, post, 2, XU_CONV_CP949 );
+		RETURN_STRING(utfpost, 1);
+	}
 	else { RETURN_STRING(post, 1); }
 }
 /* }}} */
@@ -505,7 +530,7 @@ unsigned char *autoLink (unsigned char *str_o)
 	unsigned char http[] = "(http|https|ftp|telnet|news|mms):\\/\\/(([[:alnum:]\xA1-\xFE:_\\-]+\\.[[:alnum:]\xA1-\xFE,:;&#=_~%\\[\\]?\\/.,+\\-]+)([.]*[\\/a-z0-9\\[\\]]|=[\xA1-\xFE]+))";
 	unsigned char mail[] = "([[:alnum:]\xA1-\xFE_.-]+)@([[:alnum:]\xA1-\xFE_-]+\\.[[:alnum:]\xA1-\xFE._-]*[a-z]{2,3}(\\?[[:alnum:]\xA1-\xFE=&\\?]+)*)";
 	unsigned char *src[ARRAY_NO], *tar[ARRAY_NO];
-	unsigned char *buf, *ptr;
+	static unsigned char *buf, *ptr;
 
 	ptr = get_useragent();
 	if ( ptr ) { agent_o = strstr(ptr, "MSIE") ? 1 : 0; }
@@ -597,6 +622,14 @@ unsigned char *autoLink (unsigned char *str_o)
 	
 	buf = (unsigned char *) kr_regex_replace_arr (src, tar, str_o, ARRAY_NO);
 
+	efree (src[2]);
+	efree (src[5]);
+	efree (src[6]);
+	efree (src[7]);
+	efree (src[8]);
+	efree (src[9]);
+	efree (src[15]);
+
 	return buf;
 }
 /* }}} */
@@ -604,7 +637,7 @@ unsigned char *autoLink (unsigned char *str_o)
 /* {{{ unsigned char *get_useragent(void) */
 unsigned char *get_useragent()
 {
-	unsigned char *ptr;
+	static unsigned char *ptr;
 	TSRMLS_FETCH();
 	
     ptr = sapi_getenv("HTTP_USER_AGENT", 15 TSRMLS_CC);
@@ -622,7 +655,7 @@ unsigned char *get_serverenv(unsigned char *para)
 	zval **data, **tmp, tmps;
 	char *string_key;
 	ulong num_key;
-	unsigned char *parameters = NULL;
+	static unsigned char *parameters = NULL;
 	TSRMLS_FETCH();
 
 	zend_hash_find(&EG(symbol_table), "_SERVER", 8, (void **) &data);

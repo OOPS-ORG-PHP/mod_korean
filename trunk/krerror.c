@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krerror.c,v 1.7 2002-09-18 10:14:10 oops Exp $ 
+  $Id: krerror.c,v 1.8 2002-11-27 10:52:26 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -149,7 +149,8 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 	unsigned char *rep[2] = { "\\n", "\\\\\\0" };
 
 	unsigned char *buf = NULL, *mv = NULL;
-	unsigned char *result, *ret, *agent_o;
+	unsigned char *result, *agent_o;
+	static char ret[1024];
 	TSRMLS_FETCH();
 
 	agent_o = sapi_getenv("HTTP_USER_AGENT", 15 TSRMLS_CC);
@@ -213,7 +214,7 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 		}
 	}
 
-	ret = result;
+	memmove(ret, result, strlen(result));
 	efree(buf);
 	efree(result);
 

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.13 2002-10-24 14:34:51 oops Exp $ 
+  $Id: krfile.c,v 1.14 2002-11-27 10:52:26 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -70,7 +70,8 @@ PHP_FUNCTION(human_fsize_lib)
 	convert_to_double_ex(fsize);
 
 	ret = human_file_size(Z_DVAL_PP(fsize), sub);
-	RETURN_STRING(ret, 1);
+	RETVAL_STRING(ret, 1);
+	efree (ret);
 }
 /* }}} */
 
@@ -277,7 +278,8 @@ PHP_FUNCTION(getfile_lib)
 
 	str = readfile(getfilename, chksize);
 
-	RETURN_STRINGL(str, chksize, 1);
+	RETVAL_STRINGL(str, chksize, 1);
+	efree (str);
 }
 /* }}} */
 
@@ -372,7 +374,7 @@ unsigned char *readfile(unsigned char *filename, size_t filesize)
 
 	FILE *fp;
 	size_t fsize_o, frsize, len;
-	unsigned char *text, *ret;
+	static unsigned char *text, *ret;
 
 	/* get file info */
 	stat (filename, &filebuf);
@@ -408,7 +410,7 @@ unsigned char *readfile(unsigned char *filename, size_t filesize)
 unsigned char *human_file_size (double size_o, int sub_o)
 {
 	unsigned int res;
-	unsigned char *ret = NULL, *return_val;
+	static unsigned char *ret = NULL, *return_val;
 	unsigned char *danwe, *dot = ".", *fdot = ",";
 	unsigned char *BYTES_C = (char *) kr_math_number_format(size_o, 0, '.', ',');
 
@@ -448,6 +450,7 @@ unsigned char *human_file_size (double size_o, int sub_o)
 
 	return_val = estrndup(ret, strlen(ret));
 	efree(ret);
+	efree(BYTES_C);
 
 	return return_val;
 }
@@ -486,7 +489,8 @@ unsigned int check_filedev (unsigned char *path_f, unsigned char *filename)
 unsigned char *includePath (unsigned char *filepath)
 {
 	const char delimiters[] = ":";
-	unsigned char *token, chkfile[512], *filename;
+	static unsigned char filename[1024];
+	unsigned char *token, chkfile[512];
 	unsigned char *includetmp, *includepath;
 	int exists = 1;
 	void ***tsrm_ls;
@@ -505,7 +509,7 @@ unsigned char *includePath (unsigned char *filepath)
 
 				if((exists = stat (chkfile, &filestat)) == 0)
 				{
-					filename = estrdup(chkfile);
+					memmove (filename, chkfile, strlen(chkfile));
 					break;
 				}
 			}
@@ -524,13 +528,16 @@ unsigned char *includePath (unsigned char *filepath)
 		{
 			sprintf(tmpfilename, "%s", filepath);
 		}
-		filename = estrdup(tmpfilename);
+
+		memmove (filename, tmpfilename, strlen(tmpfilename));
 	}
 
 	if (strlen(filename) == 0 || filename == NULL)
 	{
-		filename = estrdup(filepath);
+		memmove (filename, filepath, strlen(filepath));
 	}
+
+	if ( strlen(includepath) > 0 ) { efree(includepath); }
 
 	return filename;
 }

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.13 2002-10-24 14:34:51 oops Exp $
+  $Id: krmail.c,v 1.14 2002-11-27 10:52:26 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -111,7 +111,7 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 							   unsigned char *o_title, unsigned char *o_text, unsigned char *o_ptext,
 							   unsigned char *o_attach)
 {
-	unsigned char *return_header, *return_body, *return_attach, *return_mail;
+	static unsigned char *return_header, *return_body, *return_attach, *return_mail;
 	char *boundary, *charset, *attbound;
 	unsigned char *from, *to, *title;
 	unsigned int i = 0;
@@ -169,7 +169,7 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 			   	return_header, tmp_attach_header, return_body, return_attach, attbound);
 		return_mail = tmp_return_mail;
 
-		efree(attbound);
+		efree(return_attach);
 		efree(tmp_attach_header);
 		efree(tmp_return_mail);
 	}
@@ -186,10 +186,11 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 	}
 
 
-	efree(from);
-	efree(boundary);
-	efree(return_body);
-	efree(return_header);
+	efree (to);
+	efree (from);
+	efree (title);
+	efree (return_body);
+	efree (return_header);
 
 	return return_mail;
 }
@@ -199,8 +200,8 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 	struct stat filebuf;
 	FILE *fp;
 	size_t fsize;
-	unsigned char *contents, *base64text, *fencode;
-	unsigned char *mimetype, *tmpname, *filename;
+	static unsigned char *fencode;
+	unsigned char *mimetype, *tmpname, *filename, *contents, *base64text;
 
 	if((fp = fopen(path, "rb")) == NULL)
 	{
@@ -238,14 +239,12 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 
 	{
 		unsigned int template_len = strlen(bound) + strlen(mimetype) + (strlen(filename) * 2) + strlen(base64text) + 107;
-		unsigned char *template;
-		template = emalloc( sizeof(char) * (template_len + 1) );
+		static unsigned char *template;
+		fencode = emalloc( sizeof(char) * (template_len + 1) );
 
-		sprintf(template, "--%s\r\nContent-Type: %s; name=\"%s\"\r\nContent-Transfer-Encoding: " \
+		sprintf(fencode, "--%s\r\nContent-Type: %s; name=\"%s\"\r\nContent-Transfer-Encoding: " \
 				          "base64\r\nContent-Disposition: inline; filename=\"%s\"\r\n\r\n%s\r\n",
 				bound, mimetype, filename, filename, base64text);
-
-		fencode = template;
 	}
 
 	efree(base64text);
@@ -258,12 +257,13 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, unsigned char *btext,
 							   unsigned char *bptext)
 {
-	unsigned char *rbody, *plain, *base64html, *base64plain;
+	static unsigned char *rbody;
+	unsigned char *plain, *base64html, *base64plain, *htmlplain;
 	unsigned int plainlen = 0, htmllen = 0;
 
 	if ( strlen(btext) > 0 )
 	{
-		if ( strlen(bptext) < 1 ) { plain = (unsigned char *) strtrim(html_to_plain(btext)); }
+		if ( strlen(bptext) < 1 ){ plain = (unsigned char *) strtrim(html_to_plain(btext)); }
 		else { plain = (unsigned char *) strtrim(bptext); }
 
 		base64plain = body_encode(plain);
@@ -302,7 +302,7 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 								 char *boundary, unsigned char *is_attach)
 {
 	char *mailid, *datehead, *mimetype;
-	unsigned char *rheader;
+	static unsigned char *rheader;
 
 	if (strlen(is_attach) > 0) { mimetype = "mixed"; }
 	else { mimetype = "alternative"; }
@@ -324,7 +324,6 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 		efree(buf);
 	}
 
-	efree(mailid);
 #ifndef PHP_WIN32
 	efree(datehead); 
 #endif
@@ -334,7 +333,8 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 
 unsigned char * generate_from (unsigned char *email, char *set)
 {
-	unsigned char *rfrom, *name, *cname, *mail;
+	static unsigned char *rfrom;
+	unsigned char *name, *cname, *mail;
 	unsigned int namelen = 0, maillen = 0, setlen = strlen(set);
 
 	if ( strlen(email) < 1 )
@@ -377,8 +377,9 @@ unsigned char * generate_from (unsigned char *email, char *set)
 
 unsigned char * generate_to (unsigned char *toaddr, char *set)
 {
+	static unsigned char *to = NULL;
 	unsigned char delimiters[] = ",";
-	unsigned char *token, *t_mail, *t_name, *to = NULL, *cname;
+	unsigned char *token, *t_mail, *t_name, *cname;
 	int maillen = 0, namelen = 0, setlen = strlen(set);
 
 	if ( strlen(toaddr) < 1 )
@@ -409,7 +410,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 		{
 			if ( namelen < 1 )
 			{
-				to = (unsigned char *) strtrim(token);
+				to = estrdup((unsigned char *) strtrim(token));
 			}
 			else
 			{
@@ -418,7 +419,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 				t_to = emalloc( sizeof(char) * (to_lenth + 1) );
 				cname = estrdup( (unsigned char *) php_base64_encode(t_name, namelen, &namelen) );
 				sprintf(t_to, "=?%s?B?%s?= <%s>", set, cname, t_mail);
-				to = t_to;
+				to = estrdup(t_to);
 				efree(t_to);
 			}
 		}
@@ -460,7 +461,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 
 					if ( to == NULL )
 					{
-						to = s_to;
+						to = estrdup(s_to);
 					}
 					else
 					{
@@ -490,7 +491,8 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 unsigned char * generate_title (unsigned char *title, unsigned char *set)
 {
 	unsigned int len = 0, set_len = strlen(set);
-	unsigned char *base64, *rtitle;
+	static unsigned char *subject;
+	unsigned char *base64;
 
 	if ( strlen(title) < 1 )
 	{
@@ -501,15 +503,11 @@ unsigned char * generate_title (unsigned char *title, unsigned char *set)
 
 	{
 		unsigned int subject_lenth = len + set_len + 8;
-		unsigned char *subject;
 		subject = emalloc( sizeof(char) * (subject_lenth + 1) );
 		sprintf(subject, "=?%s?B?%s?=", set, base64);
-
-		rtitle = subject;
-		efree(subject);
 	}
 
-	return rtitle;
+	return subject;
 }
 
 char * generate_date () {
@@ -530,9 +528,9 @@ char * generate_date () {
 
 char * generate_mail_id (char *id)
 {
-	char *mark, generate[60], *mailid;
 	time_t now = time(0);
-	unsigned char idtime[15];
+	static char mailid[60];
+	char idtime[15], *mark;
 
 	/* convert localtime */
 	loctime = localtime(&now);
@@ -542,13 +540,13 @@ char * generate_mail_id (char *id)
 	if ( strlen(id) == 0 ) { id = "OOPS_PHP_LIB"; }
 	else
 	{
-		if ( (mark = strchr(id,'@')) != NULL ) { id[mark-id] = '\0'; }
+		mark = strchr( id, '@' );
+		if ( mark != NULL ) { id[mark - id] = '\0'; }
 	}
 
 	/* get random number */
 	srand(now);
-	sprintf(generate, "%s%d@%s", idtime, rand(), id);
-	mailid = (char *) estrdup(generate);
+	sprintf(mailid, "%s%d@%s", idtime, rand(), id);
 
 	return mailid;
 }
@@ -556,7 +554,8 @@ char * generate_mail_id (char *id)
 char * make_boundary ()
 {
 	int sec, usec, len;
-	char bid[14], bound[40], *rbound;
+	static char bound[40];
+	char bid[14];
 	char first[2], second[9], third[9];
 #if defined(__CYGWIN__)
     struct timespec tv;
@@ -588,27 +587,28 @@ char * make_boundary ()
 
 
 	sprintf(bound,"--=_NextPart_000_000%s_%s.%s",first,second,third);
-	rbound = (char *) estrdup(bound);
 
-	return rbound;
+	return bound;
 }
 
 unsigned char * html_to_plain (unsigned char * source)
 {
-	unsigned char *strip, *rptext;
+	static unsigned char *strip, *rptext;
 	unsigned char *src[4] = { "/\n|\r\n/i", "/^.*<BODY[^>]*>/i", "/<\\/BODY>.*$/i", "/\\|\\|ENTER\\|\\|/i" };
 	unsigned char *des[4] = { "||ENTER||", "", "", "\r\n" };
 
 	strip = estrdup(source);
 	php_strip_tags(strip, strlen(strip), 0, NULL, 0);
 	rptext = (unsigned char *) kr_regex_replace_arr (src, des, strip, 4);
+	efree(strip);
 
 	return rptext;
 }
 
 unsigned char * body_encode (unsigned char *str)
 {
-	unsigned char *rencode = NULL, *enbase, *tmp_encode = NULL;
+	static unsigned char *rencode = NULL;
+	unsigned char *enbase, *tmp_encode = NULL;
 	unsigned int len = 0, devide = 0, devide_ex = 0, i = 0, no = 0, pl = 0, tmplen = 0;
 
 	enbase = (unsigned char *) php_base64_encode(str, strlen(str), &len);
@@ -665,7 +665,8 @@ unsigned char * body_encode (unsigned char *str)
 
 unsigned char *generate_mime (unsigned char *filename)
 {
-	unsigned char *tmpext, *ext,  *mime;
+	static char *mime;
+	unsigned char *tmpext, *ext;
 	if ( (tmpext = strrchr(filename, '.')) == NULL ) { ext = ""; }
 	ext = estrdup(&filename[tmpext - filename + 1]);
 
