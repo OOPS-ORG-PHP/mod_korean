@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.9 2002-12-09 06:57:41 oops Exp $
+  $Id: krcharset.c,v 1.10 2002-12-09 07:44:02 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -185,7 +185,7 @@ PHP_FUNCTION(uniencode_lib)
 
 	if (argc < 2)
    	{
-		start = "\\U";
+		start = "\\u";
 		end   = "";
 	}
    	else if (argc == 2)
@@ -282,7 +282,7 @@ PHP_FUNCTION(unidecode_lib)
 
 	if (argc < 3)
    	{
-		start = "\\U";
+		start = "\\u";
 		end   = "";
 	}
    	else if (argc == 3)
