@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Tue Sep  5 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - added postposition_lib function
+
 * Tue Sep  3 2002
   by JoungKyun Kim <http://www.oops.org>
     - removed unuseless variables
