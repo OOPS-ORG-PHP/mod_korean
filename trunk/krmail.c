@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.27 2004-09-14 08:50:44 oops Exp $
+  $Id: krmail.c,v 1.28 2004-09-14 08:58:51 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.35 2003-12-10 10:49:46 oops Exp $ 
+  $Id: krfile.c,v 1.36 2004-09-14 08:58:51 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -37,6 +37,7 @@
 #include "php_ini.h"
 #include "zend_API.h"
 #include "php_krfile.h"
+#include "php_krparse.h"
 #include "php_krmath.h"
 
 struct stat filestat;
@@ -311,7 +312,7 @@ PHP_FUNCTION(getfile_lib)
 	str = readfile(getfilename);
 
 	RETVAL_STRINGL(str, chksize, 1);
-	efree (str);
+	safe_efree (str);
 }
 /* }}} */
 
@@ -403,7 +404,7 @@ PHP_FUNCTION(pcregrep_lib)
 
 			retval = pcre_match (regex, buf);
 			if (retval < 0) {
-				efree (str);
+				safe_efree (str);
 				RETURN_FALSE;
 			}
 
@@ -424,15 +425,15 @@ PHP_FUNCTION(pcregrep_lib)
 		}
 	}
 
-	efree (sep_t);
+	safe_efree (sep_t);
 
 	if (len < 1) {
-		efree (str);
+		safe_efree (str);
 		RETURN_EMPTY_STRING();
 	}
 
 	RETVAL_STRINGL(str, len - 1, 1);
-	efree (str);
+	safe_efree (str);
 }
 /* }}} */
 
@@ -470,7 +471,7 @@ int writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o
 	if ( (fp = fopen(filename, act)) == NULL )
    	{
 		php_error(E_WARNING, "Can't open %s in write mode", filename);
-		efree (string);
+		safe_efree (string);
 		return -1;
 	}
 
@@ -478,11 +479,11 @@ int writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o
    	{
 		fclose(fp);
 		php_error(E_WARNING, "Error writing to file %s", filename);
-		efree (string);
+		safe_efree (string);
 		return -1;
 	}
 
-	efree(string);
+	safe_efree(string);
 
 	fclose(fp);
 
@@ -585,7 +586,7 @@ unsigned char *human_file_size (double size_o, int sub_o, int unit, double cunit
 		}
 	}
 
-	efree(BYTES_C);
+	safe_efree(BYTES_C);
 
 	return ret;
 }
@@ -602,7 +603,7 @@ unsigned int check_filedev (unsigned char *path_f, unsigned char *filename)
 	sprintf(fullpath, "%s/%s", path_f, filename);
 
 	ret = lstat(fullpath, &s);
-	efree(fullpath);
+	safe_efree(fullpath);
 
 	if ( S_ISDIR(s.st_mode) ) { return RETURN_DIR_TYPE; }
 	else if ( S_ISREG(s.st_mode) ) { return RETURN_FILE_TYPE; }
@@ -663,7 +664,7 @@ unsigned char *includePath (unsigned char *filepath)
 		memmove (filename, filepath, strlen(filepath));
 	}
 
-	if ( strlen(includepath) > 0 ) { efree(includepath); }
+	if ( strlen(includepath) > 0 ) { safe_efree(includepath); }
 
 	return filename;
 }

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.13 2002-12-09 15:38:40 oops Exp $
+  $Id: krcharset.c,v 1.14 2004-09-14 08:58:51 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -33,6 +33,7 @@
 #include "php_krcharset.h"
 #include "php_krcheck.h"
 #include "krregex.h"
+#include "krparse.h"
 #include "SAPI.h"
 
 /* include charset */
@@ -95,7 +96,7 @@ PHP_FUNCTION(ncrencode_lib)
    	{
 		string = krNcrEncode(Z_STRVAL_PP(arg1), type);
 		RETVAL_STRING(string, 1);
-		efree(string);
+		safe_efree(string);
 	}
    	else { RETURN_EMPTY_STRING(); }
 }
@@ -130,7 +131,7 @@ PHP_FUNCTION(ncrdecode_lib)
    	{
 		retstr = krNcrDecode(Z_STRVAL_PP(arg1));
 		RETVAL_STRING(retstr, 1);
-		efree(retstr);
+		safe_efree(retstr);
 	}
    	else { RETURN_EMPTY_STRING(); }
 }
@@ -203,7 +204,7 @@ PHP_FUNCTION(uniencode_lib)
 
 	if ( string == NULL ) { RETURN_FALSE; }
 	RETVAL_STRING(string,1);
-	efree (string);
+	safe_efree (string);
 }
 
 /* }}} */
@@ -299,7 +300,7 @@ PHP_FUNCTION(unidecode_lib)
 
 	if ( string == NULL ) { RETURN_FALSE; }
 	RETVAL_STRING(string,1);
-	efree (string);
+	safe_efree (string);
 }
 
 /* }}} */
@@ -360,7 +361,7 @@ PHP_FUNCTION(utf8encode_lib)
 	utf8length = strlen(utf8);
 
 	RETVAL_STRINGL(utf8, utf8length, 1);
-	efree (utf8);
+	safe_efree (utf8);
 }
 /* }}} */
 
@@ -401,13 +402,13 @@ PHP_FUNCTION(utf8decode_lib)
 	{
 		ncr = (char *) krNcrEncode(newstr, 1);
 		RETVAL_STRING(ncr, 1);
-		efree(ncr);
+		safe_efree(ncr);
 	}
 	else
 	{
 		RETVAL_STRINGL(newstr, newstrlength, 1);
 	}
-	efree (newstr);
+	safe_efree (newstr);
 }
 /* }}} */
 
@@ -839,7 +840,7 @@ int XUCodeConv(char* dest, int max, int codeTo, const char* text, int length, in
 	len1 = XUEncode(buf, length, text, length, codeFrom);	 // other -> unicode
 	len2 = XUDecode(dest, max, buf, len1, codeTo);			// unicode -> other
 
-	efree(buf);
+	safe_efree(buf);
 	return len2;
 }
 /* }}} */
