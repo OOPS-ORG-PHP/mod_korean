@@ -5,6 +5,7 @@ PHP Korean Extexsions Changelog
 Tue Jan  7 2003
   by JoungKyun Kim <http://www.oops.org>
     - fixed gdSinT undefined error when don't include gd extension
+    - modified phpinfo data
 
 * 0.0.4
 --------------------------------------------------------------------------------
