@@ -2,6 +2,10 @@ PHP Korean Extexsions Changelog
 
 * 0.0.6
 --------------------------------------------------------------------------------
+Wed May 28 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed segment fault when return null byte in pcregrep_lib
+
 Mon May 26 2003
   by JoungKyun Kim <http://www.oops.org>
     - added unit option in human_fsize_lib function
