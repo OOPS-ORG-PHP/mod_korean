@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.7 2002-08-23 01:37:08 oops Exp $ 
+  $Id: krfile.c,v 1.8 2002-08-23 10:58:17 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -224,14 +224,16 @@ PHP_FUNCTION(putfile_lib)
 }
 /* }}} */
 
-/* {{{ proto string get_file_lib(string filename, [ int readsize ])
- *  * return file context */
+/* {{{ proto string get_file_lib(string filename, [ int readsize, [ int bin ] ])
+ * return file context */
 PHP_FUNCTION(getfile_lib)
 {
-	pval **filename, **fsize;
+	pval **filename, **getsize, **bin;
 	FILE *fp;
-	unsigned size = 0;
-	unsigned char *str;
+	int binmode = 0;
+	unsigned char *str, *getfilename;
+	size_t size = 0, orgsize = 0, chksize = 0;
+	struct stat buf;
 
 	switch(ZEND_NUM_ARGS())
 	{
@@ -242,29 +244,36 @@ PHP_FUNCTION(getfile_lib)
 			}
 			break;
 		case 2:
-			if(zend_get_parameters_ex(2, &filename, &fsize) == FAILURE)
+			if(zend_get_parameters_ex(2, &filename, &getsize) == FAILURE)
 		   	{
 				WRONG_PARAM_COUNT;
 			}
-			convert_to_long_ex(fsize);
-			size = Z_LVAL_PP(fsize);
+			convert_to_long_ex(getsize);
+			size = Z_LVAL_PP(getsize);
 			break;
 		default:
 			WRONG_PARAM_COUNT;
 	}
 
 	convert_to_string_ex(filename);
+	getfilename = Z_STRVAL_PP(filename);
 
-	if (Z_STRLEN_PP(filename) == 0)
+	/* get file info */
+	stat (getfilename, &buf);
+	/* original file size */
+	orgsize = buf.st_size;
+
+	if ( size > orgsize ) { chksize = orgsize; }
+	else { chksize = ( size == 0 ) ? orgsize : size; }
+
+	if ( Z_STRLEN_PP(filename) == 0 || chksize < 0 )
    	{
 		RETURN_FALSE;
 	}
 
-	if (size < 0 ) { size = 0; }
+	str = readfile(getfilename, chksize);
 
-	str = readfile(Z_STRVAL_PP(filename), size);
-										    
-	RETURN_STRING(str, 1);
+	RETURN_STRINGL(str, chksize, 1);
 }
 /* }}} */
 
@@ -305,6 +314,7 @@ PHP_FUNCTION(getfiletype_lib)
 }
 /* }}} */
 
+/* {{{ void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o) */
 void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o)
 {
 	struct stat s;
@@ -350,13 +360,14 @@ void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_
 
 	fclose(fp);
 }
+/* }}} */
 
-unsigned char *readfile(unsigned char *filename, unsigned int filesize)
+unsigned char *readfile(unsigned char *filename, size_t filesize)
 {
 	struct stat filebuf;
 
 	FILE *fp;
-	size_t fsize_o, fsize;
+	size_t fsize_o, frsize, len;
 	unsigned char *text, *ret;
 
 	/* get file info */
@@ -364,14 +375,8 @@ unsigned char *readfile(unsigned char *filename, unsigned int filesize)
 	/* original file size */
 	fsize_o = filebuf.st_size;
 
-	if (filesize > fsize_o)
-   	{
-		fsize = fsize_o;
-	}
-   	else
-   	{
-		fsize = ( filesize == 0 ) ? fsize_o : filesize;
-	}
+	if (filesize > fsize_o) { frsize = fsize_o; }
+	else { frsize = ( filesize == 0 ) ? fsize_o : filesize; }
 
 	if ((fp = fopen(filename, "rb")) == NULL)
    	{
@@ -379,18 +384,18 @@ unsigned char *readfile(unsigned char *filename, unsigned int filesize)
 		 return NULL;
 	}
 
-	text = emalloc(sizeof(char) * (fsize + 1));
+	text = emalloc(sizeof(char) * (frsize + 1));
 
-	if ( (fread(text, sizeof(char), fsize, fp)) != fsize )
+	if ( (len = fread(text, sizeof(char), frsize, fp)) != frsize )
    	{
 		php_error(E_ERROR, "Occured error in file stream");
 		return NULL;
 	}
-	text[fsize - 1] = '\0';
+	text[frsize] = '\0';
 
 	fclose(fp);
 
-	ret = estrdup(text);
+	ret = estrndup(text, frsize);
 	efree(text);
 	
 	return ret;
