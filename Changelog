@@ -1,6 +1,10 @@
 PHP Korean Extexsions Changelog
 
-* Tue Dec 30 2002
+* Wed Jan  1 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - added gd version check rutine on krimage.c
+
+* Mon Dec 30 2002
   by JoungKyun Kim <http://www.oops.org>
     - added small gd library
     - update krimage.c

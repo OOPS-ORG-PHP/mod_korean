@@ -1,4 +1,4 @@
-dnl $Id: config.m4,v 1.13 2002-12-31 04:16:28 oops Exp $
+dnl $Id: config.m4,v 1.14 2002-12-31 15:51:16 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -50,6 +50,7 @@ if test "$PHP_KOREAN" != "no"; then
       AC_MSG_ERROR([Unable to find libgd.(a|so) anywhere under $GD_SEARCH_PATHS])
     fi 
 
+    PHP_CHECK_LIBRARY(gd, gdImageCreateTrueColor,[AC_DEFINE(HAVE_GD2, 1,[ ])],[],[ -L$KOREAN_LIB $KOREAN_SHARED_LIBADD ])
     PHP_EXPAND_PATH($KOREAN_INCLUDE, KOREAN_INCLUDE)
     PHP_ADD_INCLUDE($KOREAN_INCLUDE)
   else
@@ -59,6 +60,7 @@ if test "$PHP_KOREAN" != "no"; then
 
     dnl These are always available with bundled library
     AC_DEFINE(KRGD_BUILTIN,             1, [ ])
+    AC_DEFINE(HAVE_GD2,                 1, [ ])
     AC_DEFINE(HAVE_GD_PNG,              1, [ ])
     AC_DEFINE(HAVE_GD_JPEG,             1, [ ])
 
