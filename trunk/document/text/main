@@ -21,6 +21,9 @@ korean extension 은 PHP4 4.2 이상 버전에서 작동하는 한국어 환경의 개발에 필요한
 함수들을 제공한다.  개발자가 배포하던 oops phplib 라는 library 를 php extension
 으로 모두 구현하였으며, 몇몇 추가된 함수들이 존재한다.
 
+korean extension 의 buildno 가 200212410255 부터는 php 4.3.0 부터 컴파일이 가능
+하다. 이미 생성이 되어진 binary 는 4.2 부터 사용이 가능하다.
+
 중요 특징으로는, EUC-KR, CP949, UTF8, NCR code 등의 charset 변환이 가능하며, 웹
 상에서 유용하게 사용할 만한 함수들이 제공이 된다.
 
@@ -202,7 +205,10 @@ PHP Korean Extexsions Changelog About CVS
 extension 을 php 모듈로 컴파일을 하기를 원한다면 --enable-korean=shared 로 컴파
 일을 하면 extension 이 php-source/module 에 korean.so 로 남게 된다.
 
-image 관련 함수를 사용하기 위해서는 --enable-korean-gd 옵션을 같이 줘야 한다.
+image 관련 함수는 korean extension 자체에서 gd library 를 제공을 한다.  만약 시
+스템의 gd library 를 이용하여 컴파일을 하고 싶다면 --enable-korean-gd 옵션을 주
+도록 한다. korean extension 의 gd library 에서는 GIF/JPG/PNG 를 지원하며, GIF는
+read 만 지원이 된다.
 
 만약 apache 웹서버가 DSO 를 지원하도록 설치가 되어 있다면, php 를 새로 설치하지
 않고 oops php extension 을 설치할 수 있다.  apache 가 DSO 를 지원 하는지 여부는
@@ -224,8 +230,10 @@ $ cd /tmp
 $ tar xvfpz korean-2002xxxx.tar.g
 $ cd korean
 $ /path/phpize
-$ ./configure --enable-korean --enable-korean-gd
+$ ./configure --with-php-config=/usr/local/bin/php-config
 $ make
+
+--with-php-config 의 값은 php-config 명령어의 절대 경로를 지정을 한다.
 
 make 를 마치면 modules 디렉토리에 korean.so 가 생성이 된다. 이 파일을 php extension
 이 존재하는 디렉토리에 넣어주고, php.ini 에서
@@ -247,25 +255,25 @@ $ find /usr -name apxs
 $ cd /tmp
 
 # gz 파일을 받았을 경우
-$ tar xvfpz php-4.2.2.tar.gz
+$ tar xvfpz php-4.3.0.tar.gz
 
 # bzip2 파일을 받았을 경우
-$ bzip -cd php-4.2.2.tar.bz2 | tar xvf -
+$ bzip -cd php-4.3.0.tar.bz2 | tar xvf -
 
-$ cd php-4.2.2/ext
+$ cd php-4.3.0/ext
 $ tar xvfpz korean-20020xxx.tar.gz
 $ cd ../
 $ ./buildconf
 
 # 자신의 서버가 Pentium ll 이상일 경우
 $ export CFLAGS="-O3 -march=i686"
-$ ./configure --with-apxs=/usr/sbin/apxs --with-regex=php --with-gd --enable-korean=shared
+$ ./configure --with-apxs=/usr/sbin/apxs --with-regex=php --enable-korean=shared
 $ .......
 
 $ cd ext/korean
 $ make
 
-까지 하면 php-4.2.2/modules 에 korea.so 가 생성이 된다. 이 파일을 php extension
+까지 하면 php-4.3.0/modules 에 korea.so 가 생성이 된다. 이 파일을 php extension
 이 존재하는 디렉토리에 넣어주고, php.ini 에서
 
 extension=korean.so
@@ -282,9 +290,8 @@ extension=korean.so
 
 php source 의 ext 디렉토리에 korean-2002xxxx.tar.gz 의 압축을 풀고 php source의
 top path 에서 ./buildconf 를 한번 실행을 하여 configure 파일을 재작성 한 후, 이
-configure 에 --enable-korean 과 --enable-korean-gd 가 등록이 되었는지 확인을 한
-후에, configure 에서 --enable-korean --enable-korean-gd 옵션을 추가하여 설치를
-하면 된다.
+configure 에 --enable-korean 이 등록이 되었는지 확인을 한 후에, configure 에서
+--enable-korean 옵션을 추가하여 설치를 하면 된다.
 
 CVS 파일 받기
 
