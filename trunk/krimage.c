@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.6 2002-06-30 03:24:05 oops Exp $ 
+  $Id: krimage.c,v 1.7 2002-06-30 05:26:18 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -29,6 +29,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include <time.h>
 #include <math.h>
 #if HAVE_FCNTL_H
@@ -297,19 +301,32 @@ PHP_FUNCTION(imgresize_lib) {
 	gdImageDestroy(im);
 
 	if (new_path == NULL) {
-		int   b;
-		char  buf[4096];
+		int   fd, b, len = 0;
+		char  buf[4096], sizeHeader[30];
+		struct stat sbuf;
 
+		/* get file size */
 		fseek(tmp, 0, SEEK_SET);
+		fd = fileno(tmp);
+		fstat(fd, &sbuf);
+		len = sbuf.st_size;
+
+		sprintf(sizeHeader, "Content-Length: %d", len);
+		len = strlen(sizeHeader);
+		sizeHeader[len] = '\0';
 
 		/* print image header */
 		if (new_type == PNGNEWTYPE) {
 			sapi_add_header_ex("Content-type: image/png", 23, 1, 1 TSRMLS_CC);
+			sapi_add_header_ex("Content-Disposition: inline; filename=resize_img.png", 52, 1, 1 TSRMLS_CC);
 		} else if (new_type == GIFNEWTYPE) {
 			sapi_add_header_ex("Content-type: image/gif", 23, 1, 1 TSRMLS_CC);
+			sapi_add_header_ex("Content-Disposition: inline; filename=resize_img.gif", 52, 1, 1 TSRMLS_CC);
 		} else {
 			sapi_add_header_ex("Content-type: image/jpeg", 24, 1, 1 TSRMLS_CC);
+			sapi_add_header_ex("Content-Disposition: inline; filename=resize_img.jpg", 52, 1, 1 TSRMLS_CC);
 		}
+		sapi_add_header_ex(sizeHeader, strlen(sizeHeader), 1, 1 TSRMLS_CC);
 
 #if APACHE && defined(CHARSET_EBCDIC)
 		/* XXX this is unlikely to work any more thies@thieso.net */
