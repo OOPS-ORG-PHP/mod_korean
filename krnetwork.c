@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.11 2002-08-09 11:41:08 oops Exp $
+  $Id: krnetwork.c,v 1.12 2002-08-09 12:26:01 oops Exp $
 */
 
 /*
@@ -328,8 +328,8 @@ unsigned char *get_mx_record(unsigned char *str)
 {
 	u_char answer[8192], *cp, *end;
 	u_short type, weight, tmpweight;
-	unsigned char *tmphost, *host, tmpmx[256], *mxrecord = "", *retaddr;
-	unsigned int i, qdc, count;
+	unsigned char *tmphost, *host, tmpmx[256], mxrecord[256] = "", *retaddr;
+	unsigned int i, qdc, count, tmpmxlen = 0;
 	HEADER *hp;
 
 
@@ -383,10 +383,12 @@ unsigned char *get_mx_record(unsigned char *str)
 			break;
 		}
 		cp += i;
+		tmpmxlen = strlen(tmpmx);
 
 		if ( strlen(mxrecord) < 1 )
 		{
-			mxrecord = estrdup(tmpmx);
+			sprintf(mxrecord, "%s", tmpmx);
+			mxrecord[tmpmxlen] = '\0';
 			weight = tmpweight;
 		}
 		else
@@ -394,8 +396,8 @@ unsigned char *get_mx_record(unsigned char *str)
 			if ( weight > tmpweight )
 			{
 				weight = tmpweight;
-				mxrecord = realloc(mxrecord, sizeof(char) * (strlen(tmpmx) + 1));
-				strcpy(mxrecord, tmpmx);
+				sprintf(mxrecord, "%s", tmpmx);
+				mxrecord[tmpmxlen] = '\0';
 			}
 		}
 	}
@@ -404,7 +406,6 @@ unsigned char *get_mx_record(unsigned char *str)
 	else
 	{
 		retaddr = estrdup(mxrecord);
-		efree(mxrecord);
 		return retaddr;
 	}
 }
