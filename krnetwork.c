@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.2 2002-05-22 18:09:01 oops Exp $
+  $Id: krnetwork.c,v 1.3 2002-05-31 14:13:07 oops Exp $
 */
 
 /*
@@ -28,7 +28,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <error.h>
 
 #include "php.h"
 #include "php_ini.h"
