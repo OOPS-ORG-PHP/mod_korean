@@ -1,5 +1,12 @@
 PHP Korean Extexsions Changelog
 
+* 0.0.8
+--------------------------------------------------------------------------------
+Tue Sep 14 2004
+  by JoungKyun Kim <http://www.oops.org>
+    - rewrite strtrim internal function
+
+
 * 0.0.7
 --------------------------------------------------------------------------------
 Mon Jul 27 2004
@@ -21,6 +28,7 @@ Tue Dec  2 2003
   by JoungKyun Kim <http://www.oops.org>
     - fixed efree bug of pcre_match function
     - rewrite pcregrep_lib function
+
 
 * 0.0.6
 --------------------------------------------------------------------------------

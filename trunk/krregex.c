@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krregex.c,v 1.13 2003-12-10 10:49:46 oops Exp $ 
+  $Id: krregex.c,v 1.14 2004-09-14 06:52:22 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -121,21 +121,6 @@ int pcre_match (unsigned char *regex, unsigned char *str)
 	efree(offsets);
 
 	return val;
-}
-
-unsigned char * strtrim(unsigned char *str)
-{
-	unsigned int i = 0, len = 0, trimmed = 0;
-	unsigned char *null_return = "";
-
-	if ( strlen(str) != 0 && str != NULL )
-   	{
-		str = kr_regex_replace("/^[\\s]+/", "", str);
-		str = kr_regex_replace("/[\\s]+$/", "", str);
-		return str;
-	}
-
-	return null_return;
 }
 
 /*

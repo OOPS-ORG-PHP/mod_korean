@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.22 2003-09-15 07:20:14 oops Exp $
+  $Id: krmail.c,v 1.23 2004-09-14 06:52:22 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -38,9 +38,10 @@
 #include "php_ini.h"
 #include "zend_API.h"
 #include "php_krmail.h"
+#include "php_krcheck.h"
+#include "php_krparse.h"
 
 #ifdef PHP_WIN32
-	#include "php_krcheck.h"
 	#include "krregex.h"
 	#include "ext/standard/base64.h"
 	#include "ext/standard/php_string.h"
@@ -59,6 +60,9 @@ PHP_FUNCTION(mailsource_lib)
 	unsigned char *c_text, *c_ptext, *c_attach, *ret;
 	unsigned char attachfile[1024];
 
+	c_attach = NULL;
+	c_ptext = NULL;
+
 	switch( ZEND_NUM_ARGS() )
 	{
 		case 5:
@@ -66,8 +70,6 @@ PHP_FUNCTION(mailsource_lib)
 			{
 				WRONG_PARAM_COUNT;
 			}
-			c_ptext = "";
-			c_attach = "";
 			break;
 		case 6:
 			if( zend_get_parameters_ex(6, &ln, &from, &to, &title, &text, &ptext) == FAILURE )
@@ -76,7 +78,6 @@ PHP_FUNCTION(mailsource_lib)
 			}
 			convert_to_string_ex(ptext);
 			c_ptext = (unsigned char *) strtrim ( Z_STRVAL_PP(ptext) );
-			c_attach = "";
 			break; 
 		case 7:
 			if( zend_get_parameters_ex(7, &ln, &from, &to, &title, &text, &ptext, &attach) == FAILURE )
@@ -105,11 +106,19 @@ PHP_FUNCTION(mailsource_lib)
 	c_text = (unsigned char *) strtrim( Z_STRVAL_PP(text) );
 
 	memset(attachfile, '\0', sizeof(attachfile));
-	if (strlen(c_attach) > 0) { VCWD_REALPATH(c_attach, attachfile); }
+	if (c_attach != NULL) { VCWD_REALPATH(c_attach, attachfile); }
 
 	ret = generate_mail(c_ln, c_from, c_to, c_title, c_text, c_ptext, attachfile);
 	RETVAL_STRING(ret,1);
-	efree(ret);
+
+	efree (c_ptext);
+	efree (c_attach);
+	efree (c_ln);
+	efree (c_from);
+	efree (c_to);
+	efree (c_title);
+	efree (c_text);
+	efree (ret);
 }
 /* }}} */
 
@@ -266,11 +275,11 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 
 	if ( strlen(btext) > 0 )
 	{
-		if ( strlen(bptext) < 1 ) { plain = (unsigned char *) strtrim(html_to_plain(btext)); }
-		else { plain = (unsigned char *) strtrim(bptext); }
+		if ( bptext == NULL ) { plain = html_to_plain(btext); }
+		else { plain = (unsigned char *) bptext; }
 
 		base64plain = body_encode(plain, -1);
-		base64html  = body_encode((unsigned char *) strtrim(btext), -1);
+		base64html  = body_encode(btext, -1);
 
 		plainlen = strlen(base64plain);
 		htmllen  = strlen(base64html);
@@ -290,8 +299,9 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 			efree(tmp_body);
 		}
 
-		efree(base64plain);
-		efree(base64html);
+		efree (plain);
+		efree (base64plain);
+		efree (base64html);
 	}
 	else
 	{
@@ -333,33 +343,32 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 unsigned char * generate_from (unsigned char *email, char *set)
 {
 	static unsigned char *rfrom;
-	unsigned char *name, *cname, *mail;
+	unsigned char *name, *cname, *mail, *name_t;
 	unsigned int namelen = 0, maillen = 0, setlen = strlen(set);
 
-	if ( strlen(email) < 1 )
-	{
+	name_t = NULL;
+
+	if ( strlen(email) < 1 ) {
 		php_error(E_ERROR, "Don't exist FROM address.");
 	}
 
 	// get email address on NAME <email@address> form
-	mail = (unsigned char *) strtrim(kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", email));
+	mail = (unsigned char *) strtrim((unsigned char *) kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", email));
 	maillen = strlen(mail);
 
 	// get name on NAME <email@address> form
-	if ( strchr(email,'<') != NULL )
-   	{ name = (unsigned char *) strtrim(kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", email)); }
-	else
-	{ name = ""; }
+	if ( strchr(email,'<') != NULL ) {
+		name_t = (unsigned char *) strtrim((unsigned char *) kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", email));
+		name = name_t;
+	} else { name = ""; }
 	
-	if ( checkAddr (mail,0) != 1 )
-	{ php_error(E_ERROR, "%s is invalid email address form.", mail); }
-	
-	if ( strlen(name) < 1 )
-   	{
-		rfrom = estrndup(mail, maillen);
+	if ( checkAddr (mail,0) != 1 ) {
+		php_error(E_ERROR, "%s is invalid email address form.", mail);
 	}
-	else
-	{
+	
+	if ( strlen(name) < 1 ) {
+		rfrom = estrndup(mail, maillen);
+	} else {
 		cname = (unsigned char *) php_base64_encode(name, strlen(name), &namelen);
 		{
 			int from_lenth = setlen + maillen + namelen + 11;
@@ -371,6 +380,9 @@ unsigned char * generate_from (unsigned char *email, char *set)
 		}
 	}
 
+	efree (mail);
+	efree (name_t);
+
 	return rfrom;
 }
 
@@ -378,41 +390,35 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 {
 	static unsigned char *to = NULL;
 	unsigned char delimiters[] = ",";
-	unsigned char *token, *t_mail, *t_name, *cname;
+	char *token, *btoken;
+	unsigned char *t_mail, *t_name, *cname, *_t_name;
 	int maillen = 0, namelen = 0, setlen = strlen(set);
 
-	if ( strlen(toaddr) < 1 )
-	{
+	if ( strlen(toaddr) < 1 ) {
 		php_error(E_ERROR, "Don't exist TO address.");
 	}
 
-	token = strtok(toaddr, delimiters);
-	if ( token != NULL )
-	{
+	_t_name = NULL;
 
+	token = strtok_r (toaddr, delimiters, &btoken);
+	if ( token != NULL ) {
 		// get email address on NAME <email@address> form
-		if ( strchr(token,'<') != NULL )
-		{
-			t_mail = (unsigned char *) strtrim( kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1",token) );
-			t_name = (unsigned char *) strtrim( kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1",token) );
+		if ( strchr(token,'<') != NULL ) {
+			t_mail = strtrim( (unsigned char *) kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1",token) );
+			_t_name = strtrim( (unsigned char *) kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1",token) );
+			t_name = _t_name;
 			maillen = strlen(t_mail);
 			namelen = strlen(t_name);
-		}
-		else
-		{
+		} else {
 			t_mail = (unsigned char *) strtrim(token);
 			t_name = "";
 		}
 
 		// whether vaild or invalid email form
-		if ( checkAddr(t_mail, 0) )
-		{
-			if ( namelen < 1 )
-			{
+		if ( checkAddr(t_mail, 0) ) {
+			if ( namelen < 1 ) {
 				to = estrdup((unsigned char *) strtrim(token));
-			}
-			else
-			{
+			} else {
 				int to_lenth = setlen + maillen + namelen + 32;
 				unsigned char *t_to;
 				t_to = emalloc( sizeof(char) * (to_lenth + 1) );
@@ -421,49 +427,44 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 				to = estrdup(t_to);
 				efree(t_to);
 			}
-		}
 
-		while ( (token = strtok(NULL, delimiters)) != NULL )
-		{
+		}
+		efree (t_mail);
+		efree (_t_name);
+
+		while ( (token = strtok(NULL, delimiters)) != NULL ) {
 			{
-				unsigned char *s_name, *s_mail, *sub_cname;
+				unsigned char *s_name, *s_mail, *sub_cname, *_s_name;
 				unsigned int snlen = 0, smlen = 0;
 
+				_s_name = NULL;
+
 				// get email address on NAME <email@address> form
-				if ( strchr(token,'<') != NULL )
-				{
-					s_mail = (unsigned char *) strtrim( kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", token) );
-					s_name = (unsigned char *) strtrim( kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", token) );
+				if ( strchr(token,'<') != NULL ) {
+					s_mail = strtrim( (unsigned char *) kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", token) );
+					_s_name = strtrim( (unsigned char *) kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", token) );
+					s_name = _s_name;
 					smlen = strlen(s_mail);
 					snlen = strlen(s_name);
-				}
-				else
-				{
-					s_mail = (unsigned char *) strtrim(token);
+				} else {
+					s_mail = strtrim( (unsigned char *) token);
 					s_name = "";
 				}
 
 				// whether vaild or invalid email form
-				if ( checkAddr(s_mail, 0) )
-				{
+				if ( checkAddr(s_mail, 0) ) {
 					unsigned char s_to[200];
-					if ( snlen < 1 )
-					{
+					if ( snlen < 1 ) {
 						memset(s_to, '\0', 20);
 						memmove(s_to, s_mail, strlen(s_mail));
-					}
-					else
-					{
+					} else {
 						sub_cname = (unsigned char *) php_base64_encode(s_name, snlen, &namelen);
 						sprintf(s_to, "=?%s?B?%s?= <%s>", set, sub_cname, s_mail);
 					}
 
-					if ( to == NULL )
-					{
+					if ( to == NULL ) {
 						to = estrdup(s_to);
-					}
-					else
-					{
+					} else {
 						unsigned int add_to_len = strlen(s_to) + 3;
 						unsigned char *add_to;
 						add_to = emalloc( sizeof(char) * (add_to_len + 1) );
@@ -473,12 +474,14 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 						efree(add_to);
 					}
 				}
+
+				efree (s_mail);
+				efree (_s_name);
 			}
 		}
 	}
 
-	if ( to == NULL )
-	{
+	if ( to == NULL ) {
 		php_error(E_ERROR, "Don't exist valid TO address.");
 	}
 

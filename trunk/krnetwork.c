@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.41 2003-09-15 08:09:24 oops Exp $
+  $Id: krnetwork.c,v 1.42 2004-09-14 06:52:22 oops Exp $
 */
 
 /*
@@ -253,6 +253,7 @@ PHP_FUNCTION(readfile_lib)
 		if (string != NULL)
 		{
 			RETVAL_STRINGL(string, *retSize, 1);
+			efree (filepath);
 			efree (string);
 		}
 	}
@@ -271,11 +272,13 @@ PHP_FUNCTION(readfile_lib)
 		{
 			string = (unsigned char *) readfile(getfilename);
 			RETVAL_STRINGL(string, filestat.st_size, 1);
+			efree (filepath);
 			efree (string);
 		}
 		else
 		{
 			php_error(E_WARNING, "File/URL %s is not found \n", filename);
+			efree (filepath);
 			RETURN_EMPTY_STRING();
 		}
 
@@ -333,8 +336,10 @@ PHP_FUNCTION(readfile_lib)
 		php_stream_close(stream);
 
 		RETVAL_STRINGL(string, len, 1);
+		efree(filepath);
 		efree(string);
 	} else {
+		efree(filepath);
 		RETURN_EMPTY_STRING();
 	}
 }
@@ -694,50 +699,52 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 	{
 		unsigned int recvlen = 0;
 		unsigned char recvmsg[1024];
+		unsigned char * str_t = NULL;
 
 		recvlen = recv (sock, recvmsg, 1024, 0);
 		recvmsg[recvlen] = '\0';
 		if (debug == 1)
 		{
+			str_t = (unsigned char *) strtrim (recvmsg);
 			php_printf("\r\nConnect %s Start\r\n", addr);
 			php_printf("----------------------------------------------------------------\r\n\r\n");
-			php_printf("DEBUG: %s\r\n", strtrim(recvmsg), recvlen);
+			php_printf("DEBUG: %s\r\n", str_t);
+			efree (str_t);
 		}
 	}
 
 	failcode = socksend (sock, debug, "HELO localhost", "helo");
-    if ( failcode == 1 )
-   	{
+    if ( failcode == 1 ) {
 	   	close(sock);
 	   	return 1;
    	}
+
 	failcode = socksend (sock, debug, fromaddr, "mail");
-	if ( failcode == 1 )
-   	{
+	if ( failcode == 1 ) {
 	   	close(sock);
 	   	return 1;
    	}
+
 	failcode = socksend (sock, debug, toaddr, "rcpt");
-	if ( failcode == 1 )
-   	{
+	if ( failcode == 1 ) {
 	   	close(sock);
 	   	return 1;
    	}
+
 	failcode = socksend (sock, debug, "data", "data");
-	if ( failcode == 1 )
-   	{
+	if ( failcode == 1 ) {
 	   	close(sock);
 	   	return 1;
    	}
+
 	failcode = socksend (sock, debug, text, "body");
-	if ( failcode == 1 )
-   	{
+	if ( failcode == 1 ) {
 	   	close(sock);
 	   	return 1;
    	}
+
 	failcode = socksend (sock, debug, "quit", "quit");
-	if ( failcode == 1 )
-   	{
+	if ( failcode == 1 ) {
 	   	close(sock);
 	   	return 1;
    	}

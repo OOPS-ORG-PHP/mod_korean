@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krparse.h,v 1.11 2002-12-12 16:58:35 oops Exp $
+$Id: php_krparse.h,v 1.12 2004-09-14 06:52:22 oops Exp $
 */
 
 #ifndef PHP_KRPARSE_H
@@ -29,6 +29,7 @@ unsigned char *autoLink (unsigned char *str_o);
 unsigned char *get_useragent(void);
 unsigned char *get_serverenv(unsigned char *para);
 int get_postposition (unsigned char *str);
+unsigned char * strtrim(unsigned char *str);
 
 #define b_NAME br
 #define b_OS os
