@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.18 2002-12-12 17:47:10 oops Exp $
+  $Id: krmail.c,v 1.19 2002-12-31 20:18:37 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -157,10 +157,11 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 
 	if (strlen(o_attach) > 0)
 	{
-		unsigned int athead_len = strlen(boundary) + strlen(attbound) + 74;
+		unsigned int athead_len = strlen(boundary) + strlen(attbound) + 128;
 		unsigned char *tmp_attach_header;
 
-		return_mail_len = strlen(return_header) + strlen(return_body) + strlen(return_attach) + strlen(attbound) + athead_len + 128;
+		return_mail_len = strlen(return_header) + strlen(return_body) + strlen(return_attach) +
+							strlen(attbound) + athead_len + 128;
 
 		tmp_attach_header = emalloc( sizeof(char) * (athead_len) );
 		return_mail = emalloc( sizeof(char) * (return_mail_len) );
@@ -228,7 +229,8 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 	// get mime type
 	mimetype = generate_mime(filename);
 
-	contents = emalloc(sizeof(char) * (fsize));
+	contents = emalloc(sizeof(char) * (fsize + 32));
+	memset(contents, '\n', sizeof(contents));
 
 	while ( (filelen = fread(getattach, sizeof(char), FILEBUFS, fp)) > 0 )
 	{
@@ -236,8 +238,8 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 		sumlen += filelen;
 	}
 	fclose(fp);
-	contents[sumlen-1] = '\0';
-
+	//contents[sumlen-1] = '\0';
+	
 	base64text = body_encode(contents, sumlen);
 
 	fencodelen = strlen(bound) + strlen(mimetype) + (strlen(filename) * 2) + strlen(base64text) + 256;
@@ -263,7 +265,7 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 
 	if ( strlen(btext) > 0 )
 	{
-		if ( strlen(bptext) < 1 ){ plain = (unsigned char *) strtrim(html_to_plain(btext)); }
+		if ( strlen(bptext) < 1 ) { plain = (unsigned char *) strtrim(html_to_plain(btext)); }
 		else { plain = (unsigned char *) strtrim(bptext); }
 
 		base64plain = body_encode(plain, -1);
@@ -601,62 +603,40 @@ unsigned char * html_to_plain (unsigned char * source)
 	return rptext;
 }
 
-unsigned char * body_encode (unsigned char *str, int chklen)
+unsigned char * body_encode (const unsigned char *str, int chklen)
 {
-	static unsigned char *rencode = NULL;
-	unsigned char *enbase, *tmp_encode = NULL;
-	unsigned int len = 0, devide = 0, devide_ex = 0, i = 0, no = 0, pl = 0, tmplen = 0;
+	static unsigned char *rencode, *enbase;
+	int len = 0, devide = 0, nlen=0, olen=0, breakpoint =0, tlen = 0;
+	int xxxlen=0;
+
+	xxxlen=chklen;
 
 	if ( chklen < 0 ) { chklen = strlen(str); }
 
 	enbase = (unsigned char *) php_base64_encode(str, chklen, &len);
-	devide = (unsigned int) len / 60;
+	devide = (int) len / 60;
 
 	if ( len < 61 ) { return enbase; }
+	rencode = emalloc(sizeof(char) * (len + 16 + devide * 2));
+	memset(rencode, '\0', len + 16 + devide * 2);
 
-	for ( i=1; i<((unsigned int) devide + 1); i++ )
+	while(1)
 	{
-		if ( i < 2 ) { no = i * 60 -1; }
-		else
+		if (strlen(enbase + olen) < 60)
 		{
-			pl += 2;
-			no = i * 60 - 1 + pl;
+			tlen = strlen(enbase + olen);
+			breakpoint = 1;
 		}
+		else { tlen = 60; }
 
-		{
-			unsigned char *tmp_source = NULL, *tmp_dest = NULL, replace[4];
-			if ( tmp_encode == NULL )
-			{
-				tmp_source = estrdup(enbase);
-			   	tmplen = len;
-		   	}
-			else
-		   	{
-				tmp_source = estrdup(tmp_encode);
-			   	tmplen = strlen(tmp_source);
-		   	}
+		memmove(rencode + nlen, enbase + olen, tlen);
+		nlen += 60;
+		olen += 60;
+		memmove(rencode + nlen, "\r\n", 2);
+		nlen += 2;
 
-			sprintf(replace, "%c\r\n", tmp_source[no]);
-			tmp_dest = ecalloc( tmplen + 3, sizeof(char *));
-			memcpy(tmp_dest, tmp_source, no);
-			memcpy(&tmp_dest[no], replace, 3);
-			memcpy(&tmp_dest[no + 3], tmp_source + no + 1, tmplen - no - 1);
-
-			if ( tmp_encode == NULL )
-			{
-				tmp_encode = emalloc(sizeof(char) * (strlen(tmp_dest) + 1));
-			}
-			else
-			{
-				tmp_encode = erealloc(tmp_encode, sizeof(char) * (strlen(tmp_dest) + 1));
-			}
-			strcpy(tmp_encode, tmp_dest);
-			efree(tmp_dest);
-		}
+		if (breakpoint == 1) { break; }
 	}
-
-	rencode = estrdup(tmp_encode);
-	efree(tmp_encode);
 
 	return rencode;
 }
