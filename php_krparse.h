@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krparse.h,v 1.7 2002-08-21 16:01:17 oops Exp $
+$Id: php_krparse.h,v 1.8 2002-09-05 02:59:51 oops Exp $
 */
 
 #ifndef PHP_KRPARSE_H
@@ -29,6 +29,7 @@ PHP_FUNCTION(utf8decode_lib);
 PHP_FUNCTION(agentinfo_lib);
 PHP_FUNCTION(autolink_lib);
 PHP_FUNCTION(substr_lib);
+PHP_FUNCTION(postposition_lib);
 
 unsigned char *krNcrEncode (unsigned char *str_o, int type);
 unsigned char *krNcrDecode (unsigned char *str_o);

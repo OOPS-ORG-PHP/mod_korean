@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.37 2002-09-02 16:07:01 oops Exp $
+  $Id: krparse.c,v 1.38 2002-09-05 02:59:51 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -720,6 +720,135 @@ PHP_FUNCTION(agentinfo_lib)
 		add_assoc_string(return_value, "br", "OTHER", 1);
 		add_assoc_string(return_value, "co", "OTHER", 1);
 	}
+}
+/* }}} */
+
+/* {{{ proto string postposition_lib(string str, string postposition, int utf)
+ *   make a decision about kreaon postposition */
+PHP_FUNCTION(postposition_lib)
+{
+	pval **string, **posts, **utf;
+	unsigned char *str, *post = NULL, *josa, *chkjosa[2];
+	unsigned char *chkstr;
+	unsigned int ncr, chkutf;
+
+	switch(ZEND_NUM_ARGS())
+   	{
+		case 2:
+			if(zend_get_parameters_ex(2, &string, &posts) == FAILURE)
+		   	{
+				WRONG_PARAM_COUNT;
+			}
+			break;
+		case 3:
+			if(zend_get_parameters_ex(3, &string, &posts, &utf) == FAILURE)
+		   	{
+				WRONG_PARAM_COUNT;
+			}
+			convert_to_long_ex(utf);
+			chkutf = Z_LVAL_PP(utf);
+			break;
+		default:
+			WRONG_PARAM_COUNT;
+	}
+
+	convert_to_string_ex(string);
+	convert_to_string_ex(posts);
+
+	if (chkutf == 1)
+	{
+		str = convUTF8( Z_STRVAL_PP(string), 2);
+		josa = convUTF8( Z_STRVAL_PP(posts), 2);
+	}
+	else
+	{
+		str = Z_STRVAL_PP(string);
+		josa = Z_STRVAL_PP(posts);
+	}
+
+	/* check korean postposition */
+	if ( strlen(josa) < 1 )
+	{
+		php_error(E_ERROR, "Don't exists postposition\n", josa);
+	}	
+	else if ( (josa[0] == 0xc0 && josa[1] == 0xcc) || (josa[0] == 0xb0 && josa[1] == 0xa1) )
+	{
+		chkjosa[0] = "이";
+		chkjosa[1] = "가";
+	}
+	else if ( (josa[0] == 0xc0 && josa[1] == 0xba) || (josa[0] == 0xb4 && josa[1] == 0xc2) )
+	{
+		chkjosa[0] = "은";
+		chkjosa[1] = "는";
+	}
+	else if ( (josa[0] == 0xc0 && josa[1] == 0xbb) || (josa[0] == 0xb8 && josa[1] == 0xa6) )
+	{
+		chkjosa[0] = "을";
+		chkjosa[1] = "를";
+	}
+	else if ( (josa[0] == 0xb0 && josa[1] == 0xfa) || (josa[0] == 0xbf && josa[1] == 0xcd) )
+	{
+		chkjosa[0] = "과";
+		chkjosa[1] = "와";
+	}
+	else if ( (josa[0] == 0xbe && josa[1] == 0xc6) || (josa[0] == 0xbe && josa[1] == 0xdf) )
+	{
+		chkjosa[0] = "아";
+		chkjosa[1] = "야";
+	}
+	else
+	{
+		php_error(E_ERROR, "%s is not korean postposition\n", josa);
+	}
+
+	if (strlen(str) > 1)
+	{
+	    chkstr = &str[strlen(str) - 2];
+	}
+	else if (strlen(str) > 0)
+	{
+	    chkstr = estrdup(str);
+	}
+	else
+	{
+		php_error(E_ERROR, "String is too short\n");
+	}
+
+	if (chkstr[0] & 0x80)
+	{
+		ncr = getNcrIDX(chkstr[0], chkstr[1]);
+		if ( ((uni_cp949_ncr_table[ncr] - 16) % 28 ) == 0 ) { post = estrdup(chkjosa[1]); }
+		else { post = estrdup(chkjosa[0]); }
+	}
+	else
+	{
+		unsigned char last;
+		last = chkstr[strlen(chkstr) - 1];
+
+		/* last charactor is a or e or i or o or u or w or y  */
+		if (last == 0x61 || last == 0x65 || last == 0x69 || last == 0x6f ||
+			last == 0x75 || last == 0x77 || last == 0x79)
+		{
+			post = estrdup(chkjosa[1]);
+		}
+		/* last charactor is ed or er or or */
+		else if ( (chkstr[0] == 0x65 && chkstr[1] == 0x72) || (chkstr[0] == 0x6f && chkstr[1] == 0x72) ||
+				  (chkstr[0] == 0x65 && chkstr[1] == 0x64) )
+		{
+			post = estrdup(chkjosa[1]);
+		}
+		else
+		{
+			post = estrdup(chkjosa[0]);
+		}
+	}
+
+	if (post)
+   	{
+		if (chkutf == 1) { RETURN_STRING( convUTF8(post, 0), 1); }
+		else { RETURN_STRING(post, 1); }
+	}
+	RETURN_FALSE;
 }
 /* }}} */
 

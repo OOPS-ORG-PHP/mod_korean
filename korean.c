@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.20 2002-09-01 06:23:32 oops Exp $
+  $Id: korean.c,v 1.21 2002-09-05 02:59:51 oops Exp $
 */
 
 /*
@@ -60,6 +60,7 @@ function_entry korean_functions[] = {
 	PHP_FE(unidecode_lib,	NULL)
 	PHP_FE(utf8encode_lib,	NULL)
 	PHP_FE(utf8decode_lib,	NULL)
+	PHP_FE(postposition_lib,	NULL)
 	PHP_FE(check_uristr_lib,	NULL)
 	PHP_FE(check_filename_lib,	NULL)
 	PHP_FE(check_htmltable_lib,	NULL)
