@@ -15,7 +15,7 @@
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
 
-$Id: php_krcharset.h,v 1.2 2002-11-27 10:46:39 oops Exp $
+$Id: php_krcharset.h,v 1.3 2002-11-28 10:04:12 oops Exp $
 */
 
 #ifndef PHP_KRCHARSET_H
@@ -34,11 +34,7 @@ PHP_FUNCTION(getunicode);
 unsigned char *krNcrEncode (unsigned char *str_o, int type);
 unsigned char *krNcrDecode (unsigned char *str_o);
 unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end);
-unsigned int getNcrIDX (unsigned char str1, unsigned char str2);
-unsigned int getNcrArrayNo (unsigned int key);
-unsigned int getUniIDX (unsigned int key);
 unsigned int hex2dec (unsigned char *str_o, unsigned int type);
-int comp (const void *s1, const void *s2);
 
 #define LKMS_VECTOR_SIZE	16
 #define MEMORY_SHORTAGE		-1000

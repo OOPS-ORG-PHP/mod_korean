@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.2 2002-11-27 10:46:39 oops Exp $
+  $Id: krcharset.c,v 1.3 2002-11-28 10:04:12 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -42,8 +42,8 @@
 #include "charset/jis0208.h"
 #include "charset/gb2312.h"
 #include "charset/big5.h"
-#include "charset/cp949_table.h"
-#include "charset/unicode_cp949_ncr_table.h"
+//#include "charset/cp949_table.h"
+//#include "charset/unicode_cp949_ncr_table.h"
 
 static XUChar table_rev_latin2 [ 1024];
 static XUChar table_rev_koi8r_1[ 1024];
@@ -443,8 +443,16 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 					if((str_o[i] >= 0x81 && str_o[i] <= 0xa0 && str_o[i+1] >= 0x41 && str_o[i+1] <=0xfe) ||
 					   (str_o[i] >= 0xa1 && str_o[i] <= 0xc6 && str_o[i+1] >= 0x41 && str_o[i+1] <=0xa0))
 				   	{
-						ncr = getNcrIDX(str_o[i], str_o[i+1]);
-						sprintf(rc, "&#%d;\0", uni_cp949_ncr_table[ncr]);
+						if(str_o[i+1] < 0x41 || str_o[i+1] > 0xfe) { memmove(rc, "?", 1); }
+						else if(0x5a < str_o[i+1] && str_o[i+1] < 0x61) { memmove(rc, "?", 1); }
+						else if(0x7a < str_o[i+1] && str_o[i+1] < 0x81) { memmove(rc, "?", 1); }
+						else
+						{
+							if(str_o[i+1] > 0x7a) str_o[i+1] -= 6;
+							if(str_o[i+1] > 0x5a) str_o[i+1] -= 6;
+							ncr = (str_o[i] - 0x81) * 178 + (str_o[i+1] - 0x41);
+							sprintf(rc, "&#%d;\0", table_ksc5601[ncr]);
+						}
 						i++;
 					}
 				   	else
@@ -456,8 +464,34 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 					break;
 				/* range of whole string */
 				default:
-					ncr = getNcrIDX(str_o[i], str_o[i+1]);
-					sprintf(rc, "&#%d;\0", uni_cp949_ncr_table[ncr]);
+					if ( 0x81 <= str_o[i] && str_o[i] <= 0xc8 )
+					{
+						if(str_o[i+1] < 0x41 || str_o[i+1] > 0xfe) { memmove(rc, "?", 1); }
+						else if(0x5a < str_o[i+1] && str_o[i+1] < 0x61) { memmove(rc, "?", 1); }
+						else if(0x7a < str_o[i+1] && str_o[i+1] < 0x81) { memmove(rc, "?", 1); }
+						else
+						{
+							if(str_o[i+1] > 0x7a) str_o[i+1] -= 6;
+							if(str_o[i+1] > 0x5a) str_o[i+1] -= 6;
+							ncr = (str_o[i] - 0x81) * 178 + (str_o[i+1] - 0x41);
+							sprintf(rc, "&#%d;\0", table_ksc5601[ncr]);
+						}
+					}
+					else if(0xca <= str_o[i] && str_o[i] <= 0xfd)
+					{
+						if(str_o[i+1] < 0xa1 || str_o[i+1] > 0xfe) { memmove(rc, "?", 1); }
+						else
+						{
+							ncr = (str_o[i] - 0xca) * 94 + (str_o[i+1] - 0xa1);
+							sprintf(rc, "&#%d;\0", table_ksc5601_hanja[ncr]);
+						}
+					}
+					else
+					{
+						memset(rc, str_o[i], 1);
+						memset(rc + 1, '\0', 1);
+					}
+
 					i++;
 			}
 		}
@@ -506,10 +540,15 @@ unsigned char *krNcrDecode (unsigned char *str_o)
 	{
 		if (str_o[i] == '&' && str_o[i+1] == '#' && str_o[i+7] == ';')
 		{
-			sprintf(tmpstr, "%c%c%c%c%c", str_o[i+2], str_o[i+3], str_o[i+4], str_o[i+5], str_o[i+6]);
-			tmp = atoi(tmpstr);
+			if( XUINITTABLE_CHECK == 0 )
+			{
+				XUInitTable();
+				XUINITTABLE_CHECK = 1;
+			}
 
-			tmp = getNcrArrayNo(tmp);
+			memmove(tmpstr, str_o + i + 2, 5);
+			tmp = atoi(tmpstr);
+			tmp = table_rev_ksc5601[tmp];
 
 			first = tmp >> 8;
 			second = tmp & 0x00FF;
@@ -564,7 +603,6 @@ unsigned char *krNcrDecode (unsigned char *str_o)
  * unsigned char *str_o   => convert string (euc-kr, cp949, unicode)
  * int type               => 0: convert euc-kr,cp949 -> unicode
  *                         1: convert unicode -> ecu-kr,cp949
- *                         2: convert cp949 -> euc-kr (same as krNcrEncode(str_o,1))
  * int subtype          => if value of type set 1, 1 is euc-kr and 0 is cp949
  * unsigned char *start => front string of hex value of unicode (ex U+AC60; => U+)
  * unsigned char *end   => after string of hex value of unicode (ex U+AC60; => ; )
@@ -572,7 +610,7 @@ unsigned char *krNcrDecode (unsigned char *str_o)
 unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end)
 {
 	unsigned long i;
-	unsigned int ncr;
+	unsigned int ncr, aryno;
 	size_t len;
 	unsigned char rc[256], *strs;
 	unsigned char *ret = NULL;
@@ -618,11 +656,17 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 				memset(chkReg+3, str_o[i+slen+3], 1);
 				memset(chkReg+4, '\0', 1);
 
+				if( XUINITTABLE_CHECK == 0 )
+				{
+					XUInitTable();
+					XUINITTABLE_CHECK = 1;
+				}
+
 				if(!strncmp(&str_o[i], start, slen) && regexec(&preg,chkReg, 0, NULL, 0) == 0 &&
 				   !strncmp(&str_o[i+slen+4], end, elen))
 			   	{
 					hexv = hex2dec(chkReg, 0);
-					sprintf(conv, "%x", getUniIDX(hexv));
+					sprintf(conv, "%x", table_rev_ksc5601[hexv]);
 
 					/* make first byte */
 					memset (first, conv[0], 1);
@@ -647,8 +691,7 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 						if((rc[0] >= 0x81 && rc[0] <= 0xa0 && rc[1] >= 0x41 && rc[1] <=0xfe) ||
 						   (rc[0] >= 0xa1 && rc[0] <= 0xc6 && rc[1] >= 0x41 && rc[1] <=0xa0))
 					   	{
-							ncr = getNcrIDX(rc[0], rc[1]);
-							sprintf(rc, "&#%d;\0", uni_cp949_ncr_table[ncr]);
+							sprintf(rc, "&#%d;\0", hexv);
 						}
 					}
 
@@ -664,17 +707,36 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 			/* convert to unicode from euc-kr/cp949 */
 			default:
 				/* if 2byte charactor */
-				if (str_o[i] & 0x80)
-			   	{
-					ncr = getNcrIDX(str_o[i], str_o[i+1]);
-					sprintf(rc,"%s%X%s\0", start, uni_cp949_ncr_table[ncr], end);
-					i++;
+				if ( 0x81 <= str_o[i] && str_o[i] <= 0xc8 )
+				{
+					if(str_o[i+1] < 0x41 || str_o[i+1] > 0xfe) { memmove(rc, "?", 1); }
+					else if(0x5a < str_o[i+1] && str_o[i+1] < 0x61) { memmove(rc, "?", 1); }
+					else if(0x7a < str_o[i+1] && str_o[i+1] < 0x81) { memmove(rc, "?", 1); }
+					else
+					{
+						if(str_o[i+1] > 0x7a) str_o[i+1] -= 6;
+						if(str_o[i+1] > 0x5a) str_o[i+1] -= 6;
+						aryno = (str_o[i] - 0x81) * 178 + (str_o[i+1] - 0x41);
+						sprintf(rc, "%s%X%s\0", start, table_ksc5601[aryno], end);
+						i++;
+					}
 				}
-			   	else
+				else if(0xca <= str_o[i] && str_o[i] <= 0xfd)
+				{
+					if(str_o[i+1] < 0xa1 || str_o[i+1] > 0xfe) { memmove(rc, "?", 1); }
+					else
+					{
+						aryno = (str_o[i] - 0xca) * 94 + (str_o[i+1] - 0xa1);
+						sprintf(rc, "%s%X%s\0", start, table_ksc5601_hanja[aryno], end);
+						i++;
+					}
+				}
+				/* if 1byte charactor */
+				else
 				{
 					memset (rc, str_o[i], 1);
 					memset (rc + 1, '\0', 1);
-			   	}
+				}
 		}
 
 		if (strlen(rc) != 0)
@@ -700,53 +762,6 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 	if (type == 1) { regfree(&preg); }
 	efree(ret);
 	return strs;
-}
-/* }}} */
-
-/* {{{ unsigned int getNcrIDX (unsigned char str1, unsigned char str2) */
-unsigned int getNcrIDX (unsigned char str1, unsigned char str2)
-{
-	unsigned int idx, ch;
-
-	ch = str1;
-	idx = (unsigned int) (ch << 8) | (unsigned int) str2;
-	idx -= 33089;
-
-	return idx;
-}
-/* }}} */
-
-/* {{{ unsigned int getNcrArrayNo (unsigned char str1, unsigned char str2) */
-unsigned int getNcrArrayNo (unsigned int key)
-{
-	unsigned int i = 0, array_no;
-	for(i=0; i<31934; i++)
-	{
-		if ( uni_cp949_ncr_table[i] == key )
-		{
-			array_no = i;
-			break;
-		}
-	}
-
-	return array_no + 33089;
-}
-/* }}} */
-
-/* {{{ unsigned int getUniIDX (unsigned int key) */
-unsigned int getUniIDX (unsigned int key)
-{
-	int *ptr, *chk, result;
-
-	ptr = (int *)bsearch(&key,cp949_2byte_ncr_table, 17048, sizeof(cp949_2byte_ncr_table[0]), comp);
-	chk = cp949_2byte_ncr_table;
-
-	if (ptr != NULL)
-   	{
-		result = ptr - chk;
-		return cp949_2byte_uni_ncr_table[result];
-	}
-   	else { return 0; }
 }
 /* }}} */
 
@@ -806,19 +821,13 @@ unsigned int hex2dec (unsigned char *str_o, unsigned int type) {
 }
 /* }}} */
 
-/* {{{ int comp(const void *s1, const void *s2) */
-int comp(const void *s1, const void *s2)
-{
-	return (*(int *)s1 - *(int *)s2);
-}
-/* }}} */
-
 /* new utf8 */
 /*****************************************************************************************/
 /* Code A -> Code B  Start  */
 /*****************************************************************************************/
 // UTF-8 -> locale code OR locale code -> UTF-8
 
+/* {{{ int XUCodeConv(char* dest, int max, int codeTo, const char* text, int length, int codeFrom) */
 int XUCodeConv(char* dest, int max, int codeTo, const char* text, int length, int codeFrom)
 {
 	XUChar* buf;
@@ -839,7 +848,9 @@ int XUCodeConv(char* dest, int max, int codeTo, const char* text, int length, in
 	free(buf);
 	return len2;
 }
+/* }}} */
 
+/* {{{ static void XUInitTable() */
 static void XUInitTable()
 {
 	int i, j;
@@ -958,12 +969,10 @@ static void XUInitTable()
 	   }
 	}
 }
+/* }}} */
 
-
-/*
- *   Other -> Unicode(UCS-2)
- */
-
+/* Other -> Unicode(UCS-2) */
+/* {{{ int XUEncode(XUChar* dest, int max, const char* text, int length, int code) */
 int XUEncode(XUChar* dest, int max, const char* text, int length, int code)
 {
 	int ret = 0;
@@ -996,11 +1005,10 @@ int XUEncode(XUChar* dest, int max, const char* text, int length, int code)
 	if(ret < max) *dest = 0;
 	return ret;
 }
+/* }}} */
 
-/**
- *   Other -> Unicode
- *   */
-
+/* Other -> Unicode */
+/* {{{ XUChar XUCharEncode(const char* text, int max, int code) */
 XUChar XUCharEncode(const char* text, int max, int code)
 {
 	XUChar ret = 0;
@@ -1091,7 +1099,9 @@ XUChar XUCharEncode(const char* text, int max, int code)
 
 	return '?';
 }
+/* }}} */
 
+/* {{{ int XUCharLen(const char* text, int max, int code) */
 int XUCharLen(const char* text, int max, int code)
 {
 	XUChar c1;
@@ -1157,12 +1167,10 @@ int XUCharLen(const char* text, int max, int code)
 
 	return 1;
 }
+/* }}} */
 
-
-/**
- *   Unicode(UCS-2) -> Other
- *   */
-
+/* Unicode(UCS-2) -> Other */
+/* {{{ int XUDecode(char* dest, int max, const XUChar* text, int length, int code) */
 int XUDecode(char* dest, int max, const XUChar* text, int length, int code)
 {
 	int ret = 0;
@@ -1195,11 +1203,10 @@ int XUDecode(char* dest, int max, const XUChar* text, int length, int code)
 	if(max > 0) *dest = 0;
 	return ret;
 }
+/* }}} */
 
-/**
- *   Unicode -> Other
- *   */
-
+/* Unicode -> Other */
+/* {{{ int XUCharDecode(char* dest, int max, XUChar ch, int code) */
 int XUCharDecode(char* dest, int max, XUChar ch, int code)
 {
 	XUChar ret = 0;
@@ -1321,17 +1328,19 @@ int XUCharDecode(char* dest, int max, XUChar ch, int code)
 	}
 	return 2;
 }
+/* }}} */
 
-
-/*****************************************************************************************/
+/********************************************/
 /* Code A -> Code B  End  */
-/*****************************************************************************************/
+/********************************************/
 
-/*****************************************************************************************/
+/********************************************/
 /* UTF8 -> Unicode  Start  */
-/*****************************************************************************************/
+/********************************************/
 
-// utf-8 -> ucs
+/* {{{ int XUutf8Encode(XUChar* dest, int max, const char* text, int length)
+ * utf-8 -> ucs
+ */
 int XUutf8Encode(XUChar* dest, int max, const char* text, int length)
 {
 	int ret = 0;
@@ -1364,7 +1373,9 @@ int XUutf8Encode(XUChar* dest, int max, const char* text, int length)
 	if(ret < max) *dest = 0;
 	return ret;
 }
+/* }}} */
 
+/* {{{ int XUutf8CharLen(const char* text, int max) */
 int XUutf8CharLen(const char* text, int max)
 {
 	XUChar c1;
@@ -1423,7 +1434,9 @@ int XUutf8CharLen(const char* text, int max)
 	if(c2 < 0x04 && c1 < 0xfd) return 1;
 	return 6;
 }
+/* }}} */
 
+/* {{{ XUChar XUutf8CharEncode(const char* text, int max) */
 XUChar XUutf8CharEncode(const char* text, int max)
 {
 	XUChar c[6];
@@ -1484,17 +1497,19 @@ XUChar XUutf8CharEncode(const char* text, int max)
 	if(c[1] < 0x04 && c[0] < 0xfd) return c[0];
 	return ((c[3] & 0x0f) << 12) + (c[4] << 6) + c[5];
 }
+/* }}} */
 
-/*****************************************************************************************/
+/********************************************/
 /* UTF8 -> Unicode  End  */
-/*****************************************************************************************/
+/********************************************/
 
-
-/*****************************************************************************************/
+/********************************************/
 /* Unicode -> UTF8 Start   */
-/*****************************************************************************************/
+/********************************************/
 
-// Unicode -> UTF8
+/* {{{ int XUutf8Decode(char* dest, int max, const XUChar* text, int length)
+ * Unicode -> UTF8
+ */
 int XUutf8Decode(char* dest, int max, const XUChar* text, int length)
 {
 	int ret = 0;
@@ -1527,9 +1542,12 @@ int XUutf8Decode(char* dest, int max, const XUChar* text, int length)
 	if(max > 0) *dest = 0;
 	return ret;
 }
+/* }}} */
 
+/* {{{ int XUutf8CharDecode(char* dest, int max, XUChar ch) */
 int XUutf8CharDecode(char* dest, int max, XUChar ch)
 {
+	php_printf("%c", ch);
 	if(ch < 0x0080) 
 	{
 	   if(max >= 1) dest[0] = (char)ch;
@@ -1551,6 +1569,7 @@ int XUutf8CharDecode(char* dest, int max, XUChar ch)
 	if(max >= 4) dest[3] = '\0';
 	return 3;
 }
+/* }}} */
 
 /*
  * Local variables:
