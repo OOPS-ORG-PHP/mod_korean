@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.21 2002-12-30 17:55:12 oops Exp $ 
+  $Id: krimage.c,v 1.22 2002-12-31 15:44:58 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -80,10 +80,10 @@ PHPAPI const char php_sig_png_kr[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (c
  *  *  print move action to url */
 PHP_FUNCTION(imgresize_lib)
 {
-	pval **opath, **ntype, **nwid, **nhei, **npath;
+	pval **opath, **ntype, **nwid, **nhei, **npath, **gver;
 	gdImagePtr im, nim;
 	FILE *fp, *tmp;
-	int issock=0, itype = 0, newpath_len = 0;
+	int issock=0, itype = 0, newpath_len = 0, gdver = 2;
 	char filetype[8], tmpfilename[64];
 	unsigned char imgfile[256], newpath[256];
 
@@ -92,6 +92,14 @@ PHP_FUNCTION(imgresize_lib)
 
 	switch(ZEND_NUM_ARGS())
    	{
+		case 6:
+			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &opath, &ntype, &nwid, &nhei, &npath, &gver) == FAILURE)
+		   	{
+				WRONG_PARAM_COUNT;
+			}
+			convert_to_long_ex(gver);
+			gdver = ( Z_LVAL_PP(gver) == 1 ) ? 1 : 2;
+			break;
 		case 5:
 			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &opath, &ntype, &nwid, &nhei, &npath) == FAILURE)
 		   	{
@@ -273,12 +281,24 @@ PHP_FUNCTION(imgresize_lib)
 	}
 
 	/* create new image */
-	//nim = gdImageCreate(new_width, new_height);
-	nim = (gdImagePtr) gdImageCreateTrueColor(new_width, new_height);
+	if ( gdver == 1 )
+	{
+		nim = gdImageCreate(new_width, new_height);
+	}
+	else
+	{
+		nim = (gdImagePtr) gdImageCreateTrueColor(new_width, new_height);
+	}
 
 	/* copy original point to new point to resize */
-	//gdImageCopyResized(nim, im , 0, 0, 0, 0, new_width, new_height, old_width, old_height);
-	gdImageCopyResampled(nim, im , 0, 0, 0, 0, new_width, new_height, old_width, old_height);
+	if ( gdver == 1 )
+	{
+		gdImageCopyResized(nim, im , 0, 0, 0, 0, new_width, new_height, old_width, old_height);
+	}
+	else
+	{
+		gdImageCopyResampled(nim, im , 0, 0, 0, 0, new_width, new_height, old_width, old_height);
+	}
 
 	if (newpath_len > 0) { tmp = VCWD_FOPEN(newpath, "wb"); }
    	else { tmp = tmpfile(); }
