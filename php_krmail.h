@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krmail.h,v 1.3 2002-12-09 12:40:21 oops Exp $
+$Id: php_krmail.h,v 1.4 2002-12-12 16:58:35 oops Exp $
 */
 
 #ifndef PHP_KRMAIL_H
@@ -41,3 +41,12 @@ unsigned char * body_encode (unsigned char *str, int chklen);
 unsigned char *generate_mime (unsigned char *filename);
 
 #endif  /* end PHP_KRMAIL_H */
+
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: noet sw=4 ts=4 fdm=marker
+ * vim<600: noet sw=4 ts=4
+ */

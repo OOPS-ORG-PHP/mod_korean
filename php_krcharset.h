@@ -15,7 +15,7 @@
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
 
-$Id: php_krcharset.h,v 1.3 2002-11-28 10:04:12 oops Exp $
+$Id: php_krcharset.h,v 1.4 2002-12-12 16:58:35 oops Exp $
 */
 
 #ifndef PHP_KRCHARSET_H
@@ -89,3 +89,12 @@ extern int XUutf8Decode(char* dest, int max, const XUChar* text, int length);
 extern int XUutf8Len(const char* text, int max);
 
 #endif /* PHP_KRCHARSET_H */
+
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: noet sw=4 ts=4 fdm=marker
+ * vim<600: noet sw=4 ts=4
+ */

@@ -15,7 +15,7 @@
   | Author:                                                              |
   +----------------------------------------------------------------------+
 
-  $Id: php_krnetwork.h,v 1.7 2002-08-23 10:58:17 oops Exp $
+  $Id: php_krnetwork.h,v 1.8 2002-12-12 16:58:35 oops Exp $
 */
 
 #ifndef PHP_KRNETWORK_H
@@ -41,4 +41,3 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
  * vim600: noet sw=4 ts=4 fdm=marker
  * vim<600: noet sw=4 ts=4
  */
-
