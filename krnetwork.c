@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.40 2003-09-15 07:17:38 oops Exp $
+  $Id: krnetwork.c,v 1.41 2003-09-15 08:09:24 oops Exp $
 */
 
 /*
@@ -494,8 +494,8 @@ unsigned char *get_mx_record(unsigned char *str)
 {
 	u_char answer[8192], *cp, *end;
 	u_short type, weight, tmpweight;
-	static char *host, mxrecord[256];
-	unsigned char *tmphost, tmpmx[256];
+	static char mxrecord[256];
+	unsigned char *host, *tmphost, tmpmx[256];
 	unsigned int i, qdc, count, tmpmxlen = 0;
 	HEADER *hp;
 
@@ -504,11 +504,11 @@ unsigned char *get_mx_record(unsigned char *str)
 
 	if ( (tmphost = strrchr(str, '@')) != NULL )
 	{
-		host = kr_regex_replace ("/[^<]*<|>.*/", "", &str[tmphost - str + 1]);
+		host = (unsigned char *) kr_regex_replace ("/[^<]*<|>.*/", "", tmphost + 1);
 	}
 	else
 	{
-		host = kr_regex_replace ("/[^<]*<|>.*/", "", str);
+		host = (unsigned char *) kr_regex_replace ("/[^<]*<|>.*/", "", str);
 	}
 
 	/* if don't exist mx record */
