@@ -3,6 +3,7 @@ PHP Korean Extexsions Changelog
 * Sun Dec  1 2002
   by JoungKyun Kim <http://www.oops.org>
     - rewrite human_fsize_lib function
+    - rewrite check_table function
 
 * Wed Nov 30 2002
   by JoungKyun Kim <http://www.oops.org>
