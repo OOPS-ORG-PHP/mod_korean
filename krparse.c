@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.11 2002-07-24 12:19:34 oops Exp $
+  $Id: krparse.c,v 1.12 2002-07-24 15:51:12 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -705,6 +705,7 @@ unsigned char *krNcrConv (unsigned char *str_o, int type)
 		/* if 2byte charactor */
 		if (str_o[i] & 0x80) {
 			switch(type) {
+				/* if type 1, check range of KSX 1001 */
 				case 1:
 					if((str_o[i] >= 0x81 && str_o[i] <= 0xa0 && str_o[i+1] >= 0x41 && str_o[i+1] <=0xfe) ||
 					   (str_o[i] >= 0xa1 && str_o[i] <= 0xc6 && str_o[i+1] >= 0x41 && str_o[i+1] <=0xa0)) {
@@ -714,6 +715,7 @@ unsigned char *krNcrConv (unsigned char *str_o, int type)
 					} else sprintf(rc,"%c",str_o[i]);
 
 					break;
+				/* range of whole string */
 				default:
 					ncr = getNcrIDX(str_o[i],str_o[i+1]);
 					sprintf(rc,"&#%d;",uni_cp949_ncr_table[ncr]);
