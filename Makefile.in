@@ -1,7 +1,7 @@
-# $Id: Makefile.in,v 1.1.1.1 2002-05-14 09:50:50 oops Exp $
+# $Id: Makefile.in,v 1.2 2002-05-14 10:55:06 oops Exp $
 
 LTLIBRARY_NAME          = libkorean.la
-LTLIBRARY_SOURCES       = korean.c krparse.c krcheck.c krregex.c krerror.c krerror.c krfile.c krnetwork.c
+LTLIBRARY_SOURCES       = korean.c krparse.c krcheck.c krregex.c krerror.c krfile.c krnetwork.c
 LTLIBRARY_SHARED_NAME   = korean.la
 LTLIBRARY_SHARED_LIBADD = $(KOREAN_SHARED_LIBADD)
 
