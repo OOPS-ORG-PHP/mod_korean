@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.2 2002-05-22 18:09:01 oops Exp $
+  $Id: krparse.c,v 1.3 2002-05-22 18:11:05 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -213,18 +213,17 @@ PHP_FUNCTION(unidecode_lib)
 /* {{{ proto string utf8encode_lib(string str)
    Return utf8 string from euc-kr or cp949 */
 PHP_FUNCTION(utf8encode_lib) {
-	pval **arg1;
-	unsigned char *str, *string;
+	pval **str;
+	unsigned char *string;
 
 	switch(ZEND_NUM_ARGS()) {
 		case 1:
-			if(zend_get_parameters_ex(1, &arg1) == FAILURE) {
+			if(zend_get_parameters_ex(1, &str) == FAILURE) {
 				WRONG_PARAM_COUNT;
 			}
-			convert_to_string_ex(arg1);
-			str  = Z_STRVAL_PP(arg1);
+			convert_to_string_ex(str);
 
-			if(strlen(str) < 1) {
+			if(Z_STRLEN_PP(str) < 1) {
 				php_error(E_ERROR, "Can't use null value of argument");
 				RETURN_FALSE;
 			}
@@ -233,7 +232,7 @@ PHP_FUNCTION(utf8encode_lib) {
 			WRONG_PARAM_COUNT;
 	}
 
-	string = convUTF8 (str,0);
+	string = convUTF8 (Z_STRVAL_PP(str),0);
 
 	RETURN_STRING(string,1);
 }
@@ -315,37 +314,44 @@ PHP_FUNCTION(autolink_lib)
  *    Returns part of a multibyte string */
 PHP_FUNCTION(substr_lib)
 {
-	zval **str, **from, **len;
-	int l, f, lenth;
+	zval **str, **from, **len, **utf8;
+	unsigned char *tmpstr, *string;
+	int l, f, lenth, utf = 0;
 	int argc = ZEND_NUM_ARGS();
 
-	if (argc < 2 || argc > 3 || zend_get_parameters_ex(argc, &str, &from, &len) == FAILURE) {
+	if (argc < 2 || argc > 4 || zend_get_parameters_ex(argc, &str, &from, &len, &utf8) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}
 	convert_to_string_ex(str);
 	convert_to_long_ex(from);
 
+	if (argc == 4) {
+		convert_to_long_ex(utf8);
+		utf = Z_LVAL_PP(utf8);
+		tmpstr = convUTF8 (Z_STRVAL_PP(str), 2);
+	} else {
+		tmpstr = Z_STRVAL_PP(str);
+	}
+
 	if (argc > 2) {
 		convert_to_long_ex(len);
 		l = Z_LVAL_PP(len);
 	} else {
-		l = Z_STRLEN_PP(str);
+		l = strlen(tmpstr);
 	}
 
 	f = Z_LVAL_PP(from);
-	lenth = Z_STRLEN_PP(str);
+	lenth = strlen(tmpstr);
 
 	/* if "from" position is negative, count start position from the end
-	 * of the string
-	 */
+	 * of the string */
 	if (f < 0) {
 		f = lenth + f;
 		if (f < 0) { f = 0; }
 	}
 
 	/* if "length" position is negative, set it to the length
-	 * needed to stop that many chars from the end of the string
-	 */
+	 * needed to stop that many chars from the end of the string */
 	if (l < 0) {
 		l = (lenth - f) + l;
 		if (l < 0) { l = 0; }
@@ -360,15 +366,22 @@ PHP_FUNCTION(substr_lib)
 	}
 
 	/* check multibyte whether start return charactor */
-	if(multibyte_check(Z_STRVAL_PP(str),f)) {
+	if(multibyte_check(tmpstr,f)) {
 		f++;
 		l--;
 	} 
 
 	/* check multibyte whether last return charactor */
-	if(multibyte_check(Z_STRVAL_PP(str),f+l)) { l++; }
+	if(multibyte_check(tmpstr,f+l)) { l++; }
 
-	RETURN_STRINGL(Z_STRVAL_PP(str) + f, l, 1);
+
+	if (utf == 1) {
+		tmpstr[f+l] = '\0';
+		string = &tmpstr[f];
+		RETURN_STRING(convUTF8(string, 0), 1);
+	} else {
+		RETURN_STRINGL(Z_STRVAL_PP(str) + f, l, 1);
+	}
 }
 /* }}} */
 
@@ -561,6 +574,7 @@ PHP_FUNCTION(agentinfo_lib)
 }
 /* }}} */
 
+/* {{{ unsigned char *autoLink (unsigned char *str_o) */
 unsigned char *autoLink (unsigned char *str_o)
 {
 	unsigned int array_no = 19, agent_o;
@@ -663,8 +677,9 @@ unsigned char *autoLink (unsigned char *str_o)
 	efree(tmp);
 	return buf;
 }
+/* }}} */
 
-/*
+/* {{{ unsigned char *krNcrConv (unsigned char *str_o, int type)
  * convert euc-kr to ncr code, or convert outside EUC-KR range to ncr code
  * unsigned chart *str_o => EUC-KR/CP949 string
  * int type              => convert whole string(0) or outside EUC-KR range(1)
@@ -716,8 +731,9 @@ unsigned char *krNcrConv (unsigned char *str_o, int type)
 	efree(ret);
 	return strs;
 }
+/* }}} */
 
-/*
+/* {{{ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end)
  * Convert EUC-KR/CP940 to unicode
  * unsigned char *str_o   => convert string (euc-kr, cp949, unicode)
  * int type               => 0: convert euc-kr,cp949 -> unicode
@@ -817,8 +833,10 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 	efree(ret);
 	return strs;
 }
+/* }}} */
 
-/* convert utf8 string */
+/* {{{ unsigned char *convUTF8(unsigned char *str_o, int type)
+ * convert utf8 string */
 unsigned char *convUTF8(unsigned char *str_o, int type)
 {
 	unsigned long i;
@@ -930,7 +948,9 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 	}
 	return ret;
 }
+/* }}} */
 
+/* {{{ unsigned int getNcrIDX (unsigned char str1, unsigned char str2) */
 unsigned int getNcrIDX (unsigned char str1, unsigned char str2)
 {
 	unsigned int idx, ch;
@@ -941,7 +961,9 @@ unsigned int getNcrIDX (unsigned char str1, unsigned char str2)
 
 	return idx;
 }
+/* }}} */
 
+/* {{{ unsigned int getUniIDX (unsigned int key) */
 unsigned int getUniIDX (unsigned int key) {
 	int *ptr, no, *chk, result;
 
@@ -954,7 +976,9 @@ unsigned int getUniIDX (unsigned int key) {
 	} else
 		return 0;
 }
+/* }}} */
 
+/* {{{ unsigned int hex2dec (unsigned char *str_o,unsigned int type) */
 unsigned int hex2dec (unsigned char *str_o,unsigned int type) {
 	int i,buf[4],len = strlen(str_o);
 
@@ -1003,7 +1027,9 @@ unsigned int hex2dec (unsigned char *str_o,unsigned int type) {
 			
 	}
 }
+/* }}} */
 
+/* {{{ unsigned char *hex2bin(unsigned char str_o) */
 unsigned char *hex2bin(unsigned char str_o)
 {
 	unsigned char *buf;
@@ -1039,7 +1065,9 @@ unsigned char *hex2bin(unsigned char str_o)
 	}
 	return buf;
 }
+/* }}} */
 
+/* {{{ unsigned int bin2dec(unsigned char *str_o) */
 unsigned int bin2dec(unsigned char *str_o)
 {
 	int i, ret = 0;
@@ -1052,7 +1080,9 @@ unsigned int bin2dec(unsigned char *str_o)
 
 	return ret;
 }
+/* }}} */
 
+/* {{{ unsigned char *bin2hex(unsigned char *str_o) */
 unsigned char *bin2hex(unsigned char *str_o)
 {
 	unsigned int i, buf = 0;
@@ -1069,11 +1099,14 @@ unsigned char *bin2hex(unsigned char *str_o)
 	free(ret);
 	return strs;
 }
+/* }}} */
 
+/* {{{ int comp(const void *s1, const void *s2) */
 int comp(const void *s1, const void *s2)
 {
 	return (*(int *)s1 - *(int *)s2);
 }
+/* }}} */
 
 /*
  * Local variables:
