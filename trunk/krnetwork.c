@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.35 2002-12-11 17:30:00 oops Exp $
+  $Id: krnetwork.c,v 1.36 2002-12-12 02:55:03 oops Exp $
 */
 
 /*
@@ -214,7 +214,7 @@ PHP_FUNCTION(get_hostname_lib)
 PHP_FUNCTION(readfile_lib)
 {
 	zval **arg1, **arg2;
-	static unsigned char *filepath, *filename, *string;
+	static unsigned char *filepath, *filename, *string, getfilename[256];
 	int use_include_path=0, issock=0;
 	size_t *retSize, retSize_t = 0;
 
@@ -262,10 +262,12 @@ PHP_FUNCTION(readfile_lib)
 		}
 		else { filename = filepath; }
 
+		VCWD_REALPATH(filename, getfilename);
+
 		// get file info
-		if( stat (filename, &filestat) == 0 )
+		if( stat (getfilename, &filestat) == 0 )
 		{
-			string = (unsigned char *) readfile(filename);
+			string = (unsigned char *) readfile(getfilename);
 			RETVAL_STRINGL(string, filestat.st_size, 1);
 			efree (string);
 		}

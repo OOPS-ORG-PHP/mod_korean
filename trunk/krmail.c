@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.16 2002-12-09 12:40:21 oops Exp $
+  $Id: krmail.c,v 1.17 2002-12-12 02:55:03 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -56,6 +56,7 @@ PHP_FUNCTION(mailsource_lib)
 	pval **ln, **from, **to, **title, **text, **ptext, **attach;
 	unsigned char *c_ln, *c_from, *c_to, *c_title;
 	unsigned char *c_text, *c_ptext, *c_attach, *ret;
+	unsigned char attachfile[256];
 
 	switch( ZEND_NUM_ARGS() )
 	{
@@ -102,7 +103,10 @@ PHP_FUNCTION(mailsource_lib)
 	c_title = (unsigned char *) strtrim( Z_STRVAL_PP(title) );
 	c_text = (unsigned char *) strtrim( Z_STRVAL_PP(text) );
 
-	ret = generate_mail(c_ln, c_from, c_to, c_title, c_text, c_ptext, c_attach);
+	memset(attachfile, '\0', sizeof(attachfile));
+	if (strlen(c_attach) > 0) { VCWD_REALPATH(c_attach, attachfile); }
+
+	ret = generate_mail(c_ln, c_from, c_to, c_title, c_text, c_ptext, attachfile);
 	RETVAL_STRING(ret,1);
 	efree(ret);
 }
