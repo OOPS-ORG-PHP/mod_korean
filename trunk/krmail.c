@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.23 2004-09-14 06:52:22 oops Exp $
+  $Id: krmail.c,v 1.24 2004-09-14 08:01:15 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -270,13 +270,14 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 							   unsigned char *bptext)
 {
 	static unsigned char *rbody;
-	unsigned char *plain, *base64html, *base64plain;
-	unsigned int plainlen = 0, htmllen = 0;
+	unsigned char *plain, *base64html, *base64plain, *plain_t;
+	unsigned int plainlen = 0, htmllen = 0, nobptext = 0;
 
 	if ( strlen(btext) > 0 )
 	{
-		if ( bptext == NULL ) { plain = html_to_plain(btext); }
-		else { plain = (unsigned char *) bptext; }
+		if ( bptext == NULL ) nobptext = 1;
+		else if ( strlen (bptext) < 1 ) nobptext = 1;
+		plain = nobptext ? strtrim (html_to_plain (btext)) : strtrim (bptext);
 
 		base64plain = body_encode(plain, -1);
 		base64html  = body_encode(btext, -1);
@@ -617,9 +618,6 @@ unsigned char * body_encode (const unsigned char *str, int chklen)
 {
 	static unsigned char *rencode, *enbase;
 	int len = 0, devide = 0, nlen=0, olen=0, breakpoint =0, tlen = 0;
-	int xxxlen=0;
-
-	xxxlen=chklen;
 
 	if ( chklen < 0 ) { chklen = strlen(str); }
 
