@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krfile.h,v 1.9 2002-12-12 16:56:30 oops Exp $
+$Id: php_krfile.h,v 1.10 2003-02-21 10:44:38 oops Exp $
 */
 #ifndef PHP_KRFILE_H
 #define PHP_KRFILE_H
@@ -32,6 +32,7 @@ unsigned int check_filedev (unsigned char *path_f, unsigned char *filename);
 unsigned char *includePath (unsigned char *filepath);
 
 #define FILEBUFS 4096
+#define MAXPATHLENGTH 1024
 #define RETURN_FILE_TYPE 1
 #define RETURN_DIR_TYPE 2
 #define RETURN_LINK_TYPE 3

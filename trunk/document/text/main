@@ -33,6 +33,10 @@ korean extension 의 buildno 가 200212410255 부터는 php 4.3.0 부터 컴파일이 가능
 
 PHP Korean Extexsions Changelog About CVS
 
+* Fri Feb 21 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed segmentation fault error of VCWD_REALPATH on FreeBS
+
 * Tue Jan  7 2003
   by JoungKyun Kim <http://www.oops.org>
     - fixed gdSinT undefined error when don't include gd extension

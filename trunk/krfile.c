@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.24 2002-12-22 14:44:23 oops Exp $ 
+  $Id: krfile.c,v 1.25 2003-02-21 10:44:38 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -81,7 +81,7 @@ PHP_FUNCTION(filelist_lib)
 {
 	pval **path, **mode, **regex;
 	DIR *dp;
-	unsigned char *mode_s, *regex_s, dirpath[256];
+	unsigned char *mode_s, *regex_s, dirpath[MAXPATHLENGTH];
 	int chkReg = 0;
 	regex_t preg;
 
@@ -199,7 +199,7 @@ PHP_FUNCTION(putfile_lib)
 {
 	pval **filename, **str, **mode;
 	unsigned int write = 0;
-	char filepath[256];
+	unsigned char filepath[MAXPATHLENGTH];
 
 	switch(ZEND_NUM_ARGS())
 	{
@@ -241,7 +241,7 @@ PHP_FUNCTION(getfile_lib)
 {
 	pval **filename, **getsize;
 	int binmode = 0;
-	unsigned char *str, getfilename[256];
+	unsigned char *str, getfilename[MAXPATHLENGTH];
 	size_t size = 0, orgsize = 0, chksize = 0;
 	struct stat buf;
 
@@ -346,7 +346,7 @@ void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_
 	   	else
 	   	{
 			act = "ab";
-			string = (char *) emalloc(strlen(str_o) + 2);
+			string = (char *) emalloc(strlen(str_o) + 32);
 			sprintf(string, "\n%s", str_o);
 		}
 	}
