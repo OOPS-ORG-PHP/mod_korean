@@ -113,4 +113,25 @@ function readfile_lib($path, $ipath=0) {
 
   return $ret;
 }
+
+function pcregrep_lib($regex, $text, $opt) {
+
+  $buf = explode ("\n", $text);
+
+  for ($i=0; $i<count($buf); $i++) {
+    if ($opt) {
+      if (preg_match("$regex", $buf[$i])) {
+        $str .= "{$buf[$i]}\n";
+      }
+    } else {
+      if (!preg_match("$regex", $buf[$i])) {
+        $str .= "{$buf[$i]}\n";
+      }
+    }
+  }
+
+  $str = preg_replace("/\n$/", "", $str);
+
+  return $str;
+}
 ?>
