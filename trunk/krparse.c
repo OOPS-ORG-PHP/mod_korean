@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.50 2002-12-01 09:37:29 oops Exp $
+  $Id: krparse.c,v 1.51 2002-12-01 09:50:54 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -89,14 +89,15 @@ PHP_FUNCTION(substr_lib)
 		{
 			dechar = krNcrDecode(Z_STRVAL_PP(str));
 			strcpy (tmpstr, dechar);
+			efree(dechar);
 		}
 	}
    	else
 	{
 		dechar = krNcrDecode(Z_STRVAL_PP(str));
 		strcpy(tmpstr, dechar);
+		efree(dechar);
 	}
-	efree(dechar);
 
 	if (argc > 2)
    	{
