@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.23 2002-09-18 10:14:10 oops Exp $
+  $Id: korean.c,v 1.24 2002-10-24 14:34:51 oops Exp $
 */
 
 /*
@@ -247,6 +247,12 @@ PHP_FUNCTION(get_microtime_lib)
 	}
 
 	sprintf(ret,"%.2f", ((atof(new_t) + atof(new_f)) - (atof(old_t) + atof(old_f))));
+
+	efree(old_f);
+	efree(old_t);
+	efree(new_f);
+	efree(new_t);
+
 	RETURN_STRING(ret, 1);
 }
 /* }}} */

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.28 2002-09-22 10:07:18 oops Exp $
+  $Id: krnetwork.c,v 1.29 2002-10-24 14:34:51 oops Exp $
 */
 
 /*
@@ -210,7 +210,7 @@ PHP_FUNCTION(get_hostname_lib)
 PHP_FUNCTION(readfile_lib)
 {
 	zval **arg1, **arg2;
-	unsigned char *filepath, *filename, *get, *string;
+	unsigned char *filepath, *filename, *string;
 	int use_include_path=0, issock=0;
 	size_t *retSize, retSize_t = 0;
 
@@ -243,27 +243,27 @@ PHP_FUNCTION(readfile_lib)
 
 	if ( issock == 1 )
 	{
-		get = (unsigned char *) sockhttp (filepath, retSize, 0, "");
-		string = estrndup(get, *retSize);
+		string = (unsigned char *) sockhttp (filepath, retSize, 0, "");
 		RETURN_STRINGL(string, *retSize, 1);
 	}
 	else
 	{
 		if ( use_include_path != 0 && filepath[0] != '/' )
 		{
-			filename = estrdup( (unsigned char *) includePath(filepath) );
+			filename = (unsigned char *) includePath(filepath);
 		}
 		else { filename = estrdup(filepath); }
 
 		/* get file info */
 		if( stat (filename, &filestat) == 0 )
 		{
-			get = (unsigned char *) readfile(filename, filestat.st_size);
-			string = estrndup(get, filestat.st_size);
+			string = (unsigned char *) readfile(filename, filestat.st_size);
+			efree(filename);
 			RETURN_STRINGL(string, filestat.st_size, 1);
 		}
 		else
 		{
+			efree(filename);
 			php_error(E_WARNING, "File/URL %s is not found \n", filename);
 			RETURN_EMPTY_STRING();
 		}
@@ -548,6 +548,7 @@ int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 	msg[rlen] = '\0';
 	debug_msg (msg, deb, 0);
 	if ( deb != 0 && !strcasecmp (target, "quit") ) { php_printf("\r\n"); }
+	efree(cmd);
 
 	return failed;
 }
@@ -626,6 +627,8 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 		}
 	}
 
+	efree(addr);
+
 	failcode = socksend (sock, debug, "HELO localhost", "helo");
     if ( failcode == 1 )
    	{
@@ -692,19 +695,23 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 	if (urlpoint != NULL)
 	{
 		url = (unsigned char *) estrndup(chk, urlpoint - chk);
-		//uri = (unsigned char *) estrdup(&chk[urlpoint - chk]);
 	}
 	else
 	{
 		url = (unsigned char *) estrdup(chk);
 	}
 
+	efree(chk);
+
 	/* check existed url */
 	if ( !(hostinfo = gethostbyname(url)) )
 	{
 		php_error(E_WARNING, "host name \"%s\" not found\n", url);
+		efree(url);
 		return NULL;
 	}
+
+	efree(url);
 
 	/* specify connect server information */
 	sinfo.sin_family = AF_INET;

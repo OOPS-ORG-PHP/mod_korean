@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Thu Oct 24 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - added memory free for estrdup variables
+
 * Sun Sep 22 2002
   by JoungKyun Kim <http://www.oops.org>
     - added memory free some variables

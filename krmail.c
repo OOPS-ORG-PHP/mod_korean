@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.12 2002-09-22 10:07:18 oops Exp $
+  $Id: krmail.c,v 1.13 2002-10-24 14:34:51 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -167,7 +167,10 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 		sprintf(tmp_return_mail, "%s\r\nThis is a multi-part message in MIME format.\r\n" \
 				                 "%s%s\r\n%s\r\n--%s--\r\n",
 			   	return_header, tmp_attach_header, return_body, return_attach, attbound);
-		return_mail = estrdup(tmp_return_mail);
+		return_mail = tmp_return_mail;
+
+		efree(attbound);
+		efree(tmp_attach_header);
 		efree(tmp_return_mail);
 	}
 	else
@@ -178,9 +181,15 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 
 		sprintf(tmp_return_mail, "%s\r\nThis is a multi-part message in MIME format." \
 								 "\r\n%s\r\n", return_header, return_body);
-		return_mail = estrdup(tmp_return_mail);
+		return_mail = tmp_return_mail;
 		efree(tmp_return_mail);
 	}
+
+
+	efree(from);
+	efree(boundary);
+	efree(return_body);
+	efree(return_header);
 
 	return return_mail;
 }
@@ -236,9 +245,11 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 				          "base64\r\nContent-Disposition: inline; filename=\"%s\"\r\n\r\n%s\r\n",
 				bound, mimetype, filename, filename, base64text);
 
-		fencode = estrdup(template);
+		fencode = template;
 	}
 
+	efree(base64text);
+	efree(filename);
 	efree(contents);
 
 	return fencode;
@@ -253,7 +264,7 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 	if ( strlen(btext) > 0 )
 	{
 		if ( strlen(bptext) < 1 ) { plain = (unsigned char *) strtrim(html_to_plain(btext)); }
-		else { plain = estrdup((unsigned char *) strtrim(bptext)); }
+		else { plain = (unsigned char *) strtrim(bptext); }
 
 		base64plain = body_encode(plain);
 		base64html  = body_encode((unsigned char *) strtrim(btext));
@@ -275,6 +286,9 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 			rbody = estrdup(tmp_body);
 			efree(tmp_body);
 		}
+
+		efree(base64plain);
+		efree(base64html);
 	}
 	else
 	{
@@ -310,6 +324,11 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 		efree(buf);
 	}
 
+	efree(mailid);
+#ifndef PHP_WIN32
+	efree(datehead); 
+#endif
+
 	return rheader;
 }
 
@@ -337,7 +356,9 @@ unsigned char * generate_from (unsigned char *email, char *set)
 	{ php_error(E_ERROR, "%s is invalid email address form.", mail); }
 	
 	if ( strlen(name) < 1 )
-   	{ rfrom = estrndup(mail, maillen); }
+   	{
+		rfrom = estrndup(mail, maillen);
+	}
 	else
 	{
 		cname = (unsigned char *) php_base64_encode(name, strlen(name), &namelen);
@@ -357,8 +378,8 @@ unsigned char * generate_from (unsigned char *email, char *set)
 unsigned char * generate_to (unsigned char *toaddr, char *set)
 {
 	unsigned char delimiters[] = ",";
-	unsigned char *token, *t_mail, *t_name, *to = NULL, *cname, *rto;
-	int free = 0, maillen = 0, namelen = 0, setlen = strlen(set);
+	unsigned char *token, *t_mail, *t_name, *to = NULL, *cname;
+	int maillen = 0, namelen = 0, setlen = strlen(set);
 
 	if ( strlen(toaddr) < 1 )
 	{
@@ -379,7 +400,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 		}
 		else
 		{
-			t_mail = estrdup( (unsigned char *) strtrim(token) );
+			t_mail = (unsigned char *) strtrim(token);
 			t_name = "";
 		}
 
@@ -388,7 +409,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 		{
 			if ( namelen < 1 )
 			{
-				to = estrdup( (unsigned char *) strtrim(token) );
+				to = (unsigned char *) strtrim(token);
 			}
 			else
 			{
@@ -397,7 +418,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 				t_to = emalloc( sizeof(char) * (to_lenth + 1) );
 				cname = estrdup( (unsigned char *) php_base64_encode(t_name, namelen, &namelen) );
 				sprintf(t_to, "=?%s?B?%s?= <%s>", set, cname, t_mail);
-				to = estrdup(t_to);
+				to = t_to;
 				efree(t_to);
 			}
 		}
@@ -418,7 +439,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 				}
 				else
 				{
-					s_mail = estrdup( (unsigned char *) strtrim(token) );
+					s_mail = (unsigned char *) strtrim(token);
 					s_name = "";
 				}
 
@@ -428,24 +449,24 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 					unsigned char s_to[200];
 					if ( snlen < 1 )
 					{
-						sprintf(s_to, "%s", s_mail);
+						memset(s_to, '\0', 20);
+						memmove(s_to, s_mail, strlen(s_mail));
 					}
 					else
 					{
-						sub_cname = estrdup ((unsigned char *) php_base64_encode(s_name, snlen, &namelen));
+						sub_cname = (unsigned char *) php_base64_encode(s_name, snlen, &namelen);
 						sprintf(s_to, "=?%s?B?%s?= <%s>", set, sub_cname, s_mail);
 					}
 
 					if ( to == NULL )
 					{
-						to = (unsigned char *) estrdup(s_to);
+						to = s_to;
 					}
 					else
 					{
 						unsigned int add_to_len = strlen(s_to) + 3;
 						unsigned char *add_to;
 						add_to = emalloc( sizeof(char) * (add_to_len + 1) );
-						free = 1;
 						sprintf(add_to, ", %s", s_to);
 						to = (unsigned char *) erealloc(to, strlen(to) + add_to_len);
 						strcat(to, add_to);
@@ -458,15 +479,12 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 
 	if ( to != NULL )
 	{
-		rto = (unsigned char *) estrdup(to);
-		if ( free == 1) { efree(to); }
+		return to;
 	}
 	else
 	{
 		php_error(E_ERROR, "Don't exist valid TO address.");
 	}
-
-	return rto;
 }
 
 unsigned char * generate_title (unsigned char *title, unsigned char *set)
@@ -487,7 +505,7 @@ unsigned char * generate_title (unsigned char *title, unsigned char *set)
 		subject = emalloc( sizeof(char) * (subject_lenth + 1) );
 		sprintf(subject, "=?%s?B?%s?=", set, base64);
 
-		rtitle = (unsigned char *) estrdup(subject);
+		rtitle = subject;
 		efree(subject);
 	}
 
@@ -530,7 +548,7 @@ char * generate_mail_id (char *id)
 	/* get random number */
 	srand(now);
 	sprintf(generate, "%s%d@%s", idtime, rand(), id);
-	mailid = (char *) strdup(generate);
+	mailid = (char *) estrdup(generate);
 
 	return mailid;
 }
@@ -570,7 +588,7 @@ char * make_boundary ()
 
 
 	sprintf(bound,"--=_NextPart_000_000%s_%s.%s",first,second,third);
-	rbound = (char *) strdup(bound);
+	rbound = (char *) estrdup(bound);
 
 	return rbound;
 }

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.12 2002-09-18 10:14:10 oops Exp $ 
+  $Id: krfile.c,v 1.13 2002-10-24 14:34:51 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -360,7 +360,7 @@ void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_
 		php_error(E_ERROR, "Error writing to file %s", filename);
 	}
 
-	if ( mode_o == 1 && ret == 0 ) { efree(string); }
+	efree(string);
 
 	fclose(fp);
 }
