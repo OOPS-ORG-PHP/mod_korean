@@ -1,5 +1,8 @@
 PHP Korean Extexsions Changelog
 
+* Fri Jul 18 2002
+- fixed problem of null new_type parameter in imgresize_lib function
+
 * Wed Jul  3 2002
 - added include_path option on readfile_lib function
 
