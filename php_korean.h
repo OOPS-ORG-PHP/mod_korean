@@ -15,7 +15,7 @@
   | Author:                                                              |
   +----------------------------------------------------------------------+
 
-  $Id: php_korean.h,v 1.53 2003-06-02 06:13:38 oops Exp $
+  $Id: php_korean.h,v 1.54 2003-07-14 04:02:27 oops Exp $
 */
 
 #ifndef PHP_KOREAN_H
@@ -71,7 +71,7 @@ ZEND_END_MODULE_GLOBALS(korean)
 #define KOREAN_G(v) (korean_globals.v)
 #endif
 
-#define BUILDNO "200306021515"
+#define BUILDNO "200307141302"
 #define BUILDVER "0.0.6dev"
 
 #define phpext_korean_ptr korean_module_ptr
