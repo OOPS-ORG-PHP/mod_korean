@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.11 2002-09-19 08:05:44 oops Exp $
+  $Id: krmail.c,v 1.12 2002-09-22 10:07:18 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -168,6 +168,7 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 				                 "%s%s\r\n%s\r\n--%s--\r\n",
 			   	return_header, tmp_attach_header, return_body, return_attach, attbound);
 		return_mail = estrdup(tmp_return_mail);
+		efree(tmp_return_mail);
 	}
 	else
 	{
@@ -178,6 +179,7 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 		sprintf(tmp_return_mail, "%s\r\nThis is a multi-part message in MIME format." \
 								 "\r\n%s\r\n", return_header, return_body);
 		return_mail = estrdup(tmp_return_mail);
+		efree(tmp_return_mail);
 	}
 
 	return return_mail;
@@ -271,6 +273,7 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 					bboundary, bset, base64plain, bboundary, bset, base64html, bboundary);
 
 			rbody = estrdup(tmp_body);
+			efree(tmp_body);
 		}
 	}
 	else
@@ -304,6 +307,7 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 					 "boundary=\"%s\"\r\n\r\n",
 				mailid, from, datehead, to, subject, mimetype, boundary);
 		rheader = (char *) estrdup(buf);
+		efree(buf);
 	}
 
 	return rheader;
@@ -343,6 +347,7 @@ unsigned char * generate_from (unsigned char *email, char *set)
 			tmp_from = emalloc( sizeof(char) * (from_lenth + 1) );
 			sprintf(tmp_from, "=?%s?B?%s?= <%s>", set, cname, mail);
 			rfrom = estrndup( tmp_from, strlen(tmp_from) );
+			efree(tmp_from);
 		}
 	}
 
@@ -393,6 +398,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 				cname = estrdup( (unsigned char *) php_base64_encode(t_name, namelen, &namelen) );
 				sprintf(t_to, "=?%s?B?%s?= <%s>", set, cname, t_mail);
 				to = estrdup(t_to);
+				efree(t_to);
 			}
 		}
 
@@ -443,6 +449,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 						sprintf(add_to, ", %s", s_to);
 						to = (unsigned char *) erealloc(to, strlen(to) + add_to_len);
 						strcat(to, add_to);
+						efree(add_to);
 					}
 				}
 			}
@@ -481,6 +488,7 @@ unsigned char * generate_title (unsigned char *title, unsigned char *set)
 		sprintf(subject, "=?%s?B?%s?=", set, base64);
 
 		rtitle = (unsigned char *) estrdup(subject);
+		efree(subject);
 	}
 
 	return rtitle;

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.27 2002-09-19 08:05:44 oops Exp $
+  $Id: krnetwork.c,v 1.28 2002-09-22 10:07:18 oops Exp $
 */
 
 /*
@@ -531,6 +531,7 @@ int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 
 		tmpcmd[tmplen + add] = '\0';
 		cmd = (unsigned char *) estrdup(tmpcmd);
+		efree(tmpcmd);
 	}
 
 	/* print debug information */
