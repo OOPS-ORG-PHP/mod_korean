@@ -1,4 +1,4 @@
-dnl $Id: config.m4,v 1.12 2002-12-30 17:55:12 oops Exp $
+dnl $Id: config.m4,v 1.13 2002-12-31 04:16:28 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -8,7 +8,7 @@ dnl without editing.
 dnl If your extension references something external, use with:
 
 PHP_ARG_ENABLE(korean, whether to enable korean support,
-[  --enable-korean           Enable korean support])
+[  --enable-korean         Enable korean support])
 
 if test "$PHP_KOREAN" != "no"; then
   AC_DEFINE(HAVE_KOREAN,1,[ ])
@@ -17,7 +17,7 @@ if test "$PHP_KOREAN" != "no"; then
   PHP_SUBST(CPPFLAGS)
 
   AC_MSG_CHECKING(whether to enable gd functoin)
-  AC_ARG_ENABLE(korean-gd, [ --enable-korean-gd         Enable gd functoin ],[
+  AC_ARG_ENABLE(korean-gd, [  --enable-korean-gd      Enable external gd functoin [ default=buildin ] ],[
     if test "$enable_korean_gd" = "yes" ; then
       AC_MSG_RESULT(external)
     else
