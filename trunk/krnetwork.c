@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.26 2002-09-19 02:55:21 oops Exp $
+  $Id: krnetwork.c,v 1.27 2002-09-19 08:05:44 oops Exp $
 */
 
 /*
@@ -521,11 +521,8 @@ int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 	else { add = 3; }
 
 	{
-#ifdef PHP_WIN32
-		unsigned char tmpcmd[4096000];
-#else
-		unsigned char tmpcmd[tmplen + add];
-#endif
+		unsigned char *tmpcmd;
+		tmpcmd = emalloc( sizeof(char) * (tmplen + add + 1) );
 
 		if ( !strcasecmp (target, "mail") ) { sprintf(tmpcmd, "MAIL From: %s\r\n", var); }
 		else if ( !strcasecmp (target, "rcpt") ) { sprintf(tmpcmd, "RCPT To: %s\r\n", var); }
@@ -757,7 +754,7 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 
 		if((fp = fopen(tmpfilename, "wb")) == NULL)
 		{
-			php_error(E_ERROR, "Can't create temp file of remote file");
+			php_error(E_ERROR, "Can't create temp file %s of remote file", tmpfilename);
 		}
 	}
 
