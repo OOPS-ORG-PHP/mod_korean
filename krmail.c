@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.19 2002-12-31 20:18:37 oops Exp $
+  $Id: krmail.c,v 1.20 2002-12-31 22:48:48 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -592,14 +592,11 @@ char * make_boundary ()
 unsigned char * html_to_plain (unsigned char * source)
 {
 	static unsigned char *strip, *rptext;
-	unsigned char *src[4] = { "/\n|\r\n/i", "/^.*<BODY[^>]*>/i", "/<\\/BODY>.*$/i", "/\\|\\|ENTER\\|\\|/i" };
-	unsigned char *des[4] = { "||ENTER||", "", "", "\r\n" };
-
-	strip = estrdup(source);
-	php_strip_tags(strip, strlen(strip), 0, NULL, 0);
-	rptext = (unsigned char *) kr_regex_replace_arr (src, des, strip, 4);
-	efree(strip);
-
+	unsigned char *src[3] = { ":^.*<BODY[^>]*>:si", ":<\\/BODY>.*$:si", ":</?[a-z][^>]*>:si" };
+	unsigned char *des[3] = { "", "", "" };
+			    
+	rptext = (unsigned char *) kr_regex_replace_arr (src, des, source, 3);
+				    
 	return rptext;
 }
 

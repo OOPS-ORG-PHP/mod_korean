@@ -4,6 +4,7 @@ PHP Korean Extexsions Changelog
   by JoungKyun Kim <http://www.oops.org>
     - added gd version check rutine on krimage.c
     - fixed setment fault of mailsource_lib function
+    - modified html_to_plain function on krmail.c
 
 * Mon Dec 30 2002
   by JoungKyun Kim <http://www.oops.org>
