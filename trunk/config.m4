@@ -1,4 +1,4 @@
-dnl $Id: config.m4,v 1.17 2003-03-01 10:04:12 oops Exp $
+dnl $Id: config.m4,v 1.18 2003-03-01 19:46:05 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -18,7 +18,7 @@ if test "$PHP_KOREAN" != "no"; then
 
   AC_MSG_CHECKING(whether to enable gd functoin)
   AC_ARG_ENABLE(korean-gd, [  --enable-korean-gd      Enable external gd functoin [ default=buildin ] ],[
-    if test "$enable_korean_gd" = "yes" ; then
+    if test "$enable_korean_gd" != "no" ; then
       AC_MSG_RESULT(external)
     else
       AC_MSG_RESULT(builtin)
@@ -27,7 +27,11 @@ if test "$PHP_KOREAN" != "no"; then
 
   AC_DEFINE(KOEAN_GD, 1, [ ])
 
-  if test "$enable_korean_gd" = "yes" ; then
+  if test -z "$enable_korean_gd" ; then
+    enable_korean_gd=no
+  fi
+
+  if test "$enable_korean_gd" != "no" ; then
     if test "$enable_korean_gd" = "yes"; then
       GD_SEARCH_PATHS="/usr/local /usr"
     else
@@ -55,8 +59,20 @@ if test "$PHP_KOREAN" != "no"; then
     PHP_ADD_INCLUDE($KOREAN_INCLUDE)
   else
 
+    if test "$ext_shared" = "no"; then
+      if test "$PHP_GD" = "no"; then
+        include_gdlib="yes"
+      else
+        include_gdlib="no"
+      fi
+    else
+      include_gdlib="yes"
+    fi
+
     KR_MODULE_TYPE=builtin
-    extra_sources="libgd/gd.c libgd/gd_png.c libgd/gd_jpeg.c libgd/gd_gif_in.c libgd/gd_io.c libgd/gdtables.c libgd/gdhelpers.c"
+    if test "$include_gdlib" = "yes"; then
+      krextra_sources="libgd/gd.c libgd/gd_png.c libgd/gd_jpeg.c libgd/gd_gif_in.c libgd/gd_io.c libgd/gd_io_file.c libgd/gd_ss.c libgd/gd_io_ss.c libgd/gdtables.c libgd/gdhelpers.c"
+    fi
 
     dnl These are always available with bundled library
     AC_DEFINE(KRGD_BUILTIN,             1, [ ])
@@ -64,13 +80,17 @@ if test "$PHP_KOREAN" != "no"; then
     AC_DEFINE(HAVE_GD_PNG,              1, [ ])
     AC_DEFINE(HAVE_GD_JPEG,             1, [ ])
 
-    KOREAN_LIB="./libgd"
-    KR_PARAMETER="$OOPS_PARAMETER -I./libgd"
-    PHP_ADD_BUILD_DIR(./libgd)
+    if test "$include_gdlib" = "yes"; then
+      KOREAN_LIB="./libgd"
+      KR_PARAMETER="$OOPS_PARAMETER -I./libgd"
+      PHP_ADD_BUILD_DIR(./libgd)
+    else
+      KR_PARAMETER="$OOPS_PARAMETER"
+    fi
+
     dnl PHP_ADD_LIBRARY_WITH_PATH(gd, $KOREAN_LIB, KOREAN_SHARED_LIBADD)
     PHP_EXPAND_PATH($KOREAN_INCLUDE, KOREAN_INCLUDE)
     PHP_ADD_INCLUDE($KOREAN_INCLUDE)
-
     PHP_SUBST(KR_PARAMETER)
   fi
 
@@ -80,5 +100,5 @@ if test "$PHP_KOREAN" != "no"; then
   dnl if php version is under 4.2.x, use PHP_EXTENSION
   dnl bug over php 4.2.x, use PHP_NEW_EXTENSION
   dnl PHP_EXTENSION(korean, $ext_shared)
-  PHP_NEW_EXTENSION(korean, krcharset.c krerror.c krimage.c krmath.c krparse.c korean.c krcheck.c krfile.c krmail.c krnetwork.c krregex.c $extra_sources, $ext_shared,, \\$(KR_PARAMETER))
+  PHP_NEW_EXTENSION(korean, krcharset.c krerror.c krimage.c krmath.c krparse.c korean.c krcheck.c krfile.c krmail.c krnetwork.c krregex.c $krextra_sources, $ext_shared,, \\$(KR_PARAMETER))
 fi
