@@ -6,17 +6,23 @@ putfile_lib -- 파일을 기록하는 함수
 
 <FONT ID=RE>설명</FONT>
 
-<B>void put_file_lib(string filename, stirng str, [ int mode ])</B>
+<B>void putfile_lib(string filename, stirng str, [ int mode, int debug ])</B>
 
 특정 내용을 파일에 기록을 한다. mode 를 지정하지 않을 경우에는 기존의 파일이 존재
 할 경우 덮어쓰기를 하게 되며, 1로 지정을 할 경우에는 존재할 경우 덧붙이기를 하게되며,
 존재하지 않을 경우에는 새 파일로 기록을 하게 된다.
 
+이 함수는 쓰기 성공시에는 0을 반환하며, 실패시에는 -1 을 반환한다.
+
 <FONT ID=RE>예제</FONT>
 
 $text = &quot;test&quot;;
 $path = &quot;./doc/example.txt&quot;;
-putfile_lib($path,$text,1);
+if (putfile_lib($path,$text,1) == -1 ) {
+  echo "Success\n";
+} else {
+  echo "Failed\n";
+}
 
 <FONT ID=RE>참고</FONT>
 getfile_lib()

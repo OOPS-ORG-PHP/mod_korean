@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.32 2003-07-14 05:12:10 oops Exp $ 
+  $Id: krfile.c,v 1.33 2003-09-04 09:23:15 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -258,7 +258,7 @@ PHP_FUNCTION(putfile_lib)
 
 	VCWD_REALPATH(Z_STRVAL_PP(filename), filepath);
 
-	writefile(filepath, Z_STRVAL_PP(str), write);
+	RETURN_LONG(writefile(filepath, Z_STRVAL_PP(str), write));
 }
 /* }}} */
 
@@ -446,7 +446,7 @@ PHP_FUNCTION(pcregrep_lib)
 /* }}} */
 
 /* {{{ void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o) */
-void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o)
+int writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o)
 {
 	struct stat s;
 
@@ -478,18 +478,24 @@ void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_
 
 	if ( (fp = fopen(filename, act)) == NULL )
    	{
-		php_error(E_ERROR, "Can't open %s in write mode", filename);
+		php_error(E_WARNING, "Can't open %s in write mode", filename);
+		efree (string);
+		return -1;
 	}
 
 	if (fwrite(string, sizeof(char), strlen(string), fp) != strlen(string))
    	{
 		fclose(fp);
-		php_error(E_ERROR, "Error writing to file %s", filename);
+		php_error(E_WARNING, "Error writing to file %s", filename);
+		efree (string);
+		return -1;
 	}
 
 	efree(string);
 
 	fclose(fp);
+
+	return 0;
 }
 /* }}} */
 
