@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.3 2002-08-05 18:26:09 oops Exp $ 
+  $Id: krfile.c,v 1.4 2002-08-05 19:20:51 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -37,19 +37,23 @@
 
 /* {{{ proto int human_fsize_lib(int filesize, int pt)
  * print move action to url */
-PHP_FUNCTION(human_fsize_lib) {
+PHP_FUNCTION(human_fsize_lib)
+{
 	pval **fsize, **pt;
 	unsigned int sub = 0;
 	unsigned char *ret;
 
-	switch(ZEND_NUM_ARGS()) {
+	switch(ZEND_NUM_ARGS())
+	{
 		case 1:
-			if(zend_get_parameters_ex(1, &fsize) == FAILURE) {
+			if(zend_get_parameters_ex(1, &fsize) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 2:
-			if(zend_get_parameters_ex(2, &fsize, &pt) == FAILURE) {
+			if(zend_get_parameters_ex(2, &fsize, &pt) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_long_ex(pt);
@@ -60,14 +64,15 @@ PHP_FUNCTION(human_fsize_lib) {
 	}
 	convert_to_double_ex(fsize);
 
-	ret = human_file_size(Z_DVAL_PP(fsize),sub);
-	RETURN_STRING(ret,1);
+	ret = human_file_size(Z_DVAL_PP(fsize), sub);
+	RETURN_STRING(ret, 1);
 }
 /* }}} */
 
 /* {{{ proto array filelist_lib(string path, [ string mode, [ string regex ] ])
  *  * return file list in path */
-PHP_FUNCTION(filelist_lib) {
+PHP_FUNCTION(filelist_lib)
+{
 	pval **path, **mode, **regex;
 	DIR *dp;
 	unsigned char *mode_s, *regex_s;
@@ -76,16 +81,19 @@ PHP_FUNCTION(filelist_lib) {
 
 	struct dirent *d;
 
-	switch(ZEND_NUM_ARGS()) {
+	switch(ZEND_NUM_ARGS())
+   	{
 		case 1:
-			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &path) == FAILURE) {
+			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &path) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			mode_s = "";
 			regex_s = "";
 			break;
 		case 2:
-			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &path, &mode) == FAILURE) {
+			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &path, &mode) == FAILURE)
+		   	{
 				 WRONG_PARAM_COUNT;
 			}
 			convert_to_string_ex(path);
@@ -93,7 +101,8 @@ PHP_FUNCTION(filelist_lib) {
 			regex_s = "";
 			break;
 		case 3:
-			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &path, &mode, &regex) == FAILURE) {
+			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &path, &mode, &regex) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_string_ex(path);
@@ -112,45 +121,62 @@ PHP_FUNCTION(filelist_lib) {
 	convert_to_string_ex(path);
 	if (Z_STRLEN_PP(path) == 0) { RETURN_FALSE; }
 
-	if ( array_init(return_value) == FAILURE) {
+	if ( array_init(return_value) == FAILURE)
+   	{
 		RETURN_FALSE;
 	}
 
-	if ( (dp = opendir(Z_STRVAL_PP(path))) == NULL ) {
-		php_error(E_ERROR,"Can't open %s directory in read mode",Z_STRVAL_PP(path));
+	if ( (dp = opendir(Z_STRVAL_PP(path))) == NULL )
+   	{
+		php_error(E_ERROR, "Can't open %s directory in read mode", Z_STRVAL_PP(path));
 	}
 
-	if (strlen(regex_s)) {
-		if (regcomp(&preg,regex_s,REG_EXTENDED) != 0) {
-			php_error(E_WARNING,"Problem REGEX compile in PHP");
+	if (strlen(regex_s))
+   	{
+		if (regcomp(&preg,regex_s, REG_EXTENDED) != 0)
+	   	{
+			php_error(E_WARNING, "Problem REGEX compile in PHP");
 			RETURN_FALSE;
 		}
 	}
 
-	while ( d = readdir(dp) ) {
-		if ( d->d_ino != 0) {
-			if ( !strcmp(d->d_name,".") || !strcmp(d->d_name,"..")) { continue; }
+	while ( d = readdir(dp) )
+	{
+		if ( d->d_ino != 0)
+		{
+			if ( !strcmp(d->d_name, ".") || !strcmp( d->d_name, "..")) { continue; }
 
-			if (!strcmp(mode_s,"f")) {
-				if (check_filedev (Z_STRVAL_PP(path),d->d_name) != RETURN_FILE_TYPE) { continue; }
-			} else if (!strcmp(mode_s,"d")) {
-				if (check_filedev (Z_STRVAL_PP(path),d->d_name) != RETURN_DIR_TYPE) { continue; }
-			} else if (!strcmp(mode_s,"l")) {
-				if (check_filedev (Z_STRVAL_PP(path),d->d_name) != RETURN_LINK_TYPE) { continue; }
-			} else if (!strcmp(mode_s,"fd")) {
-				if (check_filedev (Z_STRVAL_PP(path),d->d_name) != RETURN_FILE_TYPE &&
-					check_filedev (Z_STRVAL_PP(path),d->d_name) != RETURN_DIR_TYPE) { continue; }
-			} else if (!strcmp(mode_s,"fl")) {
-				if (check_filedev (Z_STRVAL_PP(path),d->d_name) != RETURN_FILE_TYPE &&
-					check_filedev (Z_STRVAL_PP(path),d->d_name) != RETURN_LINK_TYPE) { continue; }
-			} else if (!strcmp(mode_s,"dl")) {
-				if (check_filedev (Z_STRVAL_PP(path),d->d_name) != RETURN_LINK_TYPE &&
-					check_filedev (Z_STRVAL_PP(path),d->d_name) != RETURN_DIR_TYPE) { continue; }
+			if (!strcmp(mode_s,"f"))
+			{
+				if (check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_FILE_TYPE) { continue; }
+			}
+			else if (!strcmp(mode_s, "d"))
+			{
+				if (check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_DIR_TYPE) { continue; }
+			}
+			else if (!strcmp(mode_s, "l"))
+		   	{
+				if (check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_LINK_TYPE) { continue; }
+			}
+		   	else if (!strcmp(mode_s, "fd"))
+		   	{
+				if (check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_FILE_TYPE &&
+					check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_DIR_TYPE) { continue; }
+			}
+		   	else if (!strcmp(mode_s, "fl"))
+		   	{
+				if (check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_FILE_TYPE &&
+					check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_LINK_TYPE) { continue; }
+			}
+		   	else if (!strcmp(mode_s, "dl"))
+		   	{
+				if (check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_LINK_TYPE &&
+					check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_DIR_TYPE) { continue; }
 			} 
 
-			if ( strlen(regex_s) && regexec(&preg,d->d_name,0,NULL,0) != 0) { continue; }
+			if ( strlen(regex_s) && regexec(&preg,d->d_name, 0, NULL, 0) != 0) { continue; }
 
-			add_next_index_string(return_value,d->d_name,1);
+			add_next_index_string(return_value,d->d_name, 1);
 		}
 	}
 
@@ -161,18 +187,22 @@ PHP_FUNCTION(filelist_lib) {
 
 /* {{{ proto void put_file_lib(string filename, stirng str, [ int mode ])
  *  * write file */
-PHP_FUNCTION(putfile_lib) {
+PHP_FUNCTION(putfile_lib)
+{
 	pval **filename, **str, **mode;
 	unsigned int write = 0;
 
-	switch(ZEND_NUM_ARGS()) {
+	switch(ZEND_NUM_ARGS())
+	{
 		case 2:
-			if(zend_get_parameters_ex(2, &filename, &str) == FAILURE) {
+			if(zend_get_parameters_ex(2, &filename, &str) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 3:
-			if(zend_get_parameters_ex(3, &filename, &str, &mode) == FAILURE) {
+			if(zend_get_parameters_ex(3, &filename, &str, &mode) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_long_ex(mode);
@@ -185,30 +215,35 @@ PHP_FUNCTION(putfile_lib) {
 	convert_to_string_ex(filename);
 	convert_to_string_ex(str);
 
-	if (Z_STRLEN_PP(filename) == 0) {
+	if (Z_STRLEN_PP(filename) == 0)
+   	{
 		RETURN_FALSE;
 	}
 
-	writefile(Z_STRVAL_PP(filename),Z_STRVAL_PP(str),write);
+	writefile(Z_STRVAL_PP(filename), Z_STRVAL_PP(str), write);
 }
 /* }}} */
 
 /* {{{ proto string get_file_lib(string filename, [ int readsize ])
  *  * return file context */
-PHP_FUNCTION(getfile_lib) {
+PHP_FUNCTION(getfile_lib)
+{
 	pval **filename, **fsize;
 	FILE *fp;
 	unsigned size = 0;
 	unsigned char *str;
 
-	switch(ZEND_NUM_ARGS()) {
+	switch(ZEND_NUM_ARGS())
+	{
 		case 1:
-			if(zend_get_parameters_ex(1, &filename) == FAILURE) {
+			if(zend_get_parameters_ex(1, &filename) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 2:
-			if(zend_get_parameters_ex(2, &filename, &fsize) == FAILURE) {
+			if(zend_get_parameters_ex(2, &filename, &fsize) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_long_ex(fsize);
@@ -220,27 +255,31 @@ PHP_FUNCTION(getfile_lib) {
 
 	convert_to_string_ex(filename);
 
-	if (Z_STRLEN_PP(filename) == 0) {
+	if (Z_STRLEN_PP(filename) == 0)
+   	{
 		RETURN_FALSE;
 	}
 
 	if (size < 0 ) { size = 0; }
 
-	str = read_file(Z_STRVAL_PP(filename),size);
+	str = read_file(Z_STRVAL_PP(filename), size);
 										    
-	RETURN_STRING(str,1);
+	RETURN_STRING(str, 1);
 }
 /* }}} */
 
 /* {{{ proto string getfiletype_lib(string filename)
  *  * return file extensions */
-PHP_FUNCTION(getfiletype_lib) {
+PHP_FUNCTION(getfiletype_lib)
+{
 	pval **filename;
 	unsigned char *files, *files_o;
 
-	switch(ZEND_NUM_ARGS()) {
+	switch(ZEND_NUM_ARGS())
+	{
 		case 1:
-			if(zend_get_parameters_ex(1, &filename) == FAILURE) {
+			if(zend_get_parameters_ex(1, &filename) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_string_ex(filename);
@@ -250,16 +289,18 @@ PHP_FUNCTION(getfiletype_lib) {
 			WRONG_PARAM_COUNT;
 	}
 
-	if (strlen(files_o) == 0) {
+	if (strlen(files_o) == 0)
+   	{
 		RETURN_FALSE;
 	}
 
-	files = strrchr(files_o,'.');
+	files = strrchr(files_o, '.');
 
-	if (files == NULL) {
+	if (files == NULL)
+   	{
 		RETURN_FALSE;
 	} else {
-		RETURN_STRING(&files_o[files-files_o+1],1);
+		RETURN_STRING(&files_o[files-files_o+1], 1);
 	}
 }
 /* }}} */
@@ -272,29 +313,37 @@ void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_
 	unsigned char *act, *string;
 	int ret;
 
-	if ( mode_o == 1) {
+	if ( mode_o == 1)
+   	{
 		ret = stat (filename, &s);
 
-		if (ret < 0) {
+		if (ret < 0)
+	   	{
 			act = "wb";
 			string = estrdup(str_o);
-		} else {
+		}
+	   	else
+	   	{
 			act = "ab";
 			string = (char *) emalloc(strlen(str_o) + 2);
-			sprintf(string,"\n%s",str_o);
+			sprintf(string, "\n%s", str_o);
 		}
-	} else {
+	}
+   	else
+   	{
 		act = "wb";
 		string = estrdup(str_o);
 	}
 
-	if ((fp = fopen(filename,act)) == NULL) {
-		php_error(E_ERROR,"Can't open %s in write mode",filename);
+	if ( (fp = fopen(filename, act)) == NULL )
+   	{
+		php_error(E_ERROR, "Can't open %s in write mode", filename);
 	}
 
-	if (fwrite(string,sizeof(char),strlen(string),fp) != strlen(string)) {
+	if (fwrite(string, sizeof(char), strlen(string), fp) != strlen(string))
+   	{
 		fclose(fp);
-		php_error(E_ERROR,"Error writing to file %s",filename);
+		php_error(E_ERROR, "Error writing to file %s", filename);
 	}
 
 	if ( mode_o == 1 && ret == 0 ) { efree(string); }
@@ -311,25 +360,30 @@ unsigned char *read_file(unsigned char *filename, unsigned int filesize)
 	unsigned char *text, *ret;
 
 	/* get file info */
-	stat (filename,&filebuf);
+	stat (filename, &filebuf);
 	/* original file size */
 	fsize_o = filebuf.st_size;
 
-	if (filesize > fsize_o) {
+	if (filesize > fsize_o)
+   	{
 		fsize = fsize_o;
-	} else {
+	}
+   	else
+   	{
 		fsize = ( filesize == 0 ) ? fsize_o : filesize;
 	}
 
-	if ((fp = fopen(filename,"rb")) == NULL) {
-		 php_error(E_ERROR,"Can't open %s in read mode",filename);
+	if ((fp = fopen(filename, "rb")) == NULL)
+   	{
+		 php_error(E_ERROR, "Can't open %s in read mode", filename);
 		 return NULL;
 	}
 
 	text = emalloc(sizeof(char) * (fsize + 1));
 
-	if ( (fread(text,sizeof(char),fsize,fp)) != fsize ) {
-		php_error(E_ERROR,"Occured error in file stream");
+	if ( (fread(text, sizeof(char), fsize, fp)) != fsize )
+   	{
+		php_error(E_ERROR, "Occured error in file stream");
 		return NULL;
 	}
 	text[fsize - 1] = '\0';
@@ -342,37 +396,48 @@ unsigned char *read_file(unsigned char *filename, unsigned int filesize)
 	return ret;
 }
 
-unsigned char *human_file_size (double size_o, int sub_o) {
-
+unsigned char *human_file_size (double size_o, int sub_o)
+{
 	unsigned int res;
 	unsigned char *ret = NULL, *return_val;
 	unsigned char *danwe, *dot = ".", *fdot = ",";
 	unsigned char *BYTES_C = _php_math_number_format(size_o, 0, '.', ',');
 
-	if(size_o < 1024) {
+	if(size_o < 1024)
+	{
 		ret = emalloc(sizeof(char) * (7 + strlen(BYTES_C)));
-		sprintf(ret,"%s Bytes",BYTES_C);
-	} else {
-		if (size_o < 1048576 ) {
+		sprintf(ret, "%s Bytes", BYTES_C);
+	}
+   	else
+   	{
+		if (size_o < 1048576 )
+	   	{
 			res = round_value(size_o/1024);
 			danwe = "KB";
-		} else if (size_o < 1073741827) {
+		}
+	   	else if (size_o < 1073741827)
+	   	{
 			res = round_value(size_o/1048576);
 			danwe = "MB";
-		} else {
+		}
+	   	else
+	   	{
 			res = round_value(size_o/1073741827);
 			danwe = "GB";
 		}
 
 		ret = emalloc(sizeof(char) * (18 + strlen(BYTES_C) + strlen(danwe)));
-		if(sub_o) {
-			sprintf(ret,"%d %s (%s Bytes)",res,danwe,BYTES_C);
-		} else {
-			sprintf(ret,"%d %s",res,danwe);
+		if(sub_o)
+	   	{
+			sprintf(ret, "%d %s (%s Bytes)", res, danwe, BYTES_C);
+		}
+	   	else
+	   	{
+			sprintf(ret, "%d %s", res, danwe);
 		}
 	}
 
-	return_val = estrndup(ret,strlen(ret));
+	return_val = estrndup(ret, strlen(ret));
 	efree(ret);
 
 	return return_val;
@@ -398,9 +463,9 @@ unsigned int check_filedev (unsigned char *path_f, unsigned char *filename)
 	int ret;
 
 	fullpath = emalloc(sizeof(char) * (strlen(path_f) + strlen(filename) + 2));
-	sprintf(fullpath,"%s/%s",path_f,filename);
+	sprintf(fullpath, "%s/%s", path_f, filename);
 
-	ret = lstat(fullpath,&s);
+	ret = lstat(fullpath, &s);
 	efree(fullpath);
 
 	if ( S_ISLNK(s.st_mode) ) { return RETURN_LINK_TYPE; }

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.11 2002-08-05 18:26:09 oops Exp $
+  $Id: korean.c,v 1.12 2002-08-05 19:20:51 oops Exp $
 */
 
 /*
@@ -139,32 +139,38 @@ PHP_MINFO_FUNCTION(korean)
 
 /* {{{ proto unsigned char buildno_lib(void)
  *  print korean extension build number */
-PHP_FUNCTION(buildno_lib) {
+PHP_FUNCTION(buildno_lib)
+{
 	RETURN_STRING (BUILDNO,1);
 }
 /* }}} */
 
 /* {{{ proto unsigned char version_lib(void)
  *  print korean extension version */
-PHP_FUNCTION(version_lib) {
+PHP_FUNCTION(version_lib)
+{
 	RETURN_STRING (BUILDVER,1);
 }
 /* }}} */
 
 /* {{{ proto void movepage_lib(string url, int timeout)
  *  print move action to url */
-PHP_FUNCTION(movepage_lib) {
+PHP_FUNCTION(movepage_lib)
+{
 	pval **url, **timeout;
 	unsigned int time = 0;
 
-	switch(ZEND_NUM_ARGS()) {
+	switch(ZEND_NUM_ARGS())
+   	{
 		case 1:
-			if(zend_get_parameters_ex(1, &url) == FAILURE) {
+			if(zend_get_parameters_ex(1, &url) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 2:
-			if(zend_get_parameters_ex(2, &url, &timeout) == FAILURE) {
+			if(zend_get_parameters_ex(2, &url, &timeout) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_long_ex(timeout);
@@ -175,24 +181,28 @@ PHP_FUNCTION(movepage_lib) {
 	}
 	convert_to_string_ex(url);
 
-	if (Z_STRLEN_PP(url) == 0) {
+	if (Z_STRLEN_PP(url) == 0)
+   	{
 		php_error(E_ERROR,"Can't permit NULL value of url address\n");
 	}
 
-	php_printf("<META http-equiv=\"refresh\" content=\"%d;URL=%s\">\n",time,Z_STRVAL_PP(url));
+	php_printf("<META http-equiv=\"refresh\" content=\"%d;URL=%s\">\n", time, Z_STRVAL_PP(url));
 	zend_bailout();
 }
 /* }}} */
 
 /* {{{ proto float get_microtime_lib(int old, int new) */
-PHP_FUNCTION(get_microtime_lib) {
+PHP_FUNCTION(get_microtime_lib)
+{
 	pval **old, **new;
 	unsigned char *old_o, *new_o, *old_f, *old_t, *new_f, *new_t;
 	unsigned char *pt_o, *pt_n, ret[10];
 
-	switch(ZEND_NUM_ARGS()) {
+	switch(ZEND_NUM_ARGS())
+	{
 		case 2:
-			if(zend_get_parameters_ex(2, &old, &new) == FAILURE) {
+			if(zend_get_parameters_ex(2, &old, &new) == FAILURE)
+			{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_string_ex(old);
@@ -204,13 +214,15 @@ PHP_FUNCTION(get_microtime_lib) {
 			WRONG_PARAM_COUNT;
 	}
 
-	if ( strlen(old_o) == 0 || strlen(new_o) == 0 ) {
+	if ( strlen(old_o) == 0 || strlen(new_o) == 0 )
+	{
 		RETURN_FALSE;
 	}
 
 	pt_o = strchr(old_o,' ');
 
-	if (pt_o != NULL) {
+	if (pt_o != NULL)
+	{
 		old_f = estrdup(old_o);
 		old_f[pt_o-old_o] = '\0';
 		old_t = estrdup(&old_o[pt_o-old_o+1]);
@@ -218,9 +230,10 @@ PHP_FUNCTION(get_microtime_lib) {
 		RETURN_FALSE;
 	}
 
-	pt_n = strchr(new_o,' ');
+	pt_n = strchr(new_o, ' ');
 
-	if (pt_n != NULL) {
+	if (pt_n != NULL)
+	{
 		new_f = estrdup(new_o);
 		new_f[pt_n-new_o] = '\0';
 		new_t = estrdup(&new_o[pt_n-new_o+1]);
@@ -228,8 +241,8 @@ PHP_FUNCTION(get_microtime_lib) {
 		RETURN_FALSE;
 	}
 
-	sprintf(ret,"%.2f",((atof(new_t) + atof(new_f)) - (atof(old_t) + atof(old_f))));
-	RETURN_STRING(ret,1);
+	sprintf(ret,"%.2f", ((atof(new_t) + atof(new_f)) - (atof(old_t) + atof(old_f))));
+	RETURN_STRING(ret, 1);
 }
 /* }}} */
 

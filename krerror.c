@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krerror.c,v 1.3 2002-07-24 10:13:39 oops Exp $ 
+  $Id: krerror.c,v 1.4 2002-08-05 19:20:51 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -30,21 +30,25 @@
 
 /* {{{ proto void perror_lib(string str [, int use_java [, string move_page [, int move second ] ] ])
  *  *  print error message */
-PHP_FUNCTION(perror_lib) {
+PHP_FUNCTION(perror_lib)
+{
 	pval **str, **java, **move, **seconds;
 	unsigned int ujava = 0, sec = 5;
 	unsigned char *err, *umove;
 
-	switch(ZEND_NUM_ARGS()) {
+	switch(ZEND_NUM_ARGS())
+   	{
 		case 1:
-			if(zend_get_parameters_ex(1, &str) == FAILURE) {
+			if(zend_get_parameters_ex(1, &str) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			ujava = 0;
 			umove = "1";
 			break;
 		case 2:
-			if(zend_get_parameters_ex(2, &str, &java) == FAILURE) {
+			if(zend_get_parameters_ex(2, &str, &java) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_long_ex(java);
@@ -52,7 +56,8 @@ PHP_FUNCTION(perror_lib) {
 			umove = "1";
 			break;
 		case 3:
-			if(zend_get_parameters_ex(3, &str, &java, &move) == FAILURE) {
+			if(zend_get_parameters_ex(3, &str, &java, &move) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_long_ex(java);
@@ -64,7 +69,8 @@ PHP_FUNCTION(perror_lib) {
 			if ( strlen(umove) == 0 ) umove = "1";
 			break;
 		case 4:
-			if(zend_get_parameters_ex(4, &str, &java, &move, &seconds) == FAILURE) {
+			if(zend_get_parameters_ex(4, &str, &java, &move, &seconds) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_long_ex(java);
@@ -83,31 +89,38 @@ PHP_FUNCTION(perror_lib) {
 	}
 	convert_to_string_ex(str);
 
-	if (Z_STRLEN_PP(str) == 0) {
+	if (Z_STRLEN_PP(str) == 0)
+   	{
 		err = "Problem in your request!";
-	} else {
+	}
+   	else
+   	{
 		err = Z_STRVAL_PP(str);
 	}
 
-	php_printf("%s\n",print_error(err,ujava,umove,sec));
+	php_printf("%s\n", print_error(err, ujava, umove, sec));
 	zend_bailout();
 }
 /* }}} */
 
 /* {{{ proto void pnotice_lib(string str, int use_java)
  *  *  print notice */
-PHP_FUNCTION(pnotice_lib) {
+PHP_FUNCTION(pnotice_lib)
+{
 	pval **str, **java;
 	unsigned int ujava = 0;
 
-	switch(ZEND_NUM_ARGS()) {
+	switch(ZEND_NUM_ARGS())
+	{
 		case 1:
-			if(zend_get_parameters_ex(1, &str) == FAILURE) {
+			if(zend_get_parameters_ex(1, &str) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 2:
-			if(zend_get_parameters_ex(2, &str, &java) == FAILURE) {
+			if(zend_get_parameters_ex(2, &str, &java) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_long_ex(java);
@@ -123,7 +136,7 @@ PHP_FUNCTION(pnotice_lib) {
 		RETURN_FALSE;
 	}
 
-	php_printf("%s",print_error (Z_STRVAL_PP(str),ujava,"notice",0));
+	php_printf("%s", print_error(Z_STRVAL_PP(str), ujava, "notice", 0));
 }
 /* }}} */
 
@@ -141,60 +154,71 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 	    agent_o = getenv("HTTP_USER_AGENT");
 		refer_o = getenv("HTTP_REFERER");
 #else
-	if(sapi_module.getenv) {
+	if(sapi_module.getenv)
+	{
 	    agent_o = sapi_module.getenv("HTTP_USER_AGENT", 15 TSRMLS_CC);
-		refer_o = sapi_module.getenv("HTTP_REFERER",12 TSRMLS_CC);
-	} else {
+		refer_o = sapi_module.getenv("HTTP_REFERER", 12 TSRMLS_CC);
+	}
+	else
+	{
 		agent_o = refer_o = NULL;
 	}
 #endif
 
 	/* text browser check */
 	if(agent_o != NULL) {
-		if (strstr(agent_o,"Lynx") || strstr(agent_o,"Links") || strstr(agent_o,"w3m")) {
+		if (strstr(agent_o, "Lynx") || strstr(agent_o, "Links") || strstr(agent_o, "w3m"))
+		{
 			textBR = 1;
 		}
 	}
 
-	if ( java_o == 0 || textBR == 1 || agent_o == NULL ) {
+	if ( java_o == 0 || textBR == 1 || agent_o == NULL )
+   	{
 		buf = emalloc(sizeof(char) * (strlen(str_o) + 2));
-		sprintf(buf,"%s\n",str_o);
-		if (strcmp(move_o,"notice") && strcmp(move_o,"1")) {
-			buf_move = (unsigned char *) kr_regex_replace ("/ /i","%20",move_o);
+		sprintf(buf, "%s\n", str_o);
+		if (strcmp(move_o, "notice") && strcmp(move_o, "1"))
+		{
+			buf_move = (unsigned char *) kr_regex_replace ("/ /i", "%20", move_o);
 			mv = emalloc(sizeof(char) * (strlen(buf_move) + 60));
-			sprintf(mv,"<META http-equiv=\"refresh\" content=\"%d;URL=%s\">\n",sec_o,buf_move);
+			sprintf(mv, "<META http-equiv=\"refresh\" content=\"%d;URL=%s\">\n", sec_o,buf_move);
 			mv[strlen(mv)] = '\0';
 
 			result = emalloc(sizeof(char) * (strlen(buf) + strlen(mv) + 3));
-			sprintf (result,"%s\n%s\n",buf,mv);
+			sprintf (result, "%s\n%s\n", buf, mv);
 			efree(mv);
-		} else {
+		}
+	   	else
+	   	{
 			result = emalloc(sizeof(char) * (strlen(buf) + 2));
-			sprintf (result,"%s\n",buf);
+			sprintf (result, "%s\n", buf);
 		}
 	} else {
-		buf_str = (unsigned char *) kr_regex_replace_arr (reg,rep,str_o,2);
+		buf_str = (unsigned char *) kr_regex_replace_arr (reg, rep, str_o, 2);
 		
 		buf = emalloc(sizeof(char) * (strlen(buf_str) + 60));
-		if (!strcmp(move_o,"1")) {
-			sprintf(buf,"<SCRIPT>\nalert('%s');\nhistory.back();\n</SCRIPT>\n",buf_str);
+		if (!strcmp(move_o, "1"))
+		{
+			sprintf(buf, "<SCRIPT>\nalert('%s');\nhistory.back();\n</SCRIPT>\n", buf_str);
 
 			result = emalloc(sizeof(char) * (strlen(buf) + 2));
-			sprintf (result,"%s\n",buf);
-		} else {
-			sprintf(buf,"<SCRIPT>\nalert('%s')\n</SCRIPT>\n",buf_str);
+			sprintf (result, "%s\n", buf);
+		}
+	   	else
+	   	{
+			sprintf(buf, "<SCRIPT>\nalert('%s')\n</SCRIPT>\n", buf_str);
 			if ( strcmp(move_o,"notice")) {
-				buf_move = (unsigned char *) kr_regex_replace ("/ /i","%20",move_o);
+				buf_move = (unsigned char *) kr_regex_replace ("/ /i","%20", move_o);
 				mv = emalloc(sizeof(char) * (strlen(buf_move) + 50));
-				sprintf(mv,"<META http-equiv=\"refresh\" content=\"0;URL=%s\">\n",buf_move);
+				sprintf(mv, "<META http-equiv=\"refresh\" content=\"0;URL=%s\">\n", buf_move);
 				mv[strlen(mv)] = '\0';
 
 				result = emalloc(sizeof(char) * (strlen(buf) + strlen(mv) + 3));
-				sprintf (result,"%s\n%s\n",buf,mv);
+				sprintf (result,"%s\n%s\n", buf, mv);
 				efree(mv);
 			} else {
 				result = emalloc(sizeof(char) * (strlen(buf) + 2));
-				sprintf (result,"%s\n",buf);
+				sprintf (result, "%s\n", buf);
 			}
 		}
 	}

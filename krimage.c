@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.8 2002-07-18 20:19:23 oops Exp $ 
+  $Id: krimage.c,v 1.9 2002-08-05 19:20:51 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -72,7 +72,8 @@ PHPAPI const char php_sig_png[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (char
 
 /* {{{ proto int imgresize(string filepath [, string new_type [, int new_width [, int new_height [, string new_path ] ] ] ])
  *  *  print move action to url */
-PHP_FUNCTION(imgresize_lib) {
+PHP_FUNCTION(imgresize_lib)
+{
 	pval **opath, **ntype, **nwid, **nhei, **npath;
 	gdImagePtr im, nim;
 	FILE *fp, *tmp;
@@ -82,29 +83,35 @@ PHP_FUNCTION(imgresize_lib) {
 	unsigned char *original, *new_path;
 	int new_type = 0, new_width = 0, new_height = 0, old_width = 0, old_height = 0;
 
-	switch(ZEND_NUM_ARGS()) {
+	switch(ZEND_NUM_ARGS())
+   	{
 		case 5:
-			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &opath, &ntype, &nwid, &nhei, &npath) == FAILURE) {
+			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &opath, &ntype, &nwid, &nhei, &npath) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 4:
-			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &opath, &ntype, &nwid, &nhei) == FAILURE) {
+			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &opath, &ntype, &nwid, &nhei) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 3:
-			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &opath, &ntype, &nwid) == FAILURE) {
+			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &opath, &ntype, &nwid) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 2:
-			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &opath, &ntype) == FAILURE) {
+			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &opath, &ntype) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 1:
-			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &opath) == FAILURE) {
+			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &opath) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			break;
@@ -115,17 +122,16 @@ PHP_FUNCTION(imgresize_lib) {
 	convert_to_string_ex(opath);
 	original = Z_STRVAL_PP(opath);
 
-	if (ZEND_NUM_ARGS() > 1) {
+	if (ZEND_NUM_ARGS() > 1)
+   	{
 		convert_to_string_ex(ntype);
 
-		if (!strcasecmp(Z_STRVAL_PP(ntype),"gif")) {
-			new_type = GIFNEWTYPE;
-		} else if (!strcasecmp(Z_STRVAL_PP(ntype),"png")) {
-			new_type = PNGNEWTYPE;
-		} else {
-			new_type = JPGNEWTYPE;
-		}
-	} else {
+		if (!strcasecmp(Z_STRVAL_PP(ntype), "gif")) { new_type = GIFNEWTYPE; }
+	   	else if (!strcasecmp(Z_STRVAL_PP(ntype), "png")) { new_type = PNGNEWTYPE; }
+	   	else { new_type = JPGNEWTYPE; }
+	}
+   	else
+   	{
 #ifdef HAVE_GD_JPG
       new_type = JPGNEWTYPE;
 #elif HAVE_GD_GIF_CREATE
@@ -135,23 +141,25 @@ PHP_FUNCTION(imgresize_lib) {
 #endif
     }
 
-	if (ZEND_NUM_ARGS() > 2) {
+	if (ZEND_NUM_ARGS() > 2)
+	{
 		convert_to_long_ex(nwid);
 		new_width = Z_LVAL_PP(nwid);
 	}
 
-	if (ZEND_NUM_ARGS() > 3) {
+	if (ZEND_NUM_ARGS() > 3)
+   	{
 		convert_to_long_ex(nhei);
 		new_height = Z_LVAL_PP(nhei);
 	}
 
-	if (ZEND_NUM_ARGS() > 4) {
+	if (ZEND_NUM_ARGS() > 4)
+   	{
 		convert_to_string_ex(npath);
 		new_path = Z_STRVAL_PP(npath);
 		if (strlen(new_path) < 1) { new_path = NULL; }
-	} else {
-		new_path = NULL;
 	}
+   	else { new_path = NULL; }
 
 	/* get origianl image type */
 #ifdef PHP_WIN32
@@ -160,15 +168,18 @@ PHP_FUNCTION(imgresize_lib) {
 	fp = php_fopen_wrapper(original, "rb", IGNORE_PATH|IGNORE_URL_WIN, &issock, &socketd, NULL TSRMLS_CC);
 #endif
 
-	if (!fp && !socketd) {
-		if (issock != BAD_URL) {
+	if (!fp && !socketd)
+   	{
+		if (issock != BAD_URL)
+	   	{
 			php_strip_url_passwd(original);
 			php_error(E_WARNING, "ImgResize_lib: Unable to open '%s' for reading.", original);
 		}
 		RETURN_FALSE;
 	}
 
-    if (issock) {
+    if (issock)
+   	{
 		FILE *rp;
 		char bufs[8190];
 		int *sock=emalloc(sizeof(int)), len = 0;
@@ -176,18 +187,20 @@ PHP_FUNCTION(imgresize_lib) {
 
 		/* get random temp file name */
 		srand(now);
-		sprintf(tmpfilename,"/tmp/tmpResize-%d",rand());
+		sprintf(tmpfilename, "/tmp/tmpResize-%d", rand());
 		len = strlen(tmpfilename);
 		tmpfilename[len] = '\0';
 
 		*sock = socketd;
 
-		if ( (rp = fopen(tmpfilename, "w")) == NULL) {
-			php_error(E_ERROR,"Can't create temp file of remote file");
+		if ( (rp = fopen(tmpfilename, "w")) == NULL)
+	   	{
+			php_error(E_ERROR, "Can't create temp file of remote file");
 			RETURN_FALSE;
 		}
 
-		while (1) {
+		while (1)
+	   	{
 			if ((len = FP_FREAD(bufs, 8190, socketd, fp, issock)) < 1) { break; }
 			bufs[len] = '\0';
 			fwrite (bufs, 1, len, rp);
@@ -198,34 +211,39 @@ PHP_FUNCTION(imgresize_lib) {
 		fp = php_fopen_wrapper(tmpfilename, "rb", IGNORE_PATH|IGNORE_URL_WIN, &issock, &socketd, NULL TSRMLS_CC);
 	}
 
-	if((FP_FREAD(filetype, 3, socketd, fp, issock)) <= 0) {
+	if((FP_FREAD(filetype, 3, socketd, fp, issock)) <= 0)
+   	{
 		php_error(E_WARNING, "getimagesize: Read error!");
 		RETURN_FALSE;
 	}
 
-    if (!memcmp(filetype, php_sig_gif, 3)) {
-		itype = 1;
-	} else if (!memcmp(filetype, php_sig_jpg, 3)) {
-		itype = 2;
-	} else if (!memcmp(filetype, php_sig_png, 3)) {
+    if (!memcmp(filetype, php_sig_gif, 3)) { itype = 1; }
+   	else if (!memcmp(filetype, php_sig_jpg, 3)) { itype = 2; }
+   	else if (!memcmp(filetype, php_sig_png, 3))
+   	{
 		FP_FREAD(filetype+3, 5, socketd, fp, issock);
-		if (!memcmp(filetype, php_sig_png, 8)) {
-			itype = 3;
-		} else php_error(E_WARNING, "PNG file corrupted by ASCII conversion");
-	} else {
+		if (!memcmp(filetype, php_sig_png, 8)) { itype = 3; }
+		else 
+		{
+			php_error(E_WARNING, "PNG file corrupted by ASCII conversion");
+		}
+	}
+   	else
+   	{
 		php_error(E_ERROR, "Enable original file is type of GIF,JPG,PNG");
 	}
 
 	/* move point to start in stream */
-	fseek(fp,0,SEEK_SET);
+	fseek(fp, 0, SEEK_SET);
 
-	switch (itype) {
+	switch (itype)
+   	{
 		case 1: /* if gif */
 #if HAVE_GD_GIF_READ
 			im = gdImageCreateFromGif(fp);
 #else
 			fclose(fp);
-			php_error(E_ERROR,"NO support GIF format in gd library");
+			php_error(E_ERROR, "NO support GIF format in gd library");
 #endif
 			break;
 		case 2: /* if jpeg */
@@ -269,46 +287,52 @@ PHP_FUNCTION(imgresize_lib) {
 	/* copy original point to new point to resize */
 	gdImageCopyResized(nim, im , 0, 0, 0, 0, new_width, new_height, old_width, old_height);
 
-	if (new_path != NULL) {
-		tmp = VCWD_FOPEN(new_path, "wb");
-	} else {
-		tmp = tmpfile();
-	}
+	if (new_path != NULL) { tmp = VCWD_FOPEN(new_path, "wb"); }
+   	else { tmp = tmpfile(); }
 
-	if (tmp == NULL) {
+	if (tmp == NULL)
+   	{
 		php_error(E_WARNING, "%s: unable to open temporary file", get_active_function_name(TSRMLS_C));
 		RETURN_FALSE;
 	}
 
-	if (new_type == JPGNEWTYPE) {
+	if (new_type == JPGNEWTYPE)
+	{
 #ifdef HAVE_GD_JPG
 		gdImageJpeg(nim,tmp,80);
 #else /* HAVE_GD_JPG */
 		gdImageDestroy(im);
 		php_error(E_ERROR, "No JPEG support in this PHP build");
 #endif /* HAVE_GD_JPG */
-	} else if (new_type == PNGNEWTYPE) {
+	}
+   	else if (new_type == PNGNEWTYPE)
+   	{
 #ifdef HAVE_GD_PNG
 		gdImagePng(nim,tmp);
 #else /* HAVE_GD_PNG */
 		gdImageDestroy(im);
 		php_error(E_ERROR, "No PNG support in this PHP build");
 #endif /* HAVE_GD_PNG */
-	} else if (new_type == GIFNEWTYPE) {
+	}
+   	else if (new_type == GIFNEWTYPE)
+   	{
 #ifdef HAVE_GD_GIF_CREATE
 		gdImageGif(nim,tmp);
 #else /* HAVE_GD_GIF_CREATE */
 		gdImageDestroy(im);
-		php_error(E_ERROR,"NO support GIF format in gd library");
+		php_error(E_ERROR, "NO support GIF format in gd library");
 #endif /* HAVE_GD_GIF_CREATE */
-	} else {
+	}
+   	else
+   	{
 		gdImageDestroy(im);
 		php_error(E_ERROR, "Supported new image only gif, png, jpg format");
 	}
 
 	gdImageDestroy(im);
 
-	if (new_path == NULL) {
+	if (new_path == NULL)
+   	{
 		int   fd, b, len = 0;
 		char  buf[4096], sizeHeader[30];
 		struct stat sbuf;
@@ -324,13 +348,18 @@ PHP_FUNCTION(imgresize_lib) {
 		sizeHeader[len] = '\0';
 
 		/* print image header */
-		if (new_type == PNGNEWTYPE) {
+		if (new_type == PNGNEWTYPE)
+	   	{
 			sapi_add_header_ex("Content-type: image/png", 23, 1, 1 TSRMLS_CC);
 			sapi_add_header_ex("Content-Disposition: inline; filename=resize_img.png", 52, 1, 1 TSRMLS_CC);
-		} else if (new_type == GIFNEWTYPE) {
+		}
+	   	else if (new_type == GIFNEWTYPE)
+	   	{
 			sapi_add_header_ex("Content-type: image/gif", 23, 1, 1 TSRMLS_CC);
 			sapi_add_header_ex("Content-Disposition: inline; filename=resize_img.gif", 52, 1, 1 TSRMLS_CC);
-		} else {
+		}
+	   	else
+	   	{
 			sapi_add_header_ex("Content-type: image/jpeg", 24, 1, 1 TSRMLS_CC);
 			sapi_add_header_ex("Content-Disposition: inline; filename=resize_img.jpg", 52, 1, 1 TSRMLS_CC);
 		}
@@ -342,13 +371,13 @@ PHP_FUNCTION(imgresize_lib) {
 		ap_bsetflag(php3_rqst->connection->client, B_EBCDIC2ASCII, 0);
 #endif
 	
-		while ((b = fread(buf, 1, sizeof(buf), tmp)) > 0) {
+		while ((b = fread(buf, 1, sizeof(buf), tmp)) > 0)
+	   	{
 			php_write(buf, b TSRMLS_CC);
 		}
 		/* the temporary file is automatically deleted */
-	} else {
-		fflush(tmp);
 	}
+   	else { fflush(tmp); }
 	fclose(tmp);
 
 	RETURN_TRUE;
