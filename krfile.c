@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.9 2002-09-01 08:12:30 oops Exp $ 
+  $Id: krfile.c,v 1.10 2002-09-02 15:47:20 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -26,7 +26,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#ifndef PHP_WIN32
 #include <dirent.h>
+#endif
 
 #include "php.h"
 #include "php_ini.h"
