@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.17 2002-12-12 02:55:03 oops Exp $
+  $Id: krmail.c,v 1.18 2002-12-12 17:47:10 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -213,6 +213,10 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 
 	// get file name from path
 	if ( (tmpname = strrchr(path, '/')) != NULL )
+   	{
+	   	filename = estrdup(&path[tmpname - path + 1]);
+	}
+	else if ( (tmpname = strrchr(path, '\\')) != NULL )
    	{
 	   	filename = estrdup(&path[tmpname - path + 1]);
 	}
