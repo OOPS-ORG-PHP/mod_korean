@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.56 2004-09-14 06:52:22 oops Exp $
+  $Id: krparse.c,v 1.57 2004-09-14 08:43:00 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -781,6 +781,12 @@ unsigned char * strtrim ( unsigned char * str ) {
 }
 /* }}} */
 
+/* {{{ void safe_efree ( void * str ) */
+void safe_efree ( void * str ) {
+	if ( str != NULL )
+		efree (str);
+}
+/* }}} */
 /*
  * Local variables:
  * tab-width: 4
