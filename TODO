@@ -1,8 +1,3 @@
 sockmail_lib()
   - ipaddress 로 발송할 때의 처리
 
-readfile_lib()
-  - 4.3.0 에서의 변화 적용
-
-imgresize_lib()
-  - 4.3.0 에서의 변화 적용
