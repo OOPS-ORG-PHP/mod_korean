@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krcheck.c,v 1.3 2002-08-05 19:20:51 oops Exp $
+  $Id: krcheck.c,v 1.4 2002-08-11 14:23:07 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -139,21 +139,32 @@ unsigned int check_table (unsigned char *str)
 	return res;
 }
 
-unsigned int multibyte_check(unsigned char *str_o, unsigned int point)
+unsigned int multibyte_check(unsigned char *str_o, unsigned int p)
 {
 	unsigned char *start_p;
 	unsigned int i, l, twobyte = 0;
-	if (str_o[point] & 0x80)
+
+	/* return 0 if point is 1st byte in string */
+	if ( p == 0 ) { return 0; }
+
+	if (str_o[p] & 0x80 ||
+		/* check of 2byte charactor except KSX 1001 range */
+		(str_o[p-1] >= 0x81 && str_o[p-1] <= 0xa0 && str_o[p] >= 0x41 && str_o[p] <=0xfe) ||
+		(str_o[p-1] >= 0xa1 && str_o[p-1] <= 0xc6 && str_o[p] >= 0x41 && str_o[p] <=0xa0))
    	{
-		start_p = strchr(&str_o[point], ' ');
+		start_p = strchr(&str_o[p], ' ');
 
 		/* if don't exist ' ' charactor */
 		if(start_p == NULL) { l = strlen(str_o); }
 		else { l = start_p-str_o; }
 
-		for(i=point ; i<l ; i++)
+		for (i=p ; i<l ; i++)
 	   	{
-			if (str_o[i] & 0x80) twobyte++;
+			if (str_o[i] & 0x80) { twobyte++; }
+			/* 2th byte of 2 byte charactor is not KSX 1001 range */
+			else if ((str_o[i-1] >= 0x81 && str_o[i-1] <= 0xa0 && str_o[i] >= 0x41 && str_o[i] <=0xfe) ||
+					 (str_o[i-1] >= 0xa1 && str_o[i-1] <= 0xc6 && str_o[i] >= 0x41 && str_o[i] <=0xa0))
+		   	{ twobyte++; }
 		}
 
 		if (twobyte % 2 != 0)
