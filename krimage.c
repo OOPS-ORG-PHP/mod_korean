@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.19 2002-12-12 02:55:03 oops Exp $ 
+  $Id: krimage.c,v 1.20 2002-12-28 18:25:25 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -65,12 +65,12 @@
 
 /* file type markers */
 #ifdef PHP_WIN32
-const char php_sig_gif_kr[3] = {'G', 'I', 'F'};
+//const char php_sig_gif_kr[3] = {'G', 'I', 'F'};
 const char php_sig_jpg_kr[3] = {(char) 0xff, (char) 0xd8, (char) 0xff};
 const char php_sig_png_kr[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (char) 0x47,
 	    (char) 0x0d, (char) 0x0a, (char) 0x1a, (char) 0x0a};
 #else
-PHPAPI const char php_sig_gif_kr[3] = {'G', 'I', 'F'};
+//PHPAPI const char php_sig_gif_kr[3] = {'G', 'I', 'F'};
 PHPAPI const char php_sig_jpg_kr[3] = {(char) 0xff, (char) 0xd8, (char) 0xff};
 PHPAPI const char php_sig_png_kr[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (char) 0x47,
 	    (char) 0x0d, (char) 0x0a, (char) 0x1a, (char) 0x0a};
@@ -133,16 +133,17 @@ PHP_FUNCTION(imgresize_lib)
    	{
 		convert_to_string_ex(ntype);
 
-		if (!strcasecmp(Z_STRVAL_PP(ntype), "gif")) { new_type = GIFNEWTYPE; }
-	   	else if (!strcasecmp(Z_STRVAL_PP(ntype), "png")) { new_type = PNGNEWTYPE; }
+		//if (!strcasecmp(Z_STRVAL_PP(ntype), "gif")) { new_type = GIFNEWTYPE; }
+	   	//else
+		if (!strcasecmp(Z_STRVAL_PP(ntype), "png")) { new_type = PNGNEWTYPE; }
 	   	else { new_type = JPGNEWTYPE; }
 	}
    	else
    	{
 #ifdef HAVE_GD_JPG
       new_type = JPGNEWTYPE;
-#elif HAVE_GD_GIF_CREATE
-      new_type = GIFNEWTYPE;
+//#elif HAVE_GD_GIF_CREATE
+//      new_type = GIFNEWTYPE;
 #else
       new_type = PNGNEWTYPE;
 #endif
@@ -209,8 +210,9 @@ PHP_FUNCTION(imgresize_lib)
 		RETURN_FALSE;
 	}
 
-    if (!memcmp(filetype, php_sig_gif_kr, 3)) { itype = 1; }
-   	else if (!memcmp(filetype, php_sig_jpg_kr, 3)) { itype = 2; }
+    //if (!memcmp(filetype, php_sig_gif_kr, 3)) { itype = 1; }
+   	//else
+	if (!memcmp(filetype, php_sig_jpg_kr, 3)) { itype = 2; }
    	else if (!memcmp(filetype, php_sig_png_kr, 3))
    	{
 		fread(filetype + 3, sizeof(char), 5, fp);
@@ -222,7 +224,8 @@ PHP_FUNCTION(imgresize_lib)
 	}
    	else
    	{
-		php_error(E_ERROR, "Enable original file is type of GIF,JPG,PNG");
+		//php_error(E_ERROR, "Enable original file is type of GIF,JPG,PNG");
+		php_error(E_ERROR, "Enable original file is type of JPG,PNG");
 	}
 
 	/* move point to start in stream */
@@ -230,7 +233,8 @@ PHP_FUNCTION(imgresize_lib)
 
 	switch (itype)
    	{
-		case 1: /* if gif */
+/*
+		case 1: // if gif
 #if HAVE_GD_GIF_READ
 			im = gdImageCreateFromGif(fp);
 #else
@@ -238,6 +242,7 @@ PHP_FUNCTION(imgresize_lib)
 			php_error(E_ERROR, "NO support GIF format in gd library");
 #endif
 			break;
+*/
 		case 2: /* if jpeg */
 #ifdef HAVE_GD_JPG
 			im = gdImageCreateFromJpeg(fp);
@@ -305,19 +310,22 @@ PHP_FUNCTION(imgresize_lib)
 		php_error(E_ERROR, "No PNG support in this PHP build");
 #endif /* HAVE_GD_PNG */
 	}
+/*
    	else if (new_type == GIFNEWTYPE)
    	{
 #ifdef HAVE_GD_GIF_CREATE
 		gdImageGif(nim,tmp);
-#else /* HAVE_GD_GIF_CREATE */
+#else // HAVE_GD_GIF_CREATE
 		gdImageDestroy(im);
 		php_error(E_ERROR, "NO support GIF format in gd library");
-#endif /* HAVE_GD_GIF_CREATE */
+#endif // HAVE_GD_GIF_CREATE
 	}
+*/
    	else
    	{
 		gdImageDestroy(im);
-		php_error(E_ERROR, "Supported new image only gif, png, jpg format");
+		//php_error(E_ERROR, "Supported new image only gif, png, jpg format");
+		php_error(E_ERROR, "Supported new image only png, jpg format");
 	}
 
 	gdImageDestroy(im);
@@ -344,11 +352,13 @@ PHP_FUNCTION(imgresize_lib)
 			sapi_add_header_ex("Content-type: image/png", 23, 1, 1 TSRMLS_CC);
 			sapi_add_header_ex("Content-Disposition: inline; filename=resize_img.png", 52, 1, 1 TSRMLS_CC);
 		}
+		/*
 	   	else if (new_type == GIFNEWTYPE)
 	   	{
 			sapi_add_header_ex("Content-type: image/gif", 23, 1, 1 TSRMLS_CC);
 			sapi_add_header_ex("Content-Disposition: inline; filename=resize_img.gif", 52, 1, 1 TSRMLS_CC);
 		}
+		*/
 	   	else
 	   	{
 			sapi_add_header_ex("Content-type: image/jpeg", 24, 1, 1 TSRMLS_CC);
