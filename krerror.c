@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krerror.c,v 1.2 2002-05-15 19:02:04 oops Exp $ 
+  $Id: krerror.c,v 1.3 2002-07-24 10:13:39 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -160,7 +160,7 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 		buf = emalloc(sizeof(char) * (strlen(str_o) + 2));
 		sprintf(buf,"%s\n",str_o);
 		if (strcmp(move_o,"notice") && strcmp(move_o,"1")) {
-			buf_move = kr_regex_replace ("/ /i","%20",move_o);
+			buf_move = (unsigned char *) kr_regex_replace ("/ /i","%20",move_o);
 			mv = emalloc(sizeof(char) * (strlen(buf_move) + 60));
 			sprintf(mv,"<META http-equiv=\"refresh\" content=\"%d;URL=%s\">\n",sec_o,buf_move);
 			mv[strlen(mv)] = '\0';
@@ -173,7 +173,7 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 			sprintf (result,"%s\n",buf);
 		}
 	} else {
-		buf_str = kr_regex_replace_arr (reg,rep,str_o,2);
+		buf_str = (unsigned char *) kr_regex_replace_arr (reg,rep,str_o,2);
 		
 		buf = emalloc(sizeof(char) * (strlen(buf_str) + 60));
 		if (!strcmp(move_o,"1")) {
@@ -184,7 +184,7 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 		} else {
 			sprintf(buf,"<SCRIPT>\nalert('%s')\n</SCRIPT>\n",buf_str);
 			if ( strcmp(move_o,"notice")) {
-				buf_move = kr_regex_replace ("/ /i","%20",move_o);
+				buf_move = (unsigned char *) kr_regex_replace ("/ /i","%20",move_o);
 				mv = emalloc(sizeof(char) * (strlen(buf_move) + 50));
 				sprintf(mv,"<META http-equiv=\"refresh\" content=\"0;URL=%s\">\n",buf_move);
 				mv[strlen(mv)] = '\0';

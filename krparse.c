@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.9 2002-07-24 10:06:59 oops Exp $
+  $Id: krparse.c,v 1.10 2002-07-24 10:10:24 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -416,8 +416,8 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = kr_regex_replace("/Mo.+MSIE ([^;]+);.+/i","\\1",agent_o);
-		agent_v = kr_regex_replace("[a-z]","",buf);
+		buf = (unsigned char *) kr_regex_replace("/Mo.+MSIE ([^;]+);.+/i","\\1",agent_o);
+		agent_v = (unsigned char *) kr_regex_replace("[a-z]","",buf);
 		add_assoc_string(return_value, "vr", agent_v, 1);
 	}
 	
@@ -438,7 +438,7 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = kr_regex_replace("/Opera\\/([0-9.]+).*/i","\\1",agent_o);
+		buf = (unsigned char *) kr_regex_replace("/Opera\\/([0-9.]+).*/i","\\1",agent_o);
 		add_assoc_string(return_value, "vr", buf, 1);
 
 		/* get language */
@@ -468,8 +468,8 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = kr_regex_replace("/Mozi[^(]+\\([^;]+;[^;]+;[^;]+;[^;]+;([^)]+)\\).*/i","\\1",agent_o);
-		agent_v = kr_regex_replace("/rv:| /i","",buf);
+		buf = (unsigned char *) kr_regex_replace("/Mozi[^(]+\\([^;]+;[^;]+;[^;]+;[^;]+;([^)]+)\\).*/i","\\1",agent_o);
+		agent_v = (unsigned char *) kr_regex_replace("/rv:| /i","",buf);
 		add_assoc_string(return_value, "vr", agent_v, 1);
 
 		/* get language */
@@ -497,7 +497,7 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = kr_regex_replace("/.*Konqueror\\/([0-9.]+).*/i","\\1",agent_o);
+		buf = (unsigned char *) kr_regex_replace("/.*Konqueror\\/([0-9.]+).*/i","\\1",agent_o);
 		add_assoc_string(return_value, "vr", buf, 1);
 	}
 
@@ -507,7 +507,7 @@ PHP_FUNCTION(agentinfo_lib)
 		add_assoc_string(return_value, "co", "TextBR", 1);
 
 		/* get version */
-		buf = kr_regex_replace("/Lynx\\/([^ ]+).*/i","\\1",agent_o);
+		buf = (unsigned char *) kr_regex_replace("/Lynx\\/([^ ]+).*/i","\\1",agent_o);
 		add_assoc_string(return_value, "vr", buf, 1);
 	}
 
@@ -517,7 +517,7 @@ PHP_FUNCTION(agentinfo_lib)
 		add_assoc_string(return_value, "co", "TextBR", 1);
 
 		/* get version */
-		buf = kr_regex_replace("/w3m\\/([0-9.]+).*/i","\\1",agent_o);
+		buf = (unsigned char *) kr_regex_replace("/w3m\\/([0-9.]+).*/i","\\1",agent_o);
 		add_assoc_string(return_value, "vr", buf, 1);
 	}
 
@@ -536,7 +536,7 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = kr_regex_replace("/Links \\(([^;]+);.*/i","\\1",agent_o);
+		buf = (unsigned char *) kr_regex_replace("/Links \\(([^;]+);.*/i","\\1",agent_o);
 		add_assoc_string(return_value, "vr", buf, 1);
 	}
 
@@ -678,7 +678,7 @@ unsigned char *autoLink (unsigned char *str_o)
 		tar[18] = "";
 	}
 	
-	buf = kr_regex_replace_arr (src,tar,str_o,array_no);
+	buf = (unsigned char *) kr_regex_replace_arr (src,tar,str_o,array_no);
 
 	efree(tmp);
 	return buf;
