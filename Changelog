@@ -6,6 +6,7 @@ Sun Mar  2 2003
   by JoungKyun Kim <http://www.oops.org>
     - fixed failure of static compile
     - registed new gd library file
+    - removed gd gif read on windows
 
 Sat Mar  1 2003
   by JoungKyun Kim <http://www.oops.org>
