@@ -2,6 +2,10 @@ PHP Korean Extexsions Changelog
 
 * 0.0.6
 --------------------------------------------------------------------------------
+Mon Jul 14 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - update human_fsize_lib
+
 Mon Jun  2 2003
   by JoungKyun Kim <http://www.oops.org>
     - update libgd
