@@ -2,6 +2,10 @@ PHP Korean Extexsions Changelog
 
 * 0.0.7
 --------------------------------------------------------------------------------
+Mon May 31 2004
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed bundle gd library
+
 Wed Dec 10 2003
   by JoungKyun Kim <http://www.oops.org>
     - rewrite pcregrep_lib function

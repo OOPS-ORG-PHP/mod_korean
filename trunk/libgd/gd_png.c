@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include "gd.h"
 
-/* JCE: Arrange HAVE_LIBPNG so that it can be set in gd.h */
-#ifdef HAVE_LIBPNG
+/* JCE: Arrange HAVE_GD_PNG so that it can be set in gd.h */
+#ifdef HAVE_GD_PNG
 
 #include "gdhelpers.h"
 #include "png.h"		/* includes zlib.h and setjmp.h */

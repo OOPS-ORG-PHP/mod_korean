@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.26 2003-03-01 16:21:06 oops Exp $ 
+  $Id: krimage.c,v 1.27 2004-05-31 13:56:11 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -252,7 +252,7 @@ PHP_FUNCTION(imgresize_lib)
 #else /* HAVE_GD_PNG */
 			fclose(fp);
 			php_error(E_ERROR, "No PNG support in this PHP build");
-#endif /* HAVE_GD_PNG */
+#endif
 			break;
 	}
 
@@ -313,7 +313,7 @@ PHP_FUNCTION(imgresize_lib)
 #else /* HAVE_GD_PNG */
 		gdImageDestroy(im);
 		php_error(E_ERROR, "No PNG support in this PHP build");
-#endif /* HAVE_GD_PNG */
+#endif
 	}
    	else if (new_type == GIFNEWTYPE)
    	{
