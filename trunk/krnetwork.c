@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.17 2002-08-22 09:27:12 oops Exp $
+  $Id: krnetwork.c,v 1.18 2002-08-22 09:43:23 oops Exp $
 */
 
 /*
@@ -33,7 +33,6 @@
 #include "php.h"
 #include "php_ini.h"
 #include "SAPI.h"
-#include "fopen_wrappers.h"
 
 #if HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
@@ -151,8 +150,7 @@ PHP_FUNCTION(readfile_lib)
 {
 	zval **arg1, **arg2;
 	unsigned char *filepath, *filename, *get, *string;
-	int use_include_path=0;
-	int issock=0;
+	int use_include_path=0, issock=0;
 
 	/* check args */
 	switch (ZEND_NUM_ARGS())
