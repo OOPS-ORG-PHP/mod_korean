@@ -88,13 +88,13 @@ $ret = sockmail_lib($mailmsg, $from, $to);
 if ($ret) {
   switch ($ret) {
     case 1:
-      target = "reciever@to.org";
+      $target = "reciever@to.org";
       break;
     case 2:
-      target = "admin@domian.org";
+      $target = "admin@domian.org";
       break;
     case 3:
-      target = "who@domain.org";
+      $target = "who@domain.org";
   }
 
   echo "$target 로의 발송에 실패 했습니다. 메일 발송을 중지합니다.";
