@@ -1,0 +1,263 @@
+<FONT id=title>I. PHP4 Korean Extensions</FONT>
+
+<TABLE BORDER=1 WIDTH=100% WIDTH=0 CELLPADDING=4 CELLSPACING=1>
+<TR>
+<TD ALIGN=center><B>주의</B></TD>
+</TR>
+<TR>
+<TD><PRE>
+이 모듈은 상당히 실험적인 모듈이다. 이는 이 함수들이 제대로 작동을 하지 못할 수도 있다는 의미이다.
+이 함수들이 PHP 정식 버젼에 포함을 하기 위해 리포팅을 할 의사도 별로 없다. 또한 일본에서 작업을 하
+고 있는 mbstring 함수와의 관계도 어떻게 될지 알 수가 없다.
+
+또한, 이 함수들은 오로지 한국어 환경만을 고려하여 작성을 한다.
+</PRE></TD>
+</TR>
+</TABLE>
+
+<FONT id=title>Introduction</FONT>
+
+korean extension 은 PHP4 4.2 이상 버전에서 작동하는 한국어 환경의 개발에 필요한
+함수들을 제공한다.  개발자가 배포하던 oops phplib 라는 library 를 php extension
+으로 모두 구현하였으며, 몇몇 추가된 함수들이 존재한다.
+
+중요 특징으로는, EUC-KR, CP949, UTF8, NCR code 등의 charset 변환이 가능하며, 웹
+상에서 유용하게 사용할 만한 함수들이 제공이 된다.
+
+
+<A NAME=changelog>
+<FONT id=title>Changelog</FONT>
+
+PHP Korean Extexsions Changelog About CVS
+
+* Thu Sep 19 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - release 0.0.1
+    - fixed postposition_lib functoin
+    - fixed mailresource_lib function overflow error on windows envionment
+
+* Wed Sep 18 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - supported windows
+
+* Sun Sep  8 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed get_hostname_lib returns null value if reverse value is 0
+    - fixed proxy type on get_hostname_lib
+
+* Tue Sep  5 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - added postposition_lib function
+
+* Tue Sep  3 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - removed unuseless variables
+
+* Sun Sep  1 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - modified config.m4 for phpize
+      use --enable-korean-gd instead of --with-gd for image function
+    - fixed segment fault error on sockhttp function
+    - changed start charctor and end charactor of unicode transfer function
+    - removed include pcre.h header
+    - support apache 2
+
+* Thu Aug 29 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - supported cygwin
+      cygwin doesn't support gd and shared extension mode.
+
+* Thu Aug 23 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - supported php 4.3
+    - patched read file function that can't read binary file
+
+* Sun Aug 12 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - changed mime type on generate_attach() function
+    - added rutine of 2 byte charactor except range of KSX 1001 on substr_lib() function
+    - added rutine of 2 byte NCR code except range of KSX 1001 on substr_lib() function
+
+* Sat Aug 10 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - supported apache 2
+
+* Wed Aug  9 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - fixed mime type of attach file on mailsource_lib() function
+    - changed us-ascii from iso-8859-1 on mailsource_lib() function
+    - added sockmail_lib() function
+    - add php mime type with attach file on mailsource_lib() function
+    - fixed Segmentation fault on sockmail_lib() function
+    - changed variable type of mxrecord on sockmail_lib() function for FreeBSD
+
+* Wed Aug  7 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - added mailsource_lib() function
+
+* Fri Jul 25 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - added remove rutine of utf 8 init charactors on utf8_decode function
+    - changed print value of php_info()
+    - changed name of builddate_lib function to buildno_lib
+    - added version_lib function ( print version of korean extension )
+
+* Fri Jul 18 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - fixed problem of null new_type parameter in imgresize_lib function
+
+* Wed Jul  3 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - added include_path option on readfile_lib function
+
+* Sun Jun 30 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - enable to control of remote image on imgResize_lib function
+
+* Wed Jun 19 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - modified information of php.ini
+
+* Sat Jun 15 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - added other browser in get_agent_lib function
+
+* Thu Jun 14 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - added gd libaray if installed gd is no regular library directory
+
+* Thu Jun 13 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - modified config.m4 for supported gd for other OS except Redhat
+
+* Fri Jun  7 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - fixed reallocation error in uniencode_lib function
+
+* Mon Jun  3 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - added imgresize_lib function (added krimage.c, php_krimage.h)
+      supported thumbnail image
+
+* Fri May 24 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - fixed typo in convUTF6 function
+
+* Thu May 23 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - fixed segmentation fault utf8decod function
+    - added operation of utf8 in substr_lib
+
+* Thu May 16 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - fixed segmentation fault when use perror_lib or pnotice_lib in shell
+
+* Tue May 14 2002
+  by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - Release 0.1.1
+    - fixed duplicated regist krerror.c in Makefile.in
+
+
+<A NAME=install>
+<FONT id=title>Installation</FONT>
+
+먼저 <A HREF=ftp://mirror.oops.org/pub/Linux/Source/php-extension/snapshot/ TARGET=_blank>ftp://mirror.oops.org/pub/Linux/Source/php-extension/snapshot/</A> 에서 압축 파
+일을 받는다. 또는 CVS 에서 받도록 한다. 압축 파일을 풀면 korean 이라는 디렉토리
+가 생성이 된다. 이 디렉토리를 php-source/ext/korean 으로 위치를 한다. 새로운 모
+듈을 추가했으므로 php-source top 디렉토리에서 ./buildconf 를 실행하여 새로운 모
+듈을 등록한다. 다음 ./configure --enable-korean 옵션으로 컴파일을 시작하면 된다.
+
+extension 을 php 모듈로 컴파일을 하기를 원한다면 --enable-korean=shared 로 컴파
+일을 하면 extension 이 php-source/module 에 korean.so 로 남게 된다.
+
+image 관련 함수를 사용하기 위해서는 --enable-korean-gd 옵션을 같이 줘야 한다.
+
+만약 apache 웹서버가 DSO 를 지원하도록 설치가 되어 있다면, php 를 새로 설치하지
+않고 oops php extension 을 설치할 수 있다.  apache 가 DSO 를 지원 하는지 여부는
+httpd -l 명령을 실행한 후에, mod_so.c 가 리스트에 나오면 DSO 를 지원하는 것이다.
+
+DSO 를 지원하고, php 에서 extension 을 모듈로 사용할 경우, 다음의 과정으로 설치
+를 하면 된다.
+
+DSO 로 설치할 경우에는 phpize 를 이용한 방법과 풀 소스를 이용하여 설치하는 방법
+이 있다.
+
+
+1. phpize 가 존재할 경우
+
+find /usr -name phpize 를 실행했을 경우 phpize 의 path 를 찾을 수 있을 경우에는
+다음의 방법을 이용하여 설치를 한다. 만약 찾지 못할 경우에는 2번 항목을 참고한다.
+
+$ cd /tmp
+$ tar xvfpz korean-2002xxxx.tar.g
+$ cd korean
+$ /path/phpize
+$ ./configure --enable-korean --enable-korean-gd
+$ make
+
+make 를 마치면 modules 디렉토리에 korean.so 가 생성이 된다. 이 파일을 php extension
+이 존재하는 디렉토리에 넣어주고, php.ini 에서
+
+extension=korean.so
+
+를 등록한 후에, apache 를 재시작 하면 된다. 만약 extension 모듈로 사용하지 않을
+경우에는 php.ini 의 extension_dir 을 절대 경로로 임의의 디렉토리를 지정해 준 다
+음 지정한 디렉토리에 korean.so 를 복사하고, 위의 extension=korean.so 를 php.ini
+에 등록한 후에 apache 를 재시작 하면 된다.
+
+다음 phpinfo() 함수를 호출하여, korean 으로 검색해서, 정보가 나오는지 확인을 하
+면 된다.
+
+2. DSO 로 설치하기 위하여 apxs 의 위치를 확인
+$ find /usr -name apxs
+/usr/sbin/apxs
+
+$ cd /tmp
+
+# gz 파일을 받았을 경우
+$ tar xvfpz php-4.2.2.tar.gz
+
+# bzip2 파일을 받았을 경우
+$ bzip -cd php-4.2.2.tar.bz2 | tar xvf -
+
+$ cd php-4.2.2/ext
+$ tar xvfpz korean-20020xxx.tar.gz
+$ cd ../
+$ ./buildconf
+
+# 자신의 서버가 Pentium ll 이상일 경우
+$ export CFLAGS="-O3 -march=i686"
+$ ./configure --with-apxs=/usr/sbin/apxs --with-regex=php --with-gd --enable-korean=shared
+$ .......
+
+$ cd ext/korean
+$ make
+
+까지 하면 php-4.2.2/modules 에 korea.so 가 생성이 된다. 이 파일을 php extension
+이 존재하는 디렉토리에 넣어주고, php.ini 에서
+
+extension=korean.so
+
+를 등록한 후에, apache 를 재시작 하면 된다. 만약 extension 모듈로 사용하지 않을
+경우에는 php.ini 의 extension_dir 을 절대 경로로 임의의 디렉토리를 지정해 준 다
+음 지정한 디렉토리에 korean.so 를 복사하고, 위의 extension=korean.so 를 php.ini
+에 등록한 후에 apache 를 재시작 하면 된다.
+
+다음 phpinfo() 함수를 호출하여, korean 으로 검색해서, 정보가 나오는지 확인을 하
+면 된다.
+
+3. 정적으로 컴파일 하기
+
+php source 의 ext 디렉토리에 korean-2002xxxx.tar.gz 의 압축을 풀고 php source의
+top path 에서 ./buildconf 를 한번 실행을 하여 configure 파일을 재작성 한 후, 이
+configure 에 --enable-korean 과 --enable-korean-gd 가 등록이 되었는지 확인을 한
+후에, configure 에서 --enable-korean --enable-korean-gd 옵션을 추가하여 설치를
+하면 된다.
+
+CVS 파일 받기
+
+cvs -d :pserver:anonymous@cvs.oops.org:/data/cvs/oops login
+password: cvs
+cvs -d :pserver:anonymous@cvs.oops.org:/data/cvs/oops checkout korean
+
+CVS tree 는 http://cvs.oops.org/index.cgi/korean/ 에서 확인할 수 있다.

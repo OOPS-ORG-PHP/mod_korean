@@ -1,0 +1,19 @@
+<FONT ID=title>utf8decode_lib()</FONT>
+
+(required korean module)
+
+utf8decode_lib -- UTF8 테이블을 CP949 또는 EUC-KR 로 변환
+
+<FONT ID=RE>설명</FONT>
+
+<B>string utf8decode_lib(string str, string type)</B>
+
+type 은 EUC-KR 과 CP949, NCR 코드, UNICODE 를 지원하며, EUC-KR 로 지정을 했을 경우
+EUC-KR 범위외의 2 byte 문자에 대해서는 NCR 코드로 변환하여 출력을 한다.
+
+<FONT ID=RE>예제</FONT>
+
+$str = utf8decode_lib($str,&quot;euc-kr&quot;);
+
+<FONT ID=RE>참고</FONT>
+utf8encode_lib()

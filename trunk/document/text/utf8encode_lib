@@ -1,0 +1,18 @@
+<FONT ID=title>utf8encode_lib()</FONT>
+
+(required korean module)
+
+utf8encode -- CP949 테이블을 UTF8 로 변환
+
+<FONT ID=RE>설명</FONT>
+
+<B>string utf8encode_lib(string str)</B>
+
+EUC-KR 과 CP949 문자셋을 UTF8 로 변환한다.
+
+<FONT ID=RE>예제</FONT>
+
+$str = utf8encode_lib($str);
+
+<FONT ID=RE>참고</FONT>
+utf8decode_lib()
