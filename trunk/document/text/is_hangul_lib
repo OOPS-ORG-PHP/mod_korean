@@ -15,7 +15,7 @@ is_hangul_lib -- 문자 또는 문자열의 첫 바이트가 한글인지를 검사.
 
 $str = &quot;abcde한fg&quot;;
 
-for($i=0;$i<strlen($str);$i++) {
+for($i=0;$i&lt;strlen($str);$i++) {
   if (is_hangul_lib($str[$i])) {
     $hangul_exists = 1;
   }
