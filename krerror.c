@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krerror.c,v 1.4 2002-08-05 19:20:51 oops Exp $ 
+  $Id: krerror.c,v 1.5 2002-08-10 07:13:08 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -148,32 +148,21 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 	unsigned char *rep[2] = { "\\n", "\\\\\\0" };
 
 	unsigned char *buf = NULL, *mv = NULL;
-	unsigned char *result, *ret, *agent_o, *refer_o;
+	unsigned char *result, *ret, *agent_o;
+	TSRMLS_FETCH();
 
-#ifdef PHP_WIN32
-	    agent_o = getenv("HTTP_USER_AGENT");
-		refer_o = getenv("HTTP_REFERER");
-#else
-	if(sapi_module.getenv)
-	{
-	    agent_o = sapi_module.getenv("HTTP_USER_AGENT", 15 TSRMLS_CC);
-		refer_o = sapi_module.getenv("HTTP_REFERER", 12 TSRMLS_CC);
-	}
-	else
-	{
-		agent_o = refer_o = NULL;
-	}
-#endif
+	agent_o = sapi_getenv("HTTP_USER_AGENT", 15 TSRMLS_CC);
+	if (agent_o == NULL) { agent_o = (unsigned char *) get_serverenv("HTTP_USER_AGENT"); }
 
 	/* text browser check */
-	if(agent_o != NULL) {
+	if( strlen(agent_o) > 0) {
 		if (strstr(agent_o, "Lynx") || strstr(agent_o, "Links") || strstr(agent_o, "w3m"))
 		{
 			textBR = 1;
 		}
 	}
 
-	if ( java_o == 0 || textBR == 1 || agent_o == NULL )
+	if ( java_o == 0 || textBR == 1 || strlen(agent_o) == 0 )
    	{
 		buf = emalloc(sizeof(char) * (strlen(str_o) + 2));
 		sprintf(buf, "%s\n", str_o);

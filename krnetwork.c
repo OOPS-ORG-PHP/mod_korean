@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.12 2002-08-09 12:26:01 oops Exp $
+  $Id: krnetwork.c,v 1.13 2002-08-10 07:13:08 oops Exp $
 */
 
 /*
@@ -46,7 +46,7 @@ PHP_FUNCTION(get_hostname_lib)
 {
 	pval **reverse, **addr;
 	unsigned int i;
-	char *tmphost = NULL, *host, *check, *ret;
+	char tmphost[1024], *host, *check, *ret;
 	char *proxytype[PROXYSIZE]  = { "HTTP_VIA", "HTTP_X_COMING_FROM", "HTTP_X_FORWARDED_FOR",
 									"HTTP_X_FORWARDED", "HTTP_COMING_FROM", "HTTP_FORWARDED_FOR",
 									"HTTP_FORWARDED" };
@@ -76,38 +76,23 @@ PHP_FUNCTION(get_hostname_lib)
    	{
 		for ( i = 0; i < PROXYSIZE; i++ )
 	   	{
-#ifdef PHP_WIN32
-			if (getenv(proxytype[i]) != NULL)
-		   	{
-				tmphost = (char *) emalloc(strlen(getenv(proxytype[i])) + 1);
-				tmphost = getenv(proxytype[i]);
-#else
-			if (sapi_module.getenv(proxytype[i], strlen(proxytype[i]) TSRMLS_CC) != NULL)
-		   	{
-				tmphost = (char *) emalloc(strlen(sapi_module.getenv(proxytype[i], strlen(proxytype[i]) TSRMLS_CC)) + 1);
-				tmphost = sapi_module.getenv(proxytype[i], strlen(proxytype[i]) TSRMLS_CC);
-#endif
-				break;
-			}
+			memset (tmphost, '\0', 1024);
+			sprintf (tmphost, "%s", sapi_getenv(proxytype[i], strlen(proxytype[i]) TSRMLS_CC));
+
+			if ( strcasecmp(tmphost, "(null)") ) { break; }
 		}
 
-		if ( tmphost == NULL )
+		if ( !strcasecmp(tmphost, "(null)") )
 	   	{
-#ifdef PHP_WIN32
-			host = getenv("REMOTE_ADDR");
-#else
-			host = sapi_module.getenv("REMOTE_ADDR", 11 TSRMLS_CC);
-#endif
+			host = sapi_getenv("REMOTE_ADDR", 11 TSRMLS_CC);
+			if ( !host ) { host = getenv("REMOTE_ADDR"); }
+			if ( !host ) { host = (unsigned char *) get_serverenv("REMOTE_ADDR"); }
 		}
-	   	else
-	   	{
-			host = tmphost;
-			efree(tmphost);
-		}
+	   	else { host = tmphost; }
 	}
 	else
    	{
-		if ( Z_STRLEN_PP(addr) != 0 ) { host = Z_STRVAL_PP(addr); }
+		if ( Z_STRLEN_PP(addr) > 0 ) { host = Z_STRVAL_PP(addr); }
 	   	else
 	   	{
 			php_error(E_WARNING,"address is null value");
@@ -115,7 +100,7 @@ PHP_FUNCTION(get_hostname_lib)
 		}
 	}
 
-	check = Z_LVAL_PP(reverse) ? php_gethostbyaddr(host) : NULL ;
+	check = Z_LVAL_PP(reverse) ? php_gethostbyaddr(host) : "";
 	ret = check ? check : host ;
 
 	RETURN_STRING(ret, 1);
