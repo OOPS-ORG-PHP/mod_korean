@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.18 2002-12-09 13:11:48 oops Exp $ 
+  $Id: krfile.c,v 1.19 2002-12-09 17:18:13 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <fcntl.h>
+
 #ifdef PHP_WIN32
 	#include "win32/readdir.h"
 #else
@@ -373,9 +373,9 @@ unsigned char *readfile(unsigned char *filename, size_t filesize)
 {
 	struct stat filebuf;
 
-	int fp;
+	FILE *fp;
 	size_t fsize_o = 0, frsize = 0, len = 0, strlength = 0;
-	static unsigned char *text, *ret, tmptext[FILEBUFS];
+	static unsigned char *text, tmptext[FILEBUFS];
 
 	/* get file info */
 	stat (filename, &filebuf);
@@ -385,27 +385,24 @@ unsigned char *readfile(unsigned char *filename, size_t filesize)
 	if (filesize > fsize_o) { frsize = fsize_o; }
 	else { frsize = ( filesize == 0 ) ? fsize_o : filesize; }
 
-	if ((fp = open(filename, O_RDONLY)) == -1)
+	if ((fp = fopen(filename, "rb")) == NULL)
    	{
 		 php_error(E_ERROR, "Can't open %s in read mode", filename);
 		 return NULL;
 	}
 
-	text = emalloc(sizeof(char) * (frsize));
+	text = emalloc(sizeof(char) * frsize);
 
-	while ( (len = read(fp, tmptext, FILEBUFS)) > 0 )
+	while ( (len = fread(tmptext, sizeof(char), FILEBUFS, fp)) > 0 )
 	{
 		memmove (text + strlength, tmptext, len);
 		strlength += len;
 	}
 	text[frsize-1] = '\0';
 
-	close(fp);
+	fclose(fp);
 
-	ret = estrndup(text, frsize);
-	efree(text);
-	
-	return ret;
+	return text;
 }
 /* }}} */
 
