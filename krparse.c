@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.24 2002-08-14 10:53:16 oops Exp $
+  $Id: krparse.c,v 1.25 2002-08-14 10:56:48 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -1041,7 +1041,11 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 
 					i += 2;
 				}
-			   	else { sprintf(rc, "%c\0", str_o[i]); }
+			   	else
+			   	{
+					memset(rc, str_o[i], 1);
+					memset(rc + 1 , '\0', 1);
+			   	}
 
 				if (strlen(rc) != 0)
 			   	{
