@@ -3,6 +3,7 @@ PHP Korean Extexsions Changelog
 * Fri Aug 16 2002
   by JoungKyun Kim <http://www.oops.org>
     - removed include of dns.c on krnetwork.c
+    - removed include of files that includes ext/standard dir
     - added krmath.c, php_krmath.h
 
 * Wed Aug 14 2002

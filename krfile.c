@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.4 2002-08-05 19:20:51 oops Exp $ 
+  $Id: krfile.c,v 1.5 2002-08-16 02:18:09 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -30,8 +30,6 @@
 
 #include "php.h"
 #include "php_ini.h"
-#include "ext/standard/info.h"
-#include "ext/standard/php_math.h"
 #include "zend_API.h"
 #include "php_krfile.h"
 
@@ -401,7 +399,7 @@ unsigned char *human_file_size (double size_o, int sub_o)
 	unsigned int res;
 	unsigned char *ret = NULL, *return_val;
 	unsigned char *danwe, *dot = ".", *fdot = ",";
-	unsigned char *BYTES_C = _php_math_number_format(size_o, 0, '.', ',');
+	unsigned char *BYTES_C = (char *) kr_math_number_format(size_o, 0, '.', ',');
 
 	if(size_o < 1024)
 	{

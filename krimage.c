@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.11 2002-08-13 03:08:27 oops Exp $ 
+  $Id: krimage.c,v 1.12 2002-08-16 02:18:09 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -43,8 +43,6 @@
 #include "php_ini.h"
 #include "SAPI.h"
 #include "fopen_wrappers.h"
-#include "ext/standard/head.h"
-#include "ext/standard/info.h"
 
 #if HAVE_SYS_WAIT_H
 # include <sys/wait.h>
