@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.20 2002-12-11 10:04:36 oops Exp $ 
+  $Id: krfile.c,v 1.21 2002-12-11 17:49:13 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -197,6 +197,7 @@ PHP_FUNCTION(putfile_lib)
 {
 	pval **filename, **str, **mode;
 	unsigned int write = 0;
+	char filepath[256];
 
 	switch(ZEND_NUM_ARGS())
 	{
@@ -226,7 +227,9 @@ PHP_FUNCTION(putfile_lib)
 		RETURN_FALSE;
 	}
 
-	writefile(Z_STRVAL_PP(filename), Z_STRVAL_PP(str), write);
+	VCWD_REALPATH(Z_STRVAL_PP(filename), filepath);
+
+	writefile(filepath, Z_STRVAL_PP(str), write);
 }
 /* }}} */
 
@@ -236,7 +239,7 @@ PHP_FUNCTION(getfile_lib)
 {
 	pval **filename, **getsize;
 	int binmode = 0;
-	unsigned char *str, *getfilename;
+	unsigned char *str, getfilename[256];
 	size_t size = 0, orgsize = 0, chksize = 0;
 	struct stat buf;
 
@@ -261,11 +264,11 @@ PHP_FUNCTION(getfile_lib)
 	}
 
 	convert_to_string_ex(filename);
-	getfilename = Z_STRVAL_PP(filename);
+	VCWD_REALPATH(Z_STRVAL_PP(filename), getfilename);
 
-	/* get file info */
+	// get file info
 	stat (getfilename, &buf);
-	/* original file size */
+	// original file size
 	orgsize = buf.st_size;
 
 	if ( size > orgsize ) { chksize = orgsize; }
