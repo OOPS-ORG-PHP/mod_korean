@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.32 2002-12-09 07:29:45 oops Exp $
+  $Id: krnetwork.c,v 1.33 2002-12-11 10:04:36 oops Exp $
 */
 
 /*
@@ -220,7 +220,7 @@ PHP_FUNCTION(readfile_lib)
 
 	retSize = &retSize_t;
 
-	/* check args */
+	// check args
 	switch (ZEND_NUM_ARGS())
    	{
 		case 1:
@@ -259,10 +259,10 @@ PHP_FUNCTION(readfile_lib)
 		}
 		else { filename = filepath; }
 
-		/* get file info */
+		// get file info
 		if( stat (filename, &filestat) == 0 )
 		{
-			string = (unsigned char *) readfile(filename, filestat.st_size);
+			string = (unsigned char *) readfile(filename);
 			RETVAL_STRINGL(string, filestat.st_size, 1);
 			efree (string);
 		}

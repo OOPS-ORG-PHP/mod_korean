@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.19 2002-12-09 17:18:13 oops Exp $ 
+  $Id: krfile.c,v 1.20 2002-12-11 10:04:36 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -191,7 +191,7 @@ PHP_FUNCTION(filelist_lib)
 }
 /* }}} */
 
-/* {{{ proto void put_file_lib(string filename, stirng str, [ int mode ])
+/* {{{ proto void putfile_lib(string filename, stirng str, [ int mode ])
  *  * write file */
 PHP_FUNCTION(putfile_lib)
 {
@@ -230,7 +230,7 @@ PHP_FUNCTION(putfile_lib)
 }
 /* }}} */
 
-/* {{{ proto string get_file_lib(string filename, [ int readsize ])
+/* {{{ proto string getfile_lib(string filename, [ int readsize ])
  * return file context */
 PHP_FUNCTION(getfile_lib)
 {
@@ -276,7 +276,7 @@ PHP_FUNCTION(getfile_lib)
 		RETURN_FALSE;
 	}
 
-	str = readfile(getfilename, chksize);
+	str = readfile(getfilename);
 
 	RETVAL_STRINGL(str, chksize, 1);
 	efree (str);
@@ -368,22 +368,19 @@ void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_
 }
 /* }}} */
 
-/* {{{ unsigned char *readfile(unsigned char *filename, size_t filesize) */
-unsigned char *readfile(unsigned char *filename, size_t filesize)
+/* {{{ unsigned char *readfile(unsigned char *filename) */
+unsigned char *readfile(unsigned char *filename)
 {
 	struct stat filebuf;
 
 	FILE *fp;
-	size_t fsize_o = 0, frsize = 0, len = 0, strlength = 0;
+	size_t filesize = 0, frsize = 0, len = 0, strlength = 0;
 	static unsigned char *text, tmptext[FILEBUFS];
 
 	/* get file info */
 	stat (filename, &filebuf);
 	/* original file size */
-	fsize_o = filebuf.st_size;
-
-	if (filesize > fsize_o) { frsize = fsize_o; }
-	else { frsize = ( filesize == 0 ) ? fsize_o : filesize; }
+	filesize = filebuf.st_size;
 
 	if ((fp = fopen(filename, "rb")) == NULL)
    	{
@@ -391,14 +388,15 @@ unsigned char *readfile(unsigned char *filename, size_t filesize)
 		 return NULL;
 	}
 
-	text = emalloc(sizeof(char) * frsize);
+	text = emalloc(sizeof(char) * filesize);
 
 	while ( (len = fread(tmptext, sizeof(char), FILEBUFS, fp)) > 0 )
 	{
 		memmove (text + strlength, tmptext, len);
 		strlength += len;
 	}
-	text[frsize-1] = '\0';
+	if (strlength < filesize) { filesize = strlength; }
+	text[filesize] = '\0';
 
 	fclose(fp);
 
