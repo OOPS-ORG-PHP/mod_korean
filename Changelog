@@ -3,6 +3,7 @@ PHP Korean Extexsions Changelog
 * Thu Aug 23 2002
   by JoungKyun Kim <http://www.oops.org>
     - supported php 4.3
+    - patched read file function that can't read binary file
 
 * Thu Aug 22 2002
   by JoungKyun Kim <http://www.oops.org>

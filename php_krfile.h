@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krfile.h,v 1.3 2002-08-23 01:37:08 oops Exp $
+$Id: php_krfile.h,v 1.4 2002-08-23 10:58:17 oops Exp $
 */
 #ifndef PHP_KRFILE_H
 #define PHP_KRFILE_H
@@ -26,7 +26,7 @@ PHP_FUNCTION(putfile_lib);
 PHP_FUNCTION(filelist_lib);
 
 void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o);
-unsigned char *readfile(unsigned char *filename, unsigned int filesize);
+unsigned char *readfile(unsigned char *filename, size_t filesize);
 unsigned char *human_file_size (double size_o, int sub_o);
 unsigned int round_value (double size_o);
 unsigned int check_filedev (unsigned char *path_f, unsigned char *filename);

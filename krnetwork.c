@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.19 2002-08-23 01:36:22 oops Exp $
+  $Id: krnetwork.c,v 1.20 2002-08-23 10:58:17 oops Exp $
 */
 
 /*
@@ -152,6 +152,7 @@ PHP_FUNCTION(readfile_lib)
 	zval **arg1, **arg2;
 	unsigned char *filepath, *filename, *get, *string;
 	int use_include_path=0, issock=0;
+	size_t *retSize;
 
 	/* check args */
 	switch (ZEND_NUM_ARGS())
@@ -180,8 +181,9 @@ PHP_FUNCTION(readfile_lib)
 
 	if ( issock == 1 )
 	{
-		get = (unsigned char *) sockhttp (filepath, 0, "");
-		string = estrdup(get);
+		get = (unsigned char *) sockhttp (filepath, retSize, 0, "");
+		string = estrndup(get, *retSize);
+		RETURN_STRINGL(string, *retSize, 1);
 	}
 	else
 	{
@@ -194,17 +196,17 @@ PHP_FUNCTION(readfile_lib)
 		/* get file info */
 		if( stat (filename, &filestat) == 0 )
 		{
-			get = (unsigned char *) read_file(filename, filestat.st_size);
-			string = estrdup(get);
+			get = (unsigned char *) readfile(filename, filestat.st_size);
+			string = estrndup(get, filestat.st_size);
+			RETURN_STRINGL(string, filestat.st_size, 1);
 		}
 		else
 		{
 			php_error(E_WARNING, "File/URL %s is not found \n", filename);
 			RETURN_EMPTY_STRING();
 		}
-	}
 
-	RETURN_STRING(string, 1);
+	}
 }
 /* }}} */
 
@@ -602,14 +604,19 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 }
 /* }}} */
 
-/* {{{ unsigned char *sockhttp (unsigned char *addr) */
-unsigned char *sockhttp (unsigned char *addr, int record, unsigned char *recfile)
+/* {{{ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsigned char *recfile)
+ * addr : url path of read file
+ * record : whether write of don't write read file with randsom name
+ * recfile : if record is 1, write recfile name with read file
+ */
+unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsigned char *recfile)
 {
 	FILE *fp;
 	unsigned char tmpfilename[512];
-	int sock, len = 0, tmplen = 0, freechk = 0;
+	int sock, len = 0, freechk = 0;
 	unsigned char cmd[1024];
 	unsigned char rc[4096], *tmpstr = NULL, *string;
+	size_t tmplen = 0;
 
 	/* parse file path with url, uri */
 	unsigned char *chk, *url, *uri, *urlpoint;
@@ -721,7 +728,10 @@ unsigned char *sockhttp (unsigned char *addr, int record, unsigned char *recfile
 		/* if empty document, return NULL */
 		if ( tmplen == 0 ) { return NULL; }
 
-		string = (unsigned char *) estrdup(tmpstr);
+		/* return string length with pointer */
+		*retSize = tmplen;
+
+		string = (unsigned char *) estrndup(tmpstr, tmplen);
 		if (freechk == 1) { efree(tmpstr); }
 
 		return string;
