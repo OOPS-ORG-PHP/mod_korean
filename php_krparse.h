@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krparse.h,v 1.4 2002-08-14 10:28:28 oops Exp $
+$Id: php_krparse.h,v 1.5 2002-08-14 10:53:16 oops Exp $
 */
 
 #ifndef PHP_KRPARSE_H
@@ -36,7 +36,6 @@ unsigned int getUniIDX (unsigned int key);
 unsigned int hex2dec (unsigned char *str_o, unsigned int type);
 int comp (const void *s1, const void *s2);
 unsigned char *convUTF8 (unsigned char *str_o, int type);
-unsigned int bin2dec (unsigned char *str_o);
 unsigned char *autoLink (unsigned char *str_o);
 unsigned char *get_useragent(void);
 unsigned char *get_serverenv(unsigned char *para);

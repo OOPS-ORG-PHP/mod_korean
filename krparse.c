@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.23 2002-08-14 10:51:54 oops Exp $
+  $Id: krparse.c,v 1.24 2002-08-14 10:53:16 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -1191,22 +1191,6 @@ unsigned int hex2dec (unsigned char *str_o, unsigned int type) {
 			return ((buf[0] * 16 * 16 * 16) + (buf[1] * 16 * 16) + (buf[2] * 16) + buf[3]);
 			
 	}
-}
-/* }}} */
-
-/* {{{ unsigned int bin2dec(unsigned char *str_o) */
-unsigned int bin2dec(unsigned char *str_o)
-{
-	int i, ret = 0;
-	unsigned char var[2];
-
-	for(i=0 ; i<8 ; i++)
-   	{
-		sprintf(var, "%c", str_o[i]);
-		ret += atoi(var) << (7 - i);
-	}
-
-	return ret;
 }
 /* }}} */
 
