@@ -121,6 +121,9 @@ if ($_GET[func] == "ref") {
          "</TD></TR>\n</TABLE>\n";
 }
 
+$rsrc = array("/REP_VERSION_REP/", "/REP_PHPVERSION_REP/");
+$rdes = array("$version", "$phpversion");
+$txt = preg_replace($rsrc, $rdes, $txt);
 $txt = auto_link($txt);
 
 include "template";

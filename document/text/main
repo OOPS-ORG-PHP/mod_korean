@@ -31,7 +31,7 @@ korean extension 의 buildno 가 200212410255 부터는 php 4.3.0 부터 컴파일이 가능
 <A NAME=changelog>
 <FONT id=title>Changelog</FONT>
 
-PHP Korean Extexsions Changelog About Version <?=$version?>
+PHP Korean Extexsions Changelog About Version REP_VERSION_REP
 
 * Sun Mar  2 2003
   by JoungKyun Kim <http://www.oops.org>
@@ -89,7 +89,7 @@ find /usr -name phpize 를 실행했을 경우 phpize 의 path 를 찾을 수 있을 경우에는
 다음의 방법을 이용하여 설치를 한다. 만약 찾지 못할 경우에는 2번 항목을 참고한다.
 
 $ cd /tmp
-$ tar xvfpz korean-<?=$versoin?>.tar.g
+$ tar xvfpz korean-REP_VERSION_REP.tar.gz
 $ cd korean
 $ /path/phpize
 $ ./configure --with-php-config=/usr/local/bin/php-config
@@ -117,13 +117,13 @@ $ find /usr -name apxs
 $ cd /tmp
 
 # gz 파일을 받았을 경우
-$ tar xvfpz php-<?=$phpversion?>.tar.gz
+$ tar xvfpz php-REP_PHPVERSION_REP.tar.gz
 
 # bzip2 파일을 받았을 경우
-$ bzip -cd php-<?=$phpversion?>.tar.bz2 | tar xvf -
+$ bzip -cd php-REP_PHPVERSION_REP.tar.bz2 | tar xvf -
 
 $ cd php-<?=$phpversoin?>/ext
-$ tar xvfpz korean-<?=$version?>.tar.gz
+$ tar xvfpz korean-REP_VERSION_REP.tar.gz
 $ cd ../
 $ ./buildconf
 
@@ -135,7 +135,7 @@ $ .......
 $ cd ext/korean
 $ make
 
-까지 하면 php-<?=$phpversion?>/modules 에 korea.so 가 생성이 된다. 이 파일을 php extension
+까지 하면 php-REP_PHPVERSION_REP/modules 에 korea.so 가 생성이 된다. 이 파일을 php extension
 이 존재하는 디렉토리에 넣어주고, php.ini 에서
 
 extension=korean.so
@@ -150,7 +150,7 @@ extension=korean.so
 
 3. 정적으로 컴파일 하기
 
-php source 의 ext 디렉토리에 korean-<?=$version?>.tar.gz 의 압축을 풀고 php source의
+php source 의 ext 디렉토리에 korean-REP_VERSION_REP.tar.gz 의 압축을 풀고 php source의
 top path 에서 ./buildconf 를 한번 실행을 하여 configure 파일을 재작성 한 후, 이
 configure 에 --enable-korean 이 등록이 되었는지 확인을 한 후에, configure 에서
 --enable-korean 옵션을 추가하여 설치를 하면 된다.
