@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.15 2002-09-01 05:19:40 oops Exp $ 
+  $Id: krimage.c,v 1.16 2002-09-18 10:14:10 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -24,7 +24,7 @@
 */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+	#include "config.h"
 #endif
 
 #include <stdio.h>
@@ -36,7 +36,7 @@
 #include <time.h>
 #include <math.h>
 #if HAVE_FCNTL_H
-# include <fcntl.h>
+	#include <fcntl.h>
 #endif
 
 #include "php.h"
@@ -44,16 +44,18 @@
 #include "SAPI.h"
 
 #if HAVE_SYS_WAIT_H
-# include <sys/wait.h>
+	#include <sys/wait.h>
 #endif
 
 #if HAVE_UNISTD_H
-# include <unistd.h>
+	#include <unistd.h>
 #endif
 
 #ifdef PHP_WIN32
-# include <io.h>
-# include <fcntl.h>
+	#include <io.h>
+	#include <fcntl.h>
+	#include "krregex.h"
+	#include "php_krnetwork.h"
 #endif
 
 #if HAVE_KRLIBGD
@@ -62,10 +64,17 @@
 #include <gd.h>
 
 /* file type markers */
+#ifdef PHP_WIN32
+const char php_sig_gif_kr[3] = {'G', 'I', 'F'};
+const char php_sig_jpg_kr[3] = {(char) 0xff, (char) 0xd8, (char) 0xff};
+const char php_sig_png_kr[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (char) 0x47,
+	    (char) 0x0d, (char) 0x0a, (char) 0x1a, (char) 0x0a};
+#else
 PHPAPI const char php_sig_gif_kr[3] = {'G', 'I', 'F'};
 PHPAPI const char php_sig_jpg_kr[3] = {(char) 0xff, (char) 0xd8, (char) 0xff};
 PHPAPI const char php_sig_png_kr[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (char) 0x47,
 	    (char) 0x0d, (char) 0x0a, (char) 0x1a, (char) 0x0a};
+#endif
 
 /* {{{ proto int imgresize(string filepath [, string new_type [, int new_width [, int new_height [, string new_path ] ] ] ])
  *  *  print move action to url */
@@ -164,7 +173,6 @@ PHP_FUNCTION(imgresize_lib)
 
 	if (issock == 1)
 	{
-		unsigned char *urlimage;
 		time_t now = time(0);
 		size_t len = 0, *retSize, retSize_t = 0;
 		retSize = &retSize_t;

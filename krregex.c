@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krregex.c,v 1.8 2002-09-02 16:07:01 oops Exp $ 
+  $Id: krregex.c,v 1.9 2002-09-18 10:14:10 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -24,6 +24,7 @@
 
 #include "php.h"
 #include "php_ini.h"
+#include "ext/standard/info.h"
 #include "krregex.h"
 
 unsigned char *kr_regex_replace (unsigned char *regex_o, unsigned char *replace_o, unsigned char *str_o)
@@ -45,8 +46,13 @@ unsigned char *kr_regex_replace_arr (unsigned char *regex_o[], unsigned char *re
 {
 	unsigned int i,buf_len;
 	size_t str_len = strlen(str_o);
+#ifdef PHP_WIN32
+	zval *replaces[100];
+	unsigned char *buf_o[100];
+#else
 	zval *replaces[regex_no];
 	unsigned char *buf_o[regex_no];
+#endif
 	TSRMLS_FETCH();
 
 	for ( i=0; i<regex_no ; i++ )
@@ -92,7 +98,7 @@ unsigned int checkReg(unsigned char *str, unsigned char *regex_o)
 unsigned char * strtrim(unsigned char *str)
 {
 	unsigned int i = 0, len = 0, trimmed = 0;
-	char mask[256];
+	unsigned char *null_return = "";
 
 	if ( strlen(str) != 0 && str != NULL )
    	{
@@ -100,6 +106,8 @@ unsigned char * strtrim(unsigned char *str)
 		str = kr_regex_replace("/[\\s]+$/", "", str);
 		return str;
 	}
+
+	return null_return;
 }
 
 /*

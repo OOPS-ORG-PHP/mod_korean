@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.39 2002-09-05 05:42:03 oops Exp $
+  $Id: krparse.c,v 1.40 2002-09-18 10:14:10 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -25,6 +25,8 @@
 #include "php.h"
 #include "php_ini.h"
 #include "php_krparse.h"
+#include "php_krcheck.h"
+#include "krregex.h"
 #include "SAPI.h"
 
 #include "cp949_table.h"
@@ -825,12 +827,13 @@ PHP_FUNCTION(postposition_lib)
 /* {{{ unsigned char *autoLink (unsigned char *str_o) */
 unsigned char *autoLink (unsigned char *str_o)
 {
-	unsigned int array_no = 19, agent_o;
+	#define ARRAY_NO 19
+	unsigned int agent_o;
 	unsigned char tmp[512];
 	unsigned char file_s[] = "(\\.(gz|tgz|tar|gzip|zip|rar|mpeg|mpg|exe|rpm|dep|rm|ram|asf|ace|viv|avi|mid|gif|jpg|png|bmp|eps|mov)\") TARGET=\"_blank\"";
 	unsigned char http[] = "(http|https|ftp|telnet|news|mms):\\/\\/(([[:alnum:]\xA1-\xFE:_\\-]+\\.[[:alnum:]\xA1-\xFE,:;&#=_~%\\[\\]?\\/.,+\\-]+)([.]*[\\/a-z0-9\\[\\]]|=[\xA1-\xFE]+))";
 	unsigned char mail[] = "([[:alnum:]\xA1-\xFE_.-]+)@([[:alnum:]\xA1-\xFE_-]+\\.[[:alnum:]\xA1-\xFE._-]*[a-z]{2,3}(\\?[[:alnum:]\xA1-\xFE=&\\?]+)*)";
-	unsigned char *src[array_no], *tar[array_no];
+	unsigned char *src[ARRAY_NO], *tar[ARRAY_NO];
 	unsigned char *buf, *ptr;
 
 	ptr = get_useragent();
@@ -921,7 +924,7 @@ unsigned char *autoLink (unsigned char *str_o)
 		tar[18] = "";
 	}
 	
-	buf = estrdup((unsigned char *) kr_regex_replace_arr (src, tar, str_o, array_no));
+	buf = estrdup((unsigned char *) kr_regex_replace_arr (src, tar, str_o, ARRAY_NO));
 
 	return buf;
 }
@@ -1389,7 +1392,7 @@ unsigned int getNcrArrayNo (unsigned int key)
 /* {{{ unsigned int getUniIDX (unsigned int key) */
 unsigned int getUniIDX (unsigned int key)
 {
-	int *ptr, no, *chk, result;
+	int *ptr, *chk, result;
 
 	ptr = (int *)bsearch(&key,cp949_2byte_ncr_table, 17048, sizeof(cp949_2byte_ncr_table[0]), comp);
 	chk = cp949_2byte_ncr_table;

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.23 2002-09-08 13:33:06 oops Exp $
+  $Id: krnetwork.c,v 1.24 2002-09-18 10:14:10 oops Exp $
 */
 
 /*
@@ -36,77 +36,74 @@
 #include "SAPI.h"
 
 #if HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
+	#include <sys/socket.h>
 #endif
 #ifdef PHP_WIN32
-#if HAVE_LIBBIND
-#ifndef WINNT
-#define WINNT 1
-#endif
-/* located in www.php.net/extra/bindlib.zip */
-#if HAVE_ARPA_INET_H
-#include "arpa/inet.h"
-#endif
-#include "netdb.h"
-#if HAVE_ARPA_NAMESERV_H
-#include "arpa/nameser.h"
-#endif
-#if HAVE_RESOLV_H
-#include "resolv.h"
-#endif
-#endif
-#include <winsock.h>
-#else
-#include <netinet/in.h>
-#if HAVE_ARPA_INET_H
-#include <arpa/inet.h>
-#endif
-#include <netdb.h>
-#if HAVE_ARPA_NAMESER_H
-#include <arpa/nameser.h>
-#else
-	typedef struct {
-		unsigned	id :16;	/* query identification number */
-		#if BYTE_ORDER == BIG_ENDIAN
-				/* fields in third byte */
-		unsigned	qr: 1;		/* response flag */
-		unsigned	opcode: 4;	/* purpose of message */
-		unsigned	aa: 1;		/* authoritive answer */
-		unsigned	tc: 1;		/* truncated message */
-		unsigned	rd: 1;		/* recursion desired */
-				/* fields in fourth byte */
-		unsigned	ra: 1;		/* recursion available */
-		unsigned	unused :1;	/* unused bits (MBZ as of 4.9.3a3) */
-		unsigned	ad: 1;		/* authentic data from named */
-		unsigned	cd: 1;		/* checking disabled by resolver */
-		unsigned	rcode :4;	/* response code */
+	#include "krregex.h"
+	#include "php_krfile.h"
+	#include "php_krparse.h"
+	#include <winsock.h>
+	#if HAVE_LIBBIND
+		#ifndef WINNT
+			#define WINNT 1
 		#endif
-		#if BYTE_ORDER == LITTLE_ENDIAN || BYTE_ORDER == PDP_ENDIAN
-				/* fields in third byte */
-		unsigned	rd :1;		/* recursion desired */
-		unsigned	tc :1;		/* truncated message */
-		unsigned	aa :1;		/* authoritive answer */
-		unsigned	opcode :4;	/* purpose of message */
-		unsigned	qr :1;		/* response flag */
-				/* fields in fourth byte */
-		unsigned	rcode :4;	/* response code */
-		unsigned	cd: 1;		/* checking disabled by resolver */
-		unsigned	ad: 1;		/* authentic data from named */
-		unsigned	unused :1;	/* unused bits (MBZ as of 4.9.3a3) */
-		unsigned	ra :1;		/* recursion available */
-		#endif
-				/* remaining bytes */
-		unsigned	qdcount :16;	/* number of question entries */
-		unsigned	ancount :16;	/* number of answer entries */
-		unsigned        nscount :16;	/* number of authority entries */
-		unsigned        arcount :16;	/* number of resource entries */
-	} HEADER;
-	#define T_MX		15
-	#define C_IN		1
-#endif
-#if HAVE_RESOLV_H
-#include <resolv.h>
-#endif
+		/* located in www.php.net/extra/bindlib.zip */
+		#include "arpa/inet.h"
+		#include "netdb.h"
+		#include "arpa/nameser.h"
+		#include "resolv.h"
+	#endif
+#else
+	#include <netinet/in.h>
+	#if HAVE_ARPA_INET_H
+		#include <arpa/inet.h>
+	#endif
+	#include <netdb.h>
+	#if HAVE_ARPA_NAMESER_H
+		#include <arpa/nameser.h>
+	#else
+		typedef struct {
+			unsigned	id :16;	/* query identification number */
+			#if BYTE_ORDER == BIG_ENDIAN
+					/* fields in third byte */
+			unsigned	qr: 1;		/* response flag */
+			unsigned	opcode: 4;	/* purpose of message */
+			unsigned	aa: 1;		/* authoritive answer */
+			unsigned	tc: 1;		/* truncated message */
+			unsigned	rd: 1;		/* recursion desired */
+					/* fields in fourth byte */
+			unsigned	ra: 1;		/* recursion available */
+			unsigned	unused :1;	/* unused bits (MBZ as of 4.9.3a3) */
+			unsigned	ad: 1;		/* authentic data from named */
+			unsigned	cd: 1;		/* checking disabled by resolver */
+			unsigned	rcode :4;	/* response code */
+			#endif
+			#if BYTE_ORDER == LITTLE_ENDIAN || BYTE_ORDER == PDP_ENDIAN
+					/* fields in third byte */
+			unsigned	rd :1;		/* recursion desired */
+			unsigned	tc :1;		/* truncated message */
+			unsigned	aa :1;		/* authoritive answer */
+			unsigned	opcode :4;	/* purpose of message */
+			unsigned	qr :1;		/* response flag */
+					/* fields in fourth byte */
+			unsigned	rcode :4;	/* response code */
+			unsigned	cd: 1;		/* checking disabled by resolver */
+			unsigned	ad: 1;		/* authentic data from named */
+			unsigned	unused :1;	/* unused bits (MBZ as of 4.9.3a3) */
+			unsigned	ra :1;		/* recursion available */
+			#endif
+					/* remaining bytes */
+			unsigned	qdcount :16;	/* number of question entries */
+			unsigned	ancount :16;	/* number of answer entries */
+			unsigned        nscount :16;	/* number of authority entries */
+			unsigned        arcount :16;	/* number of resource entries */
+		} HEADER;
+		#define T_MX		15
+		#define C_IN		1
+	#endif
+	#if HAVE_RESOLV_H
+		#include <resolv.h>
+	#endif
 #endif
 
 #include "php_krnetwork.h"
@@ -282,7 +279,7 @@ PHP_FUNCTION(sockmail_lib)
 	zval **mail, **from, **to, **debugs;
 	unsigned char delimiters[] = ",";
 	unsigned char *text, *faddr, *taddr, *tmpfrom, *tmpto, *mailaddr;
-	int sock, debug = 0, len = 0, failcode = 0, error_no = 0;
+	int debug = 0, len = 0, failcode = 0, error_no = 0;
 
 	/* {{{ check args */
 	switch (ZEND_NUM_ARGS())
@@ -524,7 +521,11 @@ int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 	else { add = 3; }
 
 	{
+#ifdef PHP_WIN32
+		unsigned char tmpcmd[2048000];
+#else
 		unsigned char tmpcmd[tmplen + add];
+#endif
 
 		if ( !strcasecmp (target, "mail") ) { sprintf(tmpcmd, "MAIL From: %s\r\n", var); }
 		else if ( !strcasecmp (target, "rcpt") ) { sprintf(tmpcmd, "RCPT To: %s\r\n", var); }
@@ -679,12 +680,13 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 	FILE *fp;
 	unsigned char tmpfilename[512];
 	int sock, len = 0, freechk = 0;
-	unsigned char cmd[1024];
+	unsigned char cmd[1024], *nullstr = "";
 	unsigned char rc[4096], *tmpstr = NULL, *string;
 	size_t tmplen = 0;
 
 	/* parse file path with url, uri */
-	unsigned char *chk, *url, *uri, *urlpoint;
+	//unsigned char *uri;
+	unsigned char *chk, *url, *urlpoint;
 	chk = (unsigned char *) estrdup(&addr[7]);
 
 	urlpoint = strchr(chk, '/');
@@ -787,6 +789,7 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 	if (record == 1)
 	{
 		fclose(fp);
+		return nullstr;
 	}
 	else
 	{

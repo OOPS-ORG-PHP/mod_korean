@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krfile.h,v 1.4 2002-08-23 10:58:17 oops Exp $
+$Id: php_krfile.h,v 1.5 2002-09-18 10:14:10 oops Exp $
 */
 #ifndef PHP_KRFILE_H
 #define PHP_KRFILE_H
@@ -35,5 +35,12 @@ unsigned char *includePath (unsigned char *filepath);
 #define RETURN_FILE_TYPE 1
 #define RETURN_DIR_TYPE 2
 #define RETURN_LINK_TYPE 3
+
+#ifdef PHP_WIN32
+	#define __S_ISTYPE(mode, mask) (((mode) & S_IFMT) == (mask))
+	#define S_ISDIR(mode) __S_ISTYPE((mode), S_IFDIR)
+	#define S_ISREG(mode) __S_ISTYPE((mode), S_IFREG)
+	#define S_ISLNK(mode) __S_ISTYPE((mode), S_IFLNK)
+#endif
 
 #endif /* PHP_KRFILE_H */
