@@ -1,5 +1,11 @@
 PHP Korean Extexsions Changelog
 
+* Sat Dec 29 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - added small gd library
+    - modified config.m4
+    - limits under 4.3.0
+
 * Sat Dec 28 2002
   by JoungKyun Kim <http://www.oops.org>
     - added PHP_NEW_EXTENSION in config.m4 for over 4.2.x
