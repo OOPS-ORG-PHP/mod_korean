@@ -4,6 +4,7 @@ PHP Korean Extexsions Changelog
   by JoungKyun Kim <http://www.oops.org>
     - remove bin2hex, hex2bin, bin2dec function on krparse.c
     - arranged string variables
+    - update uniConv function on krparsc.c
 
 * Tue Aug 13 2002
   by JoungKyun Kim <http://www.oops.org>

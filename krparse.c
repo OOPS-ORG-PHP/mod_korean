@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.26 2002-08-14 11:09:38 oops Exp $
+  $Id: krparse.c,v 1.27 2002-08-14 12:08:38 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -885,10 +885,10 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 	unsigned long i;
 	unsigned int ncr;
 	size_t len;
-	unsigned char *rc, *strs;
+	unsigned char rc[256], *strs;
 	unsigned char *ret = NULL;
 
-	int regno,hexv,firsti,secondi,rc_len = 7;
+	int regno,hexv,firsti,secondi;
 	long slen = strlen(start);
 	long elen = strlen(end);
 	regex_t preg;
@@ -897,6 +897,12 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 
 	if ( str_o == NULL ) { return NULL; }
 	else { len = strlen(str_o); }
+
+	if (slen > 10 || elen > 10)
+	{
+		php_error(E_ERROR,"Can't use string over 10 charactors <br />\n" \
+				          "on unicode start string or end string");
+	}
 
 	if (type == 1)
    	{
@@ -907,32 +913,44 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 			php_error(E_WARNING, "Problem in Unicode start charactors or end charactocs");
 			return str_o;
 		}
-
-		if (subtype == 1) rc_len = 8;
-		else rc_len = slen + elen + 4;
 	}
 
 	for (i=0; i<len; i++)
    	{
-		rc = emalloc(sizeof(char) * (rc_len + 1));
 		switch(type)
 	   	{
 			/* convert to euc-kr/cp949 from unicode */
+			/* unicode is constructed start charactors and hex code and end charactors */
 			case 1:
-				/* unicode is constructed start charactors and hex code and end charactors */
-				sprintf(chkReg, "%c%c%c%c", str_o[i+slen], str_o[i+slen+1], str_o[i+slen+2], str_o[i+slen+3]);
+				/* make regex check value */
+				memset(chkReg, str_o[i+slen], 1);
+				memset(chkReg+1, str_o[i+slen+1], 1);
+				memset(chkReg+2, str_o[i+slen+2], 1);
+				memset(chkReg+3, str_o[i+slen+3], 1);
+				memset(chkReg+4, '\0', 1);
+
 				if(!strncmp(&str_o[i], start, slen) && regexec(&preg,chkReg, 0, NULL, 0) == 0 &&
 				   !strncmp(&str_o[i+slen+4], end, elen))
 			   	{
-
 					hexv = hex2dec(chkReg, 0);
 					sprintf(conv, "%x", getUniIDX(hexv));
-					sprintf(first, "%c%c", conv[0], conv[1]);
+
+					/* make first byte */
+					memset (first, conv[0], 1);
+					memset (first + 1, conv[1], 1);
+					memset (first + 2, '\0', 1);
 					firsti = hex2dec(first, 1);
-					sprintf(second, "%c%c", conv[2], conv[3]);
+
+					/* make second byte */
+					memset (second, conv[2], 1);
+					memset (second + 1, conv[3], 1);
+					memset (second + 2, '\0', 1);
 					secondi = hex2dec(second, 1);
 
-					sprintf(rc, "%c%c", firsti, secondi);
+					/* make complete 2byte charactor */
+					memset (rc, firsti, 1);
+					memset (rc + 1, secondi, 1);
+					memset (rc + 2, '\0', 1);
 
 					/* convert ncr code with outsize of EUC-KR range */
 					if (subtype == 1)
@@ -941,7 +959,7 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 						   (rc[0] >= 0xa1 && rc[0] <= 0xc6 && rc[1] >= 0x41 && rc[1] <=0xa0))
 					   	{
 							ncr = getNcrIDX(rc[0], rc[1]);
-							sprintf(rc, "&#%d;", uni_cp949_ncr_table[ncr]);
+							sprintf(rc, "&#%d;\0", uni_cp949_ncr_table[ncr]);
 						}
 					}
 
@@ -949,7 +967,8 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 				}
 			   	else
 			   	{
-					sprintf(rc, "%c", str_o[i]);
+					memset (rc, str_o[i], 1);
+					memset (rc + 1, '\0', 1);
 				}
 
 				break;
@@ -959,10 +978,14 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 				if (str_o[i] & 0x80)
 			   	{
 					ncr = getNcrIDX(str_o[i], str_o[i+1]);
-					sprintf(rc,"%s%X%s", start, uni_cp949_ncr_table[ncr], end);
+					sprintf(rc,"%s%X%s\0", start, uni_cp949_ncr_table[ncr], end);
 					i++;
 				}
-			   	else { sprintf(rc,"%c", str_o[i]); }
+			   	else
+				{
+					memset (rc, str_o[i], 1);
+					memset (rc + 1, '\0', 1);
+			   	}
 		}
 
 		if (strlen(rc) != 0)
@@ -982,7 +1005,6 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 
 	strs = (unsigned char *) estrndup(ret, strlen(ret));
 	if (type == 1) { regfree(&preg); }
-	efree(rc);
 	efree(ret);
 	return strs;
 }
