@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.10 2002-07-24 10:10:24 oops Exp $
+  $Id: krparse.c,v 1.11 2002-07-24 12:19:34 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -177,12 +177,12 @@ PHP_FUNCTION(unidecode_lib)
 		RETURN_FALSE;
 	}
 
-	if (strcasecmp(to,"euc-kr") && strcasecmp(to,"cp949")) {
+	if (strcasecmp(to,"euc-kr") && strcasecmp(to,"euc_kr") && strcasecmp(to,"cp949")) {
 		php_error(E_ERROR, "Unknown encoding \"%s\"",to);
 		RETURN_FALSE;
 	}
 
-	if (!strcasecmp(to,"euc-kr")) {
+	if (!strcasecmp(to,"euc-kr") || !strcasecmp(to,"euc_kr")) {
 		type = 1;
 		subtype = 1;
 	} else if (!strcasecmp(to,"cp949")) {
@@ -265,6 +265,8 @@ PHP_FUNCTION(utf8decode_lib) {
 	}
 
 	if ( strcasecmp(type,"euc-kr") == 0 ) {
+		chk = 1;
+	} else if (strcasecmp(type,"euc_kr") == 0 ) {
 		chk = 1;
 	} else if (strcasecmp(type,"cp949") == 0 ) {
 		chk = 2;
