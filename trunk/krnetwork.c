@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.9 2002-08-08 22:23:04 oops Exp $
+  $Id: krnetwork.c,v 1.10 2002-08-08 22:45:23 oops Exp $
 */
 
 /*
@@ -218,7 +218,7 @@ PHP_FUNCTION(sockmail_lib)
 	zval **mail, **from, **to, **debugs;
 	unsigned char delimiters[] = ",";
 	unsigned char *text, *faddr, *taddr, *tmpfrom, *tmpto, *mailaddr;
-	int sock, debug = 0, len = 0, failcode = 0;
+	int sock, debug = 0, len = 0, failcode = 0, error_no = 0;
 
 	struct sockaddr_in sinfo;
 	struct hostent *hostinfo;
@@ -312,10 +312,14 @@ PHP_FUNCTION(sockmail_lib)
 			unsigned char *src[3] = { "/[^<]*</i", "/>.*/i", "[\\s]" };
 			unsigned char *des[3] = { "", "", "" };
 			unsigned char *mailserver;
+
+			error_no++;
 			mailserver = (unsigned char *) kr_regex_replace_arr(src, des, mailaddr, (sizeof (src) / sizeof (src[0])));
-			if (sock_sendmail(faddr, mailserver, text, debug) == 1) { RETURN_FALSE; }
+			if (sock_sendmail(faddr, mailserver, text, debug) == 1) { RETURN_LONG(error_no); }
 		} while ( (mailaddr = strtok(NULL, delimiters)) != NULL );
 	}
+
+	RETURN_LONG(0);
 }
 /* }}} */
 
