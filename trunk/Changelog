@@ -3,6 +3,7 @@ PHP Korean Extexsions Changelog
 * Fri Jul 25 2002
 - added remove rutine of utf 8 init charactors on utf8_decode function
 - changed print value of php_info()
+- changed name of builddate_lib function to buildno_lib
 
 * Fri Jul 18 2002
 - fixed problem of null new_type parameter in imgresize_lib function
