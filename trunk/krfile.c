@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.1.1.1 2002-05-14 09:50:50 oops Exp $ 
+  $Id: krfile.c,v 1.2 2002-06-01 22:34:33 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -308,8 +308,7 @@ unsigned char *read_file(unsigned char *filename, unsigned int filesize)
 
 	FILE *fp;
 	size_t fsize_o, fsize;
-	unsigned char *text, *ret, *buf;
-	unsigned char i = 0;
+	unsigned char *text, *ret;
 
 	/* get file info */
 	stat (filename,&filebuf);
