@@ -106,24 +106,10 @@ function sockhttp_lib($url) {
 }
 
 function readfile_lib($path, $ipath=0) {
-  if (preg_match("/^http:/i", $path)) {
-    $ret = sockhttp_lib($path);
-  } else {
-    if (!file_exists($path)) {
-      $vpath = ini_get("include_path");
-      $inpath = explode(":", $vpath);
-      for ($i=0;$i<count($inpath);$i++) {
-        $inpath[$i] = preg_replace("/\/$/","",$inpath[$i]);
-        if (file_exists("$inpath[$i]/$path")) {
-          $rpath = "$inpath[$i]/$path";
-          break;
-        }
-      }
-      if ($rpath) { $path = $rpath; }
-      else { return; }
-    }
-    $ret = getfile_lib($path, filesize($path));
-  }
+  ob_start();
+  readfile($path, $ipath);
+  $ret = ob_get_contents();
+  ob_end_clean();
 
   return $ret;
 }
