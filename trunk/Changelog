@@ -1,5 +1,8 @@
 PHP Korean Extexsions Changelog
 
+* Wed Jun 19 2002
+- modified information of php.ini
+
 * Sat Jun 15 2002
 - added other browser in get_agent_lib function
 
