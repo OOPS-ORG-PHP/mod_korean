@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.10 2002-08-13 02:59:40 oops Exp $ 
+  $Id: krimage.c,v 1.11 2002-08-13 03:08:27 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -65,9 +65,9 @@
 #include <gd.h>
 
 /* file type markers */
-PHPAPI extern const char php_sig_gif[3] = {'G', 'I', 'F'};
-PHPAPI extern const char php_sig_jpg[3] = {(char) 0xff, (char) 0xd8, (char) 0xff};
-PHPAPI extern const char php_sig_png[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (char) 0x47,
+PHPAPI const char php_sig_gif_kr[3] = {'G', 'I', 'F'};
+PHPAPI const char php_sig_jpg_kr[3] = {(char) 0xff, (char) 0xd8, (char) 0xff};
+PHPAPI const char php_sig_png_kr[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (char) 0x47,
 	    (char) 0x0d, (char) 0x0a, (char) 0x1a, (char) 0x0a};
 
 /* {{{ proto int imgresize(string filepath [, string new_type [, int new_width [, int new_height [, string new_path ] ] ] ])
@@ -217,12 +217,12 @@ PHP_FUNCTION(imgresize_lib)
 		RETURN_FALSE;
 	}
 
-    if (!memcmp(filetype, php_sig_gif, 3)) { itype = 1; }
-   	else if (!memcmp(filetype, php_sig_jpg, 3)) { itype = 2; }
-   	else if (!memcmp(filetype, php_sig_png, 3))
+    if (!memcmp(filetype, php_sig_gif_kr, 3)) { itype = 1; }
+   	else if (!memcmp(filetype, php_sig_jpg_kr, 3)) { itype = 2; }
+   	else if (!memcmp(filetype, php_sig_png_kr, 3))
    	{
 		FP_FREAD(filetype+3, 5, socketd, fp, issock);
-		if (!memcmp(filetype, php_sig_png, 8)) { itype = 3; }
+		if (!memcmp(filetype, php_sig_png_kr, 8)) { itype = 3; }
 		else 
 		{
 			php_error(E_WARNING, "PNG file corrupted by ASCII conversion");
