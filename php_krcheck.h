@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krcheck.h,v 1.2 2002-08-11 20:08:23 oops Exp $
+$Id: php_krcheck.h,v 1.3 2002-08-21 16:15:27 oops Exp $
 */
 
 #ifndef PHP_KRCHECK_H
@@ -34,6 +34,5 @@ unsigned int chkMetaChar (unsigned char *str, int type);
 unsigned int check_table (unsigned char *str);
 unsigned int multibyte_check(unsigned char *str_o, unsigned int point);
 unsigned int check_windows(unsigned int type);
-unsigned int result_except_ksx_1001 (unsigned char *kstr, unsigned int s,  unsigned int p);
 
 #endif  /* end PHP_KRCHECK_H */

@@ -3,6 +3,7 @@ PHP Korean Extexsions Changelog
 * Thu Aug 22 2002
   by JoungKyun Kim <http://www.oops.org>
     - added ncrdecode_lib() function
+    - removed result_except_ksx_1001 function
 
 * Sun Aug 18 2002
   by JoungKyun Kim <http://www.oops.org>
