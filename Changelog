@@ -1,48 +1,66 @@
 PHP Korean Extexsions Changelog
 
+* Wed Aug  7 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - added mailsource_lib() function
+
 * Fri Jul 25 2002
-- added remove rutine of utf 8 init charactors on utf8_decode function
-- changed print value of php_info()
-- changed name of builddate_lib function to buildno_lib
-- added version_lib function ( print version of korean extension )
+  by JoungKyun Kim <http://www.oops.org>
+    - added remove rutine of utf 8 init charactors on utf8_decode function
+    - changed print value of php_info()
+    - changed name of builddate_lib function to buildno_lib
+    - added version_lib function ( print version of korean extension )
 
 * Fri Jul 18 2002
-- fixed problem of null new_type parameter in imgresize_lib function
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed problem of null new_type parameter in imgresize_lib function
 
 * Wed Jul  3 2002
-- added include_path option on readfile_lib function
+  by JoungKyun Kim <http://www.oops.org>
+    - added include_path option on readfile_lib function
 
 * Sun Jun 30 2002
-- enable to control of remote image on imgResize_lib function
+  by JoungKyun Kim <http://www.oops.org>
+    - enable to control of remote image on imgResize_lib function
 
 * Wed Jun 19 2002
-- modified information of php.ini
+  by JoungKyun Kim <http://www.oops.org>
+    - modified information of php.ini
 
 * Sat Jun 15 2002
-- added other browser in get_agent_lib function
+  by JoungKyun Kim <http://www.oops.org>
+    - added other browser in get_agent_lib function
 
 * Thu Jun 14 2002
-- added gd libaray if installed gd is no regular library directory
+  by JoungKyun Kim <http://www.oops.org>
+    - added gd libaray if installed gd is no regular library directory
 
 * Thu Jun 13 2002
-- modified config.m4 for supported gd
+  by JoungKyun Kim <http://www.oops.org>
+    - modified config.m4 for supported gd
 
 * Fri Jun  7 2002
-- fixed reallocation error in uniencode_lib function
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed reallocation error in uniencode_lib function
 
 * Mon Jun  3 2002
-- added imgresize_lib function (added krimage.c, php_krimage.h)
+  by JoungKyun Kim <http://www.oops.org>
+    - added imgresize_lib function (added krimage.c, php_krimage.h)
 
 * Fri May 24 2002
-- fixed typo in convUTF6 function
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed typo in convUTF6 function
 
 * Thu May 23 2002
-- fixed segmentation fault utf8decod function
-- added operation of utf8 in substr_lib
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed segmentation fault utf8decod function
+    - added operation of utf8 in substr_lib
 
 * Thu May 16 2002
-- fixed segmentation fault when use perror_lib or pnotice_lib in shell
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed segmentation fault when use perror_lib or pnotice_lib in shell
 
 * Tue May 14 2002
-- fixed duplicated regist krerror.c in Makefile.in
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed duplicated regist krerror.c in Makefile.in
 
