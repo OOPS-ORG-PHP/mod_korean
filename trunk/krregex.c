@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krregex.c,v 1.7 2002-08-16 02:18:09 oops Exp $ 
+  $Id: krregex.c,v 1.8 2002-09-02 16:07:01 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -28,7 +28,6 @@
 
 unsigned char *kr_regex_replace (unsigned char *regex_o, unsigned char *replace_o, unsigned char *str_o)
 {
-	unsigned int i;
 	size_t str_len = strlen(str_o);
 	zval *replaces;
 	unsigned char *buf_o;
