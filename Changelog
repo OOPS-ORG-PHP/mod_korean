@@ -2,6 +2,7 @@ PHP Korean Extexsions Changelog
 
 * Mon Dec  9 2002
   by JoungKyun Kim <http://www.oops.org>
+    - changed file stream function to row system function on readfile_lib functoin
     - fixed segment falut of mail function
     - fixed bug that changed addr variable in get_hostname_lib function
     - changed upper case to lower case start charactors of unicode function

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.17 2002-11-30 20:03:35 oops Exp $ 
+  $Id: krfile.c,v 1.18 2002-12-09 13:11:48 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 #ifdef PHP_WIN32
 	#include "win32/readdir.h"
 #else
@@ -372,9 +373,9 @@ unsigned char *readfile(unsigned char *filename, size_t filesize)
 {
 	struct stat filebuf;
 
-	FILE *fp;
-	size_t fsize_o, frsize, len;
-	static unsigned char *text, *ret;
+	int fp;
+	size_t fsize_o = 0, frsize = 0, len = 0, strlength = 0;
+	static unsigned char *text, *ret, tmptext[FILEBUFS];
 
 	/* get file info */
 	stat (filename, &filebuf);
@@ -384,22 +385,22 @@ unsigned char *readfile(unsigned char *filename, size_t filesize)
 	if (filesize > fsize_o) { frsize = fsize_o; }
 	else { frsize = ( filesize == 0 ) ? fsize_o : filesize; }
 
-	if ((fp = fopen(filename, "rb")) == NULL)
+	if ((fp = open(filename, O_RDONLY)) == -1)
    	{
 		 php_error(E_ERROR, "Can't open %s in read mode", filename);
 		 return NULL;
 	}
 
-	text = emalloc(sizeof(char) * (frsize + 1));
+	text = emalloc(sizeof(char) * (frsize));
 
-	if ( (len = fread(text, sizeof(char), frsize, fp)) != frsize )
-   	{
-		php_error(E_ERROR, "Occured error in file stream");
-		return NULL;
+	while ( (len = read(fp, tmptext, FILEBUFS)) > 0 )
+	{
+		memmove (text + strlength, tmptext, len);
+		strlength += len;
 	}
-	text[frsize] = '\0';
+	text[frsize-1] = '\0';
 
-	fclose(fp);
+	close(fp);
 
 	ret = estrndup(text, frsize);
 	efree(text);
