@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.55 2003-12-10 10:49:46 oops Exp $
+  $Id: krparse.c,v 1.56 2004-09-14 06:52:22 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -748,6 +748,36 @@ int get_postposition (unsigned char *str)
 			return 0;
 		}
 	}
+}
+/* }}} */
+
+/* {{{ unsigned char * strtrim ( unsigned char *str ) */
+unsigned char * strtrim ( unsigned char * str ) {
+	int len, i;
+	unsigned char * str_r;
+
+	len = strlen (str);
+	str_r = (unsigned char *) emalloc ( sizeof (char *) * ( len + 1 ) );
+	memset (str_r, 0, sizeof (str_r));
+
+	for ( i = 0; i < len; i++ ) {
+		if ( !isspace (str[i]) ) {
+			strcpy (str_r, str + i);
+			break;
+		}
+	}
+
+	len = strlen (str_r);
+
+	for ( i = len - 1; i>-1; i-- ) {
+		if ( isspace (str_r[i]) ) {
+			memset (str_r + i, 0, 1);
+		} else {
+			break;
+		}
+	}
+
+	return str_r;
 }
 /* }}} */
 
