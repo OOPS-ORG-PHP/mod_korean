@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.4 2002-08-08 20:33:01 oops Exp $ 
+  $Id: krmail.c,v 1.5 2002-08-09 10:48:25 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -690,7 +690,7 @@ unsigned char *generate_mime (unsigned char *filename)
 	else if (!strcmp("tiff", ext) || !strcmp("tif", ext)) { mime = "image/tiff"; }
 	else if (!strcmp("igs", ext) || !strcmp("iges", ext)) { mime = "model/iges"; }
 	else if (!strcmp("wrl", ext) || !strcmp("vrml", ext)) { mime = "model/vrml"; }
-	else if (!strcmp("asc", ext) || !strcmp("txt", ext)) { mime = "text/plain"; }
+	else if (!strcmp("asc", ext) || !strcmp("txt", ext) || !strcmp("php", ext)) { mime = "text/plain"; }
 	else if (!strcmp("sgml", ext) || !strcmp("sgm", ext)) { mime = "text/sgml"; }
 	else if (!strcmp("qt", ext) || !strcmp("mov", ext)) { mime = "video/quicktime"; }
 	else if (!strcmp("ai", ext) || !strcmp("eps", ext) || !strcmp("ps", ext)) { mime = "application/postscript"; }
