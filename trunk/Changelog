@@ -2,6 +2,11 @@ PHP Korean Extexsions Changelog
 
 * 0.0.6
 --------------------------------------------------------------------------------
+Mon Sep 15 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed fail mail and rcpt rutine on some smtp server in sockmail_lib fucntion
+    - fixed setlocale on date of mail header in mailsource_lib function
+
 Thu Sep  4 2003
   by JoungKyun Kim <http://www.oops.org>
     - changed to int type from void on putfile_lib function
