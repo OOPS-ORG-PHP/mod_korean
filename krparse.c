@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.33 2002-08-21 16:01:17 oops Exp $
+  $Id: krparse.c,v 1.34 2002-08-21 16:02:38 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -31,7 +31,6 @@
 #include "unicode_cp949_ncr_table.h"
 
 #include <math.h>
-#include <search.h>
 
 /* {{{ proto string ncrencode_lib (string str [, int type])
    Return ncr code from euc-kr */
