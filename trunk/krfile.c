@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.31 2003-07-14 03:57:40 oops Exp $ 
+  $Id: krfile.c,v 1.32 2003-07-14 05:12:10 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -531,8 +531,8 @@ unsigned char *readfile(unsigned char *filename)
 }
 /* }}} */
 
-/* {{{ unsigned char *human_file_size (double size_o, int sub_o, int unit, int cunit) */
-unsigned char *human_file_size (double size_o, int sub_o, int unit, int cunit)
+/* {{{ unsigned char *human_file_size (double size_o, int sub_o, int unit, double cunit) */
+unsigned char *human_file_size (double size_o, int sub_o, int unit, double cunit)
 {
 	float res;
 	static unsigned char ret[32];
