@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Thu Dec 26 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed typo in agentinfo_lib function
+
 * Sun Dec 22 2002
   by JoungKyun Kim <http://www.oops.org>
     - fixed segment error on readfile function

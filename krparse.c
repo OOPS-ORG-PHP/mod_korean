@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.51 2002-12-01 09:50:54 oops Exp $
+  $Id: krparse.c,v 1.52 2002-12-26 13:12:31 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -383,7 +383,7 @@ PHP_FUNCTION(agentinfo_lib)
 	   	{
 			add_assoc_string(return_value, "ln", "ko", 1);
 		}
-	   	else if (strstr(agent_o, "[ko]"))
+	   	else if (strstr(agent_o, "[en]"))
 	   	{
 			add_assoc_string(return_value, "ln", "en", 1);
 		}
