@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Fri Aug 16 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - removed include of dns.c on krnetwork.c
+
 * Wed Aug 14 2002
   by JoungKyun Kim <http://www.oops.org>
     - remove bin2hex, hex2bin, bin2dec function on krparse.c

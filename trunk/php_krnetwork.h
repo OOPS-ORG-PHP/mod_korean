@@ -15,7 +15,7 @@
   | Author:                                                              |
   +----------------------------------------------------------------------+
 
-  $Id: php_krnetwork.h,v 1.3 2002-08-08 21:59:45 oops Exp $
+  $Id: php_krnetwork.h,v 1.4 2002-08-16 01:03:54 oops Exp $
 */
 
 #ifndef PHP_KRNETWORK_H
@@ -25,6 +25,7 @@ PHP_FUNCTION(get_hostname_lib);
 PHP_FUNCTION(readfile_lib);
 PHP_FUNCTION(sockmail_lib);
 
+static char *kr_gethostbyaddr(char *ip);
 int socksend (int sock, int deb, unsigned char *var, unsigned char *target);
 unsigned char *get_mx_record (unsigned char *str);
 void debug_msg (unsigned char *msg, int info, int bar);
