@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.25 2002-08-14 10:56:48 oops Exp $
+  $Id: krparse.c,v 1.26 2002-08-14 11:09:38 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -806,13 +806,12 @@ unsigned char *krNcrConv (unsigned char *str_o, int type)
 	unsigned long i;
 	unsigned int ncr;
 	size_t len;
-	unsigned char *rc, *strs;
+	unsigned char rc[9], *strs;
 	unsigned char *ret = NULL;
 
 	if ( str_o == NULL ) { return NULL; }
 	else { len = strlen(str_o); }
 
-	rc = emalloc(sizeof(char) * 8 + 1);
 	for(i=0;i<len;i++)
    	{
 		/* if 2byte charactor */
@@ -826,20 +825,29 @@ unsigned char *krNcrConv (unsigned char *str_o, int type)
 					   (str_o[i] >= 0xa1 && str_o[i] <= 0xc6 && str_o[i+1] >= 0x41 && str_o[i+1] <=0xa0))
 				   	{
 						ncr = getNcrIDX(str_o[i], str_o[i+1]);
-						sprintf(rc, "&#%d;", uni_cp949_ncr_table[ncr]);
+						sprintf(rc, "&#%d;\0", uni_cp949_ncr_table[ncr]);
 						i++;
-					} else sprintf(rc, "%c", str_o[i]);
+					}
+				   	else
+				   	{
+						memset(rc, str_o[i], 1);
+						memset(rc + 1, '\0', 1);
+					}
 
 					break;
 				/* range of whole string */
 				default:
 					ncr = getNcrIDX(str_o[i], str_o[i+1]);
-					sprintf(rc, "&#%d;", uni_cp949_ncr_table[ncr]);
+					sprintf(rc, "&#%d;\0", uni_cp949_ncr_table[ncr]);
 					i++;
 			}
 		}
 		/* 1 byte charactor */
-		else { sprintf(rc, "%c", str_o[i]); }
+		else
+	   	{
+			memset(rc, str_o[i], 1);
+			memset(rc + 1, '\0', 1);
+	   	}
 
 		if (strlen(rc) != 0)
 	   	{
@@ -857,7 +865,6 @@ unsigned char *krNcrConv (unsigned char *str_o, int type)
 	}
 
 	strs = (unsigned char *) estrndup(ret, strlen(ret));
-	efree(rc);
 	efree(ret);
 	return strs;
 }
