@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.8 2002-08-23 10:58:17 oops Exp $ 
+  $Id: krfile.c,v 1.9 2002-09-01 08:12:30 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -485,6 +485,7 @@ unsigned char *includePath (unsigned char *filepath)
 	unsigned char *token, chkfile[512], *filename;
 	unsigned char *includetmp, *includepath;
 	int exists = 1;
+	void ***tsrm_ls;
 
 	includetmp = PG(include_path);
 	includepath = (includetmp == NULL) ? "" : estrdup(includetmp);
