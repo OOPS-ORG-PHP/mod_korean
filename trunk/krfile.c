@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.6 2002-08-22 09:27:12 oops Exp $ 
+  $Id: krfile.c,v 1.7 2002-08-23 01:37:08 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -262,7 +262,7 @@ PHP_FUNCTION(getfile_lib)
 
 	if (size < 0 ) { size = 0; }
 
-	str = read_file(Z_STRVAL_PP(filename), size);
+	str = readfile(Z_STRVAL_PP(filename), size);
 										    
 	RETURN_STRING(str, 1);
 }
@@ -351,7 +351,7 @@ void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_
 	fclose(fp);
 }
 
-unsigned char *read_file(unsigned char *filename, unsigned int filesize)
+unsigned char *readfile(unsigned char *filename, unsigned int filesize)
 {
 	struct stat filebuf;
 
