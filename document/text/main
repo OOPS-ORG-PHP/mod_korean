@@ -33,6 +33,22 @@ korean extension 의 buildno 가 200212410255 부터는 php 4.3.0 부터 컴파일이 가능
 
 PHP Korean Extexsions Changelog About Version REP_VERSION_REP
 
+Mon Sep 15 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - release 0.0.6
+    - fixed fail mail and rcpt rutine on some smtp server in sockmail_lib fucntion
+    - fixed setlocale on date of mail header in mailsource_lib function
+    - changed to int type from void on putfile_lib function
+    - fixed miss free on pcre_match function
+    - fixed autolink_lib function bug
+    - update human_fsize_lib
+    - added gif out patch on libgd
+    - update libgd
+    - fixed segment fault when return null byte in pcregrep_lib
+    - added unit option in human_fsize_lib function
+    - rewrite readfile_lib fucntion with same function of readfile
+    - added pcregrep_lib function and pcre_match internal function
+
 * Sun Mar  2 2003
   by JoungKyun Kim <http://www.oops.org>
     - release 0.0.5
