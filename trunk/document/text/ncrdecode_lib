@@ -13,7 +13,7 @@ ncrdecode_lib() 함수는 16 진수 NCR code 로 되어있는 문자를 CP949 테이블로 변환을
 <FONT ID=RE>예제</FONT>
 
 $a = &quot;한글a 와 똠방각하&quot;;
-$a = ncrdecode_lib($a);
+$a = ncrencode_lib($a);
 echo ncrdecode_lib($a);
 
 return =&gt; &quot;한글a 와 똠방각하&quot;;
