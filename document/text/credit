@@ -33,7 +33,7 @@ pnotice_lib()                  ±èÁ¤±Õ <http://www.oops.org>
 ncrencode_lib()                ±èÁ¤±Õ <http://www.oops.org>, ¹æÃ¢Çö <winchild@kldp.org>
 uniencode_lib()                ±èÁ¤±Õ <http://www.oops.org>, ¹æÃ¢Çö <winchild@kldp.org>
 unidecode_lib()                ±èÁ¤±Õ <http://www.oops.org>, ¹æÃ¢Çö <winchild@kldp.org>
-utf8encode_lib()               ±èÁ¤±Õ <http://www.oops.org>
-utf8decode_lib()               ±èÁ¤±Õ <http://www.oops.org>
+utf8encode_lib()               ±èÁ¤±Õ <http://www.oops.org>, ÃÖÇö¼ö <http://baby.web119.com>
+utf8decode_lib()               ±èÁ¤±Õ <http://www.oops.org>, ÃÖÇö¼ö <http://baby.web119.com>
 substr_lib()                   ±èÁ¤±Õ <http://www.oops.org>
 
