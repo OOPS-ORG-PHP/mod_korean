@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.2 2002-06-03 16:16:46 oops Exp $ 
+  $Id: krimage.c,v 1.3 2002-06-03 17:35:50 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -59,6 +59,12 @@
 #if HAVE_LIBGD
 
 #include <gd.h>
+
+/* file type markers */
+PHPAPI const char php_sig_gif[3] = {'G', 'I', 'F'};
+PHPAPI const char php_sig_jpg[3] = {(char) 0xff, (char) 0xd8, (char) 0xff};
+PHPAPI const char php_sig_png[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (char) 0x47,
+	    (char) 0x0d, (char) 0x0a, (char) 0x1a, (char) 0x0a};
 
 /* {{{ proto int imgresize(string filepath [, string new_type [, int new_width [, int new_height [, string new_path ] ] ] ])
  *  *  print move action to url */

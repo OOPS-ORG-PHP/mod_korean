@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krimage.h,v 1.2 2002-06-03 17:29:38 oops Exp $
+$Id: php_krimage.h,v 1.3 2002-06-03 17:35:50 oops Exp $
 */
 #ifndef PHP_KRIMAGE_H
 #define PHP_KRIMAGE_H
@@ -26,11 +26,6 @@ PHP_FUNCTION(imgresize_lib);
 #define	PNGNEWTYPE	2
 #define	JPGNEWTYPE	3
 
-/* file type markers */
-PHPAPI const char php_sig_gif[3] = {'G', 'I', 'F'};
-PHPAPI const char php_sig_jpg[3] = {(char) 0xff, (char) 0xd8, (char) 0xff};
-PHPAPI const char php_sig_png[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (char) 0x47,
-	(char) 0x0d, (char) 0x0a, (char) 0x1a, (char) 0x0a};
 #endif /* HAVE_LIBGD */
 
 #endif /* PHP_KRFILE_H */
