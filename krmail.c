@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.28 2004-09-14 08:58:51 oops Exp $
+  $Id: krmail.c,v 1.29 2004-09-14 10:01:06 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -404,6 +404,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 	}
 
 	_t_name = NULL;
+	cname   = NULL;
 
 	token = strtok_r (toaddr, delimiters, &btoken);
 	if ( token != NULL ) {
@@ -424,20 +425,21 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 			unsigned char *t_to;
 			int to_lenth;
 
+			t_to = NULL;
+
 			if ( namelen < 1 ) {
-				t_to = strtrim(token);
+				t_to = strtrim (token);
 				to_lenth = strlen (t_to);
-				to = emalloc ( sizeof (char) * (to_lenth + 1));
+				to = emalloc ( sizeof (char) * (to_lenth + 3));
 				sprintf (to, "<%s>", t_to);
 			} else {
 				to_lenth = setlen + maillen + namelen + 32;
-				t_to = emalloc( sizeof(char) * (to_lenth + 1) );
+				to = emalloc( sizeof(char) * (to_lenth + 1) );
 				cname = estrdup( (unsigned char *) php_base64_encode(t_name, namelen, &namelen) );
-				sprintf(t_to, "=?%s?B?%s?= <%s>", set, cname, t_mail);
-				to = estrdup(t_to);
+				sprintf(to, "=?%s?B?%s?= <%s>", set, cname, t_mail);
 			}
+			safe_efree (cname);
 			safe_efree(t_to);
-
 		}
 		safe_efree (t_mail);
 		safe_efree (_t_name);
@@ -450,8 +452,8 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 
 			// get email address on NAME <email@address> form
 			if ( strchr(token,'<') != NULL ) {
-				s_mail = strtrim( (unsigned char *) kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", token) );
-				_s_name = strtrim( (unsigned char *) kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", token) );
+				s_mail = strtrim ((unsigned char *) kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", token));
+				_s_name = strtrim ((unsigned char *) kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", token));
 				s_name = _s_name;
 				smlen = strlen(s_mail);
 				snlen = strlen(s_name);
@@ -462,10 +464,12 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 
 			// whether vaild or invalid email form
 			if ( checkAddr(s_mail, 0) ) {
-				unsigned char s_to[200];
+				unsigned char s_to[1024];
+
+				memset (s_to, 0, sizeof (s_to));
 
 				if ( snlen < 1 ) {
-					memset(s_to, '\0', 200);
+					memset(s_to, '\0', sizeof (s_to));
 					sprintf (s_to, "<%s>", s_mail);
 				} else {
 					sub_cname = (unsigned char *) php_base64_encode(s_name, snlen, &namelen);
@@ -475,13 +479,14 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 				if ( to == NULL ) {
 					to = estrdup(s_to);
 				} else {
-					unsigned int add_to_len = strlen(s_to) + 3;
-					unsigned char *add_to;
-					add_to = emalloc( sizeof(char) * (add_to_len + 1) );
+					unsigned int add_to_len;
+					unsigned char add_to[1024];
+
+					memset (add_to, 0, sizeof (add_to));
 					sprintf(add_to, ", %s", s_to);
-					to = (unsigned char *) erealloc(to, strlen(to) + add_to_len);
+					add_to_len = strlen (add_to);
+					to = (unsigned char *) erealloc (to, sizeof (char) * (strlen(to) + add_to_len + 1));
 					strcat(to, add_to);
-					safe_efree(add_to);
 				}
 			}
 
