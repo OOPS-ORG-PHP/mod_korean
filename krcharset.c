@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.12 2002-12-09 09:03:44 oops Exp $
+  $Id: krcharset.c,v 1.13 2002-12-09 15:38:40 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -526,7 +526,7 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 unsigned char *krNcrDecode (unsigned char *str_o)
 {
 	unsigned int slen, i = 0, tmp, first, second;
-	unsigned char rc[3], tmpstr[8], *strs;
+	unsigned char rc[3], tmpstr[8];
 	static unsigned char *ret = NULL;
 
 	ret = (unsigned char *) emalloc (sizeof(char) * strlen(str_o) * 2);
@@ -607,7 +607,7 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 	unsigned long i;
 	unsigned int aryno;
 	size_t len;
-	unsigned char rc[256], *strs;
+	unsigned char rc[256];
 	static unsigned char *ret = NULL;
 
 	int regno,hexv,firsti,secondi;
