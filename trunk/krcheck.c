@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krcheck.c,v 1.14 2002-11-30 18:11:07 oops Exp $
+  $Id: krcheck.c,v 1.15 2002-11-30 18:40:22 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -105,17 +105,16 @@ unsigned int check_table (unsigned char *str)
 
 	buf = (unsigned char *) kr_regex_replace_arr (regex, replace, str, (sizeof (regex) / sizeof (regex[0])));
 
-	if ( strlen(buf) % 3 != 0 ) { efree(buf); return 1; }
-	if ( !checkReg(buf, "^12(3|4).+9291$") ) { efree(buf); return 2; }
+	if ( strlen(buf) % 3 != 0 ) { return 1; }
+	if ( !checkReg(buf, "^12(3|4).+9291$") ) { return 2; }
 
 	while ( checkReg(buf, "([1-4])9\\1") )
 	{
 		buf = kr_regex_replace ("/([\\d])9\\1/", "", buf);
 	}
 
-	if (strlen(buf) > 0) { efree(buf); return 3; }
+	if (strlen(buf) > 0) { return 3; }
 
-	efree(buf);
 	return 0;
 }
 /* }}} */
