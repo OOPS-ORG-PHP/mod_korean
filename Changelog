@@ -2,6 +2,7 @@ PHP Korean Extexsions Changelog
 
 * Thu May 23 2002
 - fixed segmentation fault utf8decod function
+- added operation of utf8 in substr_lib
 
 * Thu May 16 2002
 - fixed segmentation fault when use perror_lib or pnotice_lib in shell
