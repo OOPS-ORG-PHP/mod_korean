@@ -2,6 +2,7 @@ PHP Korean Extexsions Changelog
 
 * Thu Sep 19 2002
   by JoungKyun Kim <http://www.oops.org>
+    - release 0.0.1
     - fixed postposition_lib functoin
     - fixed mailresource_lib function overflow error on windows envionment
 
