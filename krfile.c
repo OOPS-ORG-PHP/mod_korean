@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.34 2003-12-02 12:09:55 oops Exp $ 
+  $Id: krfile.c,v 1.35 2003-12-10 10:49:46 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -356,10 +356,11 @@ PHP_FUNCTION(getfiletype_lib)
 PHP_FUNCTION(pcregrep_lib)
 {
 	pval **getregex, **gettext, **getopt;
-	char *regex, *text, *token, *btoken, *bufstr, buf[4096];
-	char *str, tmpbuf[4096];
-	int opt = 0, retval = 0, len = 0, buflen = 0;
+	char *regex, *text, *bufstr, buf[4096];
+	char *str;
+	int opt = 0, retval = 0, len = 0, buflen = 0, newline;
 	const char delimiters[] = "\n";
+	char **sep, **sep_t;
 
 	switch(ZEND_NUM_ARGS())
 	{
@@ -388,37 +389,45 @@ PHP_FUNCTION(pcregrep_lib)
 		RETURN_EMPTY_STRING();
 	}
 
+	newline = numberOfchar (text, '\n');
+	sep = emalloc ( sizeof (char *) * (newline + 3) );
+	sep_t = sep;
 	str = emalloc ( sizeof (char) );
 	bufstr = estrdup (text);
-	token = strtok_r (bufstr, delimiters, &btoken);
 
-	while (token != NULL) {
-		memset (buf, 0, 4096);
-		memmove (buf, token, strlen(token));
-		buflen = strlen (buf);
+	while ( (*sep = strsep (&bufstr, delimiters)) != NULL ) {
+		if ( **sep != 0 ) {
+			memset (buf, 0, 4096);
+			memmove (buf, *sep, strlen(*sep));
+			buflen = strlen (buf);
 
-		retval = pcre_match (regex, buf);
-		if (retval < 0) { RETURN_FALSE; }
+			retval = pcre_match (regex, buf);
+			if (retval < 0) {
+				efree (str);
+				RETURN_FALSE;
+			}
 
-		/* print matched */
-		if ( opt )
-			retval = !retval ? 1 : 0;
+			// print matched
+			if ( opt)
+				retval = ! retval ? 1 : 0;
 
-		if ( retval ) {
-			str = erealloc ( str, sizeof (char) * (len + buflen + 3) );
-			memcpy ( str + len, buf, buflen);
-			len += buflen;
-			memset (str + len, '\n', 1);
-			len++;
-			memset (str + len, 0, 1);
+			if (retval) {
+				str = erealloc ( str, sizeof (char) * (len + buflen + 3) );
+				memcpy ( str + len, buf, buflen);
+				len += buflen;
+				memset ( str + len, '\n', 1);
+				len++;
+				memset ( str + len, 0, 1);
+			}
+
+			sep++;
 		}
-
-		token = strtok_r (NULL, delimiters, &btoken);
 	}
 
-	efree (bufstr);
+	efree (sep_t);
 
 	if (len < 1) {
+		efree (str);
 		RETURN_EMPTY_STRING();
 	}
 

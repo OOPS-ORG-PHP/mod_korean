@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.54 2003-07-16 10:58:59 oops Exp $
+  $Id: krparse.c,v 1.55 2003-12-10 10:49:46 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -665,25 +665,26 @@ unsigned char *get_serverenv(unsigned char *para)
 	static unsigned char *parameters = NULL;
 	TSRMLS_FETCH();
 
-	zend_hash_find(&EG(symbol_table), "_SERVER", 8, (void **) &data);
-	zend_hash_internal_pointer_reset(Z_ARRVAL_PP(data));
-	while (zend_hash_get_current_data(Z_ARRVAL_PP(data), (void **) &tmp) == SUCCESS)
-	{
-		if (zend_hash_get_current_key(Z_ARRVAL_PP(data), &string_key, &num_key, 0) == HASH_KEY_IS_STRING)
+	if ( zend_hash_find(&EG(symbol_table), "_SERVER", 8, (void **) &data) ) {
+		zend_hash_internal_pointer_reset(Z_ARRVAL_PP(data));
+		while (zend_hash_get_current_data(Z_ARRVAL_PP(data), (void **) &tmp) == SUCCESS)
 		{
-			if ( !strcasecmp (string_key, para) ) {
-				tmps = **tmp;
-				zval_copy_ctor(&tmps);
-				convert_to_string(&tmps);
-				parameters = Z_STRVAL(tmps);
-				zval_dtor(&tmps);
-				break;
+			if (zend_hash_get_current_key(Z_ARRVAL_PP(data), &string_key, &num_key, 0) == HASH_KEY_IS_STRING)
+			{
+				if ( !strcasecmp (string_key, para) ) {
+					tmps = **tmp;
+					zval_copy_ctor(&tmps);
+					convert_to_string(&tmps);
+					parameters = Z_STRVAL(tmps);
+					zval_dtor(&tmps);
+					break;
+				}
 			}
+			zend_hash_move_forward(Z_ARRVAL_PP(data));
 		}
-		zend_hash_move_forward(Z_ARRVAL_PP(data));
 	}
 
-	if (!parameters) { parameters = ""; }
+	if (parameters == NULL) { parameters = ""; }
 	return parameters;
 }
 /* }}} */

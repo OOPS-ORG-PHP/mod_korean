@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krregex.c,v 1.12 2003-12-02 12:09:40 oops Exp $ 
+  $Id: krregex.c,v 1.13 2003-12-10 10:49:46 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -100,21 +100,25 @@ int pcre_match (unsigned char *regex, unsigned char *str)
 	pcre *re = NULL;
 	pcre_extra *extra = NULL;
 	int preg_options = 0, *offsets, val = 0;
+	unsigned int size_offsets;
+	int num_subpats;
 
 	/* Compile regex or get it from cache. */
 	if ((re = pcre_get_compiled_regex(regex, &extra, &preg_options)) == NULL) {
 		return -1;
 	}
 
-	offsets = (int *) emalloc (3 * sizeof (int) );
+	pcre_fullinfo (re, extra, PCRE_INFO_CAPTURECOUNT, &num_subpats);
+	num_subpats++;
+	size_offsets = num_subpats * 3;
+	offsets = (int *) safe_emalloc (size_offsets, sizeof (int), 0);
 
 	/* Execute the regular expression. */
-	if ((pcre_exec(re, extra, str, strlen(str), 0, 0, offsets, 3)) > 0) {
+	if ((pcre_exec(re, extra, str, strlen(str), 0, 0, offsets, size_offsets)) > 0) {
 		val = 1;
 	}
 
 	efree(offsets);
-	free(re);
 
 	return val;
 }

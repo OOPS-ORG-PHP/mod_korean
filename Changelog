@@ -2,6 +2,12 @@ PHP Korean Extexsions Changelog
 
 * 0.0.7
 --------------------------------------------------------------------------------
+Wed Dec 10 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - rewrite pcregrep_lib function
+    - rewrite krregex.h
+    - rewrite get_serverenv function
+
 Tue Dec  2 2003
   by JoungKyun Kim <http://www.oops.org>
     - fixed efree bug of pcre_match function
