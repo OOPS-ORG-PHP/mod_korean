@@ -1,0 +1,29 @@
+
+Script of korean extension 사용법
+
+1. 임의의 디렉토리를 생성한다.
+   mkdir /usr/include/phplib
+
+2. 소스를 생성한 디렉토리에 복사한다.
+   mv * /usr/include/phplib
+
+3. php.ini 의 include_path 에 생성한 디렉토리 경로를 추가한다.
+   include_path = "./:/usr/include/phplib"
+
+4. 웹서버를 재시작 한다.
+
+5. 아래와 같이 function_header.php 를 호출하여 사용을 한다.
+   include "function_header.php";
+
+함수의 사용법은 http://devel.oops.org/manual/korean/ 을 참고한다.
+
+* 주의사항
+
+문자셋 parse 관련 함수를 사용할 경우 decode 관련 함수들은 속도가 상당히 느리다.
+문자셋 parse 관련 함수를 사용해야 한다면 korean extension module 을 로딩하여 사
+용할 것을 권장한다.
+
+이 소스는 korean extension 을 사용하는 중, 어쩔 수 없이 korean extension 을 사
+용하지 못하게 될 경우, 최소한 기능을 구현을 하기 위해 작성된 소스이다. 즉, 효율
+성은 고려를 하지 않았음을 고려해야 한다.
+
