@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.43 2004-09-14 08:58:51 oops Exp $
+  $Id: krnetwork.c,v 1.44 2004-09-14 12:41:31 oops Exp $
 */
 
 /*
@@ -352,7 +352,12 @@ PHP_FUNCTION(sockmail_lib)
 	zval **mail, **from, **to, **debugs;
 	unsigned char delimiters[] = ",";
 	unsigned char *text, *faddr, *taddr, *tmpfrom, *tmpto, *mailaddr;
+	char *btoken;
 	int debug = 0, len = 0, failcode = 0, error_no = 0;
+
+	unsigned char *src[4] = { "/[^<]*</", "/>.*/", "/[\\s]/", "/^.*$/" };
+	unsigned char *des[4] = { "", "", "", "<\\0>" };
+	unsigned char *t_addr;
 
 	/* {{{ check args */
 	switch (ZEND_NUM_ARGS())
@@ -413,41 +418,34 @@ PHP_FUNCTION(sockmail_lib)
 	convert_to_string_ex(mail);
 	text = Z_STRVAL_PP(mail);
 
-	if (strlen(tmpfrom) < 1)
-	{
-		unsigned char *src[3] = { "/\r*\n/i", "/.*From:([^!]+)!!ENTER!!.*/i", "/.*<([^>]+)>/i" };
-		unsigned char *des[3] = { "!!ENTER!!", "\\1", "<\\1>" };
-
-		faddr = (unsigned char *) kr_regex_replace_arr(src, des, text, (sizeof (src) / sizeof (src[0])));
-	}
-   	else
-	{
-		unsigned char *src = "/.*<([^>]+)>/i";
-		unsigned char *des = "<\\1>";
-		faddr = (unsigned char *) kr_regex_replace(src, des, tmpfrom);
+	if (strlen(tmpfrom) < 1) {
+		unsigned char *f_src[4] = { "/\r*\n/i", "/.*From:([^!]+)!!ENTER!!.*/i", "/.*<([^>]+)>/i", "/^.*$/" };
+		unsigned char *f_des[4] = { "!!ENTER!!", "\\1", "\\1", "<\\0>" };
+		faddr = (unsigned char *) kr_regex_replace_arr(f_src, f_des, text, (sizeof (f_src) / sizeof (f_src[0])));
+	} else {
+		unsigned char *f_src[2] = { "/.*<([^>]+)>/i", "/^.*$/" };
+		unsigned char *f_des[2] = { "\\1", "<\\0>" };
+		faddr = (unsigned char *) kr_regex_replace_arr(f_src, f_des, tmpfrom, (sizeof (f_src) / sizeof (f_src[0])));
 	}
 
-	if (strlen(tmpto) < 1)
-	{
-		unsigned char *src[3] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i", "/<([^>]+)>/i" };
-		unsigned char *des[3] = { "!!ENTER!!", "\\1", "<\\1>" };
-		taddr = (unsigned char *) kr_regex_replace_arr(src, des, text, (sizeof (src) / sizeof (src[0])));
-	}
-	else
-	{
+	if (strlen(tmpto) < 1) {
+		unsigned char *t_src[2] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i" };
+		unsigned char *t_des[2] = { "!!ENTER!!", "\\1" };
+		taddr = (unsigned char *) kr_regex_replace_arr(t_src, t_des, text, (sizeof (t_src) / sizeof (t_src[0])));
+	} else {
 		taddr = tmpto;
 	}
 
-	if ( (mailaddr = strtok(taddr, delimiters)) != NULL ) {
+	if ( (mailaddr = strtok_r (taddr, delimiters, &btoken)) != NULL ) {
 		do {
-			unsigned char *src[3] = { "/[^<]*</i", "/>.*/i", "[\\s]" };
-			unsigned char *des[3] = { "<", ">", "" };
-			unsigned char *mailserver;
-
 			error_no++;
-			mailserver = (unsigned char *) kr_regex_replace_arr(src, des, mailaddr, (sizeof (src) / sizeof (src[0])));
-			if (sock_sendmail(faddr, mailserver, text, debug) == 1) { RETURN_LONG(error_no); }
-		} while ( (mailaddr = strtok(NULL, delimiters)) != NULL );
+			t_addr = (unsigned char *) kr_regex_replace_arr(src, des, mailaddr, (sizeof (src) / sizeof (src[0])));
+
+			if (sock_sendmail(faddr, t_addr, text, debug) == 1) {
+				RETURN_LONG(error_no);
+			}
+			t_addr = NULL;
+		} while ( (mailaddr = strtok_r (NULL, delimiters, &btoken)) != NULL );
 	}
 	error_no = 0;
 
