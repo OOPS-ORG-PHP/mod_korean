@@ -312,11 +312,13 @@ typedef struct {
 				   gdFTEX_Shift_JIS, or gdFTEX_Big5;
 				   when not specified, maps are searched
 				   for in the above order. */
+	double charspacing;
 }
  gdFTStringExtra, *gdFTStringExtraPtr;
 
 #define gdFTEX_LINESPACE 1
 #define gdFTEX_CHARMAP 2
+#define gdFTEX_CHARSPACE 4
 
 /* These are NOT flags; set one in 'charmap' if you set the gdFTEX_CHARMAP bit in 'flags'. */
 #define gdFTEX_Unicode 0
@@ -441,6 +443,10 @@ void gdImageJpegCtx(gdImagePtr im, gdIOCtx *out, int quality);
 
 /* Best to free this memory with gdFree(), not free() */
 void *gdImageJpegPtr(gdImagePtr im, int *size, int quality);
+
+void gdImageGif(gdImagePtr im, FILE *out);
+void gdImageGifCtx(gdImagePtr im, gdIOCtx *out);
+void* gdImageGifPtr(gdImagePtr im, int *size);
 
 gdImagePtr gdImageCreateFromGif(FILE *fd);
 gdImagePtr gdImageCreateFromGifCtx(gdIOCtxPtr in);
