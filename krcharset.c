@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.7 2002-12-01 09:38:38 oops Exp $
+  $Id: krcharset.c,v 1.8 2002-12-01 09:50:54 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -108,6 +108,7 @@ PHP_FUNCTION(ncrdecode_lib)
 {
 	pval **arg1;
 	int argc;
+	static char *retstr;
 
 	argc = ZEND_NUM_ARGS();
 
@@ -127,7 +128,9 @@ PHP_FUNCTION(ncrdecode_lib)
 
 	if (strlen(Z_STRVAL_PP(arg1)) > 0)
    	{
-		RETURN_STRING(krNcrDecode(Z_STRVAL_PP(arg1)), 1);
+		retstr = krNcrDecode(Z_STRVAL_PP(arg1));
+		RETVAL_STRING(retstr, 1);
+		efree(retstr);
 	}
    	else { RETURN_EMPTY_STRING(); }
 }
@@ -605,7 +608,7 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 	unsigned int aryno;
 	size_t len;
 	unsigned char rc[256], *strs;
-	unsigned char *ret = NULL;
+	static unsigned char *ret = NULL;
 
 	int regno,hexv,firsti,secondi;
 	long slen = strlen(start);
@@ -633,6 +636,9 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 			return str_o;
 		}
 	}
+
+	ret = (unsigned char *) emalloc(sizeof(char) * strlen(str_o) * (5 + strlen(start) + strlen(end)));
+	memset (ret, '\0', sizeof(ret));
 
 	for (i=0; i<len; i++)
    	{
@@ -737,23 +743,19 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 			if(ret != NULL)
 		   	{
 				unsigned int retlen = strlen(ret);
-				ret = erealloc(ret,(sizeof(char) * (retlen + rclen + 1)));
 				memmove(ret + retlen, rc, rclen);
 				memset(ret + retlen + rclen, '\0', 1);
 			}
 		   	else
 		   	{
-				ret = erealloc(NULL,sizeof(char) * (rclen + 1));
 				memmove(ret, rc, rclen);
 				memset(ret + rclen, '\0', 1);
 			}
 		}
 	}
 
-	strs = (unsigned char *) estrndup(ret, strlen(ret));
 	if (type == 1) { regfree(&preg); }
-	efree(ret);
-	return strs;
+	return ret;
 }
 /* }}} */
 
