@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Sun Aug 18 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - changed krNcrConv function to krNcrEncode
+
 * Fri Aug 16 2002
   by JoungKyun Kim <http://www.oops.org>
     - removed include of dns.c on krnetwork.c
