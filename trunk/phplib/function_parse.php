@@ -1,6 +1,4 @@
 <?
-include "codetables/ksc5601.php";
-
 function substr_lib($str,$from,$length=0,$utf8=0) {
 
   if ($utf8) { $str = utf8decode_lib($str, "cp949"); }
