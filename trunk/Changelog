@@ -11,6 +11,7 @@ Sat Mar  1 2003
   by JoungKyun Kim <http://www.oops.org>
     - fixed conftest bug of config.m4
     - fixed bug of width value have 0 on imgresize_lib function
+    - fixed koren.dsp
 
 Fri Feb 21 2003
   by JoungKyun Kim <http://www.oops.org>
