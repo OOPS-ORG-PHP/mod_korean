@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.10 2002-09-18 10:14:10 oops Exp $ 
+  $Id: krmail.c,v 1.11 2002-09-19 08:05:44 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -116,28 +116,28 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 	unsigned char *from, *to, *title;
 	unsigned int i = 0;
 
-	/* make charset */
+	// make charset
 	for( i=0; i < strlen(o_ln); i++ )
    	{
 		o_ln[i] = tolower(o_ln[i]);
 	}
 	charset = !strcmp(o_ln,"ko") ? "EUC-KR" : "US-ASCII";
 
-	/* make from */
+	// make from
 	from = generate_from(o_from, charset);
 
-	/* make to */
+	// make to
 	to = generate_to(o_to, charset);
 
-	/* make title */
+	// make title
 	title = generate_title(o_title, charset);
 
-	/* make boundary */
+	// make boundary
 	boundary = make_boundary();
 
 	if (strlen(o_attach) > 0)
 	{
-		/* attach boundary */
+		// attach boundary
 		attbound = make_boundary();
 
 		return_attach = generate_attach (o_attach, attbound);
@@ -151,16 +151,15 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 
 	if (strlen(o_attach) > 0)
 	{
-#ifdef PHP_WIN32
-		#define athead_len 4096
-		#define tmp_return_amail_len 1089536 // total 1.04M
-#else
-		unsigned int athead_len = strlen(boundary) + strlen(attbound) + 74;
-		unsigned int tmp_return_amail_len = strlen(return_header) + strlen(return_body) + strlen(return_attach) + strlen(attbound) + athead_len + 59;
-#endif
 
-		unsigned char tmp_attach_header[athead_len];
-		unsigned char tmp_return_mail[tmp_return_amail_len];
+		unsigned int athead_len = strlen(boundary) + strlen(attbound) + 74;
+		unsigned int tmp_return_mail_len = strlen(return_header) + strlen(return_body) + strlen(return_attach) + strlen(attbound) + athead_len + 59;
+
+		unsigned char *tmp_attach_header;
+		unsigned char *tmp_return_mail;
+
+		tmp_attach_header = emalloc( sizeof(char) * (athead_len + 1) );
+		tmp_return_mail = emalloc( sizeof(char) * (tmp_return_mail_len + 1) );
 
 		sprintf(tmp_attach_header, "\r\n--%s\r\nContent-Type: multipart/alternative;\r\n" \
 								   "              boundary=\"%s\"\r\n\r\n", attbound, boundary);
@@ -172,12 +171,9 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 	}
 	else
 	{
-#ifdef PHP_WIN32
-		#define tmp_return_mail_len 45056 // total 44K
-#else
 		unsigned int tmp_return_mail_len = strlen(return_header) + strlen(return_body) + 51;
-#endif
-		unsigned char tmp_return_mail[tmp_return_mail_len];
+		unsigned char *tmp_return_mail;
+		tmp_return_mail = emalloc( sizeof(char) * (tmp_return_mail_len + 1) );
 
 		sprintf(tmp_return_mail, "%s\r\nThis is a multi-part message in MIME format." \
 								 "\r\n%s\r\n", return_header, return_body);
@@ -230,12 +226,9 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 	base64text = body_encode((unsigned char *) strtrim(contents));
 
 	{
-#ifdef PHP_WIN32
-		#define template_len 1048832 // total 1.2M
-#else
 		unsigned int template_len = strlen(bound) + strlen(mimetype) + (strlen(filename) * 2) + strlen(base64text) + 107;
-#endif
-		unsigned char template[template_len];
+		unsigned char *template;
+		template = emalloc( sizeof(char) * (template_len + 1) );
 
 		sprintf(template, "--%s\r\nContent-Type: %s; name=\"%s\"\r\nContent-Transfer-Encoding: " \
 				          "base64\r\nContent-Disposition: inline; filename=\"%s\"\r\n\r\n%s\r\n",
@@ -267,12 +260,9 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 		htmllen  = strlen(base64html);
 
 		{
-#ifdef PHP_WIN32
-			#define tmp_body_len 40960 // about 40K
-#else
 			unsigned int tmp_body_len = plainlen + htmllen + (strlen(bset) * 2) + (strlen(bboundary) * 3) +182;
-#endif
-			unsigned char tmp_body[tmp_body_len];
+			unsigned char *tmp_body;
+			tmp_body = emalloc( sizeof(char) * (tmp_body_len + 1) );
 
 			sprintf(tmp_body, "\r\n--%s\r\nContent-Type: text/plain; charset=%s\r\n" \
 							  "Content-Transfer-Encoding: base64\r\n\r\n%s\r\n\r\n--%s\r\n" \
@@ -305,12 +295,10 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 	datehead = generate_date();
 
 	{
-#ifdef PHP_WIN32
-		#define buflen 4096
-#else
 		unsigned int buflen = strlen(mailid) + strlen(from) + strlen(datehead) + strlen(to) + strlen(subject) + strlen(boundary) + strlen(mimetype) + 125;
-#endif
-		unsigned char buf[buflen];
+		unsigned char *buf;
+		buf = emalloc( sizeof(char) * (buflen + 1) );
+
 		sprintf(buf, "Message-ID: <%s>\r\nFrom: %s\r\nMIME-Version: 1.0\r\nDate: %s\r\n" \
 					 "To: %s\r\nSubject: %s\r\nContent-Type: multipart/%s;\r\n              " \
 					 "boundary=\"%s\"\r\n\r\n",
@@ -331,11 +319,11 @@ unsigned char * generate_from (unsigned char *email, char *set)
 		php_error(E_ERROR, "Don't exist FROM address.");
 	}
 
-	/* get email address on NAME <email@address> form */
+	// get email address on NAME <email@address> form
 	mail = (unsigned char *) strtrim(kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", email));
 	maillen = strlen(mail);
 
-	/* get name on NAME <email@address> form */
+	// get name on NAME <email@address> form
 	if ( strchr(email,'<') != NULL )
    	{ name = (unsigned char *) strtrim(kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", email)); }
 	else
@@ -350,12 +338,9 @@ unsigned char * generate_from (unsigned char *email, char *set)
 	{
 		cname = (unsigned char *) php_base64_encode(name, strlen(name), &namelen);
 		{
-#ifdef PHP_WIN32
-			#define from_lenth 256
-#else
 			int from_lenth = setlen + maillen + namelen + 11;
-#endif
-			unsigned char tmp_from[from_lenth];
+			unsigned char *tmp_from;
+			tmp_from = emalloc( sizeof(char) * (from_lenth + 1) );
 			sprintf(tmp_from, "=?%s?B?%s?= <%s>", set, cname, mail);
 			rfrom = estrndup( tmp_from, strlen(tmp_from) );
 		}
@@ -379,7 +364,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 	if ( token != NULL )
 	{
 
-		/* get email address on NAME <email@address> form */
+		// get email address on NAME <email@address> form
 		if ( strchr(token,'<') != NULL )
 		{
 			t_mail = (unsigned char *) strtrim( kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1",token) );
@@ -393,22 +378,18 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 			t_name = "";
 		}
 
-		/* whether vaild or invalid email form */
+		// whether vaild or invalid email form
 		if ( checkAddr(t_mail, 0) )
 		{
-
 			if ( namelen < 1 )
 			{
 				to = estrdup( (unsigned char *) strtrim(token) );
 			}
 			else
 			{
-#ifdef PHP_WIN32
-				#define to_lenth 256
-#else
-				int to_lenth = setlen + maillen + namelen + 11;
-#endif
-				unsigned char t_to[to_lenth];
+				int to_lenth = setlen + maillen + namelen + 32;
+				unsigned char *t_to;
+				t_to = emalloc( sizeof(char) * (to_lenth + 1) );
 				cname = estrdup( (unsigned char *) php_base64_encode(t_name, namelen, &namelen) );
 				sprintf(t_to, "=?%s?B?%s?= <%s>", set, cname, t_mail);
 				to = estrdup(t_to);
@@ -421,7 +402,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 				unsigned char *s_name, *s_mail, *sub_cname;
 				unsigned int snlen = 0, smlen = 0;
 
-				/* get email address on NAME <email@address> form */
+				// get email address on NAME <email@address> form
 				if ( strchr(token,'<') != NULL )
 				{
 					s_mail = (unsigned char *) strtrim( kr_regex_replace("/[^<]*<([^>]+)>.*/i","\\1", token) );
@@ -435,7 +416,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 					s_name = "";
 				}
 
-				/* whether vaild or invalid email form */
+				// whether vaild or invalid email form
 				if ( checkAddr(s_mail, 0) )
 				{
 					unsigned char s_to[200];
@@ -455,12 +436,9 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 					}
 					else
 					{
-#ifdef PHP_WIN32
-						#define add_to_len 256
-#else
 						unsigned int add_to_len = strlen(s_to) + 3;
-#endif
-						unsigned char add_to[add_to_len];
+						unsigned char *add_to;
+						add_to = emalloc( sizeof(char) * (add_to_len + 1) );
 						free = 1;
 						sprintf(add_to, ", %s", s_to);
 						to = (unsigned char *) erealloc(to, strlen(to) + add_to_len);
@@ -497,12 +475,9 @@ unsigned char * generate_title (unsigned char *title, unsigned char *set)
 	base64 = (unsigned char *) php_base64_encode(title, strlen(title), &len);
 
 	{
-#ifdef PHP_WIN32
-		#define subject_lenth 256
-#else
-		int subject_lenth = len + set_len + 8;
-#endif
-		unsigned char subject[subject_lenth];
+		unsigned int subject_lenth = len + set_len + 8;
+		unsigned char *subject;
+		subject = emalloc( sizeof(char) * (subject_lenth + 1) );
 		sprintf(subject, "=?%s?B?%s?=", set, base64);
 
 		rtitle = (unsigned char *) estrdup(subject);
@@ -513,12 +488,17 @@ unsigned char * generate_title (unsigned char *title, unsigned char *set)
 
 char * generate_date () {
 	time_t now = time(NULL);
-	char buf[40], *rdate;
+	char buf[64], *rdate;
 
 	loctime = localtime(&now);
-	strftime(buf, 40, "%a, %d %b %Y %H:%M:%S %Z", loctime);
+	strftime(buf, 64, "%a, %d %b %Y %H:%M:%S %Z", loctime);
 
+#ifdef PHP_WIN32
+	rdate = (char *) kr_regex_replace("/대한민국 표준시/","+09:00",buf);
+#else
 	rdate = estrdup(buf);
+#endif
+
 	return rdate;
 }
 
