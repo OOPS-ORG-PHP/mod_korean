@@ -1,5 +1,8 @@
 PHP Korean Extexsions Changelog
 
+* Mon Jun  3 2002
+- added imgresize_lib function (added krimage.c, php_krimage.h)
+
 * Fri May 24 2002
 - fixed typo in convUTF6 function
 
