@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.24 2004-09-14 08:01:15 oops Exp $
+  $Id: krmail.c,v 1.25 2004-09-14 08:11:53 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -433,7 +433,7 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 		efree (t_mail);
 		efree (_t_name);
 
-		while ( (token = strtok(NULL, delimiters)) != NULL ) {
+		while ( (token = strtok_r (NULL, delimiters, &btoken)) != NULL ) {
 			{
 				unsigned char *s_name, *s_mail, *sub_cname, *_s_name;
 				unsigned int snlen = 0, smlen = 0;
@@ -477,7 +477,8 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 				}
 
 				efree (s_mail);
-				efree (_s_name);
+				if ( _s_name != NULL )
+					efree (_s_name);
 			}
 		}
 	}
