@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.27 2003-05-26 08:37:50 oops Exp $ 
+  $Id: krfile.c,v 1.28 2003-05-28 13:45:58 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -420,7 +420,10 @@ PHP_FUNCTION(pcregrep_lib)
 		token = strtok (NULL, delimiters);
 	}
 
-	RETVAL_STRINGL(str, len - 1, 1);
+	if (len < 1)
+		RETURN_EMPTY_STRING();
+	else
+		RETVAL_STRINGL(str, len - 1, 1);
 
 	efree (bufstr);
 	efree (str);
