@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.34 2002-08-21 16:02:38 oops Exp $
+  $Id: krparse.c,v 1.35 2002-08-21 16:17:31 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -390,7 +390,7 @@ PHP_FUNCTION(autolink_lib)
 PHP_FUNCTION(substr_lib)
 {
 	zval **str, **from, **len, **utf8;
-	unsigned char *tmpstr, *string;
+	unsigned char *cstr, *tmpstr, *string;
 	int l, f, lenth, utf = 0;
 	int argc = ZEND_NUM_ARGS();
 
@@ -407,7 +407,11 @@ PHP_FUNCTION(substr_lib)
 		utf = Z_LVAL_PP(utf8);
 		tmpstr = convUTF8 (Z_STRVAL_PP(str), 2);
 	}
-   	else { tmpstr = Z_STRVAL_PP(str); }
+   	else
+	{
+		cstr = krNcrDecode(Z_STRVAL_PP(str));
+		tmpstr = cstr;
+	}
 
 	if (argc > 2)
    	{
@@ -436,8 +440,6 @@ PHP_FUNCTION(substr_lib)
 	}
 
 	if (f >= lenth) { RETURN_FALSE; }
-
-	l = result_except_ksx_1001(tmpstr, f, l);
 	if((f + l) > lenth) { l = lenth - f; }
 
 	/* check multibyte whether start return charactor */
@@ -450,15 +452,15 @@ PHP_FUNCTION(substr_lib)
 	/* check multibyte whether last return charactor */
 	if(multibyte_check(tmpstr, f + l)) { l++; }
 
+	tmpstr[f+l] = '\0';
+	string = &tmpstr[f];
 	if (utf == 1)
    	{
-		tmpstr[f+l] = '\0';
-		string = &tmpstr[f];
 		RETURN_STRING(convUTF8(string, 0), 1);
 	}
    	else
    	{
-		RETURN_STRINGL(Z_STRVAL_PP(str) + f, l, 1);
+		RETURN_STRING(krNcrEncode(string, 1), 1);
 	}
 }
 /* }}} */
@@ -910,10 +912,6 @@ unsigned char *krNcrDecode (unsigned char *str_o)
 {
 	unsigned int slen, i = 0, tmp, first, second;
 	unsigned char *ret = NULL, rc[3], tmpstr[8], *strs;
-
-	ENTRY entry, *eresult;
-	ENTRY chk_entry, *chk_result;
-	unsigned int uni_cp949_ncr_table_no = 31934;
 
 	if ( str_o == NULL ) { return NULL; }
 	else { slen = strlen(str_o); }
