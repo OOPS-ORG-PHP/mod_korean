@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.15 2002-11-30 20:03:35 oops Exp $
+  $Id: krmail.c,v 1.16 2002-12-09 12:40:21 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -103,7 +103,8 @@ PHP_FUNCTION(mailsource_lib)
 	c_text = (unsigned char *) strtrim( Z_STRVAL_PP(text) );
 
 	ret = generate_mail(c_ln, c_from, c_to, c_title, c_text, c_ptext, c_attach);
-	RETURN_STRING(ret,1);
+	RETVAL_STRING(ret,1);
+	efree(ret);
 }
 /* }}} */
 
@@ -112,9 +113,10 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 							   unsigned char *o_attach)
 {
 	static unsigned char *return_header, *return_body, *return_attach, *return_mail;
-	char *boundary, *charset, *attbound;
+	static char boundary[64], *charset, attbound[64];
 	unsigned char *from, *to, *title;
 	unsigned int i = 0;
+	size_t return_mail_len = 0;
 
 	// make charset
 	for( i=0; i < strlen(o_ln); i++ )
@@ -133,12 +135,12 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 	title = generate_title(o_title, charset);
 
 	// make boundary
-	boundary = make_boundary();
+	strcpy(boundary, make_boundary());
 
 	if (strlen(o_attach) > 0)
 	{
 		// attach boundary
-		attbound = make_boundary();
+		strcpy (attbound, make_boundary());
 
 		return_attach = generate_attach (o_attach, attbound);
 		return_header = generate_header (from, to, title, attbound, o_attach);
@@ -151,40 +153,32 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 
 	if (strlen(o_attach) > 0)
 	{
-
 		unsigned int athead_len = strlen(boundary) + strlen(attbound) + 74;
-		unsigned int tmp_return_mail_len = strlen(return_header) + strlen(return_body) + strlen(return_attach) + strlen(attbound) + athead_len + 59;
-
 		unsigned char *tmp_attach_header;
-		unsigned char *tmp_return_mail;
 
-		tmp_attach_header = emalloc( sizeof(char) * (athead_len + 1) );
-		tmp_return_mail = emalloc( sizeof(char) * (tmp_return_mail_len + 1) );
+		return_mail_len = strlen(return_header) + strlen(return_body) + strlen(return_attach) + strlen(attbound) + athead_len + 128;
+
+		tmp_attach_header = emalloc( sizeof(char) * (athead_len) );
+		return_mail = emalloc( sizeof(char) * (return_mail_len) );
 
 		sprintf(tmp_attach_header, "\r\n--%s\r\nContent-Type: multipart/alternative;\r\n" \
 								   "              boundary=\"%s\"\r\n\r\n", attbound, boundary);
 
-		sprintf(tmp_return_mail, "%s\r\nThis is a multi-part message in MIME format.\r\n" \
+		sprintf(return_mail, "%s\r\nThis is a multi-part message in MIME format.\r\n" \
 				                 "%s%s\r\n%s\r\n--%s--\r\n",
 			   	return_header, tmp_attach_header, return_body, return_attach, attbound);
-		return_mail = tmp_return_mail;
 
 		efree(return_attach);
 		efree(tmp_attach_header);
-		efree(tmp_return_mail);
 	}
 	else
 	{
-		unsigned int tmp_return_mail_len = strlen(return_header) + strlen(return_body) + 51;
-		unsigned char *tmp_return_mail;
-		tmp_return_mail = emalloc( sizeof(char) * (tmp_return_mail_len + 1) );
+		return_mail_len = strlen(return_header) + strlen(return_body) + 128;
+		return_mail = emalloc( sizeof(char) * (return_mail_len + 1) );
 
-		sprintf(tmp_return_mail, "%s\r\nThis is a multi-part message in MIME format." \
+		sprintf(return_mail, "%s\r\nThis is a multi-part message in MIME format." \
 								 "\r\n%s\r\n", return_header, return_body);
-		return_mail = tmp_return_mail;
-		efree(tmp_return_mail);
 	}
-
 
 	efree (to);
 	efree (from);
@@ -199,21 +193,21 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 {
 	struct stat filebuf;
 	FILE *fp;
-	size_t fsize;
+	size_t fsize, filelen = 0, sumlen = 0, fencodelen = 0;
 	static unsigned char *fencode;
-	unsigned char *mimetype, *tmpname, *filename, *contents, *base64text;
+	unsigned char *mimetype, *tmpname, *filename, *contents, *base64text, getattach[FILEBUFS];
 
 	if((fp = fopen(path, "rb")) == NULL)
 	{
 		php_error(E_ERROR, "Can't open attach file '%s' in read mode", path);
 	}
 
-	/* get file info */
+	// get file info
 	stat (path, &filebuf);
-	/* original file size */
+	// original file size
 	fsize = filebuf.st_size;
 
-	/* get file name from path */
+	// get file name from path
 	if ( (tmpname = strrchr(path, '/')) != NULL )
    	{
 	   	filename = estrdup(&path[tmpname - path + 1]);
@@ -223,29 +217,27 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 	   	filename = estrdup(path);
    	}
 
-	/* get mime type */
+	// get mime type
 	mimetype = generate_mime(filename);
 
-	contents = emalloc(sizeof(char) * (fsize + 1));
+	contents = emalloc(sizeof(char) * (fsize));
 
-	if (fread(contents, sizeof(char), fsize, fp) != fsize)
+	while ( (filelen = fread(getattach, sizeof(char), FILEBUFS, fp)) > 0 )
 	{
-		php_error(E_ERROR, "Occured error in attach file '%s' stream", path);
+		memmove (contents + sumlen, getattach, filelen);	
+		sumlen += filelen;
 	}
-	contents[fsize-1] = '\0';
 	fclose(fp);
+	contents[sumlen-1] = '\0';
 
-	base64text = body_encode((unsigned char *) strtrim(contents));
+	base64text = body_encode(contents, sumlen);
 
-	{
-		unsigned int template_len = strlen(bound) + strlen(mimetype) + (strlen(filename) * 2) + strlen(base64text) + 107;
-		static unsigned char *template;
-		fencode = emalloc( sizeof(char) * (template_len + 1) );
+	fencodelen = strlen(bound) + strlen(mimetype) + (strlen(filename) * 2) + strlen(base64text) + 256;
+	fencode = emalloc( sizeof(char) * (fencodelen) );
 
-		sprintf(fencode, "--%s\r\nContent-Type: %s; name=\"%s\"\r\nContent-Transfer-Encoding: " \
-				          "base64\r\nContent-Disposition: inline; filename=\"%s\"\r\n\r\n%s\r\n",
-				bound, mimetype, filename, filename, base64text);
-	}
+	sprintf(fencode, "--%s\r\nContent-Type: %s; name=\"%s\"\r\nContent-Transfer-Encoding: " \
+			          "base64\r\nContent-Disposition: inline; filename=\"%s\"\r\n\r\n%s\r\n\0",
+			bound, mimetype, filename, filename, base64text);
 
 	efree(base64text);
 	efree(filename);
@@ -266,8 +258,8 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 		if ( strlen(bptext) < 1 ){ plain = (unsigned char *) strtrim(html_to_plain(btext)); }
 		else { plain = (unsigned char *) strtrim(bptext); }
 
-		base64plain = body_encode(plain);
-		base64html  = body_encode((unsigned char *) strtrim(btext));
+		base64plain = body_encode(plain, -1);
+		base64html  = body_encode((unsigned char *) strtrim(btext), -1);
 
 		plainlen = strlen(base64plain);
 		htmllen  = strlen(base64html);
@@ -312,7 +304,7 @@ unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigne
 	datehead = generate_date();
 
 	{
-		unsigned int buflen = strlen(mailid) + strlen(from) + strlen(datehead) + strlen(to) + strlen(subject) + strlen(boundary) + strlen(mimetype) + 125;
+		unsigned int buflen = strlen(mailid) + strlen(from) + strlen(datehead) + strlen(to) + strlen(subject) + strlen(boundary) + strlen(mimetype) + 256;
 		unsigned char *buf;
 		buf = emalloc( sizeof(char) * (buflen + 1) );
 
@@ -554,7 +546,7 @@ char * make_boundary ()
 	int sec, usec, len;
 	static char bound[40];
 	char bid[14];
-	char first[2], second[9], third[9];
+	char first[9], second[9];
 #if defined(__CYGWIN__)
     struct timespec tv;
 #else
@@ -569,22 +561,20 @@ char * make_boundary ()
 #else
 	usec = (int) (tv.tv_usec % 1000000);
 #endif
-	sprintf(bid,"%07x%05x",sec,usec);
+	sprintf(bid,"%05x%07x",usec,sec);
 
 	/* get lenth of uniq id */
 	len = strlen(bid);
 
-	sprintf(first,"%c",bid[0]);
-	sprintf(second,"%c%c%c%c%c%c%c%c",
+	sprintf(first,"%c%c%c%c%c%c%c%c",
 			toupper(bid[1]),toupper(bid[2]),toupper(bid[3]),toupper(bid[4]),
 			toupper(bid[5]),toupper(bid[6]),toupper(bid[7]),toupper(bid[8]));
-	sprintf(third,"%c%c%c%c%c%c%c%c",
+	sprintf(second,"%c%c%c%c%c%c%c%c",
 			toupper(bid[len-1]),toupper(bid[len-2]),toupper(bid[len-3]),
 			toupper(bid[len-4]),toupper(bid[len-5]),toupper(bid[len-6]),
 			toupper(bid[len-7]),toupper(bid[len-8]));
 
-
-	sprintf(bound,"--=_NextPart_000_000%s_%s.%s",first,second,third);
+	sprintf(bound,"--=_NextPart_000_0%c%c%c_%s.%s",toupper(bid[3]), toupper(bid[1]), toupper(bid[0]), first, second);
 
 	return bound;
 }
@@ -603,13 +593,15 @@ unsigned char * html_to_plain (unsigned char * source)
 	return rptext;
 }
 
-unsigned char * body_encode (unsigned char *str)
+unsigned char * body_encode (unsigned char *str, int chklen)
 {
 	static unsigned char *rencode = NULL;
 	unsigned char *enbase, *tmp_encode = NULL;
 	unsigned int len = 0, devide = 0, devide_ex = 0, i = 0, no = 0, pl = 0, tmplen = 0;
 
-	enbase = (unsigned char *) php_base64_encode(str, strlen(str), &len);
+	if ( chklen < 0 ) { chklen = strlen(str); }
+
+	enbase = (unsigned char *) php_base64_encode(str, chklen, &len);
 	devide = (unsigned int) len / 60;
 
 	if ( len < 61 ) { return enbase; }

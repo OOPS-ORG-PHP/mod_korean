@@ -28,11 +28,11 @@ utf8         utf8 로 인코딩된 문자열을 처리할 경우에는 이 값을 1 로 지정을 한다.
 $a = &quot;철수&quot;;
 $b = &quot;영만&quot;;
 
-echo $a.postposition_lib($a, &quot;을&quot;);
+echo $a.postposition_lib($a, &quot;을&quot;).&quot;\n&quot;;
 =&gt; 철수를
-echo $b.postposition_lib($a, &quot;가&quot;);
+echo $b.postposition_lib($b, &quot;가&quot;).&quot;\n&quot;;
 =&gt; 영만이
-echo utf8encode_lib($a).postposition_lib(utf8encode_lib($a), utf8encode_lib(&quot;가&quot;), 1);
+echo utf8encode_lib($a).postposition_lib(utf8encode_lib($a), utf8encode_lib(&quot;가&quot;), 1).&quot;\n&quot;;
 =&gt; 철수가
 
 
