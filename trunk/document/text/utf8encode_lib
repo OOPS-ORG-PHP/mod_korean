@@ -2,17 +2,19 @@
 
 (required korean module)
 
-utf8encode -- CP949 테이블을 UTF8 로 변환
+utf8encode -- 2byte 문자를 UTF8 로 변환
 
 <FONT ID=RE>설명</FONT>
 
-<B>string utf8encode_lib(string str)</B>
+<B>string utf8encode_lib(string str [, string charset])</B>
 
-EUC-KR 과 CP949 문자셋을 UTF8 로 변환한다.
+charset 으로 지정된 2 byte 문자셋을 UTF8 로 변환한다. charset 은 지정되지
+않으면, 기본값으로 EUC-KR 이다. 지원되는 charset 은 EUC-KR, BIG5, SJIS 이
+다.
 
 <FONT ID=RE>예제</FONT>
 
-$str = utf8encode_lib($str);
+$str = utf8encode_lib($str, "EUC-KR");
 
 <FONT ID=RE>참고</FONT>
 utf8decode_lib()
