@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.48 2002-11-28 10:21:50 oops Exp $
+  $Id: krparse.c,v 1.49 2002-11-30 19:55:33 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -38,7 +38,6 @@
 PHP_FUNCTION(autolink_lib)
 {
 	pval **arg1;
-	unsigned char *ret;
 
 	switch(ZEND_NUM_ARGS())
    	{
