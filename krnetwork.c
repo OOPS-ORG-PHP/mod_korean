@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.38 2003-02-21 10:44:38 oops Exp $
+  $Id: krnetwork.c,v 1.39 2003-05-13 16:25:11 oops Exp $
 */
 
 /*
@@ -212,6 +212,7 @@ PHP_FUNCTION(get_hostname_lib)
 
 /* {{{ proto string readfile_lib(string filename)
  *    Return a file or a URL */
+/* old function
 PHP_FUNCTION(readfile_lib)
 {
 	zval **arg1, **arg2;
@@ -278,6 +279,63 @@ PHP_FUNCTION(readfile_lib)
 			RETURN_EMPTY_STRING();
 		}
 
+	}
+}
+*/
+
+PHP_FUNCTION(readfile_lib)
+{
+	zval **arg1, **arg2;
+	static unsigned char *filepath, *string;
+	unsigned char buf[8192];
+	int use_include_path=0;
+	size_t buflen =0, len = 0;
+	php_stream *stream;
+
+	// check args
+	switch (ZEND_NUM_ARGS())
+   	{
+		case 1:
+			if (zend_get_parameters_ex(1, &arg1) == FAILURE)
+		   	{
+				WRONG_PARAM_COUNT;
+			}
+			break;
+		case 2:
+			if (zend_get_parameters_ex(2, &arg1, &arg2) == FAILURE)
+		   	{
+				WRONG_PARAM_COUNT;
+			}
+			convert_to_long_ex(arg2);
+			use_include_path = Z_LVAL_PP(arg2);
+			break;
+		default:
+			WRONG_PARAM_COUNT;
+	}
+	convert_to_string_ex(arg1);
+	filepath = (unsigned char *) strtrim(Z_STRVAL_PP(arg1));
+
+	stream = php_stream_open_wrapper (filepath, "rb",
+		   	 (use_include_path ? USE_PATH : 0) | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
+
+	if (stream) {
+		string = emalloc (sizeof (char) * 8192);
+		memset (buf, '\0', sizeof(buf));
+
+		while ( (buflen = php_stream_read (stream, buf, sizeof(buf))) > 0 ) {
+			if (len > 0)
+				string = erealloc(string, sizeof(char) * (8192 + len));
+
+			memmove (string + len, buf, buflen);
+			memset (buf, '\0', sizeof(buf));
+			len += buflen;
+		}
+		php_stream_close(stream);
+
+		RETVAL_STRINGL(string, len, 1);
+		efree(string);
+	} else {
+		RETURN_EMPTY_STRING();
 	}
 }
 /* }}} */
