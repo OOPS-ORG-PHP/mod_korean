@@ -1,4 +1,4 @@
-dnl $Id: config.m4,v 1.3 2002-06-13 00:22:55 oops Exp $
+dnl $Id: config.m4,v 1.4 2002-06-13 16:40:26 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -13,6 +13,7 @@ PHP_ARG_ENABLE(korean, whether to enable korean support,
 if test "$PHP_KOREAN" != "no"; then
 	AC_DEFINE(HAVE_KOREAN,1,[ ])
   PHP_EXTENSION(korean, $ext_shared)
+  PHP_SUBST(KOREAN_SHARED_LIBADD)
 
   if test "$PHP_GD" != "no"; then
 
@@ -33,7 +34,8 @@ if test "$PHP_KOREAN" != "no"; then
     done
 
     if test -n "$KOREAN_INCLUDE" -a -n "$KOREAN_LIB" ; then
-      PHP_ADD_LIBRARY_WITH_PATH(korean, $KOREAN_LIB, KOREAN_SHARED_LIBADD)
+      PHP_ADD_LIBRARY_WITH_PATH(gd, $KOREAN_LIB, KOREAN_SHARED_LIBADD)
+      AC_DEFINE(HAVE_KRLIBGD,1,[ ])
     else
       AC_MSG_ERROR([Unable to find libgd.(a|so) anywhere under $GD_SEARCH_PATHS])
     fi 
