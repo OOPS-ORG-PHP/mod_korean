@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.5 2002-08-16 02:18:09 oops Exp $ 
+  $Id: krfile.c,v 1.6 2002-08-22 09:27:12 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -32,6 +32,8 @@
 #include "php_ini.h"
 #include "zend_API.h"
 #include "php_krfile.h"
+
+struct stat filestat;
 
 /* {{{ proto int human_fsize_lib(int filesize, int pt)
  * print move action to url */
@@ -470,6 +472,54 @@ unsigned int check_filedev (unsigned char *path_f, unsigned char *filename)
 	else if ( S_ISDIR(s.st_mode) ) { return RETURN_DIR_TYPE; }
 	else if ( S_ISREG(s.st_mode) ) { return RETURN_FILE_TYPE; }
 	else { return 0; }
+}
+
+unsigned char *includePath (unsigned char *filepath)
+{
+	const char delimiters[] = ":";
+	unsigned char *token, chkfile[512], *filename;
+	unsigned char *includetmp, *includepath;
+	int exists = 1;
+
+	includetmp = PG(include_path);
+	includepath = (includetmp == NULL) ? "" : estrdup(includetmp);
+
+	if ( strchr(includepath, ':') != NULL)
+	{
+		token = strtok(includepath, delimiters);
+		while (token != NULL)
+		{
+			if(strcmp(token, ".") && strcmp(token, "./"))
+			{
+				sprintf(chkfile, "%s/%s", token, filepath);
+
+				if((exists = stat (chkfile, &filestat)) == 0)
+				{
+					filename = estrdup(chkfile);
+					break;
+				}
+			}
+			token = strtok (NULL, delimiters);
+		}
+	}
+	else
+	{
+		if(strlen(includepath) > 0)
+		{
+			sprintf(filename, "%s/%s", includepath, filepath);
+		}
+		else
+		{
+			sprintf(filename, "%s", filepath);
+		}
+	}
+
+	if (strlen(filename) == 0 || filename == NULL)
+	{
+		filename = estrdup(filepath);
+	}
+
+	return filename;
 }
 
 /*

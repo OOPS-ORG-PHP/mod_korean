@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.16 2002-08-21 17:19:39 oops Exp $
+  $Id: krnetwork.c,v 1.17 2002-08-22 09:27:12 oops Exp $
 */
 
 /*
@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
 #include "php.h"
 #include "php_ini.h"
@@ -71,8 +72,11 @@
 
 #include "php_krnetwork.h"
 
-
 #define PROXYSIZE 7
+
+struct sockaddr_in sinfo;
+struct hostent *hostinfo;
+struct stat filestat;
 
 /* {{{ proto string get_hostname_lib (int reverse [, string addr ])
  *    Return hostname or ip address */
@@ -146,12 +150,9 @@ PHP_FUNCTION(get_hostname_lib)
 PHP_FUNCTION(readfile_lib)
 {
 	zval **arg1, **arg2;
-	FILE *fp;
+	unsigned char *filepath, *filename, *get, *string;
 	int use_include_path=0;
-	int issock=0, socketd=0;
-	int rsrc_id, len, i=0;
-
-	char buf[8192], *tmpstr = NULL, *ret;
+	int issock=0;
 
 	/* check args */
 	switch (ZEND_NUM_ARGS())
@@ -169,64 +170,42 @@ PHP_FUNCTION(readfile_lib)
 			}
 			convert_to_long_ex(arg2);
 			use_include_path = Z_LVAL_PP(arg2);
+			break;
 		default:
 			WRONG_PARAM_COUNT;
 	}
 	convert_to_string_ex(arg1);
+	filepath = (unsigned char *) strtrim(Z_STRVAL_PP(arg1));
 
-	/*
-	 * We need a better way of returning error messages from
-	 * php_fopen_wrapper().
-	 */
-	fp = php_fopen_wrapper(Z_STRVAL_PP(arg1), "rb", use_include_path | ENFORCE_SAFE_MODE, &issock, &socketd, NULL TSRMLS_CC);
-	if (!fp && !socketd)
-   	{
-		if (issock != BAD_URL)
-	   	{
-			char *tmp = estrndup(Z_STRVAL_PP(arg1), Z_STRLEN_PP(arg1));
-			php_strip_url_passwd(tmp);
-			php_error(E_WARNING, "readfile_lib(\"%s\") - %s", tmp, strerror(errno));
-			efree(tmp);
+	if (checkReg(filepath, "^[hH][tT][tT][pP]://")) { issock = 1; }
+
+	if ( issock == 1 )
+	{
+		get = (unsigned char *) sockhttp (filepath);
+		string = estrdup(get);
+	}
+	else
+	{
+		if ( use_include_path != 0 && filepath[0] != '/' )
+		{
+			filename = estrdup( (unsigned char *) includePath(filepath) );
 		}
-		RETURN_FALSE;
-	}
+		else { filename = estrdup(filepath); }
 
-	if (issock)
-   	{
-		int *sock = emalloc(sizeof(int));
-		*sock = socketd;
-		rsrc_id = ZEND_REGISTER_RESOURCE(NULL, sock, php_file_le_socket());
-	}
-   	else
-   	{
-		rsrc_id = ZEND_REGISTER_RESOURCE(NULL, fp, php_file_le_fopen());
-	}
-
-	while (1)
-   	{
-		if ((len = FP_FREAD(buf, 8190, socketd, fp, issock)) < 1) { break; }
-		buf[len] = '\0';
-
-		if ( tmpstr == NULL )
-	   	{
-			tmpstr = emalloc(sizeof(char) * len + 1);
-			strcpy(tmpstr, buf);
+		/* get file info */
+		if( stat (filename, &filestat) == 0 )
+		{
+			get = (unsigned char *) read_file(filename, filestat.st_size);
+			string = estrdup(get);
 		}
-	   	else
-	   	{
-			tmpstr = erealloc(tmpstr, sizeof(char) * (strlen(tmpstr) + len + 1));
-			strcat(tmpstr, buf);
+		else
+		{
+			php_error(E_WARNING, "File/URL %s is not found \n", filename);
+			RETURN_EMPTY_STRING();
 		}
 	}
 
-	zend_list_delete(rsrc_id);
-
-	if (tmpstr != NULL)
-   	{
-		ret = estrndup(tmpstr, strlen(tmpstr));
-		efree(tmpstr);
-		RETURN_STRING(ret, 1);
-	}
+	RETURN_STRING(string, 1);
 }
 /* }}} */
 
@@ -238,9 +217,6 @@ PHP_FUNCTION(sockmail_lib)
 	unsigned char delimiters[] = ",";
 	unsigned char *text, *faddr, *taddr, *tmpfrom, *tmpto, *mailaddr;
 	int sock, debug = 0, len = 0, failcode = 0, error_no = 0;
-
-	struct sockaddr_in sinfo;
-	struct hostent *hostinfo;
 
 	/* {{{ check args */
 	switch (ZEND_NUM_ARGS())
@@ -531,8 +507,6 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 {
 	int len, sock, failcode;
 	unsigned char *addr;
-	struct sockaddr_in sinfo;
-	struct hostent *hostinfo;
 
 	/* get mx record from 'to address' */
 	addr = get_mx_record(toaddr);
@@ -626,6 +600,91 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 
 	close(sock);
 	return 0;
+}
+/* }}} */
+
+/* {{{ unsigned char *sockhttp (unsigned char *addr) */
+unsigned char *sockhttp (unsigned char *addr)
+{
+	int sock, len = 0, tmplen = 0, freechk = 0;
+	unsigned char cmd[1024];
+	unsigned char rc[4096], *tmpstr = NULL, *string;
+
+	/* parse file path with url, uri */
+	unsigned char *chk, *url, *uri, *urlpoint;
+	chk = (unsigned char *) estrdup(&addr[7]);
+
+	urlpoint = strchr(chk, '/');
+
+	if (urlpoint != NULL)
+	{
+		url = (unsigned char *) estrndup(chk, urlpoint - chk);
+		//uri = (unsigned char *) estrdup(&chk[urlpoint - chk]);
+	}
+	else
+	{
+		url = (unsigned char *) estrdup(chk);
+	}
+
+	/* check existed url */
+	if ( !(hostinfo = gethostbyname(url)) )
+	{
+		php_error(E_WARNING, "host name \"%s\" not found\n", url);
+		return NULL;
+	}
+
+	/* specify connect server information */
+	sinfo.sin_family = AF_INET;
+	sinfo.sin_port = ntohs(80);
+	sinfo.sin_addr = *(struct in_addr *) *hostinfo->h_addr_list;
+	len = sizeof(sinfo);
+
+	sprintf(cmd, "GET %s\r\n", addr);
+
+	/* create socket */
+	if ( (sock = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
+	{
+		php_error(E_WARNING, "Failed to create socket\n");
+		return NULL;
+	}
+
+	/* connect to server in 80 port */
+	if ( connect (sock, (struct sockaddr *) &sinfo, len) == -1 )
+	{
+		php_error(E_WARNING, "Failed connect %s\n", addr);
+		return NULL;
+	}
+
+	send(sock, cmd, strlen(cmd), 0);
+
+	/* get document */
+	while( (len = recv(sock, rc, 4096, 0)) > 0 )
+	{
+		if (tmplen == 0)
+		{
+			freechk = 1;
+			tmpstr = emalloc(sizeof(char) * (len + 1));
+			memmove(tmpstr, rc, len);
+			tmpstr[len] = '\0';
+		}
+		else
+		{
+			tmpstr = erealloc(tmpstr , sizeof(char) * (tmplen + len + 1));
+			memmove(tmpstr + tmplen, rc, len);
+			tmpstr[tmplen + len] = '\0';
+		}
+		tmplen = strlen(tmpstr);
+		memset(rc, '\0', 4096);
+	}
+	close(sock);
+
+	/* if empty document, return NULL */
+	if ( tmplen == 0 ) { return NULL; }
+
+	string = (unsigned char *) estrdup(tmpstr);
+	if (freechk == 1) { efree(tmpstr); }
+
+	return string;
 }
 /* }}} */
 
