@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.15 2002-07-25 22:12:34 oops Exp $
+  $Id: krparse.c,v 1.16 2002-07-25 23:30:08 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -127,6 +127,9 @@ PHP_FUNCTION(uniencode_lib)
 
 	string = uniConv(str,0,0,start,end);
 
+	if ( string == NULL ) {
+		RETURN_FALSE;
+	}
 	RETURN_STRING(string,1);
 }
 
@@ -205,6 +208,9 @@ PHP_FUNCTION(unidecode_lib)
 	}
 	string = uniConv(str,type,subtype,start,end);
 
+	if ( string == NULL ) {
+		RETURN_FALSE;
+	}
 	RETURN_STRING(string,1);
 }
 
@@ -234,6 +240,9 @@ PHP_FUNCTION(utf8encode_lib) {
 
 	string = convUTF8 (Z_STRVAL_PP(str),0);
 
+	if ( string == NULL ) {
+		RETURN_FALSE;
+	}
 	RETURN_STRING(string,1);
 }
 /* }}} */
@@ -281,7 +290,10 @@ PHP_FUNCTION(utf8decode_lib) {
 
 	string = convUTF8 (str,chk);
 
-	RETURN_STRING(string,1);
+	if ( string != NULL ) {
+		RETURN_STRING(string,1);
+	}
+	RETURN_FALSE;
 }
 /* }}} */
 
@@ -307,7 +319,9 @@ PHP_FUNCTION(autolink_lib)
 
 	ret = autoLink(Z_STRVAL_PP(arg1));
 
-	if (ret) { RETURN_STRING(ret,1); }
+	if (ret) {
+		RETURN_STRING(ret,1);
+	}
 	RETURN_FALSE;
 }
 /* }}} */
@@ -696,9 +710,12 @@ unsigned char *krNcrConv (unsigned char *str_o, int type)
 {
 	unsigned long i;
 	unsigned int ncr;
-	size_t len = strlen(str_o);
+	size_t len;
 	unsigned char *rc, *strs;
 	unsigned char *ret = NULL;
+
+	if ( str_o == NULL ) { return NULL; }
+	else { len = strlen(str_o); }
 
 	rc = emalloc(sizeof(char) * 8 + 1);
 	for(i=0;i<len;i++) {
@@ -757,7 +774,7 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 {
 	unsigned long i;
 	unsigned int ncr;
-	size_t len = strlen(str_o);
+	size_t len;
 	unsigned char *rc, *strs;
 	unsigned char *ret = NULL;
 
@@ -767,6 +784,9 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 	regex_t preg;
 	unsigned char regex[12] = "[0-9a-f]{4}";
 	unsigned char chkReg[5], conv[5],first[3],second[3];
+
+	if ( str_o == NULL ) { return NULL; }
+	else { len = strlen(str_o); }
 
 	if (type == 1) {
 		regno = regcomp(&preg,regex,REG_EXTENDED|REG_ICASE);
@@ -850,10 +870,13 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 unsigned char *convUTF8(unsigned char *str_o, int type)
 {
 	unsigned long i = 0, start = 0;
-	size_t len = strlen(str_o);
+	size_t len;
 	int ncr;
 	unsigned char var[5], *byte[4], *bin[3], *rc, *strs, *ret = NULL;
 	unsigned char utfonebyte[9], utftwobyte[9], utfthreebyte[9];
+
+	if ( str_o == NULL ) { return NULL; }
+	else { len = strlen(str_o); }
 
 	switch(type) {
 		/* utf8 -> euc-kr */
@@ -880,7 +903,8 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 
 			/* if exists utf8 init charactor */
 			if (str_o[0] == 0xef && str_o[1] == 0xbb && str_o[2] == 0xbf ) {
-				start = 3;
+				if ( len == 3 ) { return NULL; }
+				else { start = 3; }
 			}
 			
 			for( i=start ; i<len ; i++ ) {
@@ -955,6 +979,7 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 			}
 	}
 
+	if ( ret == NULL ) { return NULL; }
 	strs = (unsigned char *) estrdup(ret);
 
 	if (type != 1 && type != 2 && type != 3) {
