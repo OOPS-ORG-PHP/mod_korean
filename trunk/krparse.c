@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.31 2002-08-16 03:34:24 oops Exp $
+  $Id: krparse.c,v 1.32 2002-08-18 15:40:41 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -69,7 +69,7 @@ PHP_FUNCTION(ncrencode_lib)
 
 	if (strlen(Z_STRVAL_PP(arg1)) > 0)
    	{
-		string = krNcrConv(Z_STRVAL_PP(arg1), type);
+		string = krNcrEncode(Z_STRVAL_PP(arg1), type);
 		RETURN_STRING(string, 1);
 	}
    	else { RETURN_EMPTY_STRING(); }
@@ -795,12 +795,12 @@ unsigned char *autoLink (unsigned char *str_o)
 }
 /* }}} */
 
-/* {{{ unsigned char *krNcrConv (unsigned char *str_o, int type)
+/* {{{ unsigned char *krNcrEncode (unsigned char *str_o, int type)
  * convert euc-kr to ncr code, or convert outside EUC-KR range to ncr code
  * unsigned chart *str_o => EUC-KR/CP949 string
  * int type              => convert whole string(0) or outside EUC-KR range(1)
  */
-unsigned char *krNcrConv (unsigned char *str_o, int type)
+unsigned char *krNcrEncode (unsigned char *str_o, int type)
 {
 	unsigned long i;
 	unsigned int ncr;
@@ -878,7 +878,7 @@ unsigned char *krNcrConv (unsigned char *str_o, int type)
  * unsigned char *str_o   => convert string (euc-kr, cp949, unicode)
  * int type               => 0: convert euc-kr,cp949 -> unicode
  *                         1: convert unicode -> ecu-kr,cp949
- *                         2: convert cp949 -> euc-kr (same as krNcrConv(str_o,1))
+ *                         2: convert cp949 -> euc-kr (same as krNcrEncode(str_o,1))
  * int subtype          => if value of type set 1, 1 is euc-kr and 0 is cp949
  * unsigned char *start => front string of hex value of unicode (ex U+AC60; => U+)
  * unsigned char *end   => after string of hex value of unicode (ex U+AC60; => ; )
@@ -1043,7 +1043,7 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 
 		/* utf8 -> ncr */
 		case 3:
-			ret = krNcrConv(convUTF8(str_o, 1), 0);
+			ret = krNcrEncode(convUTF8(str_o, 1), 0);
 			break;
 
 		/* utf8 -> unicode */
