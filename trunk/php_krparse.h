@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krparse.h,v 1.10 2002-11-26 08:49:23 oops Exp $
+$Id: php_krparse.h,v 1.11 2002-12-12 16:58:35 oops Exp $
 */
 
 #ifndef PHP_KRPARSE_H
@@ -36,3 +36,12 @@ int get_postposition (unsigned char *str);
 #define b_LANG ln
 
 #endif /* PHP_KRPARSE_H */
+
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: noet sw=4 ts=4 fdm=marker
+ * vim<600: noet sw=4 ts=4
+ */

@@ -15,7 +15,7 @@
   | Author:                                                              |
   +----------------------------------------------------------------------+
 
-  $Id: php_korean.h,v 1.31 2002-12-09 17:18:13 oops Exp $
+  $Id: php_korean.h,v 1.32 2002-12-12 16:58:35 oops Exp $
 */
 
 #ifndef PHP_KOREAN_H
@@ -80,6 +80,7 @@ ZEND_END_MODULE_GLOBALS(korean)
  * Local variables:
  * tab-width: 4
  * c-basic-offset: 4
- * indent-tabs-mode: t
  * End:
+ * vim600: noet sw=4 ts=4 fdm=marker
+ * vim<600: noet sw=4 ts=4
  */

@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krcheck.h,v 1.3 2002-08-21 16:15:27 oops Exp $
+$Id: php_krcheck.h,v 1.4 2002-12-12 16:58:35 oops Exp $
 */
 
 #ifndef PHP_KRCHECK_H
@@ -36,3 +36,12 @@ unsigned int multibyte_check(unsigned char *str_o, unsigned int point);
 unsigned int check_windows(unsigned int type);
 
 #endif  /* end PHP_KRCHECK_H */
+
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: noet sw=4 ts=4 fdm=marker
+ * vim<600: noet sw=4 ts=4
+ */
