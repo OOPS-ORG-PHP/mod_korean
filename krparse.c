@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.35 2002-08-21 16:17:31 oops Exp $
+  $Id: krparse.c,v 1.36 2002-09-01 05:35:17 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -157,13 +157,13 @@ PHP_FUNCTION(uniencode_lib)
 
 	if (argc < 2)
    	{
-		start = "U+";
-		end   = ";";
+		start = "\\U";
+		end   = "";
 	}
    	else if (argc == 2)
    	{
 		start = Z_STRVAL_PP(arg2);
-		end   = ";";
+		end   = "";
 	}
    	else
    	{
@@ -253,13 +253,13 @@ PHP_FUNCTION(unidecode_lib)
 
 	if (argc < 3)
    	{
-		start = "U+";
-		end   = ";";
+		start = "\\U";
+		end   = "";
 	}
    	else if (argc == 3)
    	{
 		start = Z_STRVAL_PP(arg3);
-		end   = ";";
+		end   = "";
 	}
    	else
    	{
