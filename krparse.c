@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.38 2002-09-05 02:59:51 oops Exp $
+  $Id: krparse.c,v 1.39 2002-09-05 05:42:03 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -728,9 +728,9 @@ PHP_FUNCTION(agentinfo_lib)
 PHP_FUNCTION(postposition_lib)
 {
 	pval **string, **posts, **utf;
-	unsigned char *str, *post = NULL, *josa, *chkjosa[2];
+	unsigned char *str, *post, *josa, *chkjosa[2];
 	unsigned char *chkstr;
-	unsigned int ncr, chkutf;
+	int position, chkutf;
 
 	switch(ZEND_NUM_ARGS())
    	{
@@ -814,41 +814,11 @@ PHP_FUNCTION(postposition_lib)
 		php_error(E_ERROR, "String is too short\n");
 	}
 
-	if (chkstr[0] & 0x80)
-	{
-		ncr = getNcrIDX(chkstr[0], chkstr[1]);
-		if ( ((uni_cp949_ncr_table[ncr] - 16) % 28 ) == 0 ) { post = estrdup(chkjosa[1]); }
-		else { post = estrdup(chkjosa[0]); }
-	}
-	else
-	{
-		unsigned char last;
-		last = chkstr[strlen(chkstr) - 1];
+	position = (int) get_postposition(chkstr);
+	post = ( position == 1 ) ? estrdup(chkjosa[1]) : estrdup(chkjosa[0]);
 
-		/* last charactor is a or e or i or o or u or w or y  */
-		if (last == 0x61 || last == 0x65 || last == 0x69 || last == 0x6f ||
-			last == 0x75 || last == 0x77 || last == 0x79)
-		{
-			post = estrdup(chkjosa[1]);
-		}
-		/* last charactor is ed or er or or */
-		else if ( (chkstr[0] == 0x65 && chkstr[1] == 0x72) || (chkstr[0] == 0x6f && chkstr[1] == 0x72) ||
-				  (chkstr[0] == 0x65 && chkstr[1] == 0x64) )
-		{
-			post = estrdup(chkjosa[1]);
-		}
-		else
-		{
-			post = estrdup(chkjosa[0]);
-		}
-	}
-
-	if (post)
-   	{
-		if (chkutf == 1) { RETURN_STRING( convUTF8(post, 0), 1); }
-		else { RETURN_STRING(post, 1); }
-	}
-	RETURN_FALSE;
+	if (chkutf == 1) { RETURN_STRING( convUTF8(post, 0), 1); }
+	else { RETURN_STRING(post, 1); }
 }
 /* }}} */
 
@@ -1542,6 +1512,66 @@ unsigned char *get_serverenv(unsigned char *para)
 	return parameters;
 }
 /* }}} */
+
+/* {{{ unsigned char *get_postposition (unsigned char *str) */
+int get_postposition (unsigned char *str)
+{
+	unsigned char first, second;
+
+	first = tolower(str[0]);
+	if (strlen(str) > 1) { second = tolower(str[1]); }
+	else { second = tolower(str[0]); }
+
+	/* number area */
+	if ( second > 47 && second < 58 )
+	{
+		if (first == 50 || first == 52 || first == 53 || first == 57) { return 0; }
+		else { return 1; }
+	}
+	/* only 1 charactor */
+	else if ( first == second )
+	{
+		if ( first == 114 || (first > 108 && first < 111) ) { return 0; }
+		else { return 1; }
+	}
+	/* if วัa */
+	else if ( first != second && (first > 127) && (second < 123 && second > 96) )
+	{
+		if ( second == 114 || (second > 108 && second < 111) ) { return 0; }
+		else { return 1; }
+	}
+	/* if วั */
+	else if (first & 0x80)
+	{
+		unsigned int ncr;
+
+		ncr = getNcrIDX(str[0], str[1]);
+		if ( ((uni_cp949_ncr_table[ncr] - 16) % 28 ) == 0 ) { return 1; }
+		else { return 0; }
+	}
+	/* if aa */
+	else
+	{
+		/* last charactor is a or e or i or o or u or w or y  */
+		if (second == 0x61 || second == 0x65 || second == 0x69 || second == 0x6f ||
+			second == 0x75 || second == 0x77 || second == 0x79)
+		{
+			return 1;
+		}
+		/* last charactor is ed or er or or */
+		else if ( (first == 0x65 && first == 0x72) || (first == 0x6f && first == 0x72) ||
+				  (first == 0x65 && first == 0x64) )
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+}
+/* }}} */
+
 /*
  * Local variables:
  * tab-width: 4
