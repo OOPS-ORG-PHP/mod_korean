@@ -1,5 +1,10 @@
 PHP Korean Extexsions Changelog
 
+* Sun Sep  8 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed get_hostname_lib returns null value if reverse value is 0
+    - fixed proxy type on get_hostname_lib
+
 * Tue Sep  5 2002
   by JoungKyun Kim <http://www.oops.org>
     - added postposition_lib function

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.22 2002-09-01 05:19:40 oops Exp $
+  $Id: krnetwork.c,v 1.23 2002-09-08 13:33:06 oops Exp $
 */
 
 /*
@@ -111,7 +111,7 @@
 
 #include "php_krnetwork.h"
 
-#define PROXYSIZE 7
+#define PROXYSIZE 9
 
 struct sockaddr_in sinfo;
 struct hostent *hostinfo;
@@ -123,11 +123,12 @@ PHP_FUNCTION(get_hostname_lib)
 {
 	pval **reverse, **addr;
 	unsigned int i;
+	const char delimiters[] = ", ";
+	unsigned char *token;
 	char tmphost[1024], *host, *check, *ret;
-	char *proxytype[PROXYSIZE]  = { "HTTP_VIA", "HTTP_X_COMING_FROM", "HTTP_X_FORWARDED_FOR",
-									"HTTP_X_FORWARDED", "HTTP_COMING_FROM", "HTTP_FORWARDED_FOR",
-									"HTTP_FORWARDED" };
-
+	char *proxytype[PROXYSIZE]  = { "HTTP_CLIENT_IP","HTTP_X_FORWARDED_FOR","HTTP_X_COMING_FROM",
+									"HTTP_X_FORWARDED","HTTP_FORWARDED_FOR","HTTP_FORWARDED",
+									"HTTP_COMING_FROM","HTTP_PROXY","HTTP_SP_HOST" };
 	switch(ZEND_NUM_ARGS())
    	{
 		case 1:
@@ -165,7 +166,30 @@ PHP_FUNCTION(get_hostname_lib)
 			if ( !host ) { host = getenv("REMOTE_ADDR"); }
 			if ( !host ) { host = (unsigned char *) get_serverenv("REMOTE_ADDR"); }
 		}
-	   	else { host = tmphost; }
+	   	else
+		{
+			if (strchr(tmphost, ','))
+			{
+				token = strtok(tmphost, delimiters);
+				if ( !strcasecmp("unknown", token) )
+				{
+					token = strtok(NULL, delimiters);
+					host = (token != NULL) ? estrdup(token) : estrdup(sapi_getenv("REMOTE_ADDR", 11 TSRMLS_CC));
+				}
+				else
+				{
+					host = estrdup(token);
+					if ( !host ) { host = sapi_getenv("REMOTE_ADDR", 11 TSRMLS_CC); }
+				}
+			}
+			else
+			{
+		   		host = tmphost;
+				if ( !host ) { host = sapi_getenv("REMOTE_ADDR", 11 TSRMLS_CC); }
+			}
+			if ( !host ) { host = getenv("REMOTE_ADDR"); }
+			if ( !host ) { host = (unsigned char *) get_serverenv("REMOTE_ADDR"); }
+		}
 	}
 	else
    	{
@@ -178,7 +202,7 @@ PHP_FUNCTION(get_hostname_lib)
 	}
 
 	check = Z_LVAL_PP(reverse) ? kr_gethostbyaddr(host) : "";
-	ret = check ? check : host ;
+	ret = (strlen(check) > 0) ? check : host ;
 
 	RETURN_STRING(ret, 1);
 }
