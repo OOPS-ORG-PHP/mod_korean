@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.18 2002-10-24 14:34:51 oops Exp $ 
+  $Id: krimage.c,v 1.19 2002-12-12 02:55:03 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -76,18 +76,18 @@ PHPAPI const char php_sig_png_kr[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (c
 	    (char) 0x0d, (char) 0x0a, (char) 0x1a, (char) 0x0a};
 #endif
 
-/* {{{ proto int imgresize(string filepath [, string new_type [, int new_width [, int new_height [, string new_path ] ] ] ])
+/* {{{ proto int imgresize(string filepath [, string new_type [, int new_width [, int new_height [, string newpath ] ] ] ])
  *  *  print move action to url */
 PHP_FUNCTION(imgresize_lib)
 {
 	pval **opath, **ntype, **nwid, **nhei, **npath;
 	gdImagePtr im, nim;
 	FILE *fp, *tmp;
-	int issock=0, itype = 0;
+	int issock=0, itype = 0, newpath_len = 0;
 	char filetype[8], tmpfilename[64];
-	unsigned char *imgfile;
+	unsigned char imgfile[256], newpath[256];
 
-	unsigned char *original, *new_path;
+	unsigned char *original;
 	int new_type = 0, new_width = 0, new_height = 0, old_width = 0, old_height = 0;
 
 	switch(ZEND_NUM_ARGS())
@@ -160,13 +160,13 @@ PHP_FUNCTION(imgresize_lib)
 		new_height = Z_LVAL_PP(nhei);
 	}
 
+	memset(newpath, '\0', sizeof(newpath));
 	if (ZEND_NUM_ARGS() > 4)
    	{
 		convert_to_string_ex(npath);
-		new_path = Z_STRVAL_PP(npath);
-		if (strlen(new_path) < 1) { new_path = NULL; }
+		VCWD_REALPATH(Z_STRVAL_PP(npath), newpath);
 	}
-   	else { new_path = NULL; }
+	newpath_len = strlen(newpath);
 
 	/* if image is url */
 	if (checkReg(original, "^[hH][tT][tT][pP]://")) { issock = 1; }
@@ -188,11 +188,12 @@ PHP_FUNCTION(imgresize_lib)
 		tmpfilename[len] = '\0';
 
 		sockhttp(original, retSize, 1, tmpfilename);
-		imgfile = estrdup(tmpfilename);
+		memset(imgfile, '\0', sizeof(imgfile));
+		memcpy(imgfile, tmpfilename, strlen(tmpfilename));
 	}
 	else
 	{
-		imgfile = estrdup(original);
+		VCWD_REALPATH(original, imgfile);
 	}
 
 	/* get origianl image type */
@@ -258,8 +259,6 @@ PHP_FUNCTION(imgresize_lib)
 	fflush(fp);
 	fclose(fp);
 
-	efree(imgfile);
-
 	/* get image size */
 	old_width = gdImageSX(im);
 	old_height = gdImageSY(im);
@@ -279,7 +278,7 @@ PHP_FUNCTION(imgresize_lib)
 	/* copy original point to new point to resize */
 	gdImageCopyResized(nim, im , 0, 0, 0, 0, new_width, new_height, old_width, old_height);
 
-	if (new_path != NULL) { tmp = VCWD_FOPEN(new_path, "wb"); }
+	if (newpath_len > 0) { tmp = VCWD_FOPEN(newpath, "wb"); }
    	else { tmp = tmpfile(); }
 
 	if (tmp == NULL)
@@ -323,7 +322,7 @@ PHP_FUNCTION(imgresize_lib)
 
 	gdImageDestroy(im);
 
-	if (new_path == NULL)
+	if (newpath_len == 0)
    	{
 		int   fd, b, len = 0;
 		char  buf[4096], sizeHeader[30];

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.21 2002-12-11 17:49:13 oops Exp $ 
+  $Id: krfile.c,v 1.22 2002-12-12 02:55:03 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -81,7 +81,7 @@ PHP_FUNCTION(filelist_lib)
 {
 	pval **path, **mode, **regex;
 	DIR *dp;
-	unsigned char *mode_s, *regex_s;
+	unsigned char *mode_s, *regex_s, dirpath[256];
 	int chkReg = 0;
 	regex_t preg;
 
@@ -132,7 +132,9 @@ PHP_FUNCTION(filelist_lib)
 		RETURN_FALSE;
 	}
 
-	if ( (dp = opendir(Z_STRVAL_PP(path))) == NULL )
+	VCWD_REALPATH(Z_STRVAL_PP(path), dirpath);
+
+	if ( (dp = opendir(dirpath)) == NULL )
    	{
 		php_error(E_ERROR, "Can't open %s directory in read mode", Z_STRVAL_PP(path));
 	}
