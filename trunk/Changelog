@@ -1,5 +1,12 @@
 PHP Korean Extexsions Changelog
 
+* 0.0.6
+--------------------------------------------------------------------------------
+Tue May 14 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - rewrite readfile_lib fucntion with same function of readfile
+
+
 * 0.0.5
 --------------------------------------------------------------------------------
 Sun Mar  2 2003
