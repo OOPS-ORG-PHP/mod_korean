@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.33 2002-12-11 10:04:36 oops Exp $
+  $Id: krnetwork.c,v 1.34 2002-12-11 11:39:10 oops Exp $
 */
 
 /*
@@ -248,8 +248,11 @@ PHP_FUNCTION(readfile_lib)
 	if ( issock == 1 )
 	{
 		string = (unsigned char *) sockhttp (filepath, retSize, 0, "");
-		RETVAL_STRINGL(string, *retSize, 1);
-		efree (string);
+		if (string != NULL)
+		{
+			RETVAL_STRINGL(string, *retSize, 1);
+			efree (string);
+		}
 	}
 	else
 	{
@@ -686,7 +689,7 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 	static unsigned char *nullstr = "", *string;
 	size_t tmplen = 0;
 
-	/* parse file path with url, uri */
+	// parse file path with url, uri
 	//unsigned char *uri;
 	unsigned char *chk, *url, *urlpoint;
 	chk = (unsigned char *) estrdup(addr + 7);
@@ -704,7 +707,7 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 
 	efree(chk);
 
-	/* check existed url */
+	// check existed url
 	if ( !(hostinfo = gethostbyname(url)) )
 	{
 		php_error(E_WARNING, "host name \"%s\" not found\n", url);
@@ -714,7 +717,7 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 
 	efree(url);
 
-	/* specify connect server information */
+	// specify connect server information
 	sinfo.sin_family = AF_INET;
 	sinfo.sin_port = ntohs(80);
 	sinfo.sin_addr = *(struct in_addr *) *hostinfo->h_addr_list;
@@ -722,14 +725,14 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 
 	sprintf(cmd, "GET %s\r\n", addr);
 
-	/* create socket */
+	// create socket
 	if ( (sock = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
 	{
 		php_error(E_WARNING, "Failed to create socket\n");
 		return NULL;
 	}
 
-	/* connect to server in 80 port */
+	// connect to server in 80 port
 	if ( connect (sock, (struct sockaddr *) &sinfo, len) == -1 )
 	{
 		php_error(E_WARNING, "Failed connect %s\n", addr);
@@ -750,7 +753,7 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 			time_t now = time(0);
 			size_t tmpflen = 0;
 
-			/* get random temp file name */
+			// get random temp file name
 			srand(now);
 #ifdef PHP_WIN32
 			sprintf(tmpfilename, "c:\\tmpResize-%d", rand());
@@ -768,7 +771,8 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 	}
 
 
-	/* get document */
+			php_printf("%s\n", cmd);
+	// get document
 	while( (len = recv(sock, rc, 4096, 0)) > 0 )
 	{
 		if(record == 1)
@@ -803,10 +807,10 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 	}
 	else
 	{
-		/* if empty document, return NULL */
+		// if empty document, return NULL
 		if ( tmplen == 0 ) { return NULL; }
 
-		/* return string length with pointer */
+		// return string length with pointer
 		*retSize = tmplen;
 
 		string = (unsigned char *) estrndup(tmpstr, tmplen);
