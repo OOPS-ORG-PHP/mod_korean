@@ -21,6 +21,7 @@ Tue Jan  7 2003
 Mon Jan  6 2003
   by JoungKyun Kim <http://www.oops.org>
     - added script version of korean extension
+    - fixed bug of width value have 0 on imgresize_lib function
 
 Wed Jan  1 2003
   by JoungKyun Kim <http://www.oops.org>

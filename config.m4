@@ -1,4 +1,4 @@
-dnl $Id: config.m4,v 1.16 2003-03-01 09:04:42 oops Exp $
+dnl $Id: config.m4,v 1.17 2003-03-01 10:04:12 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -56,7 +56,7 @@ if test "$PHP_KOREAN" != "no"; then
   else
 
     KR_MODULE_TYPE=builtin
-    extra_sources="libgd/gd.c libgd/gd_png.c libgd/gd_jpeg.c libgd/gd_gif_in.c libgd/gd_io.c libgd/gdtables.c"
+    extra_sources="libgd/gd.c libgd/gd_png.c libgd/gd_jpeg.c libgd/gd_gif_in.c libgd/gd_io.c libgd/gdtables.c libgd/gdhelpers.c"
 
     dnl These are always available with bundled library
     AC_DEFINE(KRGD_BUILTIN,             1, [ ])
