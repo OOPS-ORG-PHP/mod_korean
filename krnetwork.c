@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.29 2002-10-24 14:34:51 oops Exp $
+  $Id: krnetwork.c,v 1.30 2002-11-27 10:52:26 oops Exp $
 */
 
 /*
@@ -122,7 +122,8 @@ PHP_FUNCTION(get_hostname_lib)
 	unsigned int i;
 	const char delimiters[] = ", ";
 	unsigned char *token;
-	char tmphost[1024], *host, *check, *ret;
+	static char ret[1024];
+	char tmphost[1024], *host, *check;
 	char *proxytype[PROXYSIZE]  = { "HTTP_CLIENT_IP","HTTP_X_FORWARDED_FOR","HTTP_X_COMING_FROM",
 									"HTTP_X_FORWARDED","HTTP_FORWARDED_FOR","HTTP_FORWARDED",
 									"HTTP_COMING_FROM","HTTP_PROXY","HTTP_SP_HOST" };
@@ -181,11 +182,11 @@ PHP_FUNCTION(get_hostname_lib)
 			}
 			else
 			{
-		   		host = tmphost;
-				if ( !host ) { host = sapi_getenv("REMOTE_ADDR", 11 TSRMLS_CC); }
+		   		host = estrdup(tmphost);
+				if ( !host ) { host = estrdup(sapi_getenv("REMOTE_ADDR", 11 TSRMLS_CC)); }
 			}
-			if ( !host ) { host = getenv("REMOTE_ADDR"); }
-			if ( !host ) { host = (unsigned char *) get_serverenv("REMOTE_ADDR"); }
+			if ( !host ) { host = estrdup(getenv("REMOTE_ADDR")); }
+			if ( !host ) { host = estrdup((unsigned char *) get_serverenv("REMOTE_ADDR")); }
 		}
 	}
 	else
@@ -199,7 +200,10 @@ PHP_FUNCTION(get_hostname_lib)
 	}
 
 	check = Z_LVAL_PP(reverse) ? kr_gethostbyaddr(host) : "";
-	ret = (strlen(check) > 0) ? check : host ;
+
+	if ( strlen(check) > 0 ) { memove (ret, check, strlen(check)); }
+	else { memmove (ret, host, strlen(host)); }
+	efree(host);
 
 	RETURN_STRING(ret, 1);
 }
@@ -210,7 +214,7 @@ PHP_FUNCTION(get_hostname_lib)
 PHP_FUNCTION(readfile_lib)
 {
 	zval **arg1, **arg2;
-	unsigned char *filepath, *filename, *string;
+	static unsigned char *filepath, *filename, *string;
 	int use_include_path=0, issock=0;
 	size_t *retSize, retSize_t = 0;
 
@@ -244,7 +248,8 @@ PHP_FUNCTION(readfile_lib)
 	if ( issock == 1 )
 	{
 		string = (unsigned char *) sockhttp (filepath, retSize, 0, "");
-		RETURN_STRINGL(string, *retSize, 1);
+		RETVAL_STRINGL(string, *retSize, 1);
+		efree (string);
 	}
 	else
 	{
@@ -252,18 +257,17 @@ PHP_FUNCTION(readfile_lib)
 		{
 			filename = (unsigned char *) includePath(filepath);
 		}
-		else { filename = estrdup(filepath); }
+		else { filename = filepath; }
 
 		/* get file info */
 		if( stat (filename, &filestat) == 0 )
 		{
 			string = (unsigned char *) readfile(filename, filestat.st_size);
-			efree(filename);
-			RETURN_STRINGL(string, filestat.st_size, 1);
+			RETVAL_STRINGL(string, filestat.st_size, 1);
+			efree (string);
 		}
 		else
 		{
-			efree(filename);
 			php_error(E_WARNING, "File/URL %s is not found \n", filename);
 			RETURN_EMPTY_STRING();
 		}
@@ -362,7 +366,7 @@ PHP_FUNCTION(sockmail_lib)
 	}
 	else
 	{
-		taddr = estrdup(tmpto);
+		taddr = tmpto;
 	}
 
 	if ( (mailaddr = strtok(taddr, delimiters)) != NULL ) {
@@ -414,10 +418,10 @@ static char *kr_gethostbyaddr(char *ip)
 #endif
 
 	if (!hp) {
-		return estrdup(ip);
+		return ip;
 	}
 
-	return estrdup(hp->h_name);
+	return hp->h_name;
 }
 /* }}} */
 
@@ -426,18 +430,21 @@ unsigned char *get_mx_record(unsigned char *str)
 {
 	u_char answer[8192], *cp, *end;
 	u_short type, weight, tmpweight;
-	unsigned char *tmphost, *host, tmpmx[256], mxrecord[256] = "", *retaddr;
+	static char *host, mxrecord[256];
+	unsigned char *tmphost, tmpmx[256];
 	unsigned int i, qdc, count, tmpmxlen = 0;
 	HEADER *hp;
 
+	memset (tmpmx, '\0', sizeof(tmpmx));
+	memset (mxrecord, '\0', sizeof(mxrecord));
 
 	if ( (tmphost = strrchr(str, '@')) != NULL )
 	{
-		host = estrdup(&str[tmphost - str + 1]);
+		host = &str[tmphost - str + 1];
 	}
 	else
 	{
-		host = estrdup(str);
+		host = str;
 	}
 
 	/* if don't exist mx record */
@@ -501,11 +508,7 @@ unsigned char *get_mx_record(unsigned char *str)
 	}
 
 	if ( strlen(mxrecord) < 1 ) { return host; }
-	else
-	{
-		retaddr = estrdup(mxrecord);
-		return retaddr;
-	}
+	else { return mxrecord; }
 }
 /* }}} */
 
@@ -627,8 +630,6 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 		}
 	}
 
-	efree(addr);
-
 	failcode = socksend (sock, debug, "HELO localhost", "helo");
     if ( failcode == 1 )
    	{
@@ -681,14 +682,14 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 	FILE *fp;
 	unsigned char tmpfilename[512];
 	int sock, len = 0, freechk = 0;
-	unsigned char cmd[1024], *nullstr = "";
-	unsigned char rc[4096], *tmpstr = NULL, *string;
+	unsigned char cmd[1024], rc[4096], *tmpstr = NULL;
+	static unsigned char *nullstr = "", *string;
 	size_t tmplen = 0;
 
 	/* parse file path with url, uri */
 	//unsigned char *uri;
 	unsigned char *chk, *url, *urlpoint;
-	chk = (unsigned char *) estrdup(&addr[7]);
+	chk = (unsigned char *) estrdup(addr + 7);
 
 	urlpoint = strchr(chk, '/');
 
