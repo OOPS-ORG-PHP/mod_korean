@@ -15,7 +15,7 @@
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
 
-$Id: php_krcharset.h,v 1.1 2002-11-26 08:49:23 oops Exp $
+$Id: php_krcharset.h,v 1.2 2002-11-27 10:46:39 oops Exp $
 */
 
 #ifndef PHP_KRCHARSET_H
@@ -29,6 +29,7 @@ PHP_FUNCTION(utf8encode_lib);
 PHP_FUNCTION(utf8decode_lib);
 PHP_FUNCTION(getutf8); 
 PHP_FUNCTION(getcharacterset);
+PHP_FUNCTION(getunicode);
 
 unsigned char *krNcrEncode (unsigned char *str_o, int type);
 unsigned char *krNcrDecode (unsigned char *str_o);
@@ -38,7 +39,6 @@ unsigned int getNcrArrayNo (unsigned int key);
 unsigned int getUniIDX (unsigned int key);
 unsigned int hex2dec (unsigned char *str_o, unsigned int type);
 int comp (const void *s1, const void *s2);
-unsigned char *convUTF8 (unsigned char *str_o, int type);
 
 #define LKMS_VECTOR_SIZE	16
 #define MEMORY_SHORTAGE		-1000
@@ -58,7 +58,7 @@ unsigned char *convUTF8 (unsigned char *str_o, int type);
 #define XU_CONV_KOI8R		17
 #define XU_CONV_EUCJP		20
 #define XU_CONV_SJIS		21
-#define XU_CONV_EUCKR		30
+#define XU_CONV_CP949		30
 #define XU_CONV_EUCCN		40
 #define XU_CONV_BIG5		50
 
