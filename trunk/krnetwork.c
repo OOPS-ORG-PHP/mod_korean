@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.8 2002-08-08 21:59:45 oops Exp $
+  $Id: krnetwork.c,v 1.9 2002-08-08 22:23:04 oops Exp $
 */
 
 /*
@@ -217,7 +217,7 @@ PHP_FUNCTION(sockmail_lib)
 {
 	zval **mail, **from, **to, **debugs;
 	unsigned char delimiters[] = ",";
-	unsigned char *text, *faddr, *taddr, *tmpfrom, *tmpto, *mailserver;
+	unsigned char *text, *faddr, *taddr, *tmpfrom, *tmpto, *mailaddr;
 	int sock, debug = 0, len = 0, failcode = 0;
 
 	struct sockaddr_in sinfo;
@@ -298,27 +298,24 @@ PHP_FUNCTION(sockmail_lib)
 
 	if (strlen(tmpto) < 1)
 	{
-		unsigned char *src[4] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i", "/[^,<]+<([^>]+)>/i", "/[\\s]/" };
-		unsigned char *des[4] = { "!!ENTER!!", "\\1", "\\1", "" };
+		unsigned char *src[2] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i" };
+		unsigned char *des[2] = { "!!ENTER!!", "\\1" };
 		taddr = (unsigned char *) kr_regex_replace_arr(src, des, text, (sizeof (src) / sizeof (src[0])));
 	}
 	else
 	{
-		unsigned char *src[2] = { "/[^,<]+<([^>]+)>/i", "/[\\s]/" };
-		unsigned char *des[2] = { "\\1", "" };
-		taddr = (unsigned char *) kr_regex_replace_arr(src, des, tmpto, (sizeof (src) / sizeof (src[0])));
+		taddr = estrdup(tmpto);
 	}
 
-	if ( (mailserver = strtok(taddr, delimiters)) != NULL ) {
+	if ( (mailaddr = strtok(taddr, delimiters)) != NULL ) {
 		do {
+			unsigned char *src[3] = { "/[^<]*</i", "/>.*/i", "[\\s]" };
+			unsigned char *des[3] = { "", "", "" };
+			unsigned char *mailserver;
+			mailserver = (unsigned char *) kr_regex_replace_arr(src, des, mailaddr, (sizeof (src) / sizeof (src[0])));
 			if (sock_sendmail(faddr, mailserver, text, debug) == 1) { RETURN_FALSE; }
-		} while ( (mailserver = strtok(NULL, delimiters)) != NULL );
+		} while ( (mailaddr = strtok(NULL, delimiters)) != NULL );
 	}
-
-	/*
-	if ( sock_sendmail (faddr, taddr, text, debug) == 1 ) { RETURN_FALSE; }
-	RETURN_TRUE;
-	*/
 }
 /* }}} */
 
@@ -439,6 +436,7 @@ int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 
 	msg[rlen] = '\0';
 	debug_msg (msg, deb, 0);
+	if ( deb != 0 && !strcasecmp (target, "quit") ) { php_printf("\r\n"); }
 
 	return failed;
 }
