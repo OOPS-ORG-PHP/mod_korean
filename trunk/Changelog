@@ -8,6 +8,7 @@ PHP Korean Extexsions Changelog
     - modifed include header on krnetwork.c
     - changed url information of phpinfo()
     - modified readfile_lib() function
+    - restored gd library check on config.m4
 
 * Sun Aug 18 2002
   by JoungKyun Kim <http://www.oops.org>
