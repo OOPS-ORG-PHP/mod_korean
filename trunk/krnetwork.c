@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.10 2002-08-08 22:45:23 oops Exp $
+  $Id: krnetwork.c,v 1.11 2002-08-09 11:41:08 oops Exp $
 */
 
 /*
@@ -318,8 +318,9 @@ PHP_FUNCTION(sockmail_lib)
 			if (sock_sendmail(faddr, mailserver, text, debug) == 1) { RETURN_LONG(error_no); }
 		} while ( (mailaddr = strtok(NULL, delimiters)) != NULL );
 	}
+	error_no = 0;
 
-	RETURN_LONG(0);
+	RETURN_LONG(error_no);
 }
 /* }}} */
 
@@ -411,9 +412,12 @@ unsigned char *get_mx_record(unsigned char *str)
 int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 {
 	unsigned char *cmd, msg[1024];
-	int rlen = 0, failed = 1, bar = 0, add = 3, tmplen = strlen(var);
+	int rlen = 0, failed = 1, bar = 0, add = 0, tmplen = strlen(var);
 
-	if ( strcasecmp(target, "body") ) { add = 6; }
+	if ( !strcasecmp(target, "body") ) { add = 6; }
+	else if ( !strcasecmp(target, "mail")) { add = 14; }
+	else if ( !strcasecmp(target, "rcpt")) { add = 12; }
+	else { add = 3; }
 
 	{
 		unsigned char tmpcmd[tmplen + add];
@@ -423,12 +427,12 @@ int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 		else if ( !strcasecmp (target, "body") ) { sprintf(tmpcmd, "%s\r\n.\r\n", var); }
 		else { sprintf(tmpcmd, "%s\r\n", var); }
 
+		tmpcmd[tmplen + add] = '\0';
 		cmd = (unsigned char *) estrdup(tmpcmd);
 	}
 
 	/* print debug information */
-	if ( !strcasecmp(target, "helo") ) { bar = 1; }
-	debug_msg(cmd, deb, bar);
+	debug_msg(cmd, deb, 0);
 
 	send (sock, cmd, strlen(cmd), 0);
 	rlen = recv (sock, msg, 1024, 0);
@@ -452,7 +456,7 @@ void debug_msg (unsigned char *msg, int info, int bar)
 		php_printf("DEBUG: %s", msg);
 		if ( bar != 0 )
 		{
-			php_printf("################################################################\n");
+			php_printf("----------------------------------------------------------------\n");
 		}
 	}
 }
@@ -503,6 +507,20 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 		}
 		return 1;
 	}
+	else
+	{
+		unsigned int recvlen = 0;
+		unsigned char recvmsg[1024];
+
+		recvlen = recv (sock, recvmsg, 1024, 0);
+		recvmsg[recvlen] = '\0';
+		if (debug == 1)
+		{
+			php_printf("\r\nConnect %s Start\r\n", addr);
+			php_printf("----------------------------------------------------------------\r\n\r\n");
+			php_printf("DEBUG: %s\r\n", strtrim(recvmsg), recvlen);
+		}
+	}
 
 	failcode = socksend (sock, debug, "HELO localhost", "helo");
     if ( failcode == 1 )
@@ -541,6 +559,7 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 	   	return 1;
    	}
 
+	close(sock);
 	return 0;
 }
 

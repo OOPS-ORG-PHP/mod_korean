@@ -6,6 +6,7 @@ PHP Korean Extexsions Changelog
     - changed us-ascii from iso-8859-1 on mailsource_lib() function
     - added sockmail_lib() function
     - add php mime type with attach file on mailsource_lib() function
+    - fixed Segmentation fault on sockmail_lib() function
 
 * Wed Aug  7 2002
   by JoungKyun Kim <http://www.oops.org>
