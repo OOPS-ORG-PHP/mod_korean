@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Sat Dec 28 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - added PHP_NEW_EXTENSION in config.m4 for over 4.2.x
+
 * Thu Dec 26 2002
   by JoungKyun Kim <http://www.oops.org>
     - fixed typo in agentinfo_lib function

@@ -1,4 +1,4 @@
-dnl $Id: config.m4,v 1.7 2002-09-01 05:18:50 oops Exp $
+dnl $Id: config.m4,v 1.8 2002-12-28 10:38:04 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -12,7 +12,10 @@ PHP_ARG_ENABLE(korean, whether to enable korean support,
 
 if test "$PHP_KOREAN" != "no"; then
         AC_DEFINE(HAVE_KOREAN,1,[ ])
+  dnl if php version is under 4.2.x, use PHP_EXTENSION
+  dnl bug over php 4.2.x, use PHP_NEW_EXTENSION
   PHP_EXTENSION(korean, $ext_shared)
+  dnl PHP_NEW_EXTENSION(korean, conftest.c krcharset.c krerror.c krimage.c krmath.c krparse.c korean.c krcheck.c krfile.c krmail.c krnetwork.c krregex.c, $ext_shared)
   PHP_SUBST(KOREAN_SHARED_LIBADD)
 fi
 
