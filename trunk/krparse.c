@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.20 2002-08-11 20:08:23 oops Exp $
+  $Id: krparse.c,v 1.21 2002-08-14 10:28:28 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -991,8 +991,7 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 	unsigned long i = 0, start = 0;
 	size_t len;
 	int ncr;
-	unsigned char var[5], *byte[4], *bin[3], *rc, *strs, *ret = NULL;
-	unsigned char utfonebyte[9], utftwobyte[9], utfthreebyte[9];
+	unsigned char var[5], rc[8], *strs, *ret = NULL;
 
 	if ( str_o == NULL ) { return NULL; }
 	else { len = strlen(str_o); }
@@ -1001,26 +1000,21 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
    	{
 		/* utf8 -> euc-kr */
 		case 1:
-			rc = convUTF8(str_o, 4);
-			ret = uniConv(rc, 1, 1, "U+", ";");
+			ret = uniConv(convUTF8(str_o, 4), 1, 1, "U+", ";");
 			break;
 
 		/* utf8 -> cp949 */
 		case 2:
-			rc = convUTF8(str_o, 4);
-			ret = uniConv(rc, 1, 0, "U+", ";");
+			ret = uniConv(convUTF8(str_o, 4), 1, 0, "U+", ";");
 			break;
 
 		/* utf8 -> ncr */
 		case 3:
-			rc = convUTF8(str_o, 1);
-			ret = krNcrConv(rc, 0);
+			ret = krNcrConv(convUTF8(str_o, 1), 0);
 			break;
 
 		/* utf8 -> unicode */
 		case 4:
-			rc = emalloc(8);
-
 			/* if exists utf8 init charactor */
 			if (str_o[0] == 0xef && str_o[1] == 0xbb && str_o[2] == 0xbf )
 		   	{
@@ -1032,27 +1026,25 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 		   	{
 				if ( str_o[i] & 0x80 )
 			   	{
-					/* 2byte 의 utf8 문자를 각 byte 별의 2진수로 변환 */
-					sprintf(var, "%x", str_o[i]);
-					sprintf(utfonebyte, "%s%s", hex2bin(var[0]), hex2bin(var[1]));
-					sprintf(var, "%x", str_o[i+1]);
-					sprintf(utftwobyte, "%s%s", hex2bin(var[0]), hex2bin(var[1]));
-					sprintf(var, "%x", str_o[i+2]);
-					sprintf(utfthreebyte, "%s%s", hex2bin(var[0]), hex2bin(var[1]));
+					unsigned int unifirst, unisecond, unithird, uniforth;
 
-					sprintf(var, "%c%c%c%c", utfonebyte[4], utfonebyte[5], utfonebyte[6], utfonebyte[7]);
-					byte[0] = bin2hex(var);
-					sprintf(var, "%c%c%c%c", utftwobyte[2], utftwobyte[3], utftwobyte[4], utftwobyte[5]);
-					byte[1] = bin2hex(var);
-					sprintf(var, "%c%c%c%c", utftwobyte[6], utftwobyte[7], utfthreebyte[2], utfthreebyte[3]);
-					byte[2] = bin2hex(var);
-					sprintf(var, "%c%c%c%c", utfthreebyte[4], utfthreebyte[5], utfthreebyte[6], utfthreebyte[7]);
-					byte[3] = bin2hex(var);
+					/*
+					 * binary of utf8 is 3 byte that constructed
+					 * xxxxxxxx(str_o[i]) xxxxxxxx(str_o[i+1]) xxxxxxxx(str_o[i+2]).
+					 * unifirst is xxxx[xxxx] of str_o[i].
+					 * unisecond is xx[xxxx]xx str_o[i+1].
+					 * unithird is xxxxxx[xx] str_o[i] and xx[xx]xxxx of str_o[i+1].
+					 * uniforth is xxxx[xxxx] str_o[i+1].
+					 */
+					unifirst  = 0x0F & str_o[i];
+					unisecond = ((str_o[i+1] >> 2) & 0x0F);
+					unithird  = ((str_o[i+1] & 0x03) << 2) + ((str_o[i+2] >> 4) & 0x03);
+					uniforth  = str_o[i+2] & 0x0F;
+					sprintf(rc, "U+%x%x%x%x;", unifirst, unisecond, unithird, uniforth);
 
-					sprintf(rc, "U+%s%s%s%s;", byte[0], byte[1], byte[2], byte[3]);
 					i += 2;
 				}
-			   	else { sprintf(rc, "%c", str_o[i]); }
+			   	else { sprintf(rc, "%c\0", str_o[i]); }
 
 				if (strlen(rc) != 0)
 			   	{
@@ -1068,28 +1060,32 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 
 		/* 2 byte charactor -> utf8 */
 		default:
-			rc = emalloc(4);
 			for(i=0 ; i<len ; i++)
 		   	{
 				if ( str_o[i] & 0x80 )
 			   	{
+					unsigned int firstbyte, secondbyte, thirdbyte;
 					ncr = getNcrIDX(str_o[i], str_o[i+1]);
 					ncr = uni_cp949_ncr_table[ncr];
-					sprintf(var, "%x", ncr);
 
-					byte[0] = hex2bin(var[0]);
-					byte[1] = hex2bin(var[1]);
-					byte[2] = hex2bin(var[2]);
-					byte[3] = hex2bin(var[3]);
+					/* utf8 1th byte => 1000 + [xxxx] xxxx xxxx xxxx */
+					firstbyte = (ncr >> 12) + 0xE0;
+					/* utf8 2th byte => 10 + xxxx [xxxx xx]xx xxxx */
+					secondbyte = (0x8000 + ((ncr << 2) & 0x3F00)) >> 8;
+					/* utf8 3th byte => 10 + xxxx xxxx xx[xx xxxx] */
+					thirdbyte = (ncr & 0x003F) | 0x80;
 
-					sprintf(utfonebyte, "1110%s", byte[0]);
-					sprintf(utftwobyte, "10%s%c%c", byte[1], byte[2][0], byte[2][1]);
-					sprintf(utfthreebyte, "10%c%c%s", byte[2][2], byte[2][3], byte[3]);
-
-					sprintf(rc, "%c%c%c", bin2dec(utfonebyte), bin2dec(utftwobyte), bin2dec(utfthreebyte));
+					memset(rc, firstbyte, 1);
+					memset(rc + 1, secondbyte, 1);
+					memset(rc + 2, thirdbyte, 1);
+					memset(rc + 3, '\0', 1);
 					i++;
 				}
-			   	else { sprintf(rc, "%c", str_o[i]); }
+			   	else
+				{
+					memset(rc, str_o[i], 1);
+					memset(rc + 1 , '\0', 1);
+				}
 
 				if (strlen(rc) != 0)
 			   	{
@@ -1110,11 +1106,7 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 	if ( ret == NULL ) { return NULL; }
 	strs = (unsigned char *) estrdup(ret);
 
-	if (type != 1 && type != 2 && type != 3)
-   	{
-		efree(rc);
-		efree(ret);
-	}
+	if (type != 1 && type != 2 && type != 3) { efree(ret); }
 	return strs;
 }
 /* }}} */
@@ -1205,49 +1197,6 @@ unsigned int hex2dec (unsigned char *str_o, unsigned int type) {
 }
 /* }}} */
 
-/* {{{ unsigned char *hex2bin(unsigned char str_o) */
-unsigned char *hex2bin(unsigned char str_o)
-{
-	unsigned char *buf;
-
-	if((str_o >= 0x61 && str_o <= 0x7a) || (str_o >= 0x41 && str_o <= 0x5a))
-   	{
-		switch(str_o)
-	   	{
-			case 'a' : buf = "1010"; break;
-			case 'b' : buf = "1011"; break;
-			case 'c' : buf = "1100"; break;
-			case 'd' : buf = "1101"; break;
-			case 'e' : buf = "1110"; break;
-			case 'f' : buf = "1111"; break;
-			case 'A' : buf = "1010"; break;
-			case 'B' : buf = "1011"; break;
-			case 'C' : buf = "1100"; break;
-			case 'D' : buf = "1101"; break;
-			case 'E' : buf = "1110"; break;
-			case 'F' : buf = "1111"; break;
-		}
-	}
-   	else
-   	{
-		switch(str_o)
-	   	{
-			case '0' : buf = "0000"; break;
-			case '1' : buf = "0001"; break;
-			case '2' : buf = "0010"; break;
-			case '3' : buf = "0011"; break;
-			case '4' : buf = "0100"; break;
-			case '5' : buf = "0101"; break;
-			case '6' : buf = "0110"; break;
-			case '7' : buf = "0111"; break;
-			case '8' : buf = "1000"; break;
-			case '9' : buf = "1001"; break;
-		}
-	}
-	return buf;
-}
-/* }}} */
-
 /* {{{ unsigned int bin2dec(unsigned char *str_o) */
 unsigned int bin2dec(unsigned char *str_o)
 {
@@ -1261,26 +1210,6 @@ unsigned int bin2dec(unsigned char *str_o)
 	}
 
 	return ret;
-}
-/* }}} */
-
-/* {{{ unsigned char *bin2hex(unsigned char *str_o) */
-unsigned char *bin2hex(unsigned char *str_o)
-{
-	unsigned int i, buf = 0;
-	unsigned char *ret, *strs, var[2];
-
-	for (i=0 ; i<4 ; i++)
-   	{
-		sprintf(var, "%c", str_o[i]);
-		buf += atoi(var) << (3 - i);
-	}
-	
-	ret = emalloc(2);
-	sprintf(ret, "%X", buf);
-	strs = (unsigned char *) estrndup(ret, strlen(ret));
-	free(ret);
-	return strs;
 }
 /* }}} */
 
