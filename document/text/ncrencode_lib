@@ -8,15 +8,16 @@ ncrencode_lib -- CP949 문자열을 UHC (ncr code) 로 변환
 
 <B>string ncrencode_lib (string str [, int type])</B>
 
-ncrencode_lib() 함수는 CP949 테이블의 2 byte 문자를 NCR 코드로 변경해 준다.  type
-을 1 로 지정했을 경우에는 EUC-KR 의 범위외의 2 byte 문자만 NCR 코드로 변경을 한다.
+ncrencode_lib() 함수는 CP949 테이블의 2 byte 문자를 16진수 NCR 코드로 변경을 한다.
+type 을 1 로 지정했을 경우에는 EUC-KR 의 범위외의 2 byte 문자만 16 진수 NCR 코드로
+변경을 한다.
 
 이 함수는 GD 에서 한글을 사용할 때, GD 에 따로 한글 패치를 하지 않고 한글을 사용할
 때 유용하게 사용할 수 있다.
 
-type 을 1 로 지정할 경우는, MSIE 의 경우에는 KSX1001 이외의 범위를 알아서 UHC 로
-변환을 해 주나 타 브라우져에서는 잘 지원이 되지 않으므로 다른 브라우져의 호환성을
-생각할 때 이 함수를 사용할 수 있다.
+type 을 1 로 지정할 경우는, MSIE 의 경우에는 KSX1001 이외의 범위를 알아서 NCR 코드
+로 변환을 해 주나 타 브라우져에서는 잘 지원이 되지 않으므로 다른 브라우져의 호환성
+을 생각할 때 이 함수를 사용할 수 있다.
 
 <FONT ID=RE>예제</FONT>
 
