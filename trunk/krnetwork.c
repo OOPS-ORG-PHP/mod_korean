@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.31 2002-11-30 20:04:03 oops Exp $
+  $Id: krnetwork.c,v 1.32 2002-12-09 07:29:45 oops Exp $
 */
 
 /*
@@ -191,7 +191,7 @@ PHP_FUNCTION(get_hostname_lib)
 	}
 	else
    	{
-		if ( Z_STRLEN_PP(addr) > 0 ) { host = Z_STRVAL_PP(addr); }
+		if ( Z_STRLEN_PP(addr) > 0 ) { host = estrdup(Z_STRVAL_PP(addr)); }
 	   	else
 	   	{
 			php_error(E_WARNING,"address is null value");

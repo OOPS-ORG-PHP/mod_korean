@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Mon Dec  9 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed bug that changed addr variable in get_hostname_lib function
+
 * Sun Dec  1 2002
   by JoungKyun Kim <http://www.oops.org>
     - rewrite human_fsize_lib function
