@@ -16,7 +16,7 @@ extern gdImagePtr gdImageCreateFromPngSource (gdSourcePtr inSource);
 /*#define GD_SS_DBG(s) (s) */
 #define GD_SS_DBG(s)
 
-#ifdef HAVE_GD_PNG
+#ifdef HAVE_LIBPNG
 void
 gdImagePngToSink (gdImagePtr im, gdSinkPtr outSink)
 {

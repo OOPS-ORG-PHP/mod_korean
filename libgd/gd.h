@@ -15,7 +15,7 @@ extern "C" {
 #define PATHSEPARATOR ":"
 #else
 /* default fontpath for windows systems */
-#define DEFAULT_FONTPATH "c:\\winnt\\fonts;."
+#define DEFAULT_FONTPATH "c:\\winnt\\fonts;c:\\windows\\fonts;."
 #define PATHSEPARATOR ";"
 #endif
 
@@ -298,8 +298,16 @@ void gdImageStringUp(gdImagePtr im, gdFontPtr f, int x, int y, unsigned char *s,
 void gdImageString16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
 void gdImageStringUp16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
 
-/* clean up after using fonts in gdImageStringFT() */
-void gdFreeFontCache();
+/* 2.0.16: for thread-safe use of gdImageStringFT and friends,
+ * call this before allowing any thread to call gdImageStringFT. 
+ * Otherwise it is invoked by the first thread to invoke
+ * gdImageStringFT, with a very small but real risk of a race condition. 
+ * Return 0 on success, nonzero on failure to initialize freetype.
+ */
+int gdFontCacheSetup(void);
+
+/* Optional: clean up after application is done using fonts in gdImageStringFT(). */
+void gdFontCacheShutdown(void);
 
 /* Calls gdImageStringFT. Provided for backwards compatibility only. */
 char *gdImageStringTTF(gdImage *im, int *brect, int fg, char *fontlist,
@@ -316,6 +324,8 @@ typedef struct {
 				   gdFTEX_Shift_JIS, or gdFTEX_Big5;
 				   when not specified, maps are searched
 				   for in the above order. */
+	int hdpi;
+	int vdpi;
 	double charspacing;
 }
  gdFTStringExtra, *gdFTStringExtraPtr;
@@ -323,6 +333,7 @@ typedef struct {
 #define gdFTEX_LINESPACE 1
 #define gdFTEX_CHARMAP 2
 #define gdFTEX_CHARSPACE 4
+#define gdFTEX_RESOLUTION 4
 
 /* These are NOT flags; set one in 'charmap' if you set the gdFTEX_CHARMAP bit in 'flags'. */
 #define gdFTEX_Unicode 0
