@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krregex.c,v 1.4 2002-08-05 18:26:09 oops Exp $ 
+  $Id: krregex.c,v 1.5 2002-08-05 19:20:51 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -35,9 +35,9 @@ unsigned char *kr_regex_replace (unsigned char *regex_o, unsigned char *replace_
 	unsigned char *buf_o;
 
 	MAKE_STD_ZVAL(replaces);
-	ZVAL_STRING(replaces,replace_o,1);
+	ZVAL_STRING(replaces, replace_o, 1);
 		
-	buf_o = (unsigned char *) php_pcre_replace(regex_o,strlen(regex_o),str_o,str_len,replaces,0,&str_len,-1 TSRMLS_CC);
+	buf_o = (unsigned char *) php_pcre_replace(regex_o, strlen(regex_o), str_o,str_len, replaces,0, &str_len, -1 TSRMLS_CC);
 
 	return buf_o;
 }
@@ -49,14 +49,18 @@ unsigned char *kr_regex_replace_arr (unsigned char *regex_o[], unsigned char *re
 	zval *replaces[regex_no];
 	unsigned char *buf_o[regex_no];
 
-	for ( i=0; i<regex_no ; i++ ) {
+	for ( i=0; i<regex_no ; i++ )
+   	{
 		MAKE_STD_ZVAL(replaces[i]);
 		ZVAL_STRING(replaces[i],replace_o[i],1);
-		if( i == 0 ) {
-			buf_o[i] = (unsigned char *) php_pcre_replace(regex_o[i],strlen(regex_o[i]),str_o,str_len,replaces[i],0,&str_len,-1 TSRMLS_CC);
-		} else {
+		if( i == 0 )
+	   	{
+			buf_o[i] = (unsigned char *) php_pcre_replace(regex_o[i], strlen(regex_o[i]), str_o,str_len, replaces[i], 0, &str_len, -1 TSRMLS_CC);
+		}
+	   	else
+	   	{
 			buf_len = strlen(buf_o[i-1]);
-			buf_o[i] = (unsigned char *) php_pcre_replace(regex_o[i],strlen(regex_o[i]),buf_o[i-1],buf_len,replaces[i],0,&buf_len,-1 TSRMLS_CC);
+			buf_o[i] = (unsigned char *) php_pcre_replace(regex_o[i], strlen(regex_o[i]), buf_o[i-1], buf_len, replaces[i], 0, &buf_len, -1 TSRMLS_CC);
 		}
 	}
 
@@ -67,27 +71,33 @@ unsigned int checkReg(unsigned char *str, unsigned char *regex_o)
 {
 	regex_t preg;
 
-	if (regcomp(&preg,regex_o,REG_EXTENDED) != 0) {
-		php_error(E_WARNING,"Problem REGEX compile in PHP");
+	if (regcomp(&preg, regex_o, REG_EXTENDED) != 0)
+   	{
+		php_error(E_WARNING," Problem REGEX compile in PHP");
 		return 0;
 	}
 
-	if (regexec(&preg,str,0,NULL,0) == 0) {
+	if (regexec(&preg, str, 0, NULL, 0) == 0)
+   	{
 		regfree(&preg);
 		return 1;
-	} else {
+	}
+   	else
+   	{
 		regfree(&preg);
 		return 0;
 	}
 }
 
-unsigned char * strtrim(unsigned char *str) {
+unsigned char * strtrim(unsigned char *str)
+{
 	unsigned int i = 0, len = 0, trimmed = 0;
 	char mask[256];
 
-	if ( strlen(str) != 0 && str != NULL ) {
-		str = kr_regex_replace("/^[\\s]+/","",str);
-		str = kr_regex_replace("/[\\s]+$/","",str);
+	if ( strlen(str) != 0 && str != NULL )
+   	{
+		str = kr_regex_replace("/^[\\s]+/", "", str);
+		str = kr_regex_replace("/[\\s]+$/", "", str);
 		return str;
 	}
 }

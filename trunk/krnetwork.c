@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.4 2002-07-02 18:19:44 oops Exp $
+  $Id: krnetwork.c,v 1.5 2002-08-05 19:20:51 oops Exp $
 */
 
 /*
@@ -48,17 +48,20 @@ PHP_FUNCTION(get_hostname_lib)
 	unsigned int i;
 	char *tmphost = NULL, *host, *check, *ret;
 	char *proxytype[PROXYSIZE]  = { "HTTP_VIA", "HTTP_X_COMING_FROM", "HTTP_X_FORWARDED_FOR",
-									"HTTP_X_FORWARDED","HTTP_COMING_FROM","HTTP_FORWARDED_FOR",
+									"HTTP_X_FORWARDED", "HTTP_COMING_FROM", "HTTP_FORWARDED_FOR",
 									"HTTP_FORWARDED" };
 
-	switch(ZEND_NUM_ARGS()) {
+	switch(ZEND_NUM_ARGS())
+   	{
 		case 1:
-			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &reverse) == FAILURE) {
+			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &reverse) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 2:
-			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &reverse, &addr) == FAILURE) {
+			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &reverse, &addr) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_string_ex(addr);
@@ -69,14 +72,18 @@ PHP_FUNCTION(get_hostname_lib)
 
 	convert_to_long_ex(reverse);
 
-	if ( ZEND_NUM_ARGS() == 1 ) {
-		for ( i = 0; i < PROXYSIZE; i++ ) {
+	if ( ZEND_NUM_ARGS() == 1 )
+   	{
+		for ( i = 0; i < PROXYSIZE; i++ )
+	   	{
 #ifdef PHP_WIN32
-			if (getenv(proxytype[i]) != NULL) {
+			if (getenv(proxytype[i]) != NULL)
+		   	{
 				tmphost = (char *) emalloc(strlen(getenv(proxytype[i])) + 1);
 				tmphost = getenv(proxytype[i]);
 #else
-			if (sapi_module.getenv(proxytype[i], strlen(proxytype[i]) TSRMLS_CC) != NULL) {
+			if (sapi_module.getenv(proxytype[i], strlen(proxytype[i]) TSRMLS_CC) != NULL)
+		   	{
 				tmphost = (char *) emalloc(strlen(sapi_module.getenv(proxytype[i], strlen(proxytype[i]) TSRMLS_CC)) + 1);
 				tmphost = sapi_module.getenv(proxytype[i], strlen(proxytype[i]) TSRMLS_CC);
 #endif
@@ -84,20 +91,25 @@ PHP_FUNCTION(get_hostname_lib)
 			}
 		}
 
-		if ( tmphost == NULL ) {
+		if ( tmphost == NULL )
+	   	{
 #ifdef PHP_WIN32
 			host = getenv("REMOTE_ADDR");
 #else
 			host = sapi_module.getenv("REMOTE_ADDR", 11 TSRMLS_CC);
 #endif
-		} else {
+		}
+	   	else
+	   	{
 			host = tmphost;
 			efree(tmphost);
 		}
-	} else {
-		if ( Z_STRLEN_PP(addr) != 0 ) {
-			host = Z_STRVAL_PP(addr);
-		} else {
+	}
+	else
+   	{
+		if ( Z_STRLEN_PP(addr) != 0 ) { host = Z_STRVAL_PP(addr); }
+	   	else
+	   	{
 			php_error(E_WARNING,"address is null value");
 			RETURN_FALSE;
 		}
@@ -106,7 +118,7 @@ PHP_FUNCTION(get_hostname_lib)
 	check = Z_LVAL_PP(reverse) ? php_gethostbyaddr(host) : NULL ;
 	ret = check ? check : host ;
 
-	RETURN_STRING(ret,1);
+	RETURN_STRING(ret, 1);
 }
 /* }}} */
 
@@ -123,14 +135,17 @@ PHP_FUNCTION(readfile_lib)
 	char buf[8192], *tmpstr = NULL, *ret;
 
 	/* check args */
-	switch (ZEND_NUM_ARGS()) {
+	switch (ZEND_NUM_ARGS())
+   	{
 		case 1:
-			if (zend_get_parameters_ex(1, &arg1) == FAILURE) {
+			if (zend_get_parameters_ex(1, &arg1) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 2:
-			if (zend_get_parameters_ex(2, &arg1, &arg2) == FAILURE) {
+			if (zend_get_parameters_ex(2, &arg1, &arg2) == FAILURE)
+		   	{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_long_ex(arg2);
@@ -145,8 +160,10 @@ PHP_FUNCTION(readfile_lib)
 	 * php_fopen_wrapper().
 	 */
 	fp = php_fopen_wrapper(Z_STRVAL_PP(arg1), "rb", use_include_path | ENFORCE_SAFE_MODE, &issock, &socketd, NULL TSRMLS_CC);
-	if (!fp && !socketd) {
-		if (issock != BAD_URL) {
+	if (!fp && !socketd)
+   	{
+		if (issock != BAD_URL)
+	   	{
 			char *tmp = estrndup(Z_STRVAL_PP(arg1), Z_STRLEN_PP(arg1));
 			php_strip_url_passwd(tmp);
 			php_error(E_WARNING, "readfile_lib(\"%s\") - %s", tmp, strerror(errno));
@@ -155,33 +172,41 @@ PHP_FUNCTION(readfile_lib)
 		RETURN_FALSE;
 	}
 
-	if (issock) {
+	if (issock)
+   	{
 		int *sock = emalloc(sizeof(int));
 		*sock = socketd;
 		rsrc_id = ZEND_REGISTER_RESOURCE(NULL, sock, php_file_le_socket());
-	} else {
+	}
+   	else
+   	{
 		rsrc_id = ZEND_REGISTER_RESOURCE(NULL, fp, php_file_le_fopen());
 	}
 
-	while (1) {
+	while (1)
+   	{
 		if ((len = FP_FREAD(buf, 8190, socketd, fp, issock)) < 1) { break; }
 		buf[len] = '\0';
 
-		if ( tmpstr == NULL ) {
+		if ( tmpstr == NULL )
+	   	{
 			tmpstr = emalloc(sizeof(char) * len + 1);
-			strcpy(tmpstr,buf);
-		} else {
-			tmpstr = erealloc(tmpstr,sizeof(char) * (strlen(tmpstr) + len + 1));
-			strcat(tmpstr,buf);
+			strcpy(tmpstr, buf);
+		}
+	   	else
+	   	{
+			tmpstr = erealloc(tmpstr, sizeof(char) * (strlen(tmpstr) + len + 1));
+			strcat(tmpstr, buf);
 		}
 	}
 
 	zend_list_delete(rsrc_id);
 
-	if (tmpstr != NULL) {
-		ret = estrndup(tmpstr,strlen(tmpstr));
+	if (tmpstr != NULL)
+   	{
+		ret = estrndup(tmpstr, strlen(tmpstr));
 		efree(tmpstr);
-		RETURN_STRING(ret,1);
+		RETURN_STRING(ret, 1);
 	}
 }
 /* }}} */

@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krparse.h,v 1.1.1.1 2002-05-14 09:50:50 oops Exp $
+$Id: php_krparse.h,v 1.2 2002-08-05 19:20:51 oops Exp $
 */
 
 #ifndef PHP_KRPARSE_H
@@ -30,7 +30,7 @@ PHP_FUNCTION(autolink_lib);
 PHP_FUNCTION(substr_lib);
 
 unsigned char *krNcrConv (unsigned char *str_o, int type);
-unsigned char *uniConv (unsigned char *str_o,int type,int subtype,unsigned char *start,unsigned char *end);
+unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end);
 unsigned int getNcrIDX (unsigned char str1, unsigned char str2);
 unsigned int getUniIDX (unsigned int key);
 unsigned int hex2dec (unsigned char *str_o, unsigned int type);
