@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.13 2002-08-10 07:13:08 oops Exp $
+  $Id: krnetwork.c,v 1.14 2002-08-16 01:03:54 oops Exp $
 */
 
 /*
@@ -29,12 +29,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef PHP_WIN32
+#include <winsock.h>
+#include "netdb.h"
+#include "arpa/inet.h"
+#else
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <resolv.h>
+#endif
+
 #include "php.h"
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "SAPI.h"
 #include "fopen_wrappers.h"
-#include "ext/standard/dns.c"
 
 #include "php_krnetwork.h"
 
@@ -100,7 +111,7 @@ PHP_FUNCTION(get_hostname_lib)
 		}
 	}
 
-	check = Z_LVAL_PP(reverse) ? php_gethostbyaddr(host) : "";
+	check = Z_LVAL_PP(reverse) ? kr_gethostbyaddr(host) : "";
 	ret = check ? check : host ;
 
 	RETURN_STRING(ret, 1);
@@ -309,6 +320,46 @@ PHP_FUNCTION(sockmail_lib)
 }
 /* }}} */
 
+/* {{{ static char *kr_gethostbyaddr(char *ip) */
+static char *kr_gethostbyaddr(char *ip)
+{
+#if HAVE_IPV6 && !defined(__MacOSX__)
+	/* MacOSX at this time has support for IPv6, but not inet_pton()
+	 * so disabling IPv6 until further notice.  MacOSX 10.1.2 (kalowsky) */
+	 struct in6_addr addr6;
+#endif
+	struct in_addr addr;
+	struct hostent *hp;
+
+#if HAVE_IPV6 && !defined(__MacOSX__)
+	/* MacOSX at this time has support for IPv6, but not inet_pton()
+	 * so disabling IPv6 until further notice.  MacOSX 10.1.2 (kalowsky) */
+	if (inet_pton(AF_INET6, ip, &addr6)) {
+		hp = gethostbyaddr((char *) &addr6, sizeof(addr6), AF_INET6);
+	} else if (inet_pton(AF_INET, ip, &addr)) {
+		hp = gethostbyaddr((char *) &addr, sizeof(addr), AF_INET);
+	} else {
+		return NULL;
+	}
+#else
+	addr.s_addr = inet_addr(ip);
+
+	if (addr.s_addr == -1) {
+		return NULL;
+	}
+
+	hp = gethostbyaddr((char *) &addr, sizeof(addr), AF_INET);
+#endif
+
+	if (!hp) {
+		return estrdup(ip);
+	}
+
+	return estrdup(hp->h_name);
+}
+/* }}} */
+
+/* {{{ unsigned char *get_mx_record(unsigned char *str) */
 unsigned char *get_mx_record(unsigned char *str)
 {
 	u_char answer[8192], *cp, *end;
@@ -394,7 +445,9 @@ unsigned char *get_mx_record(unsigned char *str)
 		return retaddr;
 	}
 }
+/* }}} */
 
+/* {{{ int socksend (int sock, int deb, unsigned char *var, unsigned char *target) */
 int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 {
 	unsigned char *cmd, msg[1024];
@@ -434,7 +487,9 @@ int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 
 	return failed;
 }
+/* }}} */
 
+/* {{{ void debug_msg (unsigned char *msg, int info, int bar) */
 void debug_msg (unsigned char *msg, int info, int bar)
 {
 	if ( info != 0 )
@@ -446,8 +501,9 @@ void debug_msg (unsigned char *msg, int info, int bar)
 		}
 	}
 }
+/* }}} */
 
-
+/* {{{ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char *text, int debug) */
 int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char *text, int debug)
 {
 	int len, sock, failcode;
@@ -548,6 +604,7 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 	close(sock);
 	return 0;
 }
+/* }}} */
 
 /*
  * Local variables:

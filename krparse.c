@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.28 2002-08-15 19:02:31 oops Exp $
+  $Id: krparse.c,v 1.29 2002-08-16 01:03:54 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -1159,7 +1159,6 @@ unsigned int getUniIDX (unsigned int key)
 {
 	int *ptr, no, *chk, result;
 
-	//ptr = (int *)bsearch(&key,cp949_2byte_ncr_table, 18068, sizeof(cp949_2byte_ncr_table[0]), comp);
 	ptr = (int *)bsearch(&key,cp949_2byte_ncr_table, 17048, sizeof(cp949_2byte_ncr_table[0]), comp);
 	chk = cp949_2byte_ncr_table;
 
