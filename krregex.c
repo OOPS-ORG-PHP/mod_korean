@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krregex.c,v 1.11 2003-08-30 15:41:07 oops Exp $ 
+  $Id: krregex.c,v 1.12 2003-12-02 12:09:40 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -114,7 +114,7 @@ int pcre_match (unsigned char *regex, unsigned char *str)
 	}
 
 	efree(offsets);
-	efree(re);
+	free(re);
 
 	return val;
 }
