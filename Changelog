@@ -1,5 +1,8 @@
 PHP Korean Extexsions Changelog
 
+* Thu Jun 13 2002
+- modified config.m4 for supported gd
+
 * Fri Jun  7 2002
 - fixed reallocation error in uniencode_lib function
 
