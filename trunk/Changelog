@@ -4,6 +4,7 @@ PHP Korean Extexsions Changelog
   by JoungKyun Kim <http://www.oops.org>
     - rewrite human_fsize_lib function
     - rewrite check_table function
+    - fixed segmentation falut on krNcrEncode, krNcrDecode function
 
 * Wed Nov 30 2002
   by JoungKyun Kim <http://www.oops.org>

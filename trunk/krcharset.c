@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.6 2002-11-30 20:03:35 oops Exp $
+  $Id: krcharset.c,v 1.7 2002-12-01 09:38:38 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -418,11 +418,14 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 	unsigned long i;
 	unsigned int ncr;
 	size_t len;
-	unsigned char rc[9], *strs;
+	unsigned char rc[9];
 	static unsigned char *ret = NULL;
 
 	if ( str_o == NULL ) { return NULL; }
 	else { len = strlen(str_o); }
+
+	ret = (unsigned char *) emalloc(sizeof(char) * strlen(str_o) * 8);
+	memset (ret, '\0', sizeof(ret));
 
 	for(i=0;i<len;i++)
    	{
@@ -501,22 +504,18 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 			if (ret != NULL)
 		   	{
 				unsigned ret_len = strlen(ret);
-				ret = erealloc(ret,sizeof(char) * (ret_len + rc_len + 1));
 				memmove(ret + ret_len, rc, rc_len);
 				memset(ret + ret_len + rc_len, '\0', 1);
 			}
 		   	else
 		   	{
-				ret = erealloc(NULL,sizeof(char) * (rc_len + 1));
 				memmove(ret, rc, rc_len);
 				memset(ret + rc_len, '\0', 1);
 			}
 		}
 	}
 
-	strs = (unsigned char *) estrndup(ret, strlen(ret));
-	efree(ret);
-	return strs;
+	return ret;
 }
 /* }}} */
 
@@ -524,7 +523,11 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 unsigned char *krNcrDecode (unsigned char *str_o)
 {
 	unsigned int slen, i = 0, tmp, first, second;
-	unsigned char *ret = NULL, rc[3], tmpstr[8], *strs;
+	unsigned char rc[3], tmpstr[8], *strs;
+	static unsigned char *ret = NULL;
+
+	ret = (unsigned char *) emalloc (sizeof(char) * strlen(str_o));
+	memset (ret, '\0', sizeof(ret));
 
 	if ( str_o == NULL ) { return NULL; }
 	else { slen = strlen(str_o); }
@@ -572,22 +575,18 @@ unsigned char *krNcrDecode (unsigned char *str_o)
 			if (ret != NULL)
 			{
 				unsigned ret_len = strlen(ret);
-				ret = erealloc(ret,sizeof(char) * (ret_len + rc_len + 1));
 				memmove(ret + ret_len, rc, rc_len);
 				memset(ret + ret_len + rc_len, '\0', 1);
 			}
 			else
 			{
-				ret = erealloc(NULL,sizeof(char) * (rc_len + 1));
 				memmove(ret, rc, rc_len);
 				memset(ret + rc_len, '\0', 1);
 			}
 		}
 	}
 
-	strs = (unsigned char *) estrndup(ret, strlen(ret));
-	efree(ret);
-	return strs;
+	return ret;
 }
 /* }}} */
 
