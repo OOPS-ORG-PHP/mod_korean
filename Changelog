@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Thu Aug 23 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - supported php 4.3
+
 * Thu Aug 22 2002
   by JoungKyun Kim <http://www.oops.org>
     - added ncrdecode_lib() function

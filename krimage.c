@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.12 2002-08-16 02:18:09 oops Exp $ 
+  $Id: krimage.c,v 1.13 2002-08-23 01:36:22 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -42,7 +42,6 @@
 #include "php.h"
 #include "php_ini.h"
 #include "SAPI.h"
-#include "fopen_wrappers.h"
 
 #if HAVE_SYS_WAIT_H
 # include <sys/wait.h>
@@ -75,8 +74,9 @@ PHP_FUNCTION(imgresize_lib)
 	pval **opath, **ntype, **nwid, **nhei, **npath;
 	gdImagePtr im, nim;
 	FILE *fp, *tmp;
-	int issock=0, socketd=0, rsrc_id, itype = 0;
-	char filetype[8], tmpfilename[25];
+	int issock=0, itype = 0;
+	char filetype[8], tmpfilename[64];
+	unsigned char *imgfile;
 
 	unsigned char *original, *new_path;
 	int new_type = 0, new_width = 0, new_height = 0, old_width = 0, old_height = 0;
@@ -159,29 +159,14 @@ PHP_FUNCTION(imgresize_lib)
 	}
    	else { new_path = NULL; }
 
-	/* get origianl image type */
-#ifdef PHP_WIN32
-	fp = VCWD_FOPEN(original, "rb");
-#else
-	fp = php_fopen_wrapper(original, "rb", IGNORE_PATH|IGNORE_URL_WIN, &issock, &socketd, NULL TSRMLS_CC);
-#endif
+	/* if image is url */
+	if (checkReg(original, "^[hH][tT][tT][pP]://")) { issock = 1; }
 
-	if (!fp && !socketd)
-   	{
-		if (issock != BAD_URL)
-	   	{
-			php_strip_url_passwd(original);
-			php_error(E_WARNING, "ImgResize_lib: Unable to open '%s' for reading.", original);
-		}
-		RETURN_FALSE;
-	}
-
-    if (issock)
-   	{
-		FILE *rp;
-		char bufs[8190];
-		int *sock=emalloc(sizeof(int)), len = 0;
+	if (issock == 1)
+	{
+		unsigned char *urlimage;
 		time_t now = time(0);
+		size_t len;
 
 		/* get random temp file name */
 		srand(now);
@@ -189,27 +174,22 @@ PHP_FUNCTION(imgresize_lib)
 		len = strlen(tmpfilename);
 		tmpfilename[len] = '\0';
 
-		*sock = socketd;
-
-		if ( (rp = fopen(tmpfilename, "w")) == NULL)
-	   	{
-			php_error(E_ERROR, "Can't create temp file of remote file");
-			RETURN_FALSE;
-		}
-
-		while (1)
-	   	{
-			if ((len = FP_FREAD(bufs, 8190, socketd, fp, issock)) < 1) { break; }
-			bufs[len] = '\0';
-			fwrite (bufs, 1, len, rp);
-		}
-		fclose(rp);
-
-		fp = 0;
-		fp = php_fopen_wrapper(tmpfilename, "rb", IGNORE_PATH|IGNORE_URL_WIN, &issock, &socketd, NULL TSRMLS_CC);
+		sockhttp(original,1, tmpfilename);
+		imgfile = estrdup(tmpfilename);
+	}
+	else
+	{
+		imgfile = estrdup(original);
 	}
 
-	if((FP_FREAD(filetype, 3, socketd, fp, issock)) <= 0)
+	/* get origianl image type */
+	if ((fp = fopen(imgfile, "rb")) == NULL)
+	{
+		php_error(E_ERROR, "Can't open %s in read mode", original);
+		RETURN_FALSE;
+	}
+
+	if( fread (filetype, sizeof(char), 3, fp) <= 0)
    	{
 		php_error(E_WARNING, "getimagesize: Read error!");
 		RETURN_FALSE;
@@ -219,7 +199,7 @@ PHP_FUNCTION(imgresize_lib)
    	else if (!memcmp(filetype, php_sig_jpg_kr, 3)) { itype = 2; }
    	else if (!memcmp(filetype, php_sig_png_kr, 3))
    	{
-		FP_FREAD(filetype+3, 5, socketd, fp, issock);
+		fread(filetype + 3, sizeof(char), 5, fp);
 		if (!memcmp(filetype, php_sig_png_kr, 8)) { itype = 3; }
 		else 
 		{
@@ -264,7 +244,6 @@ PHP_FUNCTION(imgresize_lib)
 
 	fflush(fp);
 	fclose(fp);
-	if(!issock) { unlink(tmpfilename); }
 
 	/* get image size */
 	old_width = gdImageSX(im);
@@ -377,6 +356,7 @@ PHP_FUNCTION(imgresize_lib)
 	}
    	else { fflush(tmp); }
 	fclose(tmp);
+	if (issock == 1) { unlink(tmpfilename); }
 
 	RETURN_TRUE;
 }
