@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.18 2002-08-22 00:57:17 oops Exp $
+  $Id: korean.c,v 1.19 2002-09-01 06:15:46 oops Exp $
 */
 
 /*
@@ -39,7 +39,6 @@
 #include "php_krnetwork.h"
 #include "php_krimage.h"
 #include "php_krmail.h"
-#include "ext/pcre/php_pcre.h"
 
 /* If you declare any globals in php_korean.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(korean)
