@@ -3,6 +3,7 @@ PHP Korean Extexsions Changelog
 * Mon Dec 10 2002
   by JoungKyun Kim <http://www.oops.org>
     - removed unuseless variables
+    - changed system function to file stream function on readfile function
 
 * Mon Dec  9 2002
   by JoungKyun Kim <http://www.oops.org>
