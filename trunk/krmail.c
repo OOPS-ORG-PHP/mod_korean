@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.7 2002-08-13 12:58:16 oops Exp $ 
+  $Id: krmail.c,v 1.8 2002-08-16 02:18:09 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -30,7 +30,6 @@
 
 #include "php.h"
 #include "php_ini.h"
-#include "ext/standard/info.h"
 #include "zend_API.h"
 #include "php_krmail.h"
 

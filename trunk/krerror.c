@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krerror.c,v 1.5 2002-08-10 07:13:08 oops Exp $ 
+  $Id: krerror.c,v 1.6 2002-08-16 02:18:09 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -24,7 +24,6 @@
 
 #include "php.h"
 #include "php_ini.h"
-#include "ext/standard/info.h"
 #include "php_krerror.h"
 #include "SAPI.h"
 

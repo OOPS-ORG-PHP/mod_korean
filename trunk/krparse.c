@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.29 2002-08-16 01:03:54 oops Exp $
+  $Id: krparse.c,v 1.30 2002-08-16 02:18:09 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -24,7 +24,6 @@
 
 #include "php.h"
 #include "php_ini.h"
-#include "ext/standard/info.h"
 #include "php_krparse.h"
 #include "SAPI.h"
 

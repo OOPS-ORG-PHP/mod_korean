@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krregex.c,v 1.6 2002-08-10 07:13:08 oops Exp $ 
+  $Id: krregex.c,v 1.7 2002-08-16 02:18:09 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -24,7 +24,6 @@
 
 #include "php.h"
 #include "php_ini.h"
-#include "ext/standard/info.h"
 #include "krregex.h"
 
 unsigned char *kr_regex_replace (unsigned char *regex_o, unsigned char *replace_o, unsigned char *str_o)

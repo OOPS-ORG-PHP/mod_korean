@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.14 2002-08-08 18:11:56 oops Exp $
+  $Id: korean.c,v 1.15 2002-08-16 02:18:09 oops Exp $
 */
 
 /*
@@ -28,7 +28,6 @@
 
 #include "php.h"
 #include "php_ini.h"
-#include "ext/standard/info.h"
 #include "SAPI.h"
 
 #include "krregex.h"
