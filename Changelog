@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Wed Dec 12 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed readfile function on krfile.c
+
 * Mon Dec 10 2002
   by JoungKyun Kim <http://www.oops.org>
     - removed unuseless variables
