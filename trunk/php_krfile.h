@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krfile.h,v 1.8 2002-12-11 10:04:36 oops Exp $
+$Id: php_krfile.h,v 1.9 2002-12-12 16:56:30 oops Exp $
 */
 #ifndef PHP_KRFILE_H
 #define PHP_KRFILE_H
@@ -44,3 +44,12 @@ unsigned char *includePath (unsigned char *filepath);
 #endif
 
 #endif /* PHP_KRFILE_H */
+
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: noet sw=4 ts=4 fdm=marker
+ * vim<600: noet sw=4 ts=4
+ */

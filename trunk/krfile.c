@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.22 2002-12-12 02:55:03 oops Exp $ 
+  $Id: krfile.c,v 1.23 2002-12-12 16:56:30 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -156,30 +156,30 @@ PHP_FUNCTION(filelist_lib)
 
 			if (!strcmp(mode_s,"f"))
 			{
-				if (check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_FILE_TYPE) { continue; }
+				if (check_filedev(dirpath, d->d_name) != RETURN_FILE_TYPE) { continue; }
 			}
 			else if (!strcmp(mode_s, "d"))
 			{
-				if (check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_DIR_TYPE) { continue; }
+				if (check_filedev(dirpath, d->d_name) != RETURN_DIR_TYPE) { continue; }
 			}
 			else if (!strcmp(mode_s, "l"))
 		   	{
-				if (check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_LINK_TYPE) { continue; }
+				if (check_filedev(dirpath, d->d_name) != RETURN_LINK_TYPE) { continue; }
 			}
 		   	else if (!strcmp(mode_s, "fd"))
 		   	{
-				if (check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_FILE_TYPE &&
-					check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_DIR_TYPE) { continue; }
+				if (check_filedev(dirpath, d->d_name) != RETURN_FILE_TYPE &&
+					check_filedev(dirpath, d->d_name) != RETURN_DIR_TYPE) { continue; }
 			}
 		   	else if (!strcmp(mode_s, "fl"))
 		   	{
-				if (check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_FILE_TYPE &&
-					check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_LINK_TYPE) { continue; }
+				if (check_filedev(dirpath, d->d_name) != RETURN_FILE_TYPE &&
+					check_filedev(dirpath, d->d_name) != RETURN_LINK_TYPE) { continue; }
 			}
 		   	else if (!strcmp(mode_s, "dl"))
 		   	{
-				if (check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_LINK_TYPE &&
-					check_filedev(Z_STRVAL_PP(path), d->d_name) != RETURN_DIR_TYPE) { continue; }
+				if (check_filedev(dirpath, d->d_name) != RETURN_LINK_TYPE &&
+					check_filedev(dirpath, d->d_name) != RETURN_DIR_TYPE) { continue; }
 			} 
 
 			if ( strlen(regex_s) && regexec(&preg,d->d_name, 0, NULL, 0) != 0) { continue; }
@@ -546,4 +546,3 @@ unsigned char *includePath (unsigned char *filepath)
  * vim600: noet sw=4 ts=4 fdm=marker
  * vim<600: noet sw=4 ts=4
  */
-

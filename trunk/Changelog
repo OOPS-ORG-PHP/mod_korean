@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Thu Dec 13 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed bad useful variables with realpath
+
 * Wed Dec 12 2002
   by JoungKyun Kim <http://www.oops.org>
     - fixed readfile function on krfile.c
