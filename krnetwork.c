@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.34 2002-12-11 11:39:10 oops Exp $
+  $Id: krnetwork.c,v 1.35 2002-12-11 17:30:00 oops Exp $
 */
 
 /*
@@ -770,8 +770,6 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 		}
 	}
 
-
-			php_printf("%s\n", cmd);
 	// get document
 	while( (len = recv(sock, rc, 4096, 0)) > 0 )
 	{
