@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krerror.c,v 1.8 2002-11-27 10:52:26 oops Exp $ 
+  $Id: krerror.c,v 1.9 2002-12-12 17:17:03 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -214,6 +214,7 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 		}
 	}
 
+	memset(ret, '\0', sizeof(ret));
 	memmove(ret, result, strlen(result));
 	efree(buf);
 	efree(result);
