@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.18 2002-08-22 09:43:23 oops Exp $
+  $Id: krnetwork.c,v 1.19 2002-08-23 01:36:22 oops Exp $
 */
 
 /*
@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #include "php.h"
 #include "php_ini.h"
@@ -179,7 +180,7 @@ PHP_FUNCTION(readfile_lib)
 
 	if ( issock == 1 )
 	{
-		get = (unsigned char *) sockhttp (filepath);
+		get = (unsigned char *) sockhttp (filepath, 0, "");
 		string = estrdup(get);
 	}
 	else
@@ -602,8 +603,10 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 /* }}} */
 
 /* {{{ unsigned char *sockhttp (unsigned char *addr) */
-unsigned char *sockhttp (unsigned char *addr)
+unsigned char *sockhttp (unsigned char *addr, int record, unsigned char *recfile)
 {
+	FILE *fp;
+	unsigned char tmpfilename[512];
 	int sock, len = 0, tmplen = 0, freechk = 0;
 	unsigned char cmd[1024];
 	unsigned char rc[4096], *tmpstr = NULL, *string;
@@ -655,34 +658,74 @@ unsigned char *sockhttp (unsigned char *addr)
 
 	send(sock, cmd, strlen(cmd), 0);
 
-	/* get document */
-	while( (len = recv(sock, rc, 4096, 0)) > 0 )
+	if(record == 1)
 	{
-		if (tmplen == 0)
+		if ( strlen(recfile) > 0 )
 		{
-			freechk = 1;
-			tmpstr = emalloc(sizeof(char) * (len + 1));
-			memmove(tmpstr, rc, len);
-			tmpstr[len] = '\0';
+			memmove(tmpfilename, recfile, strlen(recfile));
+			tmpfilename[strlen(recfile)] = '\0';
 		}
 		else
 		{
-			tmpstr = erealloc(tmpstr , sizeof(char) * (tmplen + len + 1));
-			memmove(tmpstr + tmplen, rc, len);
-			tmpstr[tmplen + len] = '\0';
+			time_t now = time(0);
+			size_t tmpflen = 0;
+
+			/* get random temp file name */
+			srand(now);
+			sprintf(tmpfilename, "/tmp/tmpResize-%d", rand());
+			tmpflen = strlen(tmpfilename);
+			tmpfilename[tmpflen] = '\0';
 		}
-		tmplen = strlen(tmpstr);
-		memset(rc, '\0', 4096);
+
+		if((fp = fopen(tmpfilename, "wb")) == NULL)
+		{
+			php_error(E_ERROR, "Can't create temp file of remote file");
+		}
+	}
+
+
+	/* get document */
+	while( (len = recv(sock, rc, 4096, 0)) > 0 )
+	{
+		if(record == 1)
+		{
+			fwrite (rc, 1, len, fp);
+		}
+		else
+		{
+			if (tmplen == 0)
+			{
+				freechk = 1;
+				tmpstr = emalloc(sizeof(char) * len + 1);
+				memmove(tmpstr, rc, len);
+				tmpstr[len] = '\0';
+			}
+			else
+			{
+				tmpstr = erealloc(tmpstr , sizeof(char) * (tmplen + len + 1));
+				memmove(tmpstr + tmplen, rc, len);
+				tmpstr[tmplen + len] = '\0';
+			}
+			tmplen += len;
+			memset(rc, '\0', 4096);
+		}
 	}
 	close(sock);
 
-	/* if empty document, return NULL */
-	if ( tmplen == 0 ) { return NULL; }
+	if (record == 1)
+	{
+		fclose(fp);
+	}
+	else
+	{
+		/* if empty document, return NULL */
+		if ( tmplen == 0 ) { return NULL; }
 
-	string = (unsigned char *) estrdup(tmpstr);
-	if (freechk == 1) { efree(tmpstr); }
+		string = (unsigned char *) estrdup(tmpstr);
+		if (freechk == 1) { efree(tmpstr); }
 
-	return string;
+		return string;
+	}
 }
 /* }}} */
 
