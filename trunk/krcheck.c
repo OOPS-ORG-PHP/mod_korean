@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krcheck.c,v 1.15 2002-11-30 18:40:22 oops Exp $
+  $Id: krcheck.c,v 1.16 2003-12-10 10:49:46 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -28,6 +28,21 @@
 
 #include "php_krcheck.h"
 #include "krregex.h"
+
+/* {{{ int numberOfchar(char *str) */
+int numberOfchar (char *str, char chk)
+{
+	int no, i, len;
+
+	no = 0;
+	len = strlen (str);
+
+	for ( i = 0; i < len; i++ )
+		if ( str[i] == chk ) no++;
+
+	return no;
+}
+/* }}} */
 
 /* {{{ unsigned int checkAddr(unsigned char *addr, int type) */
 unsigned int checkAddr(unsigned char *addr, int type)
