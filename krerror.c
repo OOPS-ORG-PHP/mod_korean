@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krerror.c,v 1.9 2002-12-12 17:17:03 oops Exp $ 
+  $Id: krerror.c,v 1.10 2004-09-14 08:58:51 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -177,7 +177,7 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 
 			result = emalloc(sizeof(char) * (strlen(buf) + strlen(mv) + 3));
 			sprintf (result, "%s\n%s\n", buf, mv);
-			efree(mv);
+			sefe_efree(mv);
 		}
 	   	else
 	   	{
@@ -206,7 +206,7 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 
 				result = emalloc(sizeof(char) * (strlen(buf) + strlen(mv) + 3));
 				sprintf (result,"%s\n%s\n", buf, mv);
-				efree(mv);
+				sefe_efree(mv);
 			} else {
 				result = emalloc(sizeof(char) * (strlen(buf) + 2));
 				sprintf (result, "%s\n", buf);
@@ -216,8 +216,8 @@ unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned 
 
 	memset(ret, '\0', sizeof(ret));
 	memmove(ret, result, strlen(result));
-	efree(buf);
-	efree(result);
+	sefe_efree(buf);
+	sefe_efree(result);
 
 	return ret;
 }

@@ -1,5 +1,6 @@
 #include "php.h"
 #include "php_krmath.h"
+#include "php_krparse.h"
 
 #include <math.h>
 #include <float.h>
@@ -56,7 +57,7 @@ char *kr_math_number_format(double d, int dec, char dec_point, char thousand_sep
 	if (is_negative) {
 		*t-- = '-';
 	}
-	efree(tmpbuf);
+	safe_efree(tmpbuf);
 	return resbuf;
 }
 

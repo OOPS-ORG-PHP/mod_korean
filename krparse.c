@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.57 2004-09-14 08:43:00 oops Exp $
+  $Id: krparse.c,v 1.58 2004-09-14 08:58:51 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -89,14 +89,14 @@ PHP_FUNCTION(substr_lib)
 		{
 			dechar = krNcrDecode(Z_STRVAL_PP(str));
 			strcpy (tmpstr, dechar);
-			efree(dechar);
+			safe_efree(dechar);
 		}
 	}
    	else
 	{
 		dechar = krNcrDecode(Z_STRVAL_PP(str));
 		strcpy(tmpstr, dechar);
-		efree(dechar);
+		safe_efree(dechar);
 	}
 
 	if (argc > 2)
@@ -151,8 +151,8 @@ PHP_FUNCTION(substr_lib)
 		retstr = krNcrEncode(tmpstr + f, 1);
 		RETVAL_STRINGL(retstr, strlen(retstr), 1);
 	}
-	efree (retstr);
-	efree (tmpstr);
+	safe_efree (retstr);
+	safe_efree (tmpstr);
 }
 /* }}} */
 
@@ -515,8 +515,8 @@ PHP_FUNCTION(postposition_lib)
 	if ( position == 1 ) { memmove (post, chkjosa[1], 2); }
 	else { memmove (post, chkjosa[0], 2); }
 
-	efree(chkstr);
-	efree(str);
+	safe_efree(chkstr);
+	safe_efree(str);
 
 	if (chkutf == 1)
 	{
@@ -629,13 +629,13 @@ unsigned char *autoLink (unsigned char *str_o)
 	
 	buf = (unsigned char *) kr_regex_replace_arr (src, tar, str_o, ARRAY_NO);
 
-	efree (src[2]);
-	efree (src[5]);
-	efree (src[6]);
-	efree (src[7]);
-	efree (src[8]);
-	efree (src[9]);
-	efree (src[15]);
+	safe_efree (src[2]);
+	safe_efree (src[5]);
+	safe_efree (src[6]);
+	safe_efree (src[7]);
+	safe_efree (src[8]);
+	safe_efree (src[9]);
+	safe_efree (src[15]);
 
 	return buf;
 }

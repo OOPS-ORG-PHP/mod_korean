@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.42 2004-09-14 06:52:22 oops Exp $
+  $Id: krnetwork.c,v 1.43 2004-09-14 08:58:51 oops Exp $
 */
 
 /*
@@ -39,9 +39,6 @@
 	#include <sys/socket.h>
 #endif
 #ifdef PHP_WIN32
-	#include "krregex.h"
-	#include "php_krfile.h"
-	#include "php_krparse.h"
 	#include <winsock.h>
 	#if HAVE_LIBBIND
 		#ifndef WINNT
@@ -106,6 +103,9 @@
 	#endif
 #endif
 
+#include "krregex.h"
+#include "php_krfile.h"
+#include "php_krparse.h"
 #include "php_krnetwork.h"
 
 #define PROXYSIZE 9
@@ -204,7 +204,7 @@ PHP_FUNCTION(get_hostname_lib)
 	memset (ret, '\0', sizeof(ret));
 	if ( strlen(check) > 0 ) { memmove (ret, check, strlen(check)); }
 	else { memmove (ret, host, strlen(host)); }
-	efree(host);
+	safe_efree(host);
 
 	RETURN_STRING(ret, 1);
 }
@@ -253,8 +253,8 @@ PHP_FUNCTION(readfile_lib)
 		if (string != NULL)
 		{
 			RETVAL_STRINGL(string, *retSize, 1);
-			efree (filepath);
-			efree (string);
+			safe_efree (filepath);
+			safe_efree (string);
 		}
 	}
 	else
@@ -272,13 +272,13 @@ PHP_FUNCTION(readfile_lib)
 		{
 			string = (unsigned char *) readfile(getfilename);
 			RETVAL_STRINGL(string, filestat.st_size, 1);
-			efree (filepath);
-			efree (string);
+			safe_efree (filepath);
+			safe_efree (string);
 		}
 		else
 		{
 			php_error(E_WARNING, "File/URL %s is not found \n", filename);
-			efree (filepath);
+			safe_efree (filepath);
 			RETURN_EMPTY_STRING();
 		}
 
@@ -336,10 +336,10 @@ PHP_FUNCTION(readfile_lib)
 		php_stream_close(stream);
 
 		RETVAL_STRINGL(string, len, 1);
-		efree(filepath);
-		efree(string);
+		safe_efree(filepath);
+		safe_efree(string);
 	} else {
-		efree(filepath);
+		safe_efree(filepath);
 		RETURN_EMPTY_STRING();
 	}
 }
@@ -614,7 +614,7 @@ int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 
 		tmpcmd[tmplen + add] = '\0';
 		cmd = (unsigned char *) estrdup(tmpcmd);
-		efree(tmpcmd);
+		safe_efree(tmpcmd);
 	}
 
 	/* print debug information */
@@ -631,7 +631,7 @@ int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 	msg[rlen] = '\0';
 	debug_msg (msg, deb, 0);
 	if ( deb != 0 && !strcasecmp (target, "quit") ) { php_printf("\r\n"); }
-	efree(cmd);
+	safe_efree(cmd);
 
 	return failed;
 }
@@ -709,7 +709,7 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 			php_printf("\r\nConnect %s Start\r\n", addr);
 			php_printf("----------------------------------------------------------------\r\n\r\n");
 			php_printf("DEBUG: %s\r\n", str_t);
-			efree (str_t);
+			safe_efree (str_t);
 		}
 	}
 
@@ -784,17 +784,17 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 		url = (unsigned char *) estrdup(chk);
 	}
 
-	efree(chk);
+	safe_efree(chk);
 
 	// check existed url
 	if ( !(hostinfo = gethostbyname(url)) )
 	{
 		php_error(E_WARNING, "host name \"%s\" not found\n", url);
-		efree(url);
+		safe_efree(url);
 		return NULL;
 	}
 
-	efree(url);
+	safe_efree(url);
 
 	// specify connect server information
 	sinfo.sin_family = AF_INET;
@@ -891,7 +891,7 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 		*retSize = tmplen;
 
 		string = (unsigned char *) estrndup(tmpstr, tmplen);
-		if (freechk == 1) { efree(tmpstr); }
+		if (freechk == 1) { safe_efree(tmpstr); }
 
 		return string;
 	}
