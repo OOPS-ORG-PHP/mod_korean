@@ -2,12 +2,15 @@ PHP Korean Extexsions Changelog
 
 * 0.0.5
 --------------------------------------------------------------------------------
+Sun Mar  2 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed failure of static compile
+    - registed new gd library file
+
 Sat Mar  1 2003
   by JoungKyun Kim <http://www.oops.org>
     - fixed conftest bug of config.m4
     - fixed bug of width value have 0 on imgresize_lib function
-    - fixed failure of static compile
-    - registed new gd library file
 
 Fri Feb 21 2003
   by JoungKyun Kim <http://www.oops.org>
