@@ -1,4 +1,4 @@
-dnl $Id: config.m4,v 1.15 2003-01-07 11:35:11 oops Exp $
+dnl $Id: config.m4,v 1.16 2003-03-01 09:04:42 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -80,5 +80,5 @@ if test "$PHP_KOREAN" != "no"; then
   dnl if php version is under 4.2.x, use PHP_EXTENSION
   dnl bug over php 4.2.x, use PHP_NEW_EXTENSION
   dnl PHP_EXTENSION(korean, $ext_shared)
-  PHP_NEW_EXTENSION(korean, conftest.c krcharset.c krerror.c krimage.c krmath.c krparse.c korean.c krcheck.c krfile.c krmail.c krnetwork.c krregex.c $extra_sources, $ext_shared,, \\$(KR_PARAMETER))
+  PHP_NEW_EXTENSION(korean, krcharset.c krerror.c krimage.c krmath.c krparse.c korean.c krcheck.c krfile.c krmail.c krnetwork.c krregex.c $extra_sources, $ext_shared,, \\$(KR_PARAMETER))
 fi
