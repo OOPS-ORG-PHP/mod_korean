@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.5 2002-07-18 20:35:51 oops Exp $
+  $Id: korean.c,v 1.6 2002-07-24 10:14:20 oops Exp $
 */
 
 /*
@@ -115,7 +115,7 @@ PHP_MINFO_FUNCTION(korean)
 {
 	php_info_print_table_start();
 	php_info_print_table_header(2, "korean extension support", "Value");
-	php_info_print_table_row(2, "Build Date", "200207180522");
+	php_info_print_table_row(2, "Build Date", "200207241914");
 	php_info_print_table_row(2, "URL", "http://devel.oops.org");
 	php_info_print_table_row(2, "Charset function", "NCR code,Unicode 2.0,UTF8,EUC-KR,CP949");
 	php_info_print_table_row(2, "Check function", "enabled");
