@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krcheck.c,v 1.8 2002-08-21 16:15:27 oops Exp $
+  $Id: krcheck.c,v 1.9 2002-09-02 16:07:01 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -140,7 +140,7 @@ unsigned int check_table (unsigned char *str)
 
 unsigned int multibyte_check(unsigned char *str_o, unsigned int p)
 {
-	unsigned char *start_p, *test;
+	unsigned char *start_p;
 	unsigned int i, l, twobyte = 0;
 
 	/* return 0 if point is 1st byte in string */

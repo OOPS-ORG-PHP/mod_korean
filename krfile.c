@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.10 2002-09-02 15:47:20 oops Exp $ 
+  $Id: krfile.c,v 1.11 2002-09-02 16:07:01 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -226,12 +226,11 @@ PHP_FUNCTION(putfile_lib)
 }
 /* }}} */
 
-/* {{{ proto string get_file_lib(string filename, [ int readsize, [ int bin ] ])
+/* {{{ proto string get_file_lib(string filename, [ int readsize ])
  * return file context */
 PHP_FUNCTION(getfile_lib)
 {
-	pval **filename, **getsize, **bin;
-	FILE *fp;
+	pval **filename, **getsize;
 	int binmode = 0;
 	unsigned char *str, *getfilename;
 	size_t size = 0, orgsize = 0, chksize = 0;
@@ -512,14 +511,17 @@ unsigned char *includePath (unsigned char *filepath)
 	}
 	else
 	{
+		unsigned char tmpfilename[512];
+
 		if(strlen(includepath) > 0)
 		{
-			sprintf(filename, "%s/%s", includepath, filepath);
+			sprintf(tmpfilename, "%s/%s", includepath, filepath);
 		}
 		else
 		{
-			sprintf(filename, "%s", filepath);
+			sprintf(tmpfilename, "%s", filepath);
 		}
+		filename = estrdup(tmpfilename);
 	}
 
 	if (strlen(filename) == 0 || filename == NULL)

@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Tue Sep  3 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - removed unuseless variables
+
 * Sun Sep  1 2002
   by JoungKyun Kim <http://www.oops.org>
     - modified config.m4 for phpize

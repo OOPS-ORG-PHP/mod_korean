@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.36 2002-09-01 05:35:17 oops Exp $
+  $Id: krparse.c,v 1.37 2002-09-02 16:07:01 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -186,7 +186,7 @@ PHP_FUNCTION(unidecode_lib)
 	pval **arg1, **arg2, **arg3, **arg4;
 	int argc;
 	unsigned int type, subtype;
-	unsigned char *str, *from, *to, *start, *end, *string;
+	unsigned char *str, *to, *start, *end, *string;
 
 	argc = ZEND_NUM_ARGS();
 
@@ -470,7 +470,6 @@ PHP_FUNCTION(substr_lib)
 PHP_FUNCTION(agentinfo_lib)
 {
 	unsigned char *agent_o, *agent_v, *buf;
-	unsigned char *ptr;
 
     agent_o = get_useragent();
 	if ( !agent_o ) { RETURN_FALSE; }
