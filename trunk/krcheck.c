@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krcheck.c,v 1.10 2002-09-18 10:14:10 oops Exp $
+  $Id: krcheck.c,v 1.11 2002-10-24 14:34:51 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -135,6 +135,8 @@ unsigned int check_table (unsigned char *str)
 	else if (th_o != th_p) { res = 1; }
 	else if (iframe_o != iframe_p) { res = 1; }
 	else { res = 0; }
+
+	efree(buf);
 
 	return res;
 }

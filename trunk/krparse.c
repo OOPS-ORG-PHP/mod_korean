@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.43 2002-09-19 08:05:44 oops Exp $
+  $Id: krparse.c,v 1.44 2002-10-24 14:34:51 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -377,13 +377,8 @@ PHP_FUNCTION(autolink_lib)
 	}
 
 	convert_to_string_ex(arg1);
-	ret = estrdup(autoLink(Z_STRVAL_PP(arg1)));
 
-	if (ret)
-   	{
-		RETURN_STRING(ret, 1);
-	}
-	RETURN_FALSE;
+	RETURN_STRING(autoLink(Z_STRVAL_PP(arg1)), 1);
 }
 /* }}} */
 
@@ -471,7 +466,7 @@ PHP_FUNCTION(substr_lib)
  *    Returns info of browser */
 PHP_FUNCTION(agentinfo_lib)
 {
-	unsigned char *agent_o, *agent_v, *buf;
+	unsigned char *agent_o, *buf;
 
 	agent_o = get_useragent();
 	if ( !agent_o ) { RETURN_FALSE; }
@@ -503,9 +498,8 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = estrdup((unsigned char *) kr_regex_replace("/Mo.+MSIE ([^;]+);.+/i", "\\1", agent_o));
-		agent_v = estrdup((unsigned char *) kr_regex_replace("[a-z]", "", buf));
-		add_assoc_string(return_value, "vr", agent_v, 1);
+		buf = (unsigned char *) kr_regex_replace("/Mo.+MSIE ([^;]+);.+/i", "\\1", agent_o);
+		add_assoc_string(return_value, "vr", (unsigned char *) kr_regex_replace("[a-z]", "", buf), 1);
 	}
 	
 	/* if Opera */
@@ -533,7 +527,7 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = estrdup((unsigned char *) kr_regex_replace("/Opera\\/([0-9.]+).*/i","\\1", agent_o));
+		buf = (unsigned char *) kr_regex_replace("/Opera\\/([0-9.]+).*/i","\\1", agent_o);
 		add_assoc_string(return_value, "vr", buf, 1);
 
 		/* get language */
@@ -576,9 +570,8 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = estrdup((unsigned char *) kr_regex_replace("/Mozi[^(]+\\([^;]+;[^;]+;[^;]+;[^;]+;([^)]+)\\).*/i","\\1", agent_o));
-		agent_v = estrdup((unsigned char *) kr_regex_replace("/rv:| /i", "", buf));
-		add_assoc_string(return_value, "vr", agent_v, 1);
+		buf = (unsigned char *) kr_regex_replace("/Mozi[^(]+\\([^;]+;[^;]+;[^;]+;[^;]+;([^)]+)\\).*/i","\\1", agent_o);
+		add_assoc_string(return_value, "vr", (unsigned char *) kr_regex_replace("/rv:| /i", "", buf), 1);
 
 		/* get language */
 		if (strstr(agent_o, "en-US"))
@@ -616,7 +609,7 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = estrdup((unsigned char *) kr_regex_replace("/.*Konqueror\\/([0-9.]+).*/i","\\1", agent_o));
+		buf = (unsigned char *) kr_regex_replace("/.*Konqueror\\/([0-9.]+).*/i","\\1", agent_o);
 		add_assoc_string(return_value, "vr", buf, 1);
 	}
 
@@ -627,7 +620,7 @@ PHP_FUNCTION(agentinfo_lib)
 		add_assoc_string(return_value, "co", "TextBR", 1);
 
 		/* get version */
-		buf = estrdup((unsigned char *) kr_regex_replace("/Lynx\\/([^ ]+).*/i","\\1", agent_o));
+		buf = (unsigned char *) kr_regex_replace("/Lynx\\/([^ ]+).*/i","\\1", agent_o);
 		add_assoc_string(return_value, "vr", buf, 1);
 	}
 
@@ -638,7 +631,7 @@ PHP_FUNCTION(agentinfo_lib)
 		add_assoc_string(return_value, "co", "TextBR", 1);
 
 		/* get version */
-		buf = estrdup((unsigned char *) kr_regex_replace("/w3m\\/([0-9.]+).*/i","\\1", agent_o));
+		buf = (unsigned char *) kr_regex_replace("/w3m\\/([0-9.]+).*/i","\\1", agent_o);
 		add_assoc_string(return_value, "vr", buf, 1);
 	}
 
@@ -663,7 +656,7 @@ PHP_FUNCTION(agentinfo_lib)
 		}
 
 		/* get version */
-		buf = estrdup((unsigned char *) kr_regex_replace("/Links \\(([^;]+);.*/i","\\1", agent_o));
+		buf = (unsigned char *) kr_regex_replace("/Links \\(([^;]+);.*/i","\\1", agent_o);
 		add_assoc_string(return_value, "vr", buf, 1);
 	}
 
@@ -819,6 +812,8 @@ PHP_FUNCTION(postposition_lib)
 	position = (int) get_postposition(chkstr);
 	post = ( position == 1 ) ? estrdup(chkjosa[1]) : estrdup(chkjosa[0]);
 
+	efree(chkstr);
+
 	if (chkutf == 1) { RETURN_STRING( convUTF8(post, 0), 1); }
 	else { RETURN_STRING(post, 1); }
 }
@@ -924,7 +919,7 @@ unsigned char *autoLink (unsigned char *str_o)
 		tar[18] = "";
 	}
 	
-	buf = estrdup((unsigned char *) kr_regex_replace_arr (src, tar, str_o, ARRAY_NO));
+	buf = (unsigned char *) kr_regex_replace_arr (src, tar, str_o, ARRAY_NO);
 
 	return buf;
 }
@@ -1475,7 +1470,7 @@ unsigned char *get_useragent()
 	unsigned char *ptr;
 	TSRMLS_FETCH();
 	
-    ptr = estrdup(sapi_getenv("HTTP_USER_AGENT", 15 TSRMLS_CC));
+    ptr = sapi_getenv("HTTP_USER_AGENT", 15 TSRMLS_CC);
 	if ( !ptr ) { ptr = getenv("HTTP_USER_AGENT"); }
 	if ( !ptr ) { ptr = get_serverenv("HTTP_USER_AGENT"); }
 	if (!ptr) { ptr = ""; }

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.17 2002-09-18 11:38:46 oops Exp $ 
+  $Id: krimage.c,v 1.18 2002-10-24 14:34:51 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -257,6 +257,8 @@ PHP_FUNCTION(imgresize_lib)
 
 	fflush(fp);
 	fclose(fp);
+
+	efree(imgfile);
 
 	/* get image size */
 	old_width = gdImageSX(im);
