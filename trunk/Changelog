@@ -6,6 +6,7 @@ PHP Korean Extexsions Changelog
     - removed result_except_ksx_1001 function
     - modified rutine of 2 byte NCR code except range of KSX 1001 on substr_lib() function
     - modifed include header on krnetwork.c
+    - changed url information of phpinfo()
 
 * Sun Aug 18 2002
   by JoungKyun Kim <http://www.oops.org>
