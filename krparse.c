@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.49 2002-11-30 19:55:33 oops Exp $
+  $Id: krparse.c,v 1.50 2002-12-01 09:37:29 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -62,7 +62,8 @@ PHP_FUNCTION(autolink_lib)
 PHP_FUNCTION(substr_lib)
 {
 	zval **str, **from, **len, **utf8;
-	static unsigned char *tmpstr, *utfstr;
+	static unsigned char *tmpstr, *retstr;
+	unsigned char *dechar;
 	int l, f, lenth, utf = 0;
 	int argc = ZEND_NUM_ARGS();
 
@@ -86,13 +87,16 @@ PHP_FUNCTION(substr_lib)
 		}
 		else
 		{
-			strcpy (tmpstr, krNcrDecode(Z_STRVAL_PP(str)));
+			dechar = krNcrDecode(Z_STRVAL_PP(str));
+			strcpy (tmpstr, dechar);
 		}
 	}
    	else
 	{
-		strcpy(tmpstr, krNcrDecode(Z_STRVAL_PP(str)));
+		dechar = krNcrDecode(Z_STRVAL_PP(str));
+		strcpy(tmpstr, dechar);
 	}
+	efree(dechar);
 
 	if (argc > 2)
    	{
@@ -104,16 +108,16 @@ PHP_FUNCTION(substr_lib)
 	f = Z_LVAL_PP(from);
 	lenth = strlen(tmpstr);
 
-	/* if "from" position is negative, count start position from the end
-	 * of the string */
+	// if "from" position is negative, count start position from the end
+	// of the string
 	if (f < 0)
    	{
 		f = lenth + f;
 		if (f < 0) { f = 0; }
 	}
 
-	/* if "length" position is negative, set it to the length
-	 * needed to stop that many chars from the end of the string */
+	// if "length" position is negative, set it to the length
+	// needed to stop that many chars from the end of the string
 	if (l < 0)
    	{
 		l = (lenth - f) + l;
@@ -123,30 +127,31 @@ PHP_FUNCTION(substr_lib)
 	if (f >= lenth) { RETURN_FALSE; }
 	if((f + l) > lenth) { l = lenth - f; }
 
-	/* check multibyte whether start return charactor */
+	// check multibyte whether start return charactor
 	if(multibyte_check(tmpstr, f))
    	{
 		f++;
 		l--;
 	} 
 
-	/* check multibyte whether last return charactor */
+	// check multibyte whether last return charactor
 	if(multibyte_check(tmpstr, f + l)) { l++; }
 
 	tmpstr[f+l] = '\0';
 
 	if (utf == 1)
    	{
-		utfstr = (unsigned char *) emalloc(sizeof(char) * strlen(tmpstr + f) * 6);
-		XUCodeConv (utfstr, strlen(tmpstr + f) * 6, XU_CONV_UTF8, tmpstr + f, strlen(tmpstr + f), XU_CONV_CP949);
-		RETVAL_STRINGL(utfstr, strlen(utfstr), 1);
-		efree (utfstr);
+		retstr = (unsigned char *) emalloc(sizeof(char) * strlen(tmpstr + f) * 6);
+		XUCodeConv (retstr, strlen(tmpstr + f) * 6, XU_CONV_UTF8, tmpstr + f, strlen(tmpstr + f), XU_CONV_CP949);
+		RETVAL_STRINGL(retstr, strlen(retstr), 1);
 	}
    	else
    	{
-		RETVAL_STRING(krNcrEncode(tmpstr + f, 1), 1);
+		retstr = krNcrEncode(tmpstr + f, 1);
+		RETVAL_STRINGL(retstr, strlen(retstr), 1);
 	}
-	efree(tmpstr);
+	efree (retstr);
+	efree (tmpstr);
 }
 /* }}} */
 
