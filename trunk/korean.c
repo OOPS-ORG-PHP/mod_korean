@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.10 2002-07-26 00:24:02 oops Exp $
+  $Id: korean.c,v 1.11 2002-08-05 18:26:09 oops Exp $
 */
 
 /*
@@ -39,6 +39,7 @@
 #include "php_krfile.h"
 #include "php_krnetwork.h"
 #include "php_krimage.h"
+#include "php_krmail.h"
 #include "ext/pcre/php_pcre.h"
 
 /* If you declare any globals in php_korean.h uncomment this:
@@ -83,6 +84,7 @@ function_entry korean_functions[] = {
 	PHP_FE(get_hostname_lib,	NULL)
 	PHP_FE(readfile_lib,	NULL)
 	PHP_FE(imgresize_lib,	NULL)
+	PHP_FE(mailsource_lib,	NULL)
 	{NULL, NULL, NULL}
 };
 /* }}} */

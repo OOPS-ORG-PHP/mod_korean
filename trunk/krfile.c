@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.2 2002-06-01 22:34:33 oops Exp $ 
+  $Id: krfile.c,v 1.3 2002-08-05 18:26:09 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -36,7 +36,7 @@
 #include "php_krfile.h"
 
 /* {{{ proto int human_fsize_lib(int filesize, int pt)
- *  *  print move action to url */
+ * print move action to url */
 PHP_FUNCTION(human_fsize_lib) {
 	pval **fsize, **pt;
 	unsigned int sub = 0;

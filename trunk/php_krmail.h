@@ -14,10 +14,22 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: krregex.h,v 1.2 2002-08-05 18:26:09 oops Exp $
+$Id: php_krmail.h,v 1.1 2002-08-05 18:26:09 oops Exp $
 */
 
-unsigned char *kr_regex_replace(unsigned char *regex_o, unsigned char *replace_o, unsigned char *str_o);
-unsigned char *kr_regex_replace_arr(unsigned char *regex[], unsigned char *replace[], unsigned char *str, unsigned int regex_no);
-unsigned int checkReg(unsigned char *str, unsigned char *regex_o);
-unsigned char * strtrim(unsigned char *str);
+#ifndef PHP_KRMAIL_H
+#define PHP_KRMAIL_H
+
+PHP_FUNCTION(mailsource_lib);
+
+unsigned char * generate_mail (unsigned char *ln, unsigned char *form, unsigned char *to,
+			       unsigned char *title, unsigned char *text, unsigned char *attach);
+unsigned char * generate_from (unsigned char *email, char *set);
+unsigned char * generate_to (unsigned char *toaddr, char *set);
+unsigned char * generate_title (unsigned char *title, unsigned char *set);
+unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigned char *subject, char *boundary);
+char * make_boundary ();
+char * generate_mail_id (char * id);
+char * generate_date ();
+
+#endif  /* end PHP_KRMAIL_H */
