@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.30 2002-08-16 02:18:09 oops Exp $
+  $Id: krparse.c,v 1.31 2002-08-16 03:34:24 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -850,15 +850,19 @@ unsigned char *krNcrConv (unsigned char *str_o, int type)
 
 		if (strlen(rc) != 0)
 	   	{
+			unsigned int rc_len = strlen(rc);
 			if (ret != NULL)
 		   	{
-				ret = erealloc(ret,sizeof(char) * (strlen(ret) + strlen(rc) + 1));
-				strcat(ret, rc);
+				unsigned ret_len = strlen(ret);
+				ret = erealloc(ret,sizeof(char) * (ret_len + rc_len + 1));
+				memmove(ret + ret_len, rc, rc_len);
+				memset(ret + ret_len + rc_len, '\0', 1);
 			}
 		   	else
 		   	{
-				ret = erealloc(NULL,sizeof(char) * (strlen(rc) + 1));
-				strcpy(ret, rc);
+				ret = erealloc(NULL,sizeof(char) * (rc_len + 1));
+				memmove(ret, rc, rc_len);
+				memset(ret + rc_len, '\0', 1);
 			}
 		}
 	}
@@ -989,15 +993,19 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 
 		if (strlen(rc) != 0)
 	   	{
+			unsigned int rclen = strlen(rc);
 			if(ret != NULL)
 		   	{
-				ret = erealloc(ret,(sizeof(char) * (strlen(ret) + strlen(rc) + 1)));
-				strcat(ret, rc);
+				unsigned int retlen = strlen(ret);
+				ret = erealloc(ret,(sizeof(char) * (retlen + rclen + 1)));
+				memmove(ret + retlen, rc, rclen);
+				memset(ret + retlen + rclen, '\0', 1);
 			}
 		   	else
 		   	{
-				ret = erealloc(NULL,sizeof(char) * (strlen(rc) + 1));
-				strcpy(ret, rc);
+				ret = erealloc(NULL,sizeof(char) * (rclen + 1));
+				memmove(ret, rc, rclen);
+				memset(ret + rclen, '\0', 1);
 			}
 		}
 	}
@@ -1077,12 +1085,18 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 
 				if (strlen(rc) != 0)
 			   	{
+					unsigned int rclen = strlen(rc);
 					if (ret != NULL)
 				   	{
-						ret = (unsigned char *) erealloc(ret, strlen(ret) + strlen(rc) + 1);
-						strcat(ret,rc);
+						unsigned int retlen = strlen(ret);
+						ret = (unsigned char *) erealloc(ret, sizeof(char) * (retlen + rclen + 1));
+						memmove (ret + retlen, rc, rclen);
+						memset (ret + retlen + rclen, '\0', 1);
 					}
-				   	else { ret = (unsigned char *) estrdup(rc); }
+				   	else
+				   	{
+					   	ret = (unsigned char *) estrdup(rc);
+				   	}
 				}
 			}
 			break;
@@ -1118,15 +1132,19 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 
 				if (strlen(rc) != 0)
 			   	{
+					unsigned int rclen = strlen(rc);
 					if (ret != NULL)
 				   	{
-						ret = erealloc(ret,(sizeof(char) * (strlen(ret) + strlen(rc) + 1)));
-						strcat(ret, rc);
+						unsigned int retlen = strlen(ret);
+						ret = erealloc(ret,(sizeof(char) * (retlen + rclen + 1)));
+						memmove (ret + retlen, rc, rclen);
+						memset (ret + retlen + rclen, '\0', 1);
 					}
 				   	else
 				   	{
-						ret = erealloc(NULL,sizeof(char) * (strlen(rc) + 1));
-						strcpy(ret, rc);
+						ret = erealloc(NULL,sizeof(char) * (rclen + 1));
+						memmove (ret, rc, rclen);
+						memset (ret + rclen, '\0', 1);
 					}
 				}
 			}
