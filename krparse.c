@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.3 2002-05-22 18:11:05 oops Exp $
+  $Id: krparse.c,v 1.4 2002-05-23 15:01:22 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -894,11 +894,10 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 
 				if (strlen(rc) != 0) {
 					if (ret != NULL) {
-						ret = erealloc(ret,(sizeof(char) * (strlen(ret) + strlen(rc) + 1)));
+						ret = (unsigned char *) erealloc(ret, strlen(ret) + strlen(rc) + 1);
 						strcat(ret,rc);
 					} else {
-						ret = erealloc(NULL,sizeof(char) * (strlen(rc) + 1));
-						strcpy(ret,rc);
+						ret = estrdup(rc);
 					}
 				}
 			}
@@ -940,13 +939,13 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 			}
 	}
 
-	strs = estrndup(ret,strlen(ret));
+	strs = estrdup(ret);
 
 	if (type != 1 && type != 2 && type != 3) {
 		efree(rc);
 		efree(ret);
 	}
-	return ret;
+	return strs;
 }
 /* }}} */
 
