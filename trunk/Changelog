@@ -7,6 +7,7 @@ PHP Korean Extexsions Changelog
     - added sockmail_lib() function
     - add php mime type with attach file on mailsource_lib() function
     - fixed Segmentation fault on sockmail_lib() function
+    - changed variable type of mxrecord on sockmail_lib() function for FreeBSD
 
 * Wed Aug  7 2002
   by JoungKyun Kim <http://www.oops.org>
