@@ -1,5 +1,10 @@
 PHP Korean Extexsions Changelog
 
+* Tue Aug 13 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - changed to external variable that duplicate php_sig_gif... array
+      vairable with ext/standard/image.c
+
 * Sun Aug 11 2002
   by JoungKyun Kim <http://www.oops.org>
     - changed mime type on generate_attach() function
