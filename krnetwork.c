@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.39 2003-05-13 16:25:11 oops Exp $
+  $Id: krnetwork.c,v 1.40 2003-09-15 07:17:38 oops Exp $
 */
 
 /*
@@ -411,21 +411,21 @@ PHP_FUNCTION(sockmail_lib)
 	if (strlen(tmpfrom) < 1)
 	{
 		unsigned char *src[3] = { "/\r*\n/i", "/.*From:([^!]+)!!ENTER!!.*/i", "/.*<([^>]+)>/i" };
-		unsigned char *des[3] = { "!!ENTER!!", "\\1", "\\1" };
+		unsigned char *des[3] = { "!!ENTER!!", "\\1", "<\\1>" };
 
 		faddr = (unsigned char *) kr_regex_replace_arr(src, des, text, (sizeof (src) / sizeof (src[0])));
 	}
    	else
 	{
 		unsigned char *src = "/.*<([^>]+)>/i";
-		unsigned char *des = "\\1";
+		unsigned char *des = "<\\1>";
 		faddr = (unsigned char *) kr_regex_replace(src, des, tmpfrom);
 	}
 
 	if (strlen(tmpto) < 1)
 	{
-		unsigned char *src[2] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i" };
-		unsigned char *des[2] = { "!!ENTER!!", "\\1" };
+		unsigned char *src[3] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i", "/<([^>]+)>/i" };
+		unsigned char *des[3] = { "!!ENTER!!", "\\1", "<\\1>" };
 		taddr = (unsigned char *) kr_regex_replace_arr(src, des, text, (sizeof (src) / sizeof (src[0])));
 	}
 	else
@@ -436,7 +436,7 @@ PHP_FUNCTION(sockmail_lib)
 	if ( (mailaddr = strtok(taddr, delimiters)) != NULL ) {
 		do {
 			unsigned char *src[3] = { "/[^<]*</i", "/>.*/i", "[\\s]" };
-			unsigned char *des[3] = { "", "", "" };
+			unsigned char *des[3] = { "<", ">", "" };
 			unsigned char *mailserver;
 
 			error_no++;
@@ -504,15 +504,19 @@ unsigned char *get_mx_record(unsigned char *str)
 
 	if ( (tmphost = strrchr(str, '@')) != NULL )
 	{
-		host = &str[tmphost - str + 1];
+		host = kr_regex_replace ("/[^<]*<|>.*/", "", &str[tmphost - str + 1]);
 	}
 	else
 	{
-		host = str;
+		host = kr_regex_replace ("/[^<]*<|>.*/", "", str);
 	}
 
 	/* if don't exist mx record */
-	if ( (i = res_search(host, C_IN, T_MX, answer, sizeof(answer))) < 0 ) { return host; }
+	if ( (i = res_search(host, C_IN, T_MX, answer, sizeof(answer))) < 0 ) {
+		strcpy (mxrecord, host);
+		free (host);
+		return mxrecord;
+	}
 
 	if ( i > sizeof(answer) ) { i = sizeof(answer); }
 
@@ -524,7 +528,9 @@ unsigned char *get_mx_record(unsigned char *str)
 	{
 		if ( (i = dn_skipname(cp, end)) < 0 )
 		{
-			return host;
+			strcpy (mxrecord, host);
+			free (host);
+			return mxrecord;
 		}
 	}
 
@@ -534,8 +540,9 @@ unsigned char *get_mx_record(unsigned char *str)
 	{
 		if ( (i = dn_skipname(cp, end)) < 0 )
 		{
-			return host;
-			break;
+			strcpy (mxrecord, host);
+			free (host);
+			return mxrecord;
 		}
 		cp += i;
 		GETSHORT(type, cp);
@@ -548,8 +555,9 @@ unsigned char *get_mx_record(unsigned char *str)
 		}
 		GETSHORT(tmpweight, cp);
 		if ( (i = dn_expand(answer, end, cp, tmpmx, sizeof(tmpmx)-1)) < 0 ) {
-			return host;
-			break;
+			strcpy (mxrecord, host);
+			free (host);
+			return mxrecord;
 		}
 		cp += i;
 		tmpmxlen = strlen(tmpmx);
@@ -571,8 +579,11 @@ unsigned char *get_mx_record(unsigned char *str)
 		}
 	}
 
-	if ( strlen(mxrecord) < 1 ) { return host; }
-	else { return mxrecord; }
+	if ( strlen(mxrecord) < 1 ) {
+		strcpy (mxrecord, host);
+		free (host);
+		return mxrecord;
+	} else { return mxrecord; }
 }
 /* }}} */
 
