@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krregex.c,v 1.2 2002-05-14 10:46:44 oops Exp $ 
+  $Id: krregex.c,v 1.3 2002-07-24 10:13:39 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -37,7 +37,7 @@ unsigned char *kr_regex_replace (unsigned char *regex_o, unsigned char *replace_
 	MAKE_STD_ZVAL(replaces);
 	ZVAL_STRING(replaces,replace_o,1);
 		
-	buf_o = php_pcre_replace(regex_o,strlen(regex_o),str_o,str_len,replaces,0,&str_len,-1 TSRMLS_CC);
+	buf_o = (unsigned char *) php_pcre_replace(regex_o,strlen(regex_o),str_o,str_len,replaces,0,&str_len,-1 TSRMLS_CC);
 
 	return buf_o;
 }
@@ -53,10 +53,10 @@ unsigned char *kr_regex_replace_arr (unsigned char *regex_o[], unsigned char *re
 		MAKE_STD_ZVAL(replaces[i]);
 		ZVAL_STRING(replaces[i],replace_o[i],1);
 		if( i == 0 ) {
-			buf_o[i] = php_pcre_replace(regex_o[i],strlen(regex_o[i]),str_o,str_len,replaces[i],0,&str_len,-1 TSRMLS_CC);
+			buf_o[i] = (unsigned char *) php_pcre_replace(regex_o[i],strlen(regex_o[i]),str_o,str_len,replaces[i],0,&str_len,-1 TSRMLS_CC);
 		} else {
 			buf_len = strlen(buf_o[i-1]);
-			buf_o[i] = php_pcre_replace(regex_o[i],strlen(regex_o[i]),buf_o[i-1],buf_len,replaces[i],0,&buf_len,-1 TSRMLS_CC);
+			buf_o[i] = (unsigned char *) php_pcre_replace(regex_o[i],strlen(regex_o[i]),buf_o[i-1],buf_len,replaces[i],0,&buf_len,-1 TSRMLS_CC);
 		}
 	}
 
