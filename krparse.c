@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.41 2002-09-18 10:47:19 oops Exp $
+  $Id: krparse.c,v 1.42 2002-09-19 02:55:21 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -1525,14 +1525,23 @@ int get_postposition (unsigned char *str)
 	if (strlen(str) > 1) { second = tolower(str[1]); }
 	else { second = tolower(str[0]); }
 
+	/* if วั */
+	if (first & 0x80)
+	{
+		unsigned int ncr;
+
+		ncr = getNcrIDX(str[0], str[1]);
+		if ( ((uni_cp949_ncr_table[ncr] - 16) % 28 ) == 0 ) { return 1; }
+		else { return 0; }
+	}
 	/* number area */
-	if ( second > 47 && second < 58 )
+	else if ( second > 47 && second < 58 )
 	{
 		if (first == 50 || first == 52 || first == 53 || first == 57) { return 0; }
 		else { return 1; }
 	}
 	/* only 1 charactor */
-	else if ( first == second )
+	else if ( first == second)
 	{
 		if ( first == 114 || (first > 108 && first < 111) ) { return 0; }
 		else { return 1; }
@@ -1542,15 +1551,6 @@ int get_postposition (unsigned char *str)
 	{
 		if ( second == 114 || (second > 108 && second < 111) ) { return 0; }
 		else { return 1; }
-	}
-	/* if วั */
-	else if (first & 0x80)
-	{
-		unsigned int ncr;
-
-		ncr = getNcrIDX(str[0], str[1]);
-		if ( ((uni_cp949_ncr_table[ncr] - 16) % 28 ) == 0 ) { return 1; }
-		else { return 0; }
 	}
 	/* if aa */
 	else

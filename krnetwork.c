@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.25 2002-09-18 11:38:46 oops Exp $
+  $Id: krnetwork.c,v 1.26 2002-09-19 02:55:21 oops Exp $
 */
 
 /*
@@ -522,7 +522,7 @@ int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 
 	{
 #ifdef PHP_WIN32
-		unsigned char tmpcmd[2048000];
+		unsigned char tmpcmd[4096000];
 #else
 		unsigned char tmpcmd[tmplen + add];
 #endif
