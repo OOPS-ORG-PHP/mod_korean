@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.4 2002-06-12 18:45:30 oops Exp $ 
+  $Id: krimage.c,v 1.5 2002-06-13 16:40:26 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -54,7 +54,7 @@
 # include <fcntl.h>
 #endif
 
-#if HAVE_LIBGD
+#if HAVE_KRLIBGD
 
 #include "php_krimage.h"
 #include <gd.h>
@@ -303,7 +303,7 @@ PHP_FUNCTION(imgresize_lib) {
 }
 /* }}} */
 
-#endif  /* HAVE_LIBGD */
+#endif  /* HAVE_KRLIBGD */
 
 /*
  * Local variables:

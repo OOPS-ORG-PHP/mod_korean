@@ -14,19 +14,19 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krimage.h,v 1.3 2002-06-03 17:35:50 oops Exp $
+$Id: php_krimage.h,v 1.4 2002-06-13 16:40:26 oops Exp $
 */
 #ifndef PHP_KRIMAGE_H
 #define PHP_KRIMAGE_H
 
-#if HAVE_LIBGD
+#if HAVE_KRLIBGD
 PHP_FUNCTION(imgresize_lib);
 
 #define	GIFNEWTYPE	1
 #define	PNGNEWTYPE	2
 #define	JPGNEWTYPE	3
 
-#endif /* HAVE_LIBGD */
+#endif /* HAVE_KRLIBGD */
 
 #endif /* PHP_KRFILE_H */
 
