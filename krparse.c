@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.6 2002-06-15 02:10:44 oops Exp $
+  $Id: krparse.c,v 1.7 2002-06-30 03:24:05 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -465,6 +465,15 @@ PHP_FUNCTION(agentinfo_lib)
 			add_assoc_string(return_value, "os", "LINUX", 1);
 		} else {
 			add_assoc_string(return_value, "os", "OTHER", 1);
+		}
+
+		/* get language pack */
+		if (strstr(agent_o,"en-US")) {
+			add_assoc_string(return_value, "ln", "EN", 1);
+		} else if (strstr(agent_o,"en-US")) {
+			add_assoc_string(return_value, "ln", "KO", 1);
+		} else {
+			add_assoc_string(return_value, "ln", "OTHER", 1);
 		}
 
 		/* get version */

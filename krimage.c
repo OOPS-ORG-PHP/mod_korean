@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.5 2002-06-13 16:40:26 oops Exp $ 
+  $Id: krimage.c,v 1.6 2002-06-30 03:24:05 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <math.h>
 #if HAVE_FCNTL_H
 # include <fcntl.h>
@@ -72,7 +73,7 @@ PHP_FUNCTION(imgresize_lib) {
 	gdImagePtr im, nim;
 	FILE *fp, *tmp;
 	int issock=0, socketd=0, rsrc_id, itype = 0;
-	char filetype[8];
+	char filetype[8], tmpfilename[25];
 
 	unsigned char *original, *new_path;
 	int new_type = 0, new_width = 0, new_height = 0, old_width = 0, old_height = 0;
@@ -156,8 +157,33 @@ PHP_FUNCTION(imgresize_lib) {
 	}
 
     if (issock) {
-		int *sock=emalloc(sizeof(int));
+		FILE *rp;
+		char bufs[8190];
+		int *sock=emalloc(sizeof(int)), len = 0;
+		time_t now = time(0);
+
+		/* get random temp file name */
+		srand(now);
+		sprintf(tmpfilename,"/tmp/tmpResize-%d",rand());
+		len = strlen(tmpfilename);
+		tmpfilename[len] = '\0';
+
 		*sock = socketd;
+
+		if ( (rp = fopen(tmpfilename, "w")) == NULL) {
+			php_error(E_ERROR,"Can't create temp file of remote file");
+			RETURN_FALSE;
+		}
+
+		while (1) {
+			if ((len = FP_FREAD(bufs, 8190, socketd, fp, issock)) < 1) { break; }
+			bufs[len] = '\0';
+			fwrite (bufs, 1, len, rp);
+		}
+		fclose(rp);
+
+		fp = 0;
+		fp = php_fopen_wrapper(tmpfilename, "rb", IGNORE_PATH|IGNORE_URL_WIN, &issock, &socketd, NULL TSRMLS_CC);
 	}
 
 	if((FP_FREAD(filetype, 3, socketd, fp, issock)) <= 0) {
@@ -210,6 +236,7 @@ PHP_FUNCTION(imgresize_lib) {
 
 	fflush(fp);
 	fclose(fp);
+	if(!issock) { unlink(tmpfilename); }
 
 	/* get image size */
 	old_width = gdImageSX(im);

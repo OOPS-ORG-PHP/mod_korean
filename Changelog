@@ -1,5 +1,8 @@
 PHP Korean Extexsions Changelog
 
+* Sun Jun 30 2002
+- enable to control of remote image on imgResize_lib function
+
 * Wed Jun 19 2002
 - modified information of php.ini
 
