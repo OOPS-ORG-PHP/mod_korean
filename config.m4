@@ -1,4 +1,4 @@
-dnl $Id: config.m4,v 1.9 2002-12-28 12:40:52 oops Exp $
+dnl $Id: config.m4,v 1.10 2002-12-28 14:53:15 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -19,7 +19,7 @@ if test "$PHP_KOREAN" != "no"; then
   PHP_SUBST(KOREAN_SHARED_LIBADD)
 
   CPPFLAGS=$CFLAGS
-  PHP_SUBST(CPPFLAGS=$CFLAGS)
+  PHP_SUBST(CPPFLAGS)
 fi
 
 AC_MSG_CHECKING(whether to enable gd functoin)
