@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: korean.c,v 1.7 2002-07-24 15:51:12 oops Exp $
+  $Id: korean.c,v 1.8 2002-07-26 00:17:18 oops Exp $
 */
 
 /*
@@ -40,8 +40,6 @@
 #include "php_krnetwork.h"
 #include "php_krimage.h"
 #include "ext/pcre/php_pcre.h"
-
-#define MAKEDATE "200207250037"
 
 /* If you declare any globals in php_korean.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(korean)
@@ -102,7 +100,7 @@ zend_module_entry korean_module_entry = {
 	NULL,
 	PHP_MINFO(korean),
 #if ZEND_MODULE_API_NO >= 20010901
-	"0.0.1", /* Replace with version number for your extension */
+	BUILDVER, /* Replace with version number for your extension */
 #endif
 	STANDARD_MODULE_PROPERTIES
 };
@@ -117,10 +115,12 @@ ZEND_GET_MODULE(korean)
 PHP_MINFO_FUNCTION(korean)
 {
 	php_info_print_table_start();
-	php_info_print_table_header(2, "korean extension support", "Value");
-	php_info_print_table_row(2, "Build Date", MAKEDATE);
-	php_info_print_table_row(2, "URL", "http://devel.oops.org");
-	php_info_print_table_row(2, "Charset function", "NCR code,Unicode 2.0,UTF8,EUC-KR,CP949");
+	php_info_print_table_colspan_header(2, "Korean extension support");
+	php_info_print_table_row(2, "Build No", BUILDNO);
+	php_info_print_table_row(2, "Build version", BUILDVER);
+	php_info_print_table_row(2, "URL", "http://cvs.oops.org/cgi-bin/oopsdev.cgi/korean/");
+	php_info_print_table_header(2, "Function", "Support");
+	php_info_print_table_row(2, "Charset function", "NCR code, Unicode 2.0, UTF-8, EUC-KR, CP949");
 	php_info_print_table_row(2, "Check function", "enabled");
 	php_info_print_table_row(2, "Filesystem function", "enabled");
 	php_info_print_table_row(2, "HTML function", "enabled");
@@ -134,10 +134,10 @@ PHP_MINFO_FUNCTION(korean)
 }
 /* }}} */
 
-/* {{{ proto unsigned char krversion_lib(void)
+/* {{{ proto unsigned char builddate_lib(void)
  *  print korean extension version */
 PHP_FUNCTION(builddate_lib) {
-	RETURN_STRING (MAKEDATE,1);
+	RETURN_STRING (BUILDNO,1);
 }
 /* }}} */
 
