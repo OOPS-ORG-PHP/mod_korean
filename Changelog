@@ -4,6 +4,7 @@ PHP Korean Extexsions Changelog
   by JoungKyun Kim <http://www.oops.org>
     - changed mime type on generate_attach() function
     - added rutine of 2 byte charactor except range of KSX 1001 on substr_lib() function
+    - added rutine of 2 byte NCR code except range of KSX 1001 on substr_lib() function
 
 * Sat Aug 10 2002
   by JoungKyun Kim <http://www.oops.org>

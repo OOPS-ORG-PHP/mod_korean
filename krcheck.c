@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krcheck.c,v 1.4 2002-08-11 14:23:07 oops Exp $
+  $Id: krcheck.c,v 1.5 2002-08-11 20:08:23 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -141,7 +141,7 @@ unsigned int check_table (unsigned char *str)
 
 unsigned int multibyte_check(unsigned char *str_o, unsigned int p)
 {
-	unsigned char *start_p;
+	unsigned char *start_p, *test;
 	unsigned int i, l, twobyte = 0;
 
 	/* return 0 if point is 1st byte in string */
@@ -174,6 +174,44 @@ unsigned int multibyte_check(unsigned char *str_o, unsigned int p)
 	}
 
 	return 0;
+}
+
+unsigned int result_except_ksx_1001 (unsigned char *kstr, unsigned int s, unsigned int p)
+{
+	unsigned int i = 0, rest = 1;
+	unsigned int point = s + p;
+	unsigned int last = s+p;
+	unsigned int slen = strlen(kstr);
+
+	/* if exists NCR code except range of KSX 1001, this retards 2byte charactors.
+	   not completed */
+	while(1)
+	{
+		if ( rest == 0) { break; }
+		rest = 0;
+		for (i=s; i<last; i++) {
+			if (i > slen) { break; }
+			if (kstr[i] == '&' && kstr[i+1] == '#' && kstr[i+7] == ';')
+			{
+				i += 7;
+				point += 6;
+				rest = 1;
+			}
+		}
+		s = last;
+		last += point;
+	}
+
+	if (kstr[point-1] == '&' && kstr[point] == '#' && kstr[point+6] == ';') { point += 7; }
+	else if (kstr[point-2] == '&' && kstr[point-1] == '#' && kstr[point+5] == ';') { point += 6; }
+	else if (kstr[point-3] == '&' && kstr[point-2] == '#' && kstr[point+4] == ';') { point += 5; }
+	else if (kstr[point-4] == '&' && kstr[point-3] == '#' && kstr[point+3] == ';') { point += 4; }
+	else if (kstr[point-5] == '&' && kstr[point-4] == '#' && kstr[point+2] == ';') { point += 3; }
+	else if (kstr[point-6] == '&' && kstr[point-5] == '#' && kstr[point+1] == ';') { point += 2; }
+	else if (kstr[point-7] == '&' && kstr[point-6] == '#' && kstr[point] == ';') { point += 1; }
+	else { point += 0; }
+
+	return point;
 }
 
 /* type 1 => check of webserver. if iis, return 1. if not return 0

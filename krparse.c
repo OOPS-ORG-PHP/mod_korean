@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.19 2002-08-11 14:23:07 oops Exp $
+  $Id: krparse.c,v 1.20 2002-08-11 20:08:23 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -405,6 +405,8 @@ PHP_FUNCTION(substr_lib)
 	}
 
 	if (f >= lenth) { RETURN_FALSE; }
+
+	l = result_except_ksx_1001(tmpstr, f, l);
 	if((f + l) > lenth) { l = lenth - f; }
 
 	/* check multibyte whether start return charactor */
@@ -416,6 +418,8 @@ PHP_FUNCTION(substr_lib)
 
 	/* check multibyte whether last return charactor */
 	if(multibyte_check(tmpstr, f + l)) { l++; }
+
+	//l = result_except_ksx_1001(tmpstr, f, l);
 
 	if (utf == 1)
    	{
