@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: krregex.h,v 1.4 2002-09-18 10:14:10 oops Exp $
+$Id: krregex.h,v 1.5 2003-03-01 11:17:59 oops Exp $
 */
 
 /*************************************************
@@ -139,9 +139,6 @@ extern const char *pcre_version(void);
 PHPAPI char *php_pcre_replace(char *regex,   int regex_len, char *subject, int subject_len, zval *replace_val, int is_callable_replace, int *result_len, int limit TSRMLS_DC);
 PHPAPI pcre *pcre_get_compiled_regex(char *regex, pcre_extra **extra, int *options);
 
-extern zend_module_entry pcre_module_entry;
-#define pcre_module_ptr &pcre_module_entry
-
 typedef struct {
 	pcre *re;
 	pcre_extra *extra;
@@ -152,16 +149,6 @@ typedef struct {
 #endif
 } pcre_cache_entry;
 
-#ifdef ZTS
-# define PCRE_G(v) TSRMG(pcre_globals_id, zend_pcre_globals *, v)
-#else
-# define PCRE_G(v)      (pcre_globals.v)
-#endif
-
-#else
-
-#define pcre_module_ptr NULL
-#define phpext_pcre_ptr pcre_module_ptr
 #endif /* PHP_PCRE_H */
 
 unsigned char *kr_regex_replace(unsigned char *regex_o, unsigned char *replace_o, unsigned char *str_o);

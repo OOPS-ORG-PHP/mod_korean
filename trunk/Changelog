@@ -5,6 +5,8 @@ PHP Korean Extexsions Changelog
 Sat Mar  1 2003
   by JoungKyun Kim <http://www.oops.org>
     - fixed conftest bug of config.m4
+    - fixed bug of width value have 0 on imgresize_lib function
+    - fixed failure of static compile
 
 Fri Feb 21 2003
   by JoungKyun Kim <http://www.oops.org>
@@ -21,7 +23,6 @@ Tue Jan  7 2003
 Mon Jan  6 2003
   by JoungKyun Kim <http://www.oops.org>
     - added script version of korean extension
-    - fixed bug of width value have 0 on imgresize_lib function
 
 Wed Jan  1 2003
   by JoungKyun Kim <http://www.oops.org>
