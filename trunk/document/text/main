@@ -116,12 +116,12 @@ $ find /usr -name apxs
 $ cd /tmp
 
 # gz 파일을 받았을 경우
-$ tar xvfpz php-4.3.1.tar.gz
+$ tar xvfpz php-<?=$phpversion?>.tar.gz
 
 # bzip2 파일을 받았을 경우
-$ bzip -cd php-4.3.1.tar.bz2 | tar xvf -
+$ bzip -cd php-<?=$phpversion?>.tar.bz2 | tar xvf -
 
-$ cd php-4.3.1/ext
+$ cd php-<?=$phpversoin?>/ext
 $ tar xvfpz korean-<?=$version?>.tar.gz
 $ cd ../
 $ ./buildconf
@@ -134,7 +134,7 @@ $ .......
 $ cd ext/korean
 $ make
 
-까지 하면 php-4.3.1/modules 에 korea.so 가 생성이 된다. 이 파일을 php extension
+까지 하면 php-<?=$phpversion?>/modules 에 korea.so 가 생성이 된다. 이 파일을 php extension
 이 존재하는 디렉토리에 넣어주고, php.ini 에서
 
 extension=korean.so
