@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.8 2002-12-01 09:50:54 oops Exp $
+  $Id: krcharset.c,v 1.9 2002-12-09 06:57:41 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -835,11 +835,11 @@ int XUCodeConv(char* dest, int max, int codeTo, const char* text, int length, in
 	}
 
 	if(length < 0) length = strlen(text);
-	buf = (XUChar*)malloc(sizeof(XUChar) * length);
+	buf = (XUChar*) emalloc(sizeof(XUChar) * length);
 	len1 = XUEncode(buf, length, text, length, codeFrom);	 // other -> unicode
 	len2 = XUDecode(dest, max, buf, len1, codeTo);			// unicode -> other
 
-	free(buf);
+	efree(buf);
 	return len2;
 }
 /* }}} */
