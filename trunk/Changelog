@@ -1,5 +1,9 @@
 PHP Korean Extexsions Changelog
 
+* Sun Dec 22 2002
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed segment error on readfile function
+
 * Thu Dec 13 2002
   by JoungKyun Kim <http://www.oops.org>
     - release 0.0.3
