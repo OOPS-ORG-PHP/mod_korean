@@ -33,6 +33,16 @@ korean extension 의 buildno 가 200212410255 부터는 php 4.3.0 부터 컴파일이 가능
 
 PHP Korean Extexsions Changelog About CVS
 
+* Sun Mar  2 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed failure of static compile
+    - registed new gd library file
+
+* Sat Mar  1 2003
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed conftest bug of config.m4
+    - fixed bug of width value have 0 on imgresize_lib function
+
 * Fri Feb 21 2003
   by JoungKyun Kim <http://www.oops.org>
     - fixed segmentation fault error of VCWD_REALPATH on FreeBS
