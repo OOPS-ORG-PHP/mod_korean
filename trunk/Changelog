@@ -5,7 +5,6 @@ PHP Korean Extexsions Changelog
 Tue Sep 14 2004
   by JoungKyun Kim <http://www.oops.org>
     - rewrite strtrim internal function
-    - added safe_efree function
 
 
 * 0.0.7
