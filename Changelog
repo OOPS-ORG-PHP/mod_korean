@@ -4,6 +4,7 @@ PHP Korean Extexsions Changelog
   by JoungKyun Kim <http://www.oops.org>
     - added ncrdecode_lib() function
     - removed result_except_ksx_1001 function
+    - modified rutine of 2 byte NCR code except range of KSX 1001 on substr_lib() function
 
 * Sun Aug 18 2002
   by JoungKyun Kim <http://www.oops.org>
