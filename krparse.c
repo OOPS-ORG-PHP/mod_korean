@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.12 2002-07-24 15:51:12 oops Exp $
+  $Id: krparse.c,v 1.13 2002-07-25 21:45:51 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -837,7 +837,7 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 		}
 	}
 
-	strs = estrndup(ret,strlen(ret));
+	strs = (unsigned char *) estrndup(ret,strlen(ret));
 	if (type == 1) { regfree(&preg); }
 	efree(rc);
 	efree(ret);
@@ -899,7 +899,11 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 					sprintf(rc,"U+%s%s%s%s;",byte[0],byte[1],byte[2],byte[3]);
 					i += 2;
 				} else {
+					if ( i == 0 && str_o[i] == 0xef && str_o[i+1] == 0xbb && str_o[i+2] == 0xbf ) {
+						rc = NULL;
+					} else {
 					sprintf(rc,"%c",str_o[i]);
+					}
 				}
 
 				if (strlen(rc) != 0) {
@@ -907,7 +911,7 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 						ret = (unsigned char *) erealloc(ret, strlen(ret) + strlen(rc) + 1);
 						strcat(ret,rc);
 					} else {
-						ret = estrdup(rc);
+						ret = (unsigned char *) estrdup(rc);
 					}
 				}
 			}
@@ -949,7 +953,7 @@ unsigned char *convUTF8(unsigned char *str_o, int type)
 			}
 	}
 
-	strs = estrdup(ret);
+	strs = (unsigned char *) estrdup(ret);
 
 	if (type != 1 && type != 2 && type != 3) {
 		efree(rc);
@@ -1104,7 +1108,7 @@ unsigned char *bin2hex(unsigned char *str_o)
 	
 	ret = emalloc(2);
 	sprintf(ret,"%X",buf);
-	strs = estrndup(ret,strlen(ret));
+	strs = (unsigned char *) estrndup(ret,strlen(ret));
 	free(ret);
 	return strs;
 }
