@@ -1,0 +1,139 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=EUC-KR">
+<TITLE>OOPS PHP KOREAN EXTENSIONS</TITLE>
+<STYLE TYPE="text/css">
+A:LINK, A:VISITED, A:ACTIVE { TEXT-DECORATION: NONE; COLOR:#000000; }
+A:HOVER { TEXT-DECORATION:UNDERLINE; COLOR:#000000; }
+TD,BODY { FONT-SIZE:12px; FONT-FAMILY:굴림체; COLOR:#000000; }
+UL { FONT: 12px 굴림체; COLOR:#000000; }
+LI { FONT: 12px 굴림체; COLOR:#000000; }
+P  { FONT: 12px 굴림체; COLOR:#000000; }
+    #title { FONT: 20px Tahoma; COLOR:#A28451; font-weight:bold; }
+    #EN { FONT: 13px Tahoma; COLOR:#000000; }
+    #KO { FONT: 12px 굴림체; COLOR:#000000; }
+    #MA { COLOR:#CD7A1C }
+    #BO { COLOR:#EBEAFF }
+    #OG { COLOR:ORANGE; FONT-WEIGHT:BOLD }
+    #RD { COLOR:RED; FONT-WEIGHT:BOLD }
+    #CH { COLOR:#BDC8BF; FONT-WEIGHT:BOLD }
+    #WA { COLOR:#A28451; FONT-WEIGHT:BOLD}
+    #RE { COLOR:#C65151; FONT-WEIGHT:BOLD}
+    #BG { FONT-SIZE:15pt }
+    #TI { FONT-SIZE:15pt; COLOR:#4A8EF6; FONT-WEIGHT:BOLD }
+    #B  { FONT-WEIGHT:BOLD }
+</STYLE>
+</HEAD>
+
+<BODY LEFTMARGIN=0 TOPMARGIN=0 MARGINWIDTH=0 MARGINHEIGHT=0>
+
+<TABLE BORDER=0 WIDTH=100% CELLPADDING=0 CELLSPACING=0>
+<TR>
+<TD BGCOLOR=#9999cc>
+<A HREF=http://devel.oops.org/index.php?c=3><IMG SRC=./img/php_logo.gif WIDTH="120" HEIGHT="64" BORDER=0 ALT=""></A>
+</TD>
+<TD BGCOLOR=#9999cc ALIGN=right VALIGN=bottom>
+<FONT STYLE="font: 12px tahoma;">
+OOPS PHP Extensions v <?=$version?>
+<IMG SRC=./img/blank.gif WIDTH=10 HEIGHT=1 BORDER=0 ALT="">
+</FONT>
+<TD>
+</TR>
+
+<TR><TD BGCOLOR=#333366 COLSPAN=2><IMG SRC=./img/blank.gif WIDTH=1 HEIGHT=1 BORDER=0 ALT=""></TD></TR>
+
+<TR><TD BGCOLOR=#666699 COLSPAN=2 ALIGN=right>
+<FONT STYLE="color: #ffffff">
+OOPS Development Organization <A HREF=http://www.oops.org><FONT STYLE="color:#ffffff">http://devel.oops.org</FONT></A>
+<IMG SRC=./img/blank.gif WIDTH=10 HEIGHT=15 BORDER=0 ALT="">
+</FONT>
+</TD></TR>
+
+<TR><TD BGCOLOR=#333366 COLSPAN=2><IMG SRC=./img/blank.gif WIDTH=1 HEIGHT=1 BORDER=0 ALT=""></TD></TR>
+</TABLE>
+
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+<TR>
+<TD BGCOLOR="#f0f0f0" VALIGN=top>
+<IMG SRC=./img/blank.gif WIDTH=150 HEIGHT=10 BORDER=0 ALT=""><BR>
+<table WIDTH=100% CELLPADDING=0 CELLSPACING=4 BORDER=0>
+<TR><TD>
+&nbsp;<IMG SRC="./img/caret-t.gif" BORDER=0 WIDTH=11 HEIGHT=7 ALT=""><A HREF=http://www.php.net/manual/kr/>PHP Manual</A><BR>
+</TD></TR>
+<TR><TD BGCOLOR=#cccccc><IMG SRC=./img/blank.gif WIDTH=1 HEIGHT=1 BORDER=0 ALT=""></TD></TR>
+<TR><TD>
+&nbsp;<IMG SRC="./img/caret-u.gif" BORDER=0 WIDTH=11 HEIGHT=7 ALT=""><A HREF=./?func=ref>Function Reference</A><BR>
+</TD></TR>
+<TR><TD BGCOLOR=#cccccc><IMG SRC=./img/blank.gif WIDTH=1 HEIGHT=1 BORDER=0 ALT=""></TD></TR>
+<TR><TD>
+<BR>
+&nbsp;<IMG SRC="./img/box-0.gif" BORDER=0 WIDTH=11 HEIGHT=7 ALT=""><A HREF=./>처음</A><BR>
+&nbsp;<IMG SRC="./img/box-0.gif" BORDER=0 WIDTH=11 HEIGHT=7 ALT=""><A HREF=./>소개</A><BR>
+&nbsp;<IMG SRC="./img/box-0.gif" BORDER=0 WIDTH=11 HEIGHT=7 ALT=""><A HREF=./#changelog>개발상황</A><BR>
+&nbsp;<IMG SRC="./img/box-0.gif" BORDER=0 WIDTH=11 HEIGHT=7 ALT=""><A HREF=./#install>설치</A><BR>
+<?=$plist?>
+
+</TD></TR>
+</TABLE>
+
+</TD>
+<TD BACKGROUND=./img/checkerboard.gif><IMG SRC=./img/blank.gif WIDTH=2 HEIGHT=1 BORDER=0 ALT=""></TD>
+<TD VALIGN=top>
+
+<TABLE WIDTH=620 CELLPADDING=10 CELLSPACING=0 BORDER=0>
+<TR><TD>
+
+<TABLE BGCOLOR=#e0e0e0 WIDTH=620 CELLPADDING=0 CELLSPACING=4 BORDER=0>
+<TR>
+<TD><?=$prev?></TD>
+<TD ALIGN=right>
+<?=$next?>
+</TD>
+</TR>
+<TR>
+<TD BGCOLOR=#cccccc COLSPAN=2><IMG SRC=./img/blank.gif WIDTH=1 HEIGHT=1 BORDER=0 ALT=""></TD>
+</TR>
+<TR>
+<TD ALIGN=right COLSPAN=2>
+Last updated : 2002.12.01<BR>
+</TD>
+</TR>
+</TABLE>
+
+<!--------------------- context of reference ----------------------------->
+<PRE>
+
+<?=$txt?>
+
+</PRE>
+<!--------------------- context of reference ----------------------------->
+
+</TD></TR>
+</TABLE>
+
+</TD>
+</TR>
+</TABLE>
+
+<TABLE BORDER=0 WIDTH=100% CELLPADDING=0 CELLSPACING=0>
+<TR><TD BGCOLOR=#333366><IMG SRC=./img/blank.gif BORDER=0 WIDTH=1 HEIGHT=1 ALT=""></TD></TD>
+<TR><TD BGCOLOR=#9999cc ALIGN=right>
+<A HREF=./?func=copy><FONT COLOR=#ffffff>copyright</FONT></A> |
+<A HREF=./?func=credit><FONT COLOR=#ffffff>credit</FONT></A>
+<IMG SRC=./img/blank.gif WIDTH=2 HEIGHT=15 BORDER=0 ALT="">
+</TD></TR>
+<TR><TD BGCOLOR=#333366><IMG SRC=./img/blank.gif BORDER=0 WIDTH=1 HEIGHT=1 ALT=""></TD></TD>
+</TR>
+</TABLE>
+
+<TABLE BORDER=0 WIDTH=100% CELLPADDING=5 CELLSPACING=0>
+<TR BGCOLOR=#cccccc>
+<TD ALIGN=right>
+Copyright ⓒ 1999-<?=date("Y",time())?> <A HREF=http://www.oops.org>OOPS Development Organization</A><BR>
+All right reserved
+</TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>
