@@ -14,7 +14,10 @@ BIG5, SJIS 를 지원한다. EUC-KR 로 지정을 했을 경우에는 EUC-KR 범위외의 2byte
 
 <FONT ID=RE>예제</FONT>
 
-$str = utf8decode_lib($str,&quot;euc-kr&quot;);
+$str = &quot;한글a와 똠방각하&quot;;
+$str = utf8encode_lib($str);
+echo utf8decode_lib($str, &quot;CP949&quot;)."\n";
+echo utf8decode_lib($str, &quot;EUC-KR&quot;)."\n";
 
 <FONT ID=RE>참고</FONT>
 utf8encode_lib()
