@@ -1,5 +1,8 @@
 PHP Korean Extexsions Changelog
 
+* Fri Jun  7 2002
+- fixed reallocation error in uniencode_lib function
+
 * Mon Jun  3 2002
 - added imgresize_lib function (added krimage.c, php_krimage.h)
 

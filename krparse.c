@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.4 2002-05-23 15:01:22 oops Exp $
+  $Id: krparse.c,v 1.5 2002-06-06 17:08:27 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -751,7 +751,7 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 	unsigned char *rc, *strs;
 	unsigned char *ret = NULL;
 
-	int regno,hexv,firsti,secondi,rc_len;
+	int regno,hexv,firsti,secondi,rc_len = 7;
 	long slen = strlen(start);
 	long elen = strlen(end);
 	regex_t preg;
