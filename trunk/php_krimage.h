@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krimage.h,v 1.5 2002-12-09 13:11:48 oops Exp $
+$Id: php_krimage.h,v 1.6 2002-12-09 13:13:08 oops Exp $
 */
 #ifndef PHP_KRIMAGE_H
 #define PHP_KRIMAGE_H
@@ -22,7 +22,6 @@ $Id: php_krimage.h,v 1.5 2002-12-09 13:11:48 oops Exp $
 #if HAVE_KRLIBGD
 PHP_FUNCTION(imgresize_lib);
 
-#define FILEBUFS 4096
 #define	GIFNEWTYPE	1
 #define	PNGNEWTYPE	2
 #define	JPGNEWTYPE	3
