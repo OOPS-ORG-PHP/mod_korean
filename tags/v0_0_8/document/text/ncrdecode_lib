@@ -1,0 +1,22 @@
+<FONT ID=title>ncrdecode_lib()</FONT>
+
+(required korean module)
+
+ncrdecode_lib -- NCR code 를 CP949 문자열로 변환
+
+<FONT ID=RE>설명</FONT>
+
+<B>string ncrdecode_lib (string str)</B>
+
+ncrdecode_lib() 함수는 16 진수 NCR code 로 되어있는 문자를 CP949 테이블로 변환을 한다.
+
+<FONT ID=RE>예제</FONT>
+
+$a = &quot;한글a 와 똠방각하&quot;;
+$a = ncrencode_lib($a);
+echo ncrdecode_lib($a);
+
+return =&gt; &quot;한글a 와 똠방각하&quot;;
+
+<FONT ID=RE>참고</FONT>
+ncrencode_lib()

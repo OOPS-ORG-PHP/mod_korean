@@ -1,0 +1,16 @@
+<FONT ID=title>movepage_lib()</FONT>
+
+(required korean module)
+
+movepage_lib -- 페이지를 이동시키는 함수
+
+<FONT ID=RE>설명</FONT>
+
+<B>void movepage_lib(string url, int timeout)</B>
+
+
+원하는 페이지로 지정한 시간 이후에 reflesh 한 상태로 이동을 시켜준다.
+
+<FONT ID=RE>예제</FONT>
+
+movepage_lib(&quot;http://www.oops.org&quot;,30);
