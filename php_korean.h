@@ -15,7 +15,7 @@
   | Author:                                                              |
   +----------------------------------------------------------------------+
 
-  $Id: php_korean.h,v 1.3 2002-07-26 00:17:18 oops Exp $
+  $Id: php_korean.h,v 1.4 2002-07-26 00:20:35 oops Exp $
 */
 
 #ifndef PHP_KOREAN_H
@@ -40,7 +40,7 @@ PHP_RINIT_FUNCTION(korean);
 PHP_RSHUTDOWN_FUNCTION(korean);
 PHP_MINFO_FUNCTION(korean);
 
-PHP_FUNCTION(builddate_lib);
+PHP_FUNCTION(buildno_lib);
 PHP_FUNCTION(movepage_lib);
 PHP_FUNCTION(get_microtime_lib);
 
