@@ -1,0 +1,25 @@
+<FONT ID=title>check_uristr_lib()</FONT>
+
+(required korean module)
+
+check_uristr_lib -- GET 또는 POST 로 넘어가는 변수 체크
+
+<FONT ID=RE>설명</FONT>
+
+<B>int check_uristr_lib (string variable)</B>
+
+GET 이나 POST 로 변수를 체크한다. 문자열에 메타 캐릭터가 존재할 경우, 1을 리턴한다.
+이 함수에서 걸리는 문자는 한글,알파벳, _, - 문자를 제외하고는 모두 에러메세지가 출력된다.
+
+check_filename_lib 함수와의 다른점은 도트(.) 문자를 허락하지 않는다는 점이다.
+
+<FONT ID=RE>예제</FONT>
+
+$s = &quot;asdf..asdf&quot;;
+if (check_uristr_lib($s)) {
+  echo &quot;사용할 수 없는 문자가 들어 있습니다.&quot;;
+}
+
+<FONT ID=RE>참조</FONT>
+check_filename_lib()
+
