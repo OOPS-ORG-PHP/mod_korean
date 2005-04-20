@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.31 2004-09-14 12:41:31 oops Exp $
+  $Id: krmail.c,v 1.32 2005-04-20 16:59:24 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -42,8 +42,6 @@
 #include "php_krparse.h"
 
 #ifdef PHP_WIN32
-	#include "krregex.h"
-	#include "ext/standard/base64.h"
 	#include "ext/standard/php_string.h"
 #endif
 
@@ -256,7 +254,7 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 	fencode = emalloc( sizeof(char) * (fencodelen) );
 
 	sprintf(fencode, "--%s\r\nContent-Type: %s; name=\"%s\"\r\nContent-Transfer-Encoding: " \
-			          "base64\r\nContent-Disposition: inline; filename=\"%s\"\r\n\r\n%s\r\n\0",
+			          "base64\r\nContent-Disposition: inline; filename=\"%s\"\r\n\r\n%s\r\n",
 			bound, mimetype, filename, filename, base64text);
 
 	safe_efree(base64text);
@@ -270,7 +268,7 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 							   unsigned char *bptext)
 {
 	static unsigned char *rbody;
-	unsigned char *plain, *base64html, *base64plain, *plain_t;
+	unsigned char *plain, *base64html, *base64plain;
 	unsigned int plainlen = 0, htmllen = 0, nobptext = 0;
 
 	if ( strlen(btext) > 0 )
@@ -372,7 +370,6 @@ unsigned char * generate_from (unsigned char *email, char *set)
 		sprintf (rfrom, "<%s>", mail);
 	} else {
 		int from_len;
-		unsigned char *tmp_from;
 		cname = (unsigned char *) php_base64_encode(name, strlen(name), &namelen);
 
 		from_len = setlen + maillen + namelen + 11;
@@ -615,7 +612,7 @@ char * make_boundary ()
 
 unsigned char * html_to_plain (unsigned char * source)
 {
-	static unsigned char *strip, *rptext;
+	static unsigned char *rptext;
 	unsigned char *src[3] = { ":^.*<BODY[^>]*>:si", ":<\\/BODY>.*$:si", ":</?[a-z][^>]*>:si" };
 	unsigned char *des[3] = { "", "", "" };
 			    

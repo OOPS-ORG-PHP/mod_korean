@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.36 2004-09-14 08:58:51 oops Exp $ 
+  $Id: krfile.c,v 1.37 2005-04-20 16:59:24 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -110,7 +110,6 @@ PHP_FUNCTION(filelist_lib)
 	pval **path, **mode, **regex;
 	DIR *dp;
 	unsigned char *mode_s, *regex_s, dirpath[MAXPATHLENGTH];
-	int chkReg = 0;
 	regex_t preg;
 
 	struct dirent *d;
@@ -176,7 +175,7 @@ PHP_FUNCTION(filelist_lib)
 		}
 	}
 
-	while ( d = readdir(dp) )
+	while ( (d = readdir(dp)) )
 	{
 		if ( d->d_ino != 0)
 		{
@@ -268,7 +267,6 @@ PHP_FUNCTION(putfile_lib)
 PHP_FUNCTION(getfile_lib)
 {
 	pval **filename, **getsize;
-	int binmode = 0;
 	unsigned char *str, getfilename[MAXPATHLENGTH];
 	size_t size = 0, orgsize = 0, chksize = 0;
 	struct stat buf;
@@ -497,7 +495,7 @@ unsigned char *readfile(unsigned char *filename)
 	struct stat filebuf;
 
 	FILE *fp;
-	size_t filesize = 0, frsize = 0, len = 0, strlength = 0;
+	size_t filesize = 0, len = 0, strlength = 0;
 	static unsigned char *text, tmptext[FILEBUFS];
 
 	/* get file info */
@@ -534,7 +532,7 @@ unsigned char *human_file_size (double size_o, int sub_o, int unit, double cunit
 {
 	float res;
 	static unsigned char ret[32];
-	unsigned char *dot = ".", *fdot = ",", sunit[6], ssunit, danwe[3];
+	unsigned char sunit[6], ssunit, danwe[3];
 	unsigned char *BYTES_C = (char *) kr_math_number_format(size_o, 0, '.', ',');
 
 	memset (sunit, '\0', sizeof(sunit));
@@ -620,7 +618,7 @@ unsigned char *includePath (unsigned char *filepath)
 	unsigned char *token, chkfile[512];
 	unsigned char *includetmp, *includepath;
 	int exists = 1;
-	static void ***tsrm_ls;
+	//static void ***tsrm_ls;
 
 	includetmp = PG(include_path);
 	includepath = (includetmp == NULL) ? "" : estrdup(includetmp);

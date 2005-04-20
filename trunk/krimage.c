@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.27 2004-05-31 13:56:11 oops Exp $ 
+  $Id: krimage.c,v 1.28 2005-04-20 16:59:24 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -54,8 +54,6 @@
 #ifdef PHP_WIN32
 	#include <io.h>
 	#include <fcntl.h>
-	#include "krregex.h"
-	#include "php_krnetwork.h"
 #endif
 
 #if HAVE_KRLIBGD
@@ -81,7 +79,7 @@ PHPAPI const char php_sig_png_kr[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (c
 PHP_FUNCTION(imgresize_lib)
 {
 	pval **opath, **ntype, **nwid, **nhei, **npath;
-	gdImagePtr im, nim;
+	gdImagePtr im = NULL, nim = NULL;
 	FILE *fp, *tmp;
 	int issock=0, itype = 0, newpath_len = 0;
 	char filetype[8], tmpfilename[64];
