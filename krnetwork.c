@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.44 2004-09-14 12:41:31 oops Exp $
+  $Id: krnetwork.c,v 1.45 2005-04-20 16:59:24 oops Exp $
 */
 
 /*
@@ -353,7 +353,7 @@ PHP_FUNCTION(sockmail_lib)
 	unsigned char delimiters[] = ",";
 	unsigned char *text, *faddr, *taddr, *tmpfrom, *tmpto, *mailaddr;
 	char *btoken;
-	int debug = 0, len = 0, failcode = 0, error_no = 0;
+	int debug = 0, error_no = 0;
 
 	unsigned char *src[4] = { "/[^<]*</", "/>.*/", "/[\\s]/", "/^.*$/" };
 	unsigned char *des[4] = { "", "", "", "<\\0>" };
@@ -502,6 +502,7 @@ unsigned char *get_mx_record(unsigned char *str)
 	unsigned int i, qdc, count, tmpmxlen = 0;
 	HEADER *hp;
 
+	weight = 0;
 	memset (tmpmx, '\0', sizeof(tmpmx));
 	memset (mxrecord, '\0', sizeof(mxrecord));
 
@@ -594,7 +595,9 @@ unsigned char *get_mx_record(unsigned char *str)
 int socksend (int sock, int deb, unsigned char *var, unsigned char *target)
 {
 	unsigned char *cmd, msg[1024];
-	int rlen = 0, failed = 1, bar = 0, add = 0, tmplen = strlen(var);
+	int rlen = 0, failed = 1, bar = 0, add = 0, tmplen;
+
+	tmplen = strlen (var);
 
 	if ( !strcasecmp(target, "body") ) { add = 6; }
 	else if ( !strcasecmp(target, "mail")) { add = 14; }
@@ -770,6 +773,7 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 	//unsigned char *uri;
 	unsigned char *chk, *url, *urlpoint;
 	chk = (unsigned char *) estrdup(addr + 7);
+	fp = NULL;
 
 	urlpoint = strchr(chk, '/');
 

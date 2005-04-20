@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krmail.h,v 1.5 2002-12-31 20:18:37 oops Exp $
+$Id: php_krmail.h,v 1.6 2005-04-20 16:59:24 oops Exp $
 */
 
 #ifndef PHP_KRMAIL_H
@@ -39,6 +39,10 @@ char * generate_date ();
 unsigned char * html_to_plain (unsigned char * text);
 unsigned char * body_encode (const unsigned char *str, int chklen);
 unsigned char *generate_mime (unsigned char *filename);
+
+unsigned char *kr_regex_replace(unsigned char *regex_o, unsigned char *replace_o, unsigned char *str_o);
+unsigned char *kr_regex_replace_arr(unsigned char *regex[], unsigned char *replace[], unsigned char *str, unsigned int regex_no);
+PHPAPI extern unsigned char *php_base64_encode(const unsigned char *, int, int *);
 
 #endif  /* end PHP_KRMAIL_H */
 

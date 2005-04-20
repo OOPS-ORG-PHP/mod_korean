@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.58 2004-09-14 08:58:51 oops Exp $
+  $Id: krparse.c,v 1.59 2005-04-20 16:59:24 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -465,7 +465,7 @@ PHP_FUNCTION(postposition_lib)
 	/* check korean postposition */
 	if ( strlen(josa) < 1 )
 	{
-		php_error(E_ERROR, "Don't exists postposition\n", josa);
+		php_error(E_ERROR, "Don't exists postposition\n");
 	}	
 	else if ( (josa[0] == 0xc0 && josa[1] == 0xcc) || (josa[0] == 0xb0 && josa[1] == 0xa1) )
 	{

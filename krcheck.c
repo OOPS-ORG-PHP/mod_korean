@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krcheck.c,v 1.16 2003-12-10 10:49:46 oops Exp $
+  $Id: krcheck.c,v 1.17 2005-04-20 16:59:24 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -174,8 +174,9 @@ unsigned int multibyte_check(unsigned char *str_o, unsigned int p)
 /* }}} */
 
 /* {{{ unsigned int check_windows(unsigned int type)
-/* type 1 => check of webserver. if iis, return 1. if not return 0
- * type 0 => check of os. if windows, return 1. if not return 0 */
+ * type 1 => check of webserver. if iis, return 1. if not return 0
+ * type 0 => check of os. if windows, return 1. if not return 0
+ */
 unsigned int check_windows(unsigned int type)
 {
 	switch(type)

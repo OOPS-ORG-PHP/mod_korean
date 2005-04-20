@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id: php_krfile.h,v 1.15 2003-09-04 09:23:15 oops Exp $
+$Id: php_krfile.h,v 1.16 2005-04-20 16:59:24 oops Exp $
 */
 #ifndef PHP_KRFILE_H
 #define PHP_KRFILE_H
@@ -31,6 +31,8 @@ unsigned char *readfile(unsigned char *filename);
 unsigned char *human_file_size (double size_o, int sub_o, int unit, double cunit);
 unsigned int check_filedev (unsigned char *path_f, unsigned char *filename);
 unsigned char *includePath (unsigned char *filepath);
+int numberOfchar (char *str, char chk);
+int pcre_match (unsigned char *regex, unsigned char *str);
 
 #define FILEBUFS 4096
 #define MAXPATHLENGTH 1024

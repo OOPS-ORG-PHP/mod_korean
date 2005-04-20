@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.15 2004-09-14 09:02:11 oops Exp $
+  $Id: krcharset.c,v 1.16 2005-04-20 16:59:24 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -52,8 +52,8 @@ static XUChar table_rev_jis0208[65536];
 static XUChar table_rev_ksc5601[65536];
 static XUChar table_rev_gb2312 [65536];
 static XUChar table_rev_big5   [65536];
-static const char* xu_lang = NULL;
-static char xu_language[3] = {0, 0, 0};
+//static const char* xu_lang = NULL;
+//static char xu_language[3] = {0, 0, 0};
 static int  xu_locale_encoding = XU_CONV_NONE;
 static int  XUINITTABLE_CHECK = 0;
 
@@ -451,7 +451,7 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 							if(str_o[i+1] > 0x7a) str_o[i+1] -= 6;
 							if(str_o[i+1] > 0x5a) str_o[i+1] -= 6;
 							ncr = (str_o[i] - 0x81) * 178 + (str_o[i+1] - 0x41);
-							sprintf(rc, "&#%d;\0", table_ksc5601[ncr]);
+							sprintf(rc, "&#%d;", table_ksc5601[ncr]);
 						}
 						i++;
 					}
@@ -474,7 +474,7 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 							if(str_o[i+1] > 0x7a) str_o[i+1] -= 6;
 							if(str_o[i+1] > 0x5a) str_o[i+1] -= 6;
 							ncr = (str_o[i] - 0x81) * 178 + (str_o[i+1] - 0x41);
-							sprintf(rc, "&#%d;\0", table_ksc5601[ncr]);
+							sprintf(rc, "&#%d;", table_ksc5601[ncr]);
 						}
 					}
 					else if(0xca <= str_o[i] && str_o[i] <= 0xfd)
@@ -483,7 +483,7 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 						else
 						{
 							ncr = (str_o[i] - 0xca) * 94 + (str_o[i+1] - 0xa1);
-							sprintf(rc, "&#%d;\0", table_ksc5601_hanja[ncr]);
+							sprintf(rc, "&#%d;", table_ksc5601_hanja[ncr]);
 						}
 					}
 					else
@@ -690,7 +690,7 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 						if((rc[0] >= 0x81 && rc[0] <= 0xa0 && rc[1] >= 0x41 && rc[1] <=0xfe) ||
 						   (rc[0] >= 0xa1 && rc[0] <= 0xc6 && rc[1] >= 0x41 && rc[1] <=0xa0))
 					   	{
-							sprintf(rc, "&#%d;\0", hexv);
+							sprintf(rc, "&#%d;", hexv);
 						}
 					}
 
@@ -716,7 +716,7 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 						if(str_o[i+1] > 0x7a) str_o[i+1] -= 6;
 						if(str_o[i+1] > 0x5a) str_o[i+1] -= 6;
 						aryno = (str_o[i] - 0x81) * 178 + (str_o[i+1] - 0x41);
-						sprintf(rc, "%s%X%s\0", start, table_ksc5601[aryno], end);
+						sprintf(rc, "%s%X%s", start, table_ksc5601[aryno], end);
 						i++;
 					}
 				}
@@ -726,7 +726,7 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 					else
 					{
 						aryno = (str_o[i] - 0xca) * 94 + (str_o[i+1] - 0xa1);
-						sprintf(rc, "%s%X%s\0", start, table_ksc5601_hanja[aryno], end);
+						sprintf(rc, "%s%X%s", start, table_ksc5601_hanja[aryno], end);
 						i++;
 					}
 				}
