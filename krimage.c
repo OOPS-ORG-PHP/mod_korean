@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.28 2005-04-20 16:59:24 oops Exp $ 
+  $Id: krimage.c,v 1.29 2006-02-12 05:46:09 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -180,7 +180,8 @@ PHP_FUNCTION(imgresize_lib)
 #ifdef PHP_WIN32
 		sprintf(tmpfilename, "c:\\tmpResize-%d", rand());
 #else
-		sprintf(tmpfilename, "/tmp/tmpResize-%d", rand());
+		sprintf(tmpfilename, "%s/tmpResize-%d",
+							 PG(upload_tmp_dir) ? PG(upload_tmp_dir) : "/tmp", rand());
 #endif
 		len = strlen(tmpfilename);
 		tmpfilename[len] = '\0';

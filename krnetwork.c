@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.45 2005-04-20 16:59:24 oops Exp $
+  $Id: krnetwork.c,v 1.46 2006-02-12 05:46:09 oops Exp $
 */
 
 /*
@@ -839,7 +839,8 @@ unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsig
 #ifdef PHP_WIN32
 			sprintf(tmpfilename, "c:\\tmpResize-%d", rand());
 #else
-			sprintf(tmpfilename, "/tmp/tmpResize-%d", rand());
+			sprintf(tmpfilename, "%s/tmpResize-%d",
+								 PG(upload_tmp_dir) ? PG(upload_tmp_dir) : "/tmp", rand());
 #endif
 			tmpflen = strlen(tmpfilename);
 			tmpfilename[tmpflen] = '\0';
