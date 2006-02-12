@@ -1,7 +1,7 @@
 /*
  * gd_jpeg.c: Read and write JPEG (JFIF) format image files using the
  * gd graphics library (http://www.boutell.com/gd/).
- * 
+ *
  * This software is based in part on the work of the Independent JPEG
  * Group.  For more information on the IJG JPEG software (and JPEG
  * documentation, etc.), see ftp://ftp.uu.net/graphics/jpeg/.
@@ -18,12 +18,8 @@
  * major CGI brain damage
  *
  * 2.0.10: more efficient gdImageCreateFromJpegCtx, thanks to
- * Christian Aberger 
+ * Christian Aberger
  */
-
-#if PHP_WIN32 && !defined(ssize_t)
-typedef int ssize_t;
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -174,7 +170,7 @@ void gdImageJpegCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 
 			nlines = jpeg_write_scanlines (&cinfo, rowptr, 1);
 			if (nlines != 1) {
-				php_gd_error_ex(E_WARNING, "gd_jpeg: warning: jpeg_write_scanlines returns %u -- expected 1\n", nlines);
+				php_gd_error_ex(E_WARNING, "gd_jpeg: warning: jpeg_write_scanlines returns %u -- expected 1", nlines);
 			}
 		}
 	} else {
@@ -201,7 +197,7 @@ void gdImageJpegCtx (gdImagePtr im, gdIOCtx * outfile, int quality)
 
 			nlines = jpeg_write_scanlines (&cinfo, rowptr, 1);
 			if (nlines != 1) {
-				php_gd_error_ex(E_WARNING, "gd_jpeg: warning: jpeg_write_scanlines returns %u -- expected 1\n", nlines);
+				php_gd_error_ex(E_WARNING, "gd_jpeg: warning: jpeg_write_scanlines returns %u -- expected 1", nlines);
 			}
 		}
 	}
@@ -235,7 +231,7 @@ void jpeg_gdIOCtx_src (j_decompress_ptr cinfo, gdIOCtx * infile);
 
 static int CMYKToRGB(int c, int m, int y, int k, int inverted);
 
-/* 
+/*
  * Create a gd-format image from the JPEG-format INFILE.  Returns the
  * image, or NULL upon error.
  */
@@ -280,7 +276,7 @@ gdImagePtr gdImageCreateFromJpegCtx (gdIOCtx * infile)
 	jpeg_save_markers(&cinfo, JPEG_APP0 + 14, 256);
 
 	retval = jpeg_read_header (&cinfo, TRUE);
-	if (retval != JPEG_HEADER_OK) { 
+	if (retval != JPEG_HEADER_OK) {
 		php_gd_error_ex(E_WARNING, "gd-jpeg: warning: jpeg_read_header returned %d, expected %d", retval, JPEG_HEADER_OK);
 	}
 
@@ -316,9 +312,9 @@ gdImagePtr gdImageCreateFromJpegCtx (gdIOCtx * infile)
 	 * latest libjpeg, replaced by something else. Unfortunately
 	 * there is still no right way to find out if the file was
 	 * progressive or not; just declare your intent before you
-	 * write one by calling gdImageInterlace(im, 1) yourself. 
+	 * write one by calling gdImageInterlace(im, 1) yourself.
 	 * After all, we're not really supposed to rework JPEGs and
-	 * write them out again anyway. Lossy compression, remember? 
+	 * write them out again anyway. Lossy compression, remember?
 	 */
 #if 0
   gdImageInterlace (im, cinfo.progressive_mode != 0);
@@ -524,7 +520,7 @@ safeboolean fill_input_buffer (j_decompress_ptr cinfo)
 		int got = gdGetBuf(src->buffer + nbytes, INPUT_BUF_SIZE - nbytes, src->infile);
 
 		if (got == EOF || got == 0) {
-			/* EOF or error. If we got any data, don't worry about it. If we didn't, then this is unexpected. */ 
+			/* EOF or error. If we got any data, don't worry about it. If we didn't, then this is unexpected. */
 			if (!nbytes) {
 				nbytes = -1;
 			}
@@ -532,7 +528,7 @@ safeboolean fill_input_buffer (j_decompress_ptr cinfo)
 		}
 		nbytes += got;
 	}
-  
+
 	if (nbytes <= 0) {
 		if (src->start_of_file)	{ /* Treat empty input file as fatal error */
 			ERREXIT (cinfo, JERR_INPUT_EMPTY);
@@ -634,7 +630,7 @@ void jpeg_gdIOCtx_src (j_decompress_ptr cinfo, gdIOCtx * infile)
 		(*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT, sizeof (my_source_mgr));
 		src = (my_src_ptr) cinfo->src;
 		src->buffer = (unsigned char *) (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT, INPUT_BUF_SIZE * sizeof (unsigned char));
-      
+
 	}
 
 	src = (my_src_ptr) cinfo->src;
