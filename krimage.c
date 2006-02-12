@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.29 2006-02-12 05:46:09 oops Exp $ 
+  $Id: krimage.c,v 1.30 2006-02-12 06:43:14 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -60,6 +60,7 @@
 
 #include "php_krimage.h"
 #include <gd.h>
+#include "php_kr.h"
 
 /* file type markers */
 #ifdef PHP_WIN32
@@ -181,7 +182,7 @@ PHP_FUNCTION(imgresize_lib)
 		sprintf(tmpfilename, "c:\\tmpResize-%d", rand());
 #else
 		sprintf(tmpfilename, "%s/tmpResize-%d",
-							 PG(upload_tmp_dir) ? PG(upload_tmp_dir) : "/tmp", rand());
+							 PG(upload_tmp_dir) ? PG(upload_tmp_dir) : "tmp", rand());
 #endif
 		len = strlen(tmpfilename);
 		tmpfilename[len] = '\0';
@@ -196,6 +197,8 @@ PHP_FUNCTION(imgresize_lib)
 	}
 
 	/* get origianl image type */
+	PHP_KR_CHECK_OPEN_BASEDIR (imgfile);
+
 	if ((fp = fopen(imgfile, "rb")) == NULL)
 	{
 		php_error(E_ERROR, "Can't open %s in read mode", original);

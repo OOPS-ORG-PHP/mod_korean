@@ -1,5 +1,13 @@
 PHP Korean Extexsions Changelog
 
+* 0.1.0
+Sun Feb 12 2006
+--------------------------------------------------------------------------------
+  by JoungKyun Kim <http://www.oops.org>
+    - update libgd on php 5.1.2
+    - changed create location of tmpfile to PG(upload_tmp_dir)
+    - added open basedir check
+
 * 0.0.9
 Thu Apr 21 2005
 --------------------------------------------------------------------------------

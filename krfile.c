@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.37 2005-04-20 16:59:24 oops Exp $ 
+  $Id: krfile.c,v 1.38 2006-02-12 06:43:14 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -39,6 +39,7 @@
 #include "php_krfile.h"
 #include "php_krparse.h"
 #include "php_krmath.h"
+#include "php_kr.h"
 
 struct stat filestat;
 
@@ -161,6 +162,7 @@ PHP_FUNCTION(filelist_lib)
 
 	VCWD_REALPATH(Z_STRVAL_PP(path), dirpath);
 
+	PHP_KR_CHECK_OPEN_BASEDIR (dirpath);
 	if ( (dp = opendir(dirpath)) == NULL )
    	{
 		php_error(E_ERROR, "Can't open %s directory in read mode", Z_STRVAL_PP(path));
@@ -258,6 +260,7 @@ PHP_FUNCTION(putfile_lib)
 
 	VCWD_REALPATH(Z_STRVAL_PP(filename), filepath);
 
+	PHP_KR_CHECK_OPEN_BASEDIR (filepath);
 	RETURN_LONG(writefile(filepath, Z_STRVAL_PP(str), write));
 }
 /* }}} */
@@ -307,6 +310,7 @@ PHP_FUNCTION(getfile_lib)
 		RETURN_FALSE;
 	}
 
+	PHP_KR_CHECK_OPEN_BASEDIR (getfilename);
 	str = readfile(getfilename);
 
 	RETVAL_STRINGL(str, chksize, 1);
@@ -435,7 +439,7 @@ PHP_FUNCTION(pcregrep_lib)
 }
 /* }}} */
 
-/* {{{ void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o) */
+/* {{{ PHPAPI void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o) */
 int writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o)
 {
 	struct stat s;
@@ -489,7 +493,7 @@ int writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o
 }
 /* }}} */
 
-/* {{{ unsigned char *readfile(unsigned char *filename) */
+/* {{{ PHPAPI unsigned char *readfile(unsigned char *filename) */
 unsigned char *readfile(unsigned char *filename)
 {
 	struct stat filebuf;
