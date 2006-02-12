@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.32 2005-04-20 16:59:24 oops Exp $
+  $Id: krmail.c,v 1.33 2006-02-12 06:43:14 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -44,6 +44,8 @@
 #ifdef PHP_WIN32
 	#include "ext/standard/php_string.h"
 #endif
+
+#include "php_kr.h"
 
 struct tm *loctime;
 
@@ -104,7 +106,10 @@ PHP_FUNCTION(mailsource_lib)
 	c_text = (unsigned char *) strtrim( Z_STRVAL_PP(text) );
 
 	memset(attachfile, '\0', sizeof(attachfile));
-	if (c_attach != NULL) { VCWD_REALPATH(c_attach, attachfile); }
+	if (c_attach != NULL) {
+		VCWD_REALPATH(c_attach, attachfile);
+		PHP_KR_CHECK_OPEN_BASEDIR (attachfile);
+	}
 
 	ret = generate_mail(c_ln, c_from, c_to, c_title, c_text, c_ptext, attachfile);
 	RETVAL_STRING(ret,1);
