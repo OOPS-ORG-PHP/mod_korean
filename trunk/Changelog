@@ -7,6 +7,7 @@ Thu Mar 16 2006
     - fixed gdImageCreatePaletteFromTrueColor link bug in bundle gd library
 	- fixed substr_lib ascii range parsing bug
 	- fixed buffer over flow on body_encode function in krmail.c
+	- changed err code E_ERROR to E_WARNING when mailresource_lib function failed
 
 * 0.1.0
 Sun Feb 12 2006
