@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.16 2005-04-20 16:59:24 oops Exp $
+  $Id: krcharset.c,v 1.17 2006-03-15 17:16:14 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -457,8 +457,9 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 					}
 				   	else
 				   	{
-						memset(rc, str_o[i], 1);
-						memset(rc + 1, '\0', 1);
+						memcpy(rc, str_o + i, 2);
+						memset(rc + 2, '\0', 1);
+						i++;
 					}
 
 					break;
