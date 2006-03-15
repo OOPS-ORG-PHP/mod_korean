@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krregex.c,v 1.15 2004-09-14 08:58:51 oops Exp $ 
+  $Id: krregex.c,v 1.16 2006-03-15 19:47:28 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -45,7 +45,7 @@ unsigned char *kr_regex_replace (unsigned char *regex_o, unsigned char *replace_
 
 unsigned char *kr_regex_replace_arr (unsigned char *regex_o[], unsigned char *replace_o[], unsigned char *str_o, unsigned int regex_no)
 {
-	unsigned int i,buf_len;
+	unsigned int i;
 	size_t str_len = strlen(str_o);
 #ifdef PHP_WIN32
 	zval *replaces[100];
@@ -54,6 +54,8 @@ unsigned char *kr_regex_replace_arr (unsigned char *regex_o[], unsigned char *re
 	zval *replaces[regex_no];
 	unsigned char *buf_o[regex_no];
 #endif
+	unsigned char * o_str = NULL;
+	unsigned char * c_str = NULL;
 	TSRMLS_FETCH();
 
 	for ( i=0; i<regex_no ; i++ )
@@ -62,16 +64,37 @@ unsigned char *kr_regex_replace_arr (unsigned char *regex_o[], unsigned char *re
 		ZVAL_STRING(replaces[i],replace_o[i],1);
 		if( i == 0 )
 	   	{
-			buf_o[i] = (unsigned char *) php_pcre_replace(regex_o[i], strlen(regex_o[i]), str_o,str_len, replaces[i], 0, &str_len, -1 TSRMLS_CC);
+			o_str = (unsigned char *) php_pcre_replace(regex_o[i],
+				   										strlen(regex_o[i]),
+													   	str_o,str_len,
+													   	replaces[i],
+													   	0,
+													   	&str_len,
+													   	-1 TSRMLS_CC);
+			c_str = emalloc (sizeof(unsigned char *) * str_len + 1);
+			strcpy (c_str, o_str);
 		}
 	   	else
 	   	{
-			buf_len = strlen(buf_o[i-1]);
-			buf_o[i] = (unsigned char *) php_pcre_replace(regex_o[i], strlen(regex_o[i]), buf_o[i-1], buf_len, replaces[i], 0, &buf_len, -1 TSRMLS_CC);
+			o_str = NULL;
+			o_str = (unsigned char *) php_pcre_replace(regex_o[i],
+				  										strlen(regex_o[i]),
+													   	c_str,
+													   	str_len,
+													   	replaces[i],
+													   	0,
+													   	&str_len,
+													   	-1 TSRMLS_CC);
+			efree (c_str);
+			c_str = emalloc (sizeof(unsigned char *) * str_len + 1);
+			strcpy (c_str, o_str);
 		}
 	}
 
-	return buf_o[regex_no - 1];
+	if ( c_str != NULL )
+		efree (c_str);
+
+	return o_str;
 }
 
 unsigned int checkReg(unsigned char *str, unsigned char *regex_o)
