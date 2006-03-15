@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.46 2006-02-12 05:46:09 oops Exp $
+  $Id: krnetwork.c,v 1.47 2006-03-15 20:28:17 oops Exp $
 */
 
 /*
@@ -345,13 +345,14 @@ PHP_FUNCTION(readfile_lib)
 }
 /* }}} */
 
-/* {{{ proto int sockmail_lib(string mail [, string from [, string to [, int debug ] ] ])
+/* {{{ proto int sockmail_lib(string mail [, string from [, string to [, string helohost [, int debug ] ] ] ])
  *    Return a file or a URL */
 PHP_FUNCTION(sockmail_lib)
 {
-	zval **mail, **from, **to, **debugs;
+	zval **mail, **from, **to, **hhost, **debugs;
 	unsigned char delimiters[] = ",";
 	unsigned char *text, *faddr, *taddr, *tmpfrom, *tmpto, *mailaddr;
+	unsigned char *helohost;
 	char *btoken;
 	int debug = 0, error_no = 0;
 
@@ -369,6 +370,7 @@ PHP_FUNCTION(sockmail_lib)
 			}
 			tmpfrom = "";
 			tmpto = "";
+			helohost = "";
 			break;
 		case 2:
 			if (zend_get_parameters_ex(ZEND_NUM_ARGS(), &mail, &from) == FAILURE)
@@ -381,6 +383,7 @@ PHP_FUNCTION(sockmail_lib)
 			tmpfrom = Z_STRVAL_PP(from);
 			/* get to address */
 			tmpto = "";
+			helohost = "";
 			break;
 		case 3:
 			if (zend_get_parameters_ex(ZEND_NUM_ARGS(), &mail, &from, &to) == FAILURE)
@@ -393,9 +396,10 @@ PHP_FUNCTION(sockmail_lib)
 			/* get to address */
 			convert_to_string_ex(to);
 			tmpto = Z_STRVAL_PP(to);
+			helohost = "";
 			break;
 		case 4:
-			if (zend_get_parameters_ex(ZEND_NUM_ARGS(), &mail, &from, &to, &debugs) == FAILURE)
+			if (zend_get_parameters_ex(ZEND_NUM_ARGS(), &mail, &from, &to, &hhost) == FAILURE)
 		   	{
 				WRONG_PARAM_COUNT;
 			}
@@ -405,6 +409,24 @@ PHP_FUNCTION(sockmail_lib)
 			/* get to address */
 			convert_to_string_ex(to);
 			tmpto = Z_STRVAL_PP(to);
+			/* get helohost */
+			convert_to_string_ex(hhost);
+			helohost = Z_STRVAL_PP(hhost);
+			break;
+		case 5:
+			if (zend_get_parameters_ex(ZEND_NUM_ARGS(), &mail, &from, &to, &hhost, &debugs) == FAILURE)
+		   	{
+				WRONG_PARAM_COUNT;
+			}
+			/* get from address */
+			convert_to_string_ex(from);
+			tmpfrom = Z_STRVAL_PP(from);
+			/* get to address */
+			convert_to_string_ex(to);
+			tmpto = Z_STRVAL_PP(to);
+			/* get helohost */
+			convert_to_string_ex(hhost);
+			helohost = Z_STRVAL_PP(hhost);
 			/* get bebug information */
 			convert_to_long_ex(debugs);
 			debug = Z_LVAL_PP(debugs);
@@ -439,12 +461,12 @@ PHP_FUNCTION(sockmail_lib)
 	if ( (mailaddr = strtok_r (taddr, delimiters, &btoken)) != NULL ) {
 		do {
 			error_no++;
+			t_addr = NULL;
 			t_addr = (unsigned char *) kr_regex_replace_arr(src, des, mailaddr, (sizeof (src) / sizeof (src[0])));
 
-			if (sock_sendmail(faddr, t_addr, text, debug) == 1) {
+			if (sock_sendmail(faddr, t_addr, text, helohost, debug) == 1) {
 				RETURN_LONG(error_no);
 			}
-			t_addr = NULL;
 		} while ( (mailaddr = strtok_r (NULL, delimiters, &btoken)) != NULL );
 	}
 	error_no = 0;
@@ -653,10 +675,16 @@ void debug_msg (unsigned char *msg, int info, int bar)
 /* }}} */
 
 /* {{{ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char *text, int debug) */
-int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char *text, int debug)
+int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char *text, unsigned char *host, int debug)
 {
 	int len, sock, failcode;
 	unsigned char *addr;
+	unsigned char helocmd[1024] = { 0, };
+
+	if ( strlen (host) < 1 )
+		strcpy (helocmd, "HELO localhost");
+	else
+		sprintf (helocmd, "HELO %s", host);
 
 	/* get mx record from 'to address' */
 	addr = get_mx_record(toaddr);
@@ -680,20 +708,20 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 	if ( (sock = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
 	{
 		if ( debug == 1 )
-		{
 			php_error(E_WARNING, "Failed to create socket\n");
-		}
+
 		return 1;
 	}
 
 	/* connect to server in 25 port */
 	if ( connect (sock, (struct sockaddr *) &sinfo, len) == -1 )
 	{
-		if ( debug == 1 )
-		{
+		if ( sock )
 			close (sock);
+
+		if ( debug == 1 )
 			php_error(E_WARNING, "Failed connect %s\n", addr);
-		}
+
 		return 1;
 	}
 	else
@@ -714,7 +742,7 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 		}
 	}
 
-	failcode = socksend (sock, debug, "HELO localhost", "helo");
+	failcode = socksend (sock, debug, helocmd, "helo");
     if ( failcode == 1 ) {
 	   	close(sock);
 	   	return 1;
