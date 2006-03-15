@@ -18,9 +18,11 @@ class maildaemon_lib {
   function maildaemon_lib($v) {
     $this->debug = $v->debug ? $v->debug : $v['debug'];
     $this->ofhtml = $v->ofhtml ? $v->ofhtml : $v['ofhtml'];
-    if($_SERVER['SERVER_NAME']) $this->helo = $_SERVER['SERVER_NAME'];
-    if(!$this->helo || preg_match("/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/",$this->helo))
-      $this->helo = "OOPS-PHPLibrarySMTP";
+    if ( ! $this->helo ) {
+      if($_SERVER['SERVER_NAME']) $this->helo = $_SERVER['SERVER_NAME'];
+      if(preg_match("/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/",$this->helo))
+        $this->helo = "OOPS-PHPLibrarySMTP";
+    }
     $this->from = $v->from ? $v->from : $v['from'];
     $this->to   = $v->to ? $v->to : $v['to'];
     $this->body = $v->text ? $v->text."\r\n." : $v['text']."\r\n.";
@@ -485,12 +487,13 @@ function mailsource_lib($ln,$from,$to,$subject,$body,$pbody="",$attach="") {
   return $parse->text;
 }
 
-function sockmail_lib($source, $from, $to, $debug = 0) {
+function sockmail_lib($source, $from, $to, $helohost = "", $debug = 0) {
   $inputs->debug = $debug;
   $inputs->ofhtml = 0;
   $inputs->from = trim($from);
   $inputs->to = trim($to);
   $inputs->text = trim($source);
+  $inputs->helo = trim ($heloshost);
 
   $ret = new maildaemon_lib($inputs);
 

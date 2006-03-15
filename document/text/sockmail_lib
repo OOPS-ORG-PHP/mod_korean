@@ -6,7 +6,7 @@ sockmail_lib -- 메일 데몬에 의존하지 않고 메일을 발송하는 함수
 
 <FONT ID=RE>설명</FONT>
 
-<B>int sockmail_lib(string mail [, string from [, string to [, int debug ] ] ])</B>
+<B>int sockmail_lib(string mail [, string from [, string to [, string to helo_host [, int debug ] ] ] ])</B>
 
 sockmail_lib 함수는 서버의 smtp daemon 에 의존하지 않고 php korean extension 자체의 기능으로
 메일을 발송하는 함수이다.
@@ -27,7 +27,9 @@ $ret = sockmail_lib($mailtext, $from, $to);
             함.
 3 일 경우 : test@test.com, recv@recv.com 발송 성공, man@man.com 발송 실패
 
-와 같이 해석할 수 있다.
+와 같이 해석할 수 있다. 단, to 가 여러개가 있거나, cc 가 존재할 경우, 발송에 실패를 하면, 실
+패를 한 호스트 순서에서 발송이 모두 정지가 된다. (될 수 있으면, to 를 1개로 사용하는 것을 권
+장하며, 1개로 사용할 경우에는 실패를 하더라도 계속 발송을 시킬 수 있다.)
 
 함수에 사용이 되어지는 파라미터들은 아래를 참고한다.
 
@@ -52,6 +54,10 @@ to    받을 사람의 메일주소를 지정한다. 받을 사람의 메일주소는 from 의 형식을 따�
       파라미터는 쉼표(,) 를 사용하여 여러명에게 메일을 발송할 수 있다. 아래의 예를 참고한다.
 
       "보낸이" &lt;sender@sender.com&gt;, sender@sender.com, test@test.com
+
+helo_host
+      SMTP 에 HELO 구문에 적어줄 호스트 명을 적는다. sendmail 의 -f 옵션과 동일하다고 보면된
+      다.
       
 debug 메일 발송 처리 과정을 출력을 한다.
 
