@@ -5,6 +5,7 @@ Thu Mar 16 2006
 --------------------------------------------------------------------------------
   by JoungKyun Kim <http://www.oops.org>
     - fixed gdImageCreatePaletteFromTrueColor link bug in bundle gd library
+	- fixed substr_lib ascii range parsing bug
 
 * 0.1.0
 Sun Feb 12 2006
