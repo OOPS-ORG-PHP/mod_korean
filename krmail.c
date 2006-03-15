@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.33 2006-02-12 06:43:14 oops Exp $
+  $Id: krmail.c,v 1.34 2006-03-15 18:28:38 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -650,7 +650,7 @@ unsigned char * body_encode (const unsigned char *str, int chklen)
 		else { tlen = 60; }
 
 		memmove(rencode + nlen, enbase + olen, tlen);
-		nlen += 60;
+		nlen += tlen;
 		olen += 60;
 		memmove(rencode + nlen, "\r\n", 2);
 		nlen += 2;
