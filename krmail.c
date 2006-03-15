@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.34 2006-03-15 18:28:38 oops Exp $
+  $Id: krmail.c,v 1.35 2006-03-15 18:37:06 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -111,7 +111,9 @@ PHP_FUNCTION(mailsource_lib)
 		PHP_KR_CHECK_OPEN_BASEDIR (attachfile);
 	}
 
-	ret = generate_mail(c_ln, c_from, c_to, c_title, c_text, c_ptext, attachfile);
+	if ( (ret = generate_mail(c_ln, c_from, c_to, c_title, c_text, c_ptext, attachfile)) == NULL )
+		RETURN_EMPTY_STRING();
+
 	RETVAL_STRING(ret,1);
 
 	safe_efree (c_ptext);
@@ -143,13 +145,16 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 	charset = !strcmp(o_ln,"ko") ? "EUC-KR" : "US-ASCII";
 
 	// make from
-	from = generate_from(o_from, charset);
+	if ( (from = generate_from(o_from, charset)) == NULL )
+		return NULL;
 
 	// make to
-	to = generate_to(o_to, charset);
+	if ( (to = generate_to(o_to, charset)) == NULL )
+		return NULL;
 
 	// make title
-	title = generate_title(o_title, charset);
+	if ( (title = generate_title(o_title, charset)) == NULL )
+		return NULL;
 
 	// make boundary
 	strcpy(boundary, make_boundary());
@@ -166,9 +171,11 @@ unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_from, unsig
 	{
 		return_header = generate_header (from, to, title, boundary, o_attach);
 	}
-	return_body = generate_body (charset, boundary, o_text, o_ptext);
 
-	if (strlen(o_attach) > 0)
+	if ( (return_body = generate_body (charset, boundary, o_text, o_ptext)) == NULL )
+		return NULL;
+
+	if (strlen(o_attach) > 0 && return_attach > 0)
 	{
 		unsigned int athead_len = strlen(boundary) + strlen(attbound) + 128;
 		unsigned char *tmp_attach_header;
@@ -217,7 +224,8 @@ unsigned char * generate_attach (unsigned char *path, unsigned char *bound)
 
 	if((fp = fopen(path, "rb")) == NULL)
 	{
-		php_error(E_ERROR, "Can't open attach file '%s' in read mode", path);
+		php_error(E_WARNING, "Can't open attach file '%s' in read mode", path);
+		return "";
 	}
 
 	// get file info
@@ -309,7 +317,8 @@ unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, un
 	}
 	else
 	{
-		php_error(E_ERROR, "Don't exist mail body context");
+		php_error(E_WARNING, "Don't exist mail body context");
+		return NULL;
 	}
 
 	return rbody;
@@ -349,7 +358,8 @@ unsigned char * generate_from (unsigned char *email, char *set)
 	name_t = NULL;
 
 	if ( strlen(email) < 1 ) {
-		php_error(E_ERROR, "Don't exist FROM address.");
+		php_error(E_WARNING, "Don't exist FROM address.");
+		return NULL;
 	}
 
 	// get email address on NAME <email@address> form
@@ -367,7 +377,8 @@ unsigned char * generate_from (unsigned char *email, char *set)
 	} else { name = ""; }
 	
 	if ( checkAddr (mail,0) != 1 ) {
-		php_error(E_ERROR, "%s is invalid email address form.", mail);
+		php_error(E_WARNING, "%s is invalid email address form.", mail);
+		return NULL;
 	}
 	
 	if ( strlen(name) < 1 ) {
@@ -398,7 +409,8 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 	int maillen = 0, namelen = 0, setlen = strlen(set);
 
 	if ( strlen(toaddr) < 1 ) {
-		php_error(E_ERROR, "Don't exist TO address.");
+		php_error(E_WARNING, "Don't exist TO address.");
+		return NULL;
 	}
 
 	_t_name = NULL;
@@ -495,7 +507,8 @@ unsigned char * generate_to (unsigned char *toaddr, char *set)
 	}
 
 	if ( to == NULL ) {
-		php_error(E_ERROR, "Don't exist valid TO address.");
+		php_error(E_WARNING, "Don't exist valid TO address.");
+		return NULL;
 	}
 
 	return to;
@@ -509,7 +522,8 @@ unsigned char * generate_title (unsigned char *title, unsigned char *set)
 
 	if ( strlen(title) < 1 )
 	{
-		php_error(E_ERROR, "Don't exists mail subject.");
+		php_error(E_WARNING, "Don't exists mail subject.");
+		return NULL;
 	}
 
 	base64 = (unsigned char *) php_base64_encode(title, strlen(title), &len);
