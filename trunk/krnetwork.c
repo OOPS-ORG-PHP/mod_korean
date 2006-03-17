@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.48 2006-03-17 15:57:23 oops Exp $
+  $Id: krnetwork.c,v 1.49 2006-03-17 15:59:06 oops Exp $
 */
 
 /*
@@ -92,8 +92,8 @@
 					/* remaining bytes */
 			unsigned	qdcount :16;	/* number of question entries */
 			unsigned	ancount :16;	/* number of answer entries */
-			unsigned        nscount :16;	/* number of authority entries */
-			unsigned        arcount :16;	/* number of resource entries */
+			unsigned	nscount :16;	/* number of authority entries */
+			unsigned	arcount :16;	/* number of resource entries */
 		} HEADER;
 		#define T_MX		15
 		#define C_IN		1
@@ -124,20 +124,20 @@ PHP_FUNCTION(get_hostname_lib)
 	unsigned char *token;
 	static char ret[1024];
 	char tmphost[1024], *host, *check;
-	char *proxytype[PROXYSIZE]  = { "HTTP_CLIENT_IP","HTTP_X_FORWARDED_FOR","HTTP_X_COMING_FROM",
+	char *proxytype[PROXYSIZE] = { "HTTP_CLIENT_IP","HTTP_X_FORWARDED_FOR","HTTP_X_COMING_FROM",
 									"HTTP_X_FORWARDED","HTTP_FORWARDED_FOR","HTTP_FORWARDED",
 									"HTTP_COMING_FROM","HTTP_PROXY","HTTP_SP_HOST" };
 	switch(ZEND_NUM_ARGS())
-   	{
+	{
 		case 1:
 			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &reverse) == FAILURE)
-		   	{
+			{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 2:
 			if(zend_get_parameters_ex(ZEND_NUM_ARGS(), &reverse, &addr) == FAILURE)
-		   	{
+			{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_string_ex(addr);
@@ -149,9 +149,9 @@ PHP_FUNCTION(get_hostname_lib)
 	convert_to_long_ex(reverse);
 
 	if ( ZEND_NUM_ARGS() == 1 )
-   	{
+	{
 		for ( i = 0; i < PROXYSIZE; i++ )
-	   	{
+		{
 			memset (tmphost, '\0', 1024);
 			sprintf (tmphost, "%s", sapi_getenv(proxytype[i], strlen(proxytype[i]) TSRMLS_CC));
 
@@ -159,12 +159,12 @@ PHP_FUNCTION(get_hostname_lib)
 		}
 
 		if ( !strcasecmp(tmphost, "(null)") )
-	   	{
+		{
 			host = sapi_getenv("REMOTE_ADDR", 11 TSRMLS_CC);
 			if ( !host ) { host = getenv("REMOTE_ADDR"); }
 			if ( !host ) { host = (unsigned char *) get_serverenv("REMOTE_ADDR"); }
 		}
-	   	else
+		else
 		{
 			if (strchr(tmphost, ','))
 			{
@@ -182,7 +182,7 @@ PHP_FUNCTION(get_hostname_lib)
 			}
 			else
 			{
-		   		host = estrdup(tmphost);
+				host = estrdup(tmphost);
 				if ( !host ) { host = estrdup(sapi_getenv("REMOTE_ADDR", 11 TSRMLS_CC)); }
 			}
 			if ( !host ) { host = estrdup(getenv("REMOTE_ADDR")); }
@@ -190,10 +190,10 @@ PHP_FUNCTION(get_hostname_lib)
 		}
 	}
 	else
-   	{
+	{
 		if ( Z_STRLEN_PP(addr) > 0 ) { host = estrdup(Z_STRVAL_PP(addr)); }
-	   	else
-	   	{
+		else
+		{
 			php_error(E_WARNING,"address is null value");
 			RETURN_FALSE;
 		}
@@ -224,16 +224,16 @@ PHP_FUNCTION(readfile_lib)
 
 	// check args
 	switch (ZEND_NUM_ARGS())
-   	{
+	{
 		case 1:
 			if (zend_get_parameters_ex(1, &arg1) == FAILURE)
-		   	{
+			{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 2:
 			if (zend_get_parameters_ex(2, &arg1, &arg2) == FAILURE)
-		   	{
+			{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_long_ex(arg2);
@@ -297,16 +297,16 @@ PHP_FUNCTION(readfile_lib)
 
 	// check args
 	switch (ZEND_NUM_ARGS())
-   	{
+	{
 		case 1:
 			if (zend_get_parameters_ex(1, &arg1) == FAILURE)
-		   	{
+			{
 				WRONG_PARAM_COUNT;
 			}
 			break;
 		case 2:
 			if (zend_get_parameters_ex(2, &arg1, &arg2) == FAILURE)
-		   	{
+			{
 				WRONG_PARAM_COUNT;
 			}
 			convert_to_long_ex(arg2);
@@ -319,7 +319,7 @@ PHP_FUNCTION(readfile_lib)
 	filepath = (unsigned char *) strtrim(Z_STRVAL_PP(arg1));
 
 	stream = php_stream_open_wrapper (filepath, "rb",
-		   	 (use_include_path ? USE_PATH : 0) | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
+			(use_include_path ? USE_PATH : 0) | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
 
 	if (stream) {
 		string = emalloc (sizeof (char) * 8192);
@@ -362,10 +362,10 @@ PHP_FUNCTION(sockmail_lib)
 
 	/* {{{ check args */
 	switch (ZEND_NUM_ARGS())
-   	{
+	{
 		case 1:
 			if (zend_get_parameters_ex(ZEND_NUM_ARGS(), &mail) == FAILURE)
-		   	{
+			{
 				WRONG_PARAM_COUNT;
 			}
 			tmpfrom = "";
@@ -374,7 +374,7 @@ PHP_FUNCTION(sockmail_lib)
 			break;
 		case 2:
 			if (zend_get_parameters_ex(ZEND_NUM_ARGS(), &mail, &from) == FAILURE)
-		   	{
+			{
 				WRONG_PARAM_COUNT;
 			}
 
@@ -387,7 +387,7 @@ PHP_FUNCTION(sockmail_lib)
 			break;
 		case 3:
 			if (zend_get_parameters_ex(ZEND_NUM_ARGS(), &mail, &from, &to) == FAILURE)
-		   	{
+			{
 				WRONG_PARAM_COUNT;
 			}
 			/* get from address */
@@ -400,7 +400,7 @@ PHP_FUNCTION(sockmail_lib)
 			break;
 		case 4:
 			if (zend_get_parameters_ex(ZEND_NUM_ARGS(), &mail, &from, &to, &hhost) == FAILURE)
-		   	{
+			{
 				WRONG_PARAM_COUNT;
 			}
 			/* get from address */
@@ -415,7 +415,7 @@ PHP_FUNCTION(sockmail_lib)
 			break;
 		case 5:
 			if (zend_get_parameters_ex(ZEND_NUM_ARGS(), &mail, &from, &to, &hhost, &debugs) == FAILURE)
-		   	{
+			{
 				WRONG_PARAM_COUNT;
 			}
 			/* get from address */
@@ -752,40 +752,40 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 	}
 
 	failcode = socksend (sock, debug, helocmd, "helo");
-    if ( failcode == 1 ) {
-	   	if ( sock ) close(sock);
-	   	return 1;
-   	}
+	if ( failcode == 1 ) {
+		if ( sock ) close(sock);
+		return 1;
+	}
 
 	failcode = socksend (sock, debug, fromaddr, "mail");
 	if ( failcode == 1 ) {
-	   	if ( sock ) close(sock);
-	   	return 1;
-   	}
+		if ( sock ) close(sock);
+		return 1;
+	}
 
 	failcode = socksend (sock, debug, toaddr, "rcpt");
 	if ( failcode == 1 ) {
-	   	if ( sock ) close(sock);
-	   	return 1;
-   	}
+		if ( sock ) close(sock);
+		return 1;
+	}
 
 	failcode = socksend (sock, debug, "data", "data");
 	if ( failcode == 1 ) {
-	   	if ( sock ) close(sock);
-	   	return 1;
-   	}
+		if ( sock ) close(sock);
+		return 1;
+	}
 
 	failcode = socksend (sock, debug, text, "body");
 	if ( failcode == 1 ) {
-	   	if ( sock ) close(sock);
-	   	return 1;
-   	}
+		if ( sock ) close(sock);
+		return 1;
+	}
 
 	failcode = socksend (sock, debug, "quit", "quit");
 	if ( failcode == 1 ) {
-	   	if ( sock ) close(sock);
-	   	return 1;
-   	}
+		if ( sock ) close(sock);
+		return 1;
+	}
 
 	if ( sock ) close(sock);
 	return 0;
