@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.47 2006-03-15 20:28:17 oops Exp $
+  $Id: krnetwork.c,v 1.48 2006-03-17 15:57:23 oops Exp $
 */
 
 /*
@@ -345,7 +345,7 @@ PHP_FUNCTION(readfile_lib)
 }
 /* }}} */
 
-/* {{{ proto int sockmail_lib(string mail [, string from [, string to [, string helohost [, int debug ] ] ] ])
+/* {{{ proto array sockmail_lib(string mail [, string from [, string to [, string helohost [, int debug ] ] ] ])
  *    Return a file or a URL */
 PHP_FUNCTION(sockmail_lib)
 {
@@ -354,7 +354,7 @@ PHP_FUNCTION(sockmail_lib)
 	unsigned char *text, *faddr, *taddr, *tmpfrom, *tmpto, *mailaddr;
 	unsigned char *helohost;
 	char *btoken;
-	int debug = 0, error_no = 0;
+	int debug = 0;
 
 	unsigned char *src[4] = { "/[^<]*</", "/>.*/", "/[\\s]/", "/^.*$/" };
 	unsigned char *des[4] = { "", "", "", "<\\0>" };
@@ -458,20 +458,31 @@ PHP_FUNCTION(sockmail_lib)
 		taddr = tmpto;
 	}
 
+	if ( array_init (return_value) == FAILURE )
+	{
+		php_error(E_WARNING, "Failed init array");
+		RETURN_FALSE;
+	}
+
 	if ( (mailaddr = strtok_r (taddr, delimiters, &btoken)) != NULL ) {
 		do {
-			error_no++;
+			char *err_host;
+			int hostlen = 0;
+
 			t_addr = NULL;
 			t_addr = (unsigned char *) kr_regex_replace_arr(src, des, mailaddr, (sizeof (src) / sizeof (src[0])));
+			hostlen = strlen (t_addr);
+			err_host = emalloc (sizeof (char *) * hostlen + 1);
+			memset (err_host, 0, hostlen + 1);
+			strncpy (err_host, t_addr + 1, strlen (t_addr) - 2);
 
 			if (sock_sendmail(faddr, t_addr, text, helohost, debug) == 1) {
-				RETURN_LONG(error_no);
+				add_assoc_long (return_value, err_host, 1);
 			}
+
+			efree (err_host);
 		} while ( (mailaddr = strtok_r (NULL, delimiters, &btoken)) != NULL );
 	}
-	error_no = 0;
-
-	RETURN_LONG(error_no);
 }
 /* }}} */
 
@@ -691,8 +702,7 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 
 	if ( !(hostinfo = gethostbyname(addr)) )
 	{
-		if ( debug == 1 )
-		{
+		if ( debug == 1 ) {
 			php_error(E_WARNING, "host name \"%s\" not found\n", addr);
 		}
 		return 1;
@@ -716,8 +726,7 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 	/* connect to server in 25 port */
 	if ( connect (sock, (struct sockaddr *) &sinfo, len) == -1 )
 	{
-		if ( sock )
-			close (sock);
+		if ( sock ) close (sock);
 
 		if ( debug == 1 )
 			php_error(E_WARNING, "Failed connect %s\n", addr);
@@ -744,41 +753,41 @@ int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char
 
 	failcode = socksend (sock, debug, helocmd, "helo");
     if ( failcode == 1 ) {
-	   	close(sock);
+	   	if ( sock ) close(sock);
 	   	return 1;
    	}
 
 	failcode = socksend (sock, debug, fromaddr, "mail");
 	if ( failcode == 1 ) {
-	   	close(sock);
+	   	if ( sock ) close(sock);
 	   	return 1;
    	}
 
 	failcode = socksend (sock, debug, toaddr, "rcpt");
 	if ( failcode == 1 ) {
-	   	close(sock);
+	   	if ( sock ) close(sock);
 	   	return 1;
    	}
 
 	failcode = socksend (sock, debug, "data", "data");
 	if ( failcode == 1 ) {
-	   	close(sock);
+	   	if ( sock ) close(sock);
 	   	return 1;
    	}
 
 	failcode = socksend (sock, debug, text, "body");
 	if ( failcode == 1 ) {
-	   	close(sock);
+	   	if ( sock ) close(sock);
 	   	return 1;
    	}
 
 	failcode = socksend (sock, debug, "quit", "quit");
 	if ( failcode == 1 ) {
-	   	close(sock);
+	   	if ( sock ) close(sock);
 	   	return 1;
    	}
 
-	close(sock);
+	if ( sock ) close(sock);
 	return 0;
 }
 /* }}} */
