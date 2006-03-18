@@ -35,6 +35,9 @@ class maildaemon_lib {
     $to_addr = explode(" ",trim(str_replace(",","",$to)));
     $from_addr = trim(preg_replace("/.*<([^>]+)>/i","\\1",$this->from));
 
+    if ( $ret_r ) unset ($ret_r);
+    $ret_r = array ();
+
     for($i=0;$i<sizeof($to_addr);$i++) {
       $to_addr[$i] = trim(preg_replace("/<|>/","",$to_addr[$i]));
       if(is_email_lib($to_addr[$i])) {
@@ -53,12 +56,12 @@ class maildaemon_lib {
         $this->send("quit");
         $this->sockets("close");
 
-        if($this->failed) {
-          $this->errno = $i + 1;
-          break;
-        }
+        if($this->failed)
+          $ret_r[] = $to_addr[$i];
       }
     }
+
+    return $ret_r;
   }
 
   function getMX($email) {
