@@ -1,8 +1,9 @@
-<FONT id=title>I. CHECK 함수</FONT>
+<FONT class="title">I. CHECK 함수</FONT>
+</PRE>
 
-<TABLE BORDER=1 WIDTH=100% WIDTH=0 CELLPADDING=4 CELLSPACING=1>
+<TABLE BORDER=1 WIDTH="100%" CELLPADDING=4 CELLSPACING=1>
 <TR>
-<TD ALIGN=center><B>주의</B></TD>
+<TD ALIGN="center"><B>주의</B></TD>
 </TR>
 <TR>
 <TD><PRE>
@@ -15,6 +16,7 @@
 </TR>
 </TABLE>
 
+<PRE>
 check 관련 함수들은 어떠한 값이나 상황을 체크하는 함수들을 모아놓은 함수들이다.
 
 <B>차례</B>
