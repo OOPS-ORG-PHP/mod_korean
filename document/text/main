@@ -38,6 +38,14 @@ korean extension 은 korean extension source 안의 phplib 디렉토리에  pure php 코
 
 PHP Korean Extexsions Changelog About Version REP_VERSION_REP
 
+* 0.1.2
+Sun Mar 19 2006
+--------------------------------------------------------------------------------
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed documents with html 4 validate
+    - fixed sockmail_lib function removed upper html print out
+
+
 * 0.1.1
 Thu Mar 16 2006
 --------------------------------------------------------------------------------

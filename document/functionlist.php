@@ -1,6 +1,6 @@
 <?
 $phpversion = "5.1.2";
-$version = "0.1.1";
+$version = "0.1.2";
 $updates = "2006.03.19";
 
 $list[] = "main";
