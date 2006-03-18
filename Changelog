@@ -1,6 +1,11 @@
 PHP Korean Extexsions Changelog
 
 * 0.1.1
+Sat Mar 18 2006
+--------------------------------------------------------------------------------
+  by JoungKyun Kim <http://www.oops.org>
+    - when sending fail, don't stop function any more.
+
 Thu Mar 16 2006
 --------------------------------------------------------------------------------
   by JoungKyun Kim <http://www.oops.org>
@@ -10,7 +15,6 @@ Thu Mar 16 2006
     - changed err code E_ERROR to E_WARNING when mailresource_lib function failed
     - fixed out of memory of kr_regex_replace_arr function
     - add helo host argument in sockmail_lib function
-    - when sending fail, don't stop function any more.
 
 * 0.1.0
 Sun Feb 12 2006
