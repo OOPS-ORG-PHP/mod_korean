@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.51 2006-03-18 19:02:27 oops Exp $
+  $Id: krnetwork.c,v 1.52 2006-03-18 19:46:32 oops Exp $
 */
 
 /*
@@ -551,7 +551,6 @@ unsigned char *get_mx_record(unsigned char *str)
 	/* if don't exist mx record */
 	if ( (i = res_search(host, C_IN, T_MX, answer, sizeof(answer))) < 0 ) {
 		strcpy (mxrecord, host);
-		free (host);
 		return mxrecord;
 	}
 
@@ -618,7 +617,6 @@ unsigned char *get_mx_record(unsigned char *str)
 
 	if ( strlen(mxrecord) < 1 ) {
 		strcpy (mxrecord, host);
-		free (host);
 		return mxrecord;
 	} else { return mxrecord; }
 }
