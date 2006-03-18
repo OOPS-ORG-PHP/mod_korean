@@ -1,8 +1,9 @@
-<FONT id=title>II. FILE SYSTEM 함수</FONT>
+<FONT class="title">II. FILE SYSTEM 함수</FONT>
+</PRE>
 
-<TABLE BORDER=1 WIDTH=100% WIDTH=0 CELLPADDING=4 CELLSPACING=1>
+<TABLE BORDER=1 WIDTH="100%" CELLPADDING=4 CELLSPACING=1>
 <TR>
-<TD ALIGN=center><B>주의</B></TD>
+<TD ALIGN="center"><B>주의</B></TD>
 </TR>
 <TR>
 <TD><PRE>
@@ -15,6 +16,7 @@
 </TR>
 </TABLE>
 
+<PRE>
 File System 관련 함수는 파일 리스트, 파일 내용, 파일 쓰기등 파일 시스템과 관련된 함수들의 모음이다.
 
 win32 용에서 파일 경로를 상대경로로 사용할 경우에는 realpath() 함수를 이용하여 절대 경로화를 해서

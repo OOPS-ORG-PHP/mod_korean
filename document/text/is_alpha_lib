@@ -1,4 +1,4 @@
-<FONT ID=title>is_alpha_lib()</FONT>
+<FONT class="title">is_alpha_lib()</FONT>
 
 <FONT ID=RE>작성</FONT> 김병찬 &lt;<A HREF=http://linux.sarang.net TARGET=blank>http://linux.sarang.net</A>&gt;
 <FONT ID=RE>문법</FONT> <FONT ID=EN>is_alpha_lib(string)</FONT>

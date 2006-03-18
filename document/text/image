@@ -1,8 +1,9 @@
-<FONT id=title>V. IMAGE 함수</FONT>
+<FONT class="title">V. IMAGE 함수</FONT>
+</PRE>
 
-<TABLE BORDER=1 WIDTH=100% WIDTH=0 CELLPADDING=4 CELLSPACING=1>
+<TABLE BORDER=1 WIDTH="100%" CELLPADDING=4 CELLSPACING=1>
 <TR>
-<TD ALIGN=center><B>주의</B></TD>
+<TD ALIGN="center"><B>주의</B></TD>
 </TR>
 <TR>
 <TD><PRE>
@@ -15,6 +16,7 @@
 </TR>
 </TABLE>
 
+<PRE>
 image 관련 함수들은 php compile 시에 --with-gd 옵션을 주어야 적용이 된다. korean extension 빌드 넘
 버 20020901 부터는 --enable-korean-gd 를 주어야 한다. 빌드 넘버는 php_korean.h 에 정의 되어 있으니
 확인하고 설치를 하기 바란다. 또는, ./configure --help | grep korean 으로 확인하였을 경우 korean-gd

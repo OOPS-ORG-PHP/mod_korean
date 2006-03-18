@@ -1,8 +1,9 @@
-<FONT id=title>VI. MAIL 함수</FONT>
+<FONT class="title">VI. MAIL 함수</FONT>
+</PRE>
 
-<TABLE BORDER=1 WIDTH=100% WIDTH=0 CELLPADDING=4 CELLSPACING=1>
+<TABLE BORDER=1 WIDTH="100%" CELLPADDING=4 CELLSPACING=1>
 <TR>
-<TD ALIGN=center><B>주의</B></TD>
+<TD ALIGN="center"><B>주의</B></TD>
 </TR>
 <TR>
 <TD><PRE>
@@ -15,6 +16,7 @@
 </TR>
 </TABLE>
 
+<PRE>
 mail 에 관련된 함수는 php 자체의 mail() 함수와는 전혀 상관이 없다.  여기서 제공하는 함수들은
 서버의 SMTP 데몬에 의존하지 않고 korean module 자체적으로 메일을 발송하는 기능을 위한 함수들
 이 제공된다. korean module 자체라는 의미는 --enable-korean 옵션 만으로 이 함수들을 사용할 수

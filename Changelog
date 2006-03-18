@@ -1,5 +1,11 @@
 PHP Korean Extexsions Changelog
 
+* 0.1.2
+Sun Mar 19 2006
+--------------------------------------------------------------------------------
+  by JoungKyun Kim <http://www.oops.org>
+    - fixed documents with html 4 validate
+
 * 0.1.1
 Sat Mar 18 2006
 --------------------------------------------------------------------------------
