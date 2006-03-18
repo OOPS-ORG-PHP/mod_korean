@@ -5,6 +5,7 @@ Sun Mar 19 2006
 --------------------------------------------------------------------------------
   by JoungKyun Kim <http://www.oops.org>
     - fixed documents with html 4 validate
+    - fixed sockmail_lib function removed upper html print out
 
 
 * 0.1.1

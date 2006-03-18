@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.50 2006-03-18 15:01:50 oops Exp $
+  $Id: krnetwork.c,v 1.51 2006-03-18 19:02:27 oops Exp $
 */
 
 /*
@@ -436,6 +436,12 @@ PHP_FUNCTION(sockmail_lib)
 	}
 	/* }}} */
 
+	if ( array_init (return_value) == FAILURE )
+	{
+		php_error(E_WARNING, "Failed init array");
+		RETURN_FALSE;
+	}
+
 	/* mail context */
 	convert_to_string_ex(mail);
 	text = Z_STRVAL_PP(mail);
@@ -456,12 +462,6 @@ PHP_FUNCTION(sockmail_lib)
 		taddr = (unsigned char *) kr_regex_replace_arr(t_src, t_des, text, (sizeof (t_src) / sizeof (t_src[0])));
 	} else {
 		taddr = tmpto;
-	}
-
-	if ( array_init (return_value) == FAILURE )
-	{
-		php_error(E_WARNING, "Failed init array");
-		RETURN_FALSE;
 	}
 
 	if ( (mailaddr = strtok_r (taddr, delimiters, &btoken)) != NULL ) {
