@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.49 2006-03-17 15:59:06 oops Exp $
+  $Id: krnetwork.c,v 1.50 2006-03-18 15:01:50 oops Exp $
 */
 
 /*
@@ -477,7 +477,7 @@ PHP_FUNCTION(sockmail_lib)
 			strncpy (err_host, t_addr + 1, strlen (t_addr) - 2);
 
 			if (sock_sendmail(faddr, t_addr, text, helohost, debug) == 1) {
-				add_assoc_long (return_value, err_host, 1);
+				add_next_index_string(return_value, err_host, 1);
 			}
 
 			efree (err_host);
