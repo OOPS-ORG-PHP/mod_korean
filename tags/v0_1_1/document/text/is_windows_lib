@@ -1,0 +1,15 @@
+<FONT ID=title>is_windows_lib()</FONT>
+
+(required korean module)
+
+is_windows_lib -- 운영되는 OS 가 windows 인지 체크
+
+<FONT ID=RE>설명</FONT>
+
+<B>int is_windows_lib(void)</B>
+
+운영체제가 windows machine 인지 판단을 한다. 운영체제가 windows 이면 1 을 리턴하고 아니며 0
+을 리턴한다.
+
+<FONT ID=RE>참조</FONT>
+is_iis_lib()
