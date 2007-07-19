@@ -1,0 +1,53 @@
+<FONT class="title">pcregrep_lib()</FONT>
+
+(required korean module over BUILDNO 200305140401) 
+
+pcregrep_lib -- 지정 디렉토리의 파일 리스트를 가져옴
+
+<FONT ID=RE>설명</FONT>
+
+<B>array pcregrep_lib(string regex, string text [, int opt])</B>
+
+시스템의 grep 과 비슷한 역할을 한다. text 에 주어진 문자열에서 regex 와 매치되는 행을 변수로
+받는다. opt 를 1 로 주었을 경우, regex 와 매치되지 않는 행만 변수로 받는다.
+
+정규식은 pcre 호환 정규식이 적용이 된다.
+
+<FONT ID=RE>예제</FONT>
+
+$a = &quot;I'm a boy\n&quot;.
+     &quot;You are the student\n&quot;.
+     &quot;Am I Oh happy?\n&quot;.
+     &quot;Oh no, I'm crazy\n&quot;.
+     &quot;Oh no, I'M sexy girl\n&quot;;
+
+echo pcregrep_lib (&quot;/I'm/i&quot;, $a);
+
+=&gt;
+I'm a boy
+Oh no, I'm crazy
+Oh no, I'M sexy girl
+
+
+echo pcregrep_lib (&quot;/I'M/&quot;, $a);
+
+=&gt;
+Oh no, I'M sexy girl
+
+
+echo pcregrep_lib (&quot;/I'M/&quot;, $a, 1);
+
+=&gt;
+I'm a boy
+You are the student
+Am I Oh happy?
+Oh no, I'm crazy
+
+
+echo pcregrep_lib(&quot;/^I/&quot;, $a, 1);
+
+=&gt;
+You are the student
+Am I Oh happy?
+Oh no, I'm crazy
+Oh no, I'M sexy girl

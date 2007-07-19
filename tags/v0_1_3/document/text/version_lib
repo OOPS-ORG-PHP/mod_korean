@@ -1,0 +1,18 @@
+<FONT class="title">version_lib()</FONT>
+
+(required korean module)
+
+version_lib -- korean extension 의 버전을 출력
+
+<FONT ID=RE>설명</FONT>
+
+<B>unsigned char version_lib(void)</B>
+
+korean extension 의 버전을 출력
+
+<FONT ID=RE>예제</FONT>
+
+echo version_lib();
+
+결과 : 0.0.1
+
