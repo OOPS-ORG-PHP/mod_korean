@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krnetwork.c,v 1.52 2006-03-18 19:46:32 oops Exp $
+  $Id: krnetwork.c,v 1.53 2007-07-19 19:59:18 oops Exp $
 */
 
 /*
@@ -265,7 +265,8 @@ PHP_FUNCTION(readfile_lib)
 		}
 		else { filename = filepath; }
 
-		VCWD_REALPATH(filename, getfilename);
+		if ( VCWD_REALPATH(filename, getfilename) == NULL )
+			strcpy (getfilename, filename);
 
 		// get file info
 		if( stat (getfilename, &filestat) == 0 )
