@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krimage.c,v 1.30 2006-02-12 06:43:14 oops Exp $ 
+  $Id: krimage.c,v 1.31 2007-07-19 19:59:18 oops Exp $ 
 
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
@@ -163,7 +163,8 @@ PHP_FUNCTION(imgresize_lib)
 	if (ZEND_NUM_ARGS() > 4)
    	{
 		convert_to_string_ex(npath);
-		VCWD_REALPATH(Z_STRVAL_PP(npath), newpath);
+		if ( VCWD_REALPATH(Z_STRVAL_PP(npath), newpath) == NULL )
+			strcpy (newpath, Z_STRVAL_PP(npath));
 	}
 	newpath_len = strlen(newpath);
 
@@ -193,7 +194,8 @@ PHP_FUNCTION(imgresize_lib)
 	}
 	else
 	{
-		VCWD_REALPATH(original, imgfile);
+		if ( VCWD_REALPATH(original, imgfile) == NULL )
+			strcpy (imgfile, original);
 	}
 
 	/* get origianl image type */

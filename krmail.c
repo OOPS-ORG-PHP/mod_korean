@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.35 2006-03-15 18:37:06 oops Exp $
+  $Id: krmail.c,v 1.36 2007-07-19 19:59:18 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -107,7 +107,8 @@ PHP_FUNCTION(mailsource_lib)
 
 	memset(attachfile, '\0', sizeof(attachfile));
 	if (c_attach != NULL) {
-		VCWD_REALPATH(c_attach, attachfile);
+		if ( VCWD_REALPATH(c_attach, attachfile) == NULL )
+			strcpy (attachfile, c_attach);
 		PHP_KR_CHECK_OPEN_BASEDIR (attachfile);
 	}
 

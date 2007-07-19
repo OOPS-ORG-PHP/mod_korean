@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krfile.c,v 1.38 2006-02-12 06:43:14 oops Exp $ 
+  $Id: krfile.c,v 1.39 2007-07-19 19:59:18 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -110,7 +110,7 @@ PHP_FUNCTION(filelist_lib)
 {
 	pval **path, **mode, **regex;
 	DIR *dp;
-	unsigned char *mode_s, *regex_s, dirpath[MAXPATHLENGTH];
+	unsigned char *mode_s, *regex_s, dirpath[MAXPATHLENGTH] = { 0, };
 	regex_t preg;
 
 	struct dirent *d;
@@ -160,7 +160,8 @@ PHP_FUNCTION(filelist_lib)
 		RETURN_FALSE;
 	}
 
-	VCWD_REALPATH(Z_STRVAL_PP(path), dirpath);
+	if ( VCWD_REALPATH(Z_STRVAL_PP(path), dirpath) == NULL )
+		strcpy (dirpath, Z_STRVAL_PP(path));
 
 	PHP_KR_CHECK_OPEN_BASEDIR (dirpath);
 	if ( (dp = opendir(dirpath)) == NULL )
@@ -228,7 +229,7 @@ PHP_FUNCTION(putfile_lib)
 {
 	pval **filename, **str, **mode;
 	unsigned int write = 0;
-	unsigned char filepath[MAXPATHLENGTH];
+	unsigned char filepath[MAXPATHLENGTH] = { 0, };
 
 	switch(ZEND_NUM_ARGS())
 	{
@@ -258,7 +259,8 @@ PHP_FUNCTION(putfile_lib)
 		RETURN_FALSE;
 	}
 
-	VCWD_REALPATH(Z_STRVAL_PP(filename), filepath);
+	if ( VCWD_REALPATH(Z_STRVAL_PP(filename), filepath) == NULL )
+		strcpy (filepath, Z_STRVAL_PP(filename));
 
 	PHP_KR_CHECK_OPEN_BASEDIR (filepath);
 	RETURN_LONG(writefile(filepath, Z_STRVAL_PP(str), write));
@@ -270,7 +272,7 @@ PHP_FUNCTION(putfile_lib)
 PHP_FUNCTION(getfile_lib)
 {
 	pval **filename, **getsize;
-	unsigned char *str, getfilename[MAXPATHLENGTH];
+	unsigned char *str, getfilename[MAXPATHLENGTH] = { 0, };
 	size_t size = 0, orgsize = 0, chksize = 0;
 	struct stat buf;
 
@@ -295,7 +297,8 @@ PHP_FUNCTION(getfile_lib)
 	}
 
 	convert_to_string_ex(filename);
-	VCWD_REALPATH(Z_STRVAL_PP(filename), getfilename);
+	if ( VCWD_REALPATH(Z_STRVAL_PP(filename), getfilename) == NULL )
+		strcpy (getfilename, Z_STRVAL_PP(filename));
 
 	// get file info
 	stat (getfilename, &buf);
