@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
   
-  $Id: krmail.c,v 1.36 2007-07-19 19:59:18 oops Exp $
+  $Id: krmail.c,v 1.37 2007-11-16 11:56:23 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -562,7 +562,7 @@ char * generate_date () {
 	if ( len < 128 ) strcpy (retbuf, rdate);
 	else strncpy (retbuf, rdate, 127);
 
-	free (rdate);
+	safe_efree (rdate);
 
 	return retbuf;
 }
