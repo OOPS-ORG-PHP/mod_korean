@@ -1,6 +1,11 @@
 PHP Korean Extexsions Changelog
 
 * 0.1.4
+Tue Jul 15 2008
+--------------------------------------------------------------------------------
+  by JoungKyun Kim <http://oops.org>
+  	- support 64bit library check
+
 Fri Nov 16 2007
 --------------------------------------------------------------------------------
   by JoungKyun Kim <http://oops.org>
