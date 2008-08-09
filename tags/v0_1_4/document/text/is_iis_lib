@@ -1,0 +1,14 @@
+<FONT class="title">is_iis_lib()</FONT>
+
+(required korean module)
+
+is_iis_lib -- 웹서버가 iis 인지 아닌지를 판단
+
+<FONT ID=RE>설명</FONT>
+
+<B>int is_iis_lib(void)</B>
+
+웹서버가 iis 서버인지를 체크한다. 웹서버가 iis 이면 1 을 리턴하고 아니면 0 을 리턴한다.
+
+<FONT ID=RE>참조</FONT>
+is_windows_lib()

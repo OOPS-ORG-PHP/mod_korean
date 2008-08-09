@@ -1,0 +1,21 @@
+<FONT class="title">getfile_lib()</FONT>
+
+(required korean module)
+
+getfile_lib -- 파일의 내용을 변수로 받음
+
+<FONT ID=RE>설명</FONT>
+
+<B>int getfile_lib (string path [, int size])</B>
+
+특정 파일의 내용을 변수로 받아 들인다. path 는 변수로 받을 파일의 경로를 지정하며 size 를 지
+정할 경우 해당 파일의 처음 부터 지정한 크기 만큼만 받으며 지정하지 않을 경우에는 해당파일 전
+체를 받는다.
+
+<FONT ID=RE>예제</FONT>
+
+$path = &quot;./doc/example.txt&quot;;
+$text = getfile_lib($path,250);
+
+<FONT ID=RE>참고</FONT>
+putfile_lib()
