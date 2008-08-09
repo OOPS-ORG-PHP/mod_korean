@@ -7,6 +7,7 @@ Sun Aug 10 2008
 	- support PCRE 7.6
 	  fixed kr_regex_replace_arr segfault
 	  Thanks for HyunSung Jang <orzz at orzz.org>
+	- update gd php bundle library on 5.2.6
 
 Tue Jul 15 2008
 --------------------------------------------------------------------------------

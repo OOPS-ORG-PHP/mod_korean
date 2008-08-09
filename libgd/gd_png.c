@@ -7,7 +7,7 @@
 /* JCE: Arrange HAVE_LIBPNG so that it can be set in gd.h */
 #ifdef HAVE_LIBPNG
 
-#include <png.h>		/* includes zlib.h and setjmp.h */
+#include "png.h"		/* includes zlib.h and setjmp.h */
 #include "gdhelpers.h"
 
 #define TRUE 1
@@ -58,7 +58,7 @@ static void gdPngErrorHandler (png_structp png_ptr, png_const_charp msg)
 	 * been defined.
 	 */
 
-	php_gd_error_ex(E_ERROR, "gd-png:  fatal libpng error: %s", msg);
+	php_gd_error_ex(E_WARNING, "gd-png:  fatal libpng error: %s", msg);
 
 	jmpbuf_ptr = png_get_error_ptr (png_ptr);
 	if (jmpbuf_ptr == NULL) { /* we are completely hosed now */
@@ -71,7 +71,11 @@ static void gdPngErrorHandler (png_structp png_ptr, png_const_charp msg)
 
 static void gdPngReadData (png_structp png_ptr, png_bytep data, png_size_t length)
 {
-	gdGetBuf(data, length, (gdIOCtx *) png_get_io_ptr(png_ptr));
+	int check;
+	check = gdGetBuf(data, length, (gdIOCtx *) png_get_io_ptr(png_ptr));
+	if (check != length) {
+		png_error(png_ptr, "Read Error: truncated data");
+	}
 }
 
 static void gdPngWriteData (png_structp png_ptr, png_bytep data, png_size_t length)
@@ -126,12 +130,15 @@ gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 
 	/* Make sure the signature can't match by dumb luck -- TBB */
 	/* GRR: isn't sizeof(infile) equal to the size of the pointer? */
-	memset (infile, 0, sizeof(infile));
+	memset (sig, 0, sizeof(sig));
 
 	  /* first do a quick check that the file really is a PNG image; could
 	   * have used slightly more general png_sig_cmp() function instead
 	   */
-	gdGetBuf(sig, 8, infile);
+	if (gdGetBuf(sig, 8, infile) < 8) {
+		return NULL;
+	}
+
 	if (!png_check_sig (sig, 8)) { /* bad signature */
 		return NULL;
 	}
@@ -196,6 +203,23 @@ gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 	} else if (bit_depth < 8) {
 		png_set_packing (png_ptr); /* expand to 1 byte per pixel */
 	}
+
+	/* setjmp() must be called in every non-callback function that calls a
+	 * PNG-reading libpng function
+	 */
+#ifndef PNG_SETJMP_NOT_SUPPORTED
+	if (setjmp(gdPngJmpbufStruct.jmpbuf)) {
+		php_gd_error("gd-png error: setjmp returns error condition");
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+		gdFree(image_data);
+		gdFree(row_pointers);
+		if (im) {
+			gdImageDestroy(im);
+		}
+		return NULL;
+	}
+#endif
+
 
 	switch (color_type) {
 		case PNG_COLOR_TYPE_PALETTE:
@@ -384,17 +408,17 @@ gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 	return im;
 }
 
-void gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
+void gdImagePngEx (gdImagePtr im, FILE * outFile, int level, int basefilter)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
-	gdImagePngCtxEx(im, out, level);
+	gdImagePngCtxEx(im, out, level, basefilter);
 	out->gd_free(out);
 }
 
 void gdImagePng (gdImagePtr im, FILE * outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
-  	gdImagePngCtxEx(im, out, -1);
+  	gdImagePngCtxEx(im, out, -1, -1);
 	out->gd_free(out);
 }
 
@@ -402,18 +426,18 @@ void * gdImagePngPtr (gdImagePtr im, int *size)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
-	gdImagePngCtxEx(im, out, -1);
+	gdImagePngCtxEx(im, out, -1, -1);
 	rv = gdDPExtractData(out, size);
 	out->gd_free(out);
 
 	return rv;
 }
 
-void * gdImagePngPtrEx (gdImagePtr im, int *size, int level)
+void * gdImagePngPtrEx (gdImagePtr im, int *size, int level, int basefilter)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
-	gdImagePngCtxEx(im, out, level);
+	gdImagePngCtxEx(im, out, level, basefilter);
 	rv = gdDPExtractData(out, size);
 	out->gd_free(out);
 	return rv;
@@ -421,14 +445,14 @@ void * gdImagePngPtrEx (gdImagePtr im, int *size, int level)
 
 void gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 {
-	gdImagePngCtxEx(im, outfile, -1);
+	gdImagePngCtxEx(im, outfile, -1, -1);
 }
 
 /* This routine is based in part on code from Dale Lutz (Safe Software Inc.)
  *  and in part on demo code from Chapter 15 of "PNG: The Definitive Guide"
  *  (http://www.cdrom.com/pub/png/pngbook.html).
  */
-void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
+void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level, int basefilter)
 {
 	int i, j, bit_depth = 0, interlace_type;
 	int width = im->sx;
@@ -484,6 +508,9 @@ void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 
 	/* 2.0.12: this is finally a parameter */
 	png_set_compression_level(png_ptr, level);
+	if (basefilter >= 0) {
+		png_set_filter(png_ptr, PNG_FILTER_TYPE_BASE, basefilter);
+	}
 
 	/* can set this to a smaller value without compromising compression if all
 	 * image data is 16K or less; will save some decoder memory [min == 8]
