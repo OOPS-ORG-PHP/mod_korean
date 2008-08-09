@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krregex.c,v 1.16 2006-03-15 19:47:28 oops Exp $ 
+  $Id: krregex.c,v 1.17 2008-08-09 16:16:52 oops Exp $ 
 */
 
 #ifdef HAVE_CONFIG_H
@@ -38,7 +38,7 @@ unsigned char *kr_regex_replace (unsigned char *regex_o, unsigned char *replace_
 	MAKE_STD_ZVAL(replaces);
 	ZVAL_STRING(replaces, replace_o, 1);
 		
-	buf_o = (unsigned char *) php_pcre_replace(regex_o, strlen(regex_o), str_o,str_len, replaces,0, &str_len, -1 TSRMLS_CC);
+	buf_o = (unsigned char *) php_pcre_replace(regex_o, strlen(regex_o), str_o,str_len, replaces,0, &str_len, -1, 0 TSRMLS_CC);
 
 	return buf_o;
 }
@@ -49,10 +49,8 @@ unsigned char *kr_regex_replace_arr (unsigned char *regex_o[], unsigned char *re
 	size_t str_len = strlen(str_o);
 #ifdef PHP_WIN32
 	zval *replaces[100];
-	unsigned char *buf_o[100];
 #else
 	zval *replaces[regex_no];
-	unsigned char *buf_o[regex_no];
 #endif
 	unsigned char * o_str = NULL;
 	unsigned char * c_str = NULL;
@@ -66,11 +64,12 @@ unsigned char *kr_regex_replace_arr (unsigned char *regex_o[], unsigned char *re
 	   	{
 			o_str = (unsigned char *) php_pcre_replace(regex_o[i],
 				   										strlen(regex_o[i]),
-													   	str_o,str_len,
+													   	str_o,
+														str_len,
 													   	replaces[i],
 													   	0,
 													   	&str_len,
-													   	-1 TSRMLS_CC);
+													   	-1, 0 TSRMLS_CC);
 			c_str = emalloc (sizeof(unsigned char *) * str_len + 1);
 			strcpy (c_str, o_str);
 		}
@@ -84,11 +83,13 @@ unsigned char *kr_regex_replace_arr (unsigned char *regex_o[], unsigned char *re
 													   	replaces[i],
 													   	0,
 													   	&str_len,
-													   	-1 TSRMLS_CC);
+													   	-1, 0 TSRMLS_CC);
 			efree (c_str);
 			c_str = emalloc (sizeof(unsigned char *) * str_len + 1);
 			strcpy (c_str, o_str);
 		}
+
+		str_len = strlen(o_str);
 	}
 
 	if ( c_str != NULL )
@@ -128,7 +129,7 @@ int pcre_match (unsigned char *regex, unsigned char *str)
 	int num_subpats;
 
 	/* Compile regex or get it from cache. */
-	if ((re = pcre_get_compiled_regex(regex, &extra, &preg_options)) == NULL) {
+	if ((re = pcre_get_compiled_regex(regex, &extra, &preg_options TSRMLS_CC)) == NULL) {
 		return -1;
 	}
 
