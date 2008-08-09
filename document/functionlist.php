@@ -1,7 +1,7 @@
 <?
-$phpversion = "5.2.3";
-$version = "0.1.3";
-$updates = "2007.07.20";
+$phpversion = "5.2.6";
+$version = "0.1.4";
+$updates = "2008.08.10";
 
 $list[] = "main";
 $list[] = "check";
