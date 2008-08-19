@@ -4,7 +4,8 @@ PHP Korean Extexsions Changelog
 Tue Aug 19 2008
 --------------------------------------------------------------------------------
   by JoungKyun.Kim <http://oops.org>
-  	- start 0.1.5
+    - support PHP_LIBDIR on PHP4
+    - start 0.1.5
 
 
 * 0.1.4
