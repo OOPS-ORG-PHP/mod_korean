@@ -1,4 +1,4 @@
-dnl $Id: config.m4,v 1.23 2008-07-15 11:37:55 oops Exp $
+dnl $Id: config.m4,v 1.24 2008-08-19 12:25:46 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -52,6 +52,11 @@ if test "$PHP_KOREAN" != "no"; then
 
   if test -z "$with_zlib_dir"; then
     with_zlib_dir=no
+  fi
+
+  if test -z "$PHP_LIBDIR"; then
+    parch=`uname -m`
+    test "$parch" = "x86_64" && PHP_LIBDIR="lib64" || PHP_LIBDIR="lib"
   fi
 
   dnl In this case given --enable-korean-gd option
