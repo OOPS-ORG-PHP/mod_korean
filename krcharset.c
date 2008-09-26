@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.17 2006-03-15 17:16:14 oops Exp $
+  $Id: krcharset.c,v 1.18 2008-09-26 17:55:31 oops Exp $
 */
 
 #ifdef HAVE_CONFIG_H
@@ -44,14 +44,14 @@
 #include "charset/gb2312.h"
 #include "charset/big5.h"
 
-static XUChar table_rev_latin2 [ 1024];
-static XUChar table_rev_koi8r_1[ 1024];
-static XUChar table_rev_koi8r_2[ 1024];
-static XUChar table_rev_iso8859[65536];
-static XUChar table_rev_jis0208[65536];
-static XUChar table_rev_ksc5601[65536];
-static XUChar table_rev_gb2312 [65536];
-static XUChar table_rev_big5   [65536];
+static XUChar table_rev_latin2 [ 1024] = { 0, };
+static XUChar table_rev_koi8r_1[ 1024] = { 0, };
+static XUChar table_rev_koi8r_2[ 1024] = { 0, };
+static XUChar table_rev_iso8859[65536] = { 0, };
+static XUChar table_rev_jis0208[65536] = { 0, };
+static XUChar table_rev_ksc5601[65536] = { 0, };
+static XUChar table_rev_gb2312 [65536] = { 0, };
+static XUChar table_rev_big5   [65536] = { 0, };
 //static const char* xu_lang = NULL;
 //static char xu_language[3] = {0, 0, 0};
 static int  xu_locale_encoding = XU_CONV_NONE;
@@ -854,12 +854,14 @@ static void XUInitTable()
 	XUChar c1;
 	XUChar c2; 
 
+	/*
 	for(i = 0; i < 1024; i++) 
 	{
 	   table_rev_latin2 [i] = 0;
 	   table_rev_koi8r_1[i] = 0;
 	   table_rev_koi8r_2[i] = 0;
 	} 
+	*/
 
 	for(i = 0; i < 128; i++) 
 	{
@@ -876,11 +878,13 @@ static void XUInitTable()
 			table_rev_koi8r_2[c - 0x2200] = i + 0x0080;
 	} 
 
+	/*
 	for(i = 0; i < 65536; i++) table_rev_iso8859[i] = 0;
 	for(i = 0; i < 65536; i++) table_rev_jis0208[i] = 0;
 	for(i = 0; i < 65536; i++) table_rev_ksc5601[i] = 0;
 	for(i = 0; i < 65536; i++) table_rev_gb2312 [i] = 0;
 	for(i = 0; i < 65536; i++) table_rev_big5   [i] = 0; 
+	*/
 
 	for(i = 9; i >= 1; i--) 
 	{
