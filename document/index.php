@@ -126,5 +126,5 @@ $rdes = array("$version", "$phpversion");
 $txt = preg_replace($rsrc, $rdes, $txt);
 $txt = auto_link($txt);
 
-include "template";
+include "html.template";
 ?>
