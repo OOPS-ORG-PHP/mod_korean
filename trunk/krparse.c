@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krparse.c,v 1.59 2005-04-20 16:59:24 oops Exp $
+  $Id$
 */
 
 #ifdef HAVE_CONFIG_H
