@@ -15,7 +15,7 @@
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
 
-$Id: php_krcharset.h,v 1.4 2002-12-12 16:58:35 oops Exp $
+$Id$
 */
 
 #ifndef PHP_KRCHARSET_H

@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krerror.c,v 1.11 2004-09-14 13:04:53 oops Exp $ 
+  $Id$ 
 */
 
 #ifdef HAVE_CONFIG_H

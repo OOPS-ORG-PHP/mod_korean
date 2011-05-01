@@ -1,4 +1,4 @@
-# $Id: Makefile.in,v 1.6 2002-11-26 08:49:23 oops Exp $
+# $Id$
 
 LTLIBRARY_NAME          = libkorean.la
 LTLIBRARY_SOURCES       = korean.c krparse.c krcheck.c krregex.c krerror.c krfile.c krnetwork.c krimage.c krmail.c krmath.c krcharset.c

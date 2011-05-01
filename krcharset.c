@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
 
-  $Id: krcharset.c,v 1.18 2008-09-26 17:55:31 oops Exp $
+  $Id$
 */
 
 #ifdef HAVE_CONFIG_H

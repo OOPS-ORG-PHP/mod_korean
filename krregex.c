@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://www.oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id: krregex.c,v 1.17 2008-08-09 16:16:52 oops Exp $ 
+  $Id$ 
 */
 
 #ifdef HAVE_CONFIG_H
