@@ -5,6 +5,7 @@ Sat Sep 27 2008
 --------------------------------------------------------------------------------
   by JoungKyun.Kim <http://oops.org>
     - initailize arrany variable when declear on krcharset.c
+	- fixed proto type error about regex_t
 
 Tue Aug 19 2008
 --------------------------------------------------------------------------------

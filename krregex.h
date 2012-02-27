@@ -78,6 +78,7 @@ make changes to pcre.in. */
 it is needed here for malloc. */
 
 #include <stdlib.h>
+#include <regex.h>
 
 /* Allow for C++ users */
 

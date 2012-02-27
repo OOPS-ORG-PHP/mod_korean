@@ -41,6 +41,8 @@
 #include "php_krmath.h"
 #include "php_kr.h"
 
+#include <regex.h>
+
 struct stat filestat;
 
 /* {{{ proto int human_fsize_lib(int filesize, int pt, int unit, int cunit)
