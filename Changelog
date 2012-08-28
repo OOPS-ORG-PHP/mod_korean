@@ -1,6 +1,11 @@
 PHP Korean Extexsions Changelog
 
 * 0.1.5
+Wed Aug 29 2012
+--------------------------------------------------------------------------------
+  by JoungKyun.Kim <http://oops.org>
+    - fixed overflow2 link problem with libgd
+
 Sat Sep 27 2008
 --------------------------------------------------------------------------------
   by JoungKyun.Kim <http://oops.org>
