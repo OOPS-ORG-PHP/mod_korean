@@ -69,11 +69,11 @@ if test "$PHP_KOREAN" != "no"; then
     fi
 
     for j in $GD_SEARCH_PATHS; do
-      for i in include/gd1.3 include/gd include gd1.3 gd ""; do
+      for i in include include/gd1.3 include/gd include gd1.3 gd ""; do
         test -f $j/$i/gd.h && KOREAN_INCLUDE=$j/$i
       done
 
-      for i in $PHP_LIBDIR/gd1.3 $PHP_LIBDIR/gd $PHP_LIBDIR gd1.3 gd ""; do
+      for i in $PHP_LIBDIR $PHP_LIBDIR/gd1.3 $PHP_LIBDIR/gd $PHP_LIBDIR gd1.3 gd ""; do
         test -f $j/$i/libgd.$SHLIB_SUFFIX_NAME -o -f $j/$i/libgd.a && KOREAN_LIB=$j/$i
       done
     done
