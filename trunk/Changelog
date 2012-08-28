@@ -5,7 +5,7 @@ Sat Sep 27 2008
 --------------------------------------------------------------------------------
   by JoungKyun.Kim <http://oops.org>
     - initailize arrany variable when declear on krcharset.c
-	- fixed proto type error about regex_t
+    - fixed proto type error about regex_t
 
 Tue Aug 19 2008
 --------------------------------------------------------------------------------
@@ -18,15 +18,15 @@ Tue Aug 19 2008
 Sun Aug 10 2008
 --------------------------------------------------------------------------------
   by JoungKyun.Kim <http://oops.org>
-	- support PCRE 7.6
-	  fixed kr_regex_replace_arr segfault
-	  Thanks for HyunSung Jang <orzz at orzz.org>
-	- update gd php bundle library on 5.2.6
+    - support PCRE 7.6
+      fixed kr_regex_replace_arr segfault
+      Thanks for HyunSung Jang <orzz at orzz.org>
+    - update gd php bundle library on 5.2.6
 
 Tue Jul 15 2008
 --------------------------------------------------------------------------------
   by JoungKyun Kim <http://oops.org>
-  	- support 64bit library check
+    - support 64bit library check
 
 Fri Nov 16 2007
 --------------------------------------------------------------------------------
