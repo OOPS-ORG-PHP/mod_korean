@@ -53,7 +53,7 @@ static int le_korean;
  *
  * Every user visible function must have an entry in korean_functions[].
  */
-function_entry korean_functions[] = {
+const zend_function_entry korean_functions[] = {
 	PHP_FE(buildno_lib,			NULL)
 	PHP_FE(version_lib,			NULL)
 	PHP_FE(ncrencode_lib,		NULL)

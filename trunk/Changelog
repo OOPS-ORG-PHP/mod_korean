@@ -1,27 +1,29 @@
 PHP Korean Extexsions Changelog
 
 * 0.1.5
-Wed Aug 29 2012
 --------------------------------------------------------------------------------
+Fri Nov  2 2012
+  by JoungKyun.Kim <http://oops.org>
+    - support PHP 5.4
+
+Wed Aug 29 2012
   by JoungKyun.Kim <http://oops.org>
     - fixed overflow2 link problem with libgd
 
 Sat Sep 27 2008
---------------------------------------------------------------------------------
   by JoungKyun.Kim <http://oops.org>
     - initailize arrany variable when declear on krcharset.c
     - fixed proto type error about regex_t
 
 Tue Aug 19 2008
---------------------------------------------------------------------------------
   by JoungKyun.Kim <http://oops.org>
     - support PHP_LIBDIR on PHP4
     - start 0.1.5
 
 
 * 0.1.4
-Sun Aug 10 2008
 --------------------------------------------------------------------------------
+Sun Aug 10 2008
   by JoungKyun.Kim <http://oops.org>
     - support PCRE 7.6
       fixed kr_regex_replace_arr segfault
@@ -29,26 +31,24 @@ Sun Aug 10 2008
     - update gd php bundle library on 5.2.6
 
 Tue Jul 15 2008
---------------------------------------------------------------------------------
   by JoungKyun Kim <http://oops.org>
     - support 64bit library check
 
 Fri Nov 16 2007
---------------------------------------------------------------------------------
   by JoungKyun Kim <http://oops.org>
     - fixed segfault generate_date function on krmail.c
 
 
 * 0.1.3
-Fri Jul 20 2007
 --------------------------------------------------------------------------------
+Fri Jul 20 2007
   by JoungKyun Kim <http://oops.org>
     - fixed VCWD_REALPATH changes on PHP 5.2
 
 
 * 0.1.2
-Sun Mar 19 2006
 --------------------------------------------------------------------------------
+Sun Mar 19 2006
   by JoungKyun Kim <http://oops.org>
     - fixed documents with html 4 validate
     - fixed sockmail_lib function removed upper html print out
@@ -56,13 +56,12 @@ Sun Mar 19 2006
 
 
 * 0.1.1
-Sat Mar 18 2006
 --------------------------------------------------------------------------------
+Sat Mar 18 2006
   by JoungKyun Kim <http://oops.org>
     - when sending fail, don't stop function any more.
 
 Thu Mar 16 2006
---------------------------------------------------------------------------------
   by JoungKyun Kim <http://oops.org>
     - fixed gdImageCreatePaletteFromTrueColor link bug in bundle gd library
     - fixed substr_lib ascii range parsing bug
@@ -73,8 +72,8 @@ Thu Mar 16 2006
 
 
 * 0.1.0
-Sun Feb 12 2006
 --------------------------------------------------------------------------------
+Sun Feb 12 2006
   by JoungKyun Kim <http://oops.org>
     - update libgd on php 5.1.2
     - changed create location of tmpfile to PG(upload_tmp_dir)
@@ -82,8 +81,8 @@ Sun Feb 12 2006
 
 
 * 0.0.9
-Thu Apr 21 2005
 --------------------------------------------------------------------------------
+Thu Apr 21 2005
   by JoungKyun Kim <http://oops.org>
     - fixed warning messages
 
@@ -186,6 +185,7 @@ Tue Jan  7 2003
     - modified phpinfo data
     - enabled to use on account mode
 
+
 * 0.0.4
 --------------------------------------------------------------------------------
 Mon Jan  6 2003
@@ -222,6 +222,7 @@ Sun Dec 22 2002
   by JoungKyun Kim <http://oops.org>
     - fixed segment error on readfile function
 
+
 * 0.0.3
 --------------------------------------------------------------------------------
 
@@ -242,6 +243,7 @@ Mon Dec 10 2002
   by JoungKyun Kim <http://oops.org>
     - removed unuseless variables
     - changed system function to file stream function on readfile function
+
 
 * 0.0.2
 --------------------------------------------------------------------------------
@@ -286,6 +288,7 @@ Thu Oct 24 2002
 Sun Sep 22 2002
   by JoungKyun Kim <http://oops.org>
     - added memory free some variables
+
 
 * 0.0.1
 --------------------------------------------------------------------------------
