@@ -33,7 +33,7 @@
  *  *  print error message */
 PHP_FUNCTION(perror_lib)
 {
-	pval **str, **java, **move, **seconds;
+	zval **str, **java, **move, **seconds;
 	unsigned int ujava = 0, sec = 5;
 	unsigned char *err, *umove;
 
@@ -108,7 +108,7 @@ PHP_FUNCTION(perror_lib)
  *  *  print notice */
 PHP_FUNCTION(pnotice_lib)
 {
-	pval **str, **java;
+	zval **str, **java;
 	unsigned int ujava = 0;
 
 	switch(ZEND_NUM_ARGS())
@@ -141,83 +141,83 @@ PHP_FUNCTION(pnotice_lib)
 }
 /* }}} */
 
-unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned char *move_o, unsigned int sec_o)
+unsigned char * print_error (unsigned char * str_o, unsigned int java_o, unsigned char * move_o, unsigned int sec_o)
 {
-	unsigned int textBR = 0;
-	unsigned char *buf_str, *buf_move;
-	unsigned char *reg[2] = { "/\n/i", "/'|#/i" };
-	unsigned char *rep[2] = { "\\n", "\\\\\\0" };
+	unsigned int    textBR = 0;
+	unsigned char * buf_str,
+				  * buf_move;
+	unsigned char * reg[2] = { "/\n/i", "/'|#/i" };
+	unsigned char * rep[2] = { "\\n", "\\\\\\0" };
 
-	unsigned char *buf = NULL, *mv = NULL;
-	unsigned char *result, *agent_o;
-	static char ret[1024];
+	unsigned char * buf = NULL,
+				  * mv = NULL;
+	unsigned char * result,
+				  * agent_o;
+	static char     ret[1024];
+
 	TSRMLS_FETCH();
 
-	agent_o = sapi_getenv("HTTP_USER_AGENT", 15 TSRMLS_CC);
-	if (agent_o == NULL) { agent_o = (unsigned char *) get_serverenv("HTTP_USER_AGENT"); }
+	agent_o = sapi_getenv ("HTTP_USER_AGENT", 15 TSRMLS_CC);
+	if ( agent_o == NULL )
+		agent_o = (unsigned char *) get_serverenv ("HTTP_USER_AGENT");
 
 	/* text browser check */
-	if( strlen(agent_o) > 0) {
-		if (strstr(agent_o, "Lynx") || strstr(agent_o, "Links") || strstr(agent_o, "w3m"))
-		{
+	if ( strlen (agent_o) > 0 )
+		if ( strstr (agent_o, "Lynx") || strstr (agent_o, "Links") || strstr (agent_o, "w3m"))
 			textBR = 1;
-		}
-	}
 
-	if ( java_o == 0 || textBR == 1 || strlen(agent_o) == 0 )
-   	{
-		buf = emalloc(sizeof(char) * (strlen(str_o) + 2));
-		sprintf(buf, "%s\n", str_o);
-		if (strcmp(move_o, "notice") && strcmp(move_o, "1"))
-		{
+	if ( java_o == 0 || textBR == 1 || strlen (agent_o) == 0 ) {
+		buf = emalloc (sizeof (char) * (strlen (str_o) + 2));
+		sprintf (buf, "%s\n", str_o);
+		if ( strcmp (move_o, "notice") && strcmp (move_o, "1")) {
 			buf_move = (unsigned char *) kr_regex_replace ("/ /i", "%20", move_o);
-			mv = emalloc(sizeof(char) * (strlen(buf_move) + 60));
-			sprintf(mv, "<META http-equiv=\"refresh\" content=\"%d;URL=%s\">\n", sec_o,buf_move);
-			mv[strlen(mv)] = '\0';
+			mv = emalloc (sizeof (char) * (strlen (buf_move) + 60));
+			sprintf (mv, "<META http-equiv=\"refresh\" content=\"%d;URL=%s\">\n", sec_o,buf_move);
+			mv[strlen (mv)] = '\0';
 
-			result = emalloc(sizeof(char) * (strlen(buf) + strlen(mv) + 3));
+			result = emalloc (sizeof (char) * (strlen (buf) + strlen (mv) + 3));
 			sprintf (result, "%s\n%s\n", buf, mv);
-			safe_efree(mv);
+			safe_efree (mv);
 		}
 	   	else
 	   	{
-			result = emalloc(sizeof(char) * (strlen(buf) + 2));
+			result = emalloc (sizeof (char) * (strlen (buf) + 2));
 			sprintf (result, "%s\n", buf);
 		}
 	} else {
 		buf_str = (unsigned char *) kr_regex_replace_arr (reg, rep, str_o, 2);
 		
-		buf = emalloc(sizeof(char) * (strlen(buf_str) + 60));
-		if (!strcmp(move_o, "1"))
+		buf = emalloc (sizeof (char) * (strlen (buf_str) + 60));
+		if ( ! strcmp (move_o, "1") )
 		{
-			sprintf(buf, "<SCRIPT>\nalert('%s');\nhistory.back();\n</SCRIPT>\n", buf_str);
+			sprintf (buf, "<SCRIPT>\nalert('%s');\nhistory.back();\n</SCRIPT>\n", buf_str);
 
-			result = emalloc(sizeof(char) * (strlen(buf) + 2));
+			result = emalloc (sizeof (char) * (strlen (buf) + 2));
 			sprintf (result, "%s\n", buf);
 		}
 	   	else
 	   	{
-			sprintf(buf, "<SCRIPT>\nalert('%s')\n</SCRIPT>\n", buf_str);
-			if ( strcmp(move_o,"notice")) {
+			sprintf (buf, "<SCRIPT>\nalert('%s')\n</SCRIPT>\n", buf_str);
+			if ( strcmp (move_o, "notice") ) {
 				buf_move = (unsigned char *) kr_regex_replace ("/ /i","%20", move_o);
-				mv = emalloc(sizeof(char) * (strlen(buf_move) + 50));
-				sprintf(mv, "<META http-equiv=\"refresh\" content=\"0;URL=%s\">\n", buf_move);
-				mv[strlen(mv)] = '\0';
+				mv = emalloc (sizeof (char) * (strlen (buf_move) + 50));
+				sprintf (mv, "<META http-equiv=\"refresh\" content=\"0;URL=%s\">\n", buf_move);
+				mv[strlen (mv)] = '\0';
 
-				result = emalloc(sizeof(char) * (strlen(buf) + strlen(mv) + 3));
+				result = emalloc (sizeof (char) * (strlen (buf) + strlen (mv) + 3));
 				sprintf (result,"%s\n%s\n", buf, mv);
-				safe_efree(mv);
+				safe_efree (mv);
 			} else {
-				result = emalloc(sizeof(char) * (strlen(buf) + 2));
+				result = emalloc (sizeof (char) * (strlen (buf) + 2));
 				sprintf (result, "%s\n", buf);
 			}
 		}
 	}
 
-	memset(ret, '\0', sizeof(ret));
-	memmove(ret, result, strlen(result));
-	safe_efree(buf);
-	safe_efree(result);
+	memset (ret, '\0', sizeof (ret));
+	memmove (ret, result, strlen (result));
+	safe_efree (buf);
+	safe_efree (result);
 
 	return ret;
 }
