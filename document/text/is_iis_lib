@@ -1,14 +1,14 @@
-<FONT class="title">is_iis_lib()</FONT>
+<span class="title">is_iis_lib()</span>
 
 (required korean module)
 
-is_iis_lib -- À¥¼­¹ö°¡ iis ÀÎÁö ¾Æ´ÑÁö¸¦ ÆÇ´Ü
+is_iis_lib -- ì›¹ì„œë²„ê°€ iis ì¸ì§€ ì•„ë‹Œì§€ë¥¼ íŒë‹¨
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>int is_iis_lib(void)</B>
+<b>int is_iis_lib(void)</b>
 
-À¥¼­¹ö°¡ iis ¼­¹öÀÎÁö¸¦ Ã¼Å©ÇÑ´Ù. À¥¼­¹ö°¡ iis ÀÌ¸é 1 À» ¸®ÅÏÇÏ°í ¾Æ´Ï¸é 0 À» ¸®ÅÏÇÑ´Ù.
+ì›¹ì„œë²„ê°€ iis ì„œë²„ì¸ì§€ë¥¼ ì²´í¬í•œë‹¤. ì›¹ì„œë²„ê°€ iis ì´ë©´ 1 ì„ ë¦¬í„´í•˜ê³  ì•„ë‹ˆë©´ 0 ì„ ë¦¬í„´í•œë‹¤.
 
-<FONT ID=RE>ÂüÁ¶</FONT>
+<span id="RE">ì°¸ì¡°</span>
 is_windows_lib()

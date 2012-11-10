@@ -1,23 +1,23 @@
-<FONT class="title">utf8decode_lib()</FONT>
+<span class="title">utf8decode_lib()</span>
 
 (required korean module)
 
-utf8decode_lib -- UTF8 Å×ÀÌºíÀ» CP949 ¶Ç´Â EUC-KR ·Î º¯È¯
+utf8decode_lib -- UTF8 í…Œì´ë¸”ì„ CP949 ë˜ëŠ” EUC-KR ë¡œ ë³€í™˜
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>string utf8decode_lib(string str, string type)</B>
+<b>string utf8decode_lib(string str, string type)</b>
 
-UTF8 ¹®ÀÚ¼ÂÀ» type ¿¡ ÁöÁ¤µÈ ¹®ÀÚ¼ÂÀ¸·Î º¯È¯À» ÇÑ´Ù. type ¿¡´Â CP949, EUC-KR,
-BIG5, SJIS ¸¦ Áö¿øÇÑ´Ù. EUC-KR ·Î ÁöÁ¤À» ÇßÀ» °æ¿ì¿¡´Â EUC-KR ¹üÀ§¿ÜÀÇ 2byte
-¹®ÀÚ¸¦ NCR code ·Î º¯È¯ÇÏ¿© ¹İÈ¯ÇÑ´Ù.
+UTF8 ë¬¸ìì…‹ì„ type ì— ì§€ì •ëœ ë¬¸ìì…‹ìœ¼ë¡œ ë³€í™˜ì„ í•œë‹¤. type ì—ëŠ” CP949, EUC-KR,
+BIG5, SJIS ë¥¼ ì§€ì›í•œë‹¤. EUC-KR ë¡œ ì§€ì •ì„ í–ˆì„ ê²½ìš°ì—ëŠ” EUC-KR ë²”ìœ„ì™¸ì˜ 2byte
+ë¬¸ìë¥¼ NCR code ë¡œ ë³€í™˜í•˜ì—¬ ë°˜í™˜í•œë‹¤.
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
-$str = &quot;ÇÑ±Ûa¿Í Œc¹æ°¢ÇÏ&quot;;
+$str = &quot;í•œê¸€aì™€ ë˜ ë°©ê°í•˜&quot;;
 $str = utf8encode_lib($str);
 echo utf8decode_lib($str, &quot;CP949&quot;)."\n";
 echo utf8decode_lib($str, &quot;EUC-KR&quot;)."\n";
 
-<FONT ID=RE>Âü°í</FONT>
+<span id="RE">ì°¸ê³ </span>
 utf8encode_lib()

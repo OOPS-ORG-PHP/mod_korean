@@ -1,54 +1,54 @@
-<FONT class="title">imgResize_lib()</FONT>
+<span class="title">imgResize_lib()</span>
 
 (required korean module and gd module)
 
-imgresize_lib -- ÀÌ¹ÌÁö »çÀÌÁî¸¦ Á¶Á¤ÇÏ¿© Ãâ·ÂÇÏ°Å³ª »ý¼º
+imgresize_lib -- ì´ë¯¸ì§€ ì‚¬ì´ì¦ˆë¥¼ ì¡°ì •í•˜ì—¬ ì¶œë ¥í•˜ê±°ë‚˜ ìƒì„±
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>void imgresize_lib(string file_path [, string new_type [, int new_width [, int new_height [, string new_path ] ] ] ])</B>
+<b>void imgresize_lib(string file_path [, string new_type [, int new_width [, int new_height [, string new_path ] ] ] ])</b>
 
-imgresize_lib ÇÔ¼ö´Â ¿øº»ÀÌ¹ÌÁöÀÇ »çÀÌÁî¸¦ Á¶Á¤ÇÏ¿© »õ·Î¿î ÀÌ¹ÌÁö¸¦ »ý¼ºÇÏ°Å³ª
-»çÀÌÁî°¡ Á¶Á¤µÈ ÀÌ¹ÌÁö¸¦ Ãâ·ÂÇÏ´Â ±â´ÉÀ» ÇÑ´Ù. ¼¶³×ÀÏ ÀÌ¹ÌÁö¸¦ ¸¸µé °æ¿ì À¯¿ëÇÏ°Ô
-»ç¿ëÇÒ ¼ö ÀÖ´Ù.
+imgresize_lib í•¨ìˆ˜ëŠ” ì›ë³¸ì´ë¯¸ì§€ì˜ ì‚¬ì´ì¦ˆë¥¼ ì¡°ì •í•˜ì—¬ ìƒˆë¡œìš´ ì´ë¯¸ì§€ë¥¼ ìƒì„±í•˜ê±°ë‚˜
+ì‚¬ì´ì¦ˆê°€ ì¡°ì •ëœ ì´ë¯¸ì§€ë¥¼ ì¶œë ¥í•˜ëŠ” ê¸°ëŠ¥ì„ í•œë‹¤. ì„¬ë„¤ì¼ ì´ë¯¸ì§€ë¥¼ ë§Œë“¤ ê²½ìš° ìœ ìš©í•˜ê²Œ
+ì‚¬ìš©í•  ìˆ˜ ìžˆë‹¤.
 
-°¢ ÆÄ¶ó¹ÌÅÍÀÇ ¼³¸íÀº ´ÙÀ½°ú °°´Ù
+ê° íŒŒë¼ë¯¸í„°ì˜ ì„¤ëª…ì€ ë‹¤ìŒê³¼ ê°™ë‹¤
 
-file_path  ÀÌ¹ÌÁö »çÀÌÁî¸¦ Á¶Á¤ÇÒ ¿øº» ÀÌ¹ÌÁöÀÇ °æ·Î¸¦ ÁöÁ¤ÇÑ´Ù. ÆÄÀÏ °æ·Î¿¡ http://
-           ÇÁ·ÎÅäÄÝÀ» »ç¿ëÇÒ °æ¿ì¿¡´Â À¥»óÀÇ ÀÌ¹ÌÁö¸¦ ÄÁÆ®·Ñ ÇÒ ¼ö ÀÖ´Ù.
+file_path  ì´ë¯¸ì§€ ì‚¬ì´ì¦ˆë¥¼ ì¡°ì •í•  ì›ë³¸ ì´ë¯¸ì§€ì˜ ê²½ë¡œë¥¼ ì§€ì •í•œë‹¤. íŒŒì¼ ê²½ë¡œì— http://
+           í”„ë¡œí† ì½œì„ ì‚¬ìš©í•  ê²½ìš°ì—ëŠ” ì›¹ìƒì˜ ì´ë¯¸ì§€ë¥¼ ì»¨íŠ¸ë¡¤ í•  ìˆ˜ ìžˆë‹¤.
 
-new_type   »õ·Î »ý¼ºµÉ ÀÌ¹ÌÁöÀÇ È®ÀåÀÚ¸¦ ÁöÁ¤ÇÑ´Ù. jpg, png, gif Áß¿¡¼­ ÁöÁ¤ÇÒ ¼ö
-           ÀÖ´Ù. jpg ¿Í gif ´Â gd ÀÇ ¹öÁ¯¿¡ µû¶ó Áö¿øÀÌ µÉ ¼öµµ ¾ÈµÉ ¼öµµ ÀÖ´Ù.
-           gd 1.6 ¹Ì¸¸ ¹öÁ¯¿¡¼­´Â jpg ´ë½Å gif °¡ Áö¿øÀÌµÇ¸ç, 1.6 ÀÌ»ó ¹öÁ¯¿¡¼­´Â
-           gif °¡ Áö¿øÀÌ µÇÁö ¾Ê°í jpg °¡ Áö¿øÀÌ µÈ´Ù.
+new_type   ìƒˆë¡œ ìƒì„±ë  ì´ë¯¸ì§€ì˜ í™•ìž¥ìžë¥¼ ì§€ì •í•œë‹¤. jpg, png, gif ì¤‘ì—ì„œ ì§€ì •í•  ìˆ˜
+           ìžˆë‹¤. jpg ì™€ gif ëŠ” gd ì˜ ë²„ì ¼ì— ë”°ë¼ ì§€ì›ì´ ë  ìˆ˜ë„ ì•ˆë  ìˆ˜ë„ ìžˆë‹¤.
+           gd 1.6 ë¯¸ë§Œ ë²„ì ¼ì—ì„œëŠ” jpg ëŒ€ì‹  gif ê°€ ì§€ì›ì´ë˜ë©°, 1.6 ì´ìƒ ë²„ì ¼ì—ì„œëŠ”
+           gif ê°€ ì§€ì›ì´ ë˜ì§€ ì•Šê³  jpg ê°€ ì§€ì›ì´ ëœë‹¤.
 
-new_width  Á¶Á¤ÇÒ ÀÌ¹ÌÁö »çÀÌÁîÀÇ width °ªÀ» ÁöÁ¤ÇÑ´Ù. ÁöÁ¤ÇÏÁö ¾ÊÀ» °æ¿ì ±âº»°ª
-           À¸·Î 50 ÀÌ Àû¿ëµÈ´Ù.
+new_width  ì¡°ì •í•  ì´ë¯¸ì§€ ì‚¬ì´ì¦ˆì˜ width ê°’ì„ ì§€ì •í•œë‹¤. ì§€ì •í•˜ì§€ ì•Šì„ ê²½ìš° ê¸°ë³¸ê°’
+           ìœ¼ë¡œ 50 ì´ ì ìš©ëœë‹¤.
 
-new_height Á¶Á¤ÇÒ ÀÌ¹ÌÁö »çÀÌÁîÀÇ height °ªÀ» ÁöÁ¤ÇÑ´Ù. ÁöÁ¤ÇÏÁö ¾Ê¾ÒÀ» °æ¿ì
-           new_width °ªÀÇ ºñÀ²¿¡ ¸ÂÃß¾î ÁöÁ¤µÈ´Ù.
+new_height ì¡°ì •í•  ì´ë¯¸ì§€ ì‚¬ì´ì¦ˆì˜ height ê°’ì„ ì§€ì •í•œë‹¤. ì§€ì •í•˜ì§€ ì•Šì•˜ì„ ê²½ìš°
+           new_width ê°’ì˜ ë¹„ìœ¨ì— ë§žì¶”ì–´ ì§€ì •ëœë‹¤.
 
-new_path   »çÀÌÁî°¡ Á¶Á¤µÈ ÀÌ¹ÌÁö¸¦ ÀúÀåÇÒ ÆÄÀÏ ÀÌ¸§À» °æ·Î¿Í ÇÔ²² ÁöÁ¤ÇÑ´Ù. ÁöÁ¤
-           µÇÁö ¾Ê¾ÒÀ» °æ¿ì¿¡´Â ÀÌ¹ÌÁö¸¦ Ãâ·ÂÇÑ´Ù. ÀÌ¹ÌÁö¸¦ ÀúÀåÇÏÁö ¾Ê°í Á÷Á¢ Ãâ·Â
-           ÇÒ °æ¿ì¿¡´Â Content-type ÀÌ ÀÚµ¿À¸·Î Ãâ·ÂÀÌ µÈ´Ù.
+new_path   ì‚¬ì´ì¦ˆê°€ ì¡°ì •ëœ ì´ë¯¸ì§€ë¥¼ ì €ìž¥í•  íŒŒì¼ ì´ë¦„ì„ ê²½ë¡œì™€ í•¨ê»˜ ì§€ì •í•œë‹¤. ì§€ì •
+           ë˜ì§€ ì•Šì•˜ì„ ê²½ìš°ì—ëŠ” ì´ë¯¸ì§€ë¥¼ ì¶œë ¥í•œë‹¤. ì´ë¯¸ì§€ë¥¼ ì €ìž¥í•˜ì§€ ì•Šê³  ì§ì ‘ ì¶œë ¥
+           í•  ê²½ìš°ì—ëŠ” Content-type ì´ ìžë™ìœ¼ë¡œ ì¶œë ¥ì´ ëœë‹¤.
 
-win32 È¯°æ¿¡¼­´Â file_path ¿Í mew_path ¸¦ ÁöÁ¤ÇÒ ¶§ »ó´ë °æ·Î·Î ÁöÁ¤À» ÇÏ·Á¸é realpath() ÇÔ¼ö¸¦ ÀÌ¿ëÇÏ¿©
-Àý´ë °æ·ÎÈ­¸¦ ÇØ Áà¾ß ÇÑ´Ù.
+win32 í™˜ê²½ì—ì„œëŠ” file_path ì™€ mew_path ë¥¼ ì§€ì •í•  ë•Œ ìƒëŒ€ ê²½ë¡œë¡œ ì§€ì •ì„ í•˜ë ¤ë©´ realpath() í•¨ìˆ˜ë¥¼ ì´ìš©í•˜ì—¬
+ì ˆëŒ€ ê²½ë¡œí™”ë¥¼ í•´ ì¤˜ì•¼ í•œë‹¤.
 
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
-50 * 50 »çÀÌÁîÀÇ jpeg ÀÌ¹ÌÁö¸¦ Ãâ·Â
+50 * 50 ì‚¬ì´ì¦ˆì˜ jpeg ì´ë¯¸ì§€ë¥¼ ì¶œë ¥
 imgresize_lib("./org.jpg");
 
-50 * 50 »çÀÌÁîÀÇ png ÀÌ¹ÌÁö¸¦ Ãâ·Â
+50 * 50 ì‚¬ì´ì¦ˆì˜ png ì´ë¯¸ì§€ë¥¼ ì¶œë ¥
 imgresize_lib("./org.jpg","png");
 
-width °¡ 70 ÀÌ¸ç height °ªÀº width °ªÀÇ ºñÀ²¿¡ ÀÇÇØ °áÁ¤µÇ´Â png ÀÌ¹ÌÁö Ãâ·Â
+width ê°€ 70 ì´ë©° height ê°’ì€ width ê°’ì˜ ë¹„ìœ¨ì— ì˜í•´ ê²°ì •ë˜ëŠ” png ì´ë¯¸ì§€ ì¶œë ¥
 imgresize_lib("./org.jpg","png",70);
 
-70 * 30 »çÀÌÁîÀÇ png ÀÌ¹ÌÁö Ãâ·Â
+70 * 30 ì‚¬ì´ì¦ˆì˜ png ì´ë¯¸ì§€ ì¶œë ¥
 imgresize_lib("./org.jpg","png",70,30);
 
-70 * 30 »çÀÌÁîÀÇ png ÀÌ¹ÌÁö¸¦ test.png ·Î ÀúÀå
+70 * 30 ì‚¬ì´ì¦ˆì˜ png ì´ë¯¸ì§€ë¥¼ test.png ë¡œ ì €ìž¥
 imgresize_lib("./org.jpg","png",70,30,"./test.png");

@@ -1,29 +1,29 @@
-<FONT class="title">perror_lib()</FONT>
+<span class="title">perror_lib()</span>
 
 (required korean module)
 
-perror_lib -- ¿¡·¯ ¸Ş¼¼Áö¸¦ Ãâ·ÂÈÄ ¿øÇÏ´Â ÆäÀÌÁö·Î ÀÌµ¿
+perror_lib -- ì—ëŸ¬ ë©”ì„¸ì§€ë¥¼ ì¶œë ¥í›„ ì›í•˜ëŠ” í˜ì´ì§€ë¡œ ì´ë™
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>void perror_lib(string str [, int use_java [, string move_page [, int move second ] ] ])</B>
+<b>void perror_lib(string str [, int use_java [, string move_page [, int move second ] ] ])</b>
 
-¿¡·¯ ¸Ş¼¼Áö¸¦ Ãâ·ÂÇÏ°í ÀÌÀü È­¸éÀ¸·Î µ¹¾Æ°£´Ù. ½©¿¡¼­ ÀÌ ÇÔ¼ö¸¦ »ç¿ëÇÒ °æ¿ì¿¡´Â use_java ¸¦
-0 ·Î ÁöÁ¤À» ÇÏ¿© java script °¡ ¾Æ´Ñ ¹®ÀÚ¿­ Ãâ·ÂÀ¸·Î µÇ°Ô ÇÒ ¼ö ÀÖ´Ù. move_page ¸¦ ÁöÁ¤ÇßÀ»
-°æ¿ì¿¡´Â ÁöÁ¤ÇÑ ÆäÀÌÁö·Î ÀÌµ¿À» ÇÏ°Ô µÈ´Ù. move_page ¸¦ ÁöÁ¤ÇßÀ» °æ¿ì java ¸¦ »ç¿ëÇÏ´Â °æ¿ì
-¿¡´Â ¹Ù·Î ÀÌµ¿À» ÇÏ¸ç, ÀÚ¹Ù¸¦ »ç¿ëÇÏÁö ¾Ê´Â °æ¿ì¿¡´Â move second ¿¡ ÁöÁ¤ÇÑ ÃÊ°¡ °æ°úÇÑ ÈÄ¿¡
-ÀÌµ¿À» ÇÑ´Ù. ÁöÁ¤À» ÇÏÁö ¾Ê¾ÒÀ» °æ¿ì ±âº»°ªÀº 5ÃÊ ÀÌ´Ù.
+ì—ëŸ¬ ë©”ì„¸ì§€ë¥¼ ì¶œë ¥í•˜ê³  ì´ì „ í™”ë©´ìœ¼ë¡œ ëŒì•„ê°„ë‹¤. ì‰˜ì—ì„œ ì´ í•¨ìˆ˜ë¥¼ ì‚¬ìš©í•  ê²½ìš°ì—ëŠ” use_java ë¥¼
+0 ë¡œ ì§€ì •ì„ í•˜ì—¬ java script ê°€ ì•„ë‹Œ ë¬¸ìì—´ ì¶œë ¥ìœ¼ë¡œ ë˜ê²Œ í•  ìˆ˜ ìˆë‹¤. move_page ë¥¼ ì§€ì •í–ˆì„
+ê²½ìš°ì—ëŠ” ì§€ì •í•œ í˜ì´ì§€ë¡œ ì´ë™ì„ í•˜ê²Œ ëœë‹¤. move_page ë¥¼ ì§€ì •í–ˆì„ ê²½ìš° java ë¥¼ ì‚¬ìš©í•˜ëŠ” ê²½ìš°
+ì—ëŠ” ë°”ë¡œ ì´ë™ì„ í•˜ë©°, ìë°”ë¥¼ ì‚¬ìš©í•˜ì§€ ì•ŠëŠ” ê²½ìš°ì—ëŠ” move second ì— ì§€ì •í•œ ì´ˆê°€ ê²½ê³¼í•œ í›„ì—
+ì´ë™ì„ í•œë‹¤. ì§€ì •ì„ í•˜ì§€ ì•Šì•˜ì„ ê²½ìš° ê¸°ë³¸ê°’ì€ 5ì´ˆ ì´ë‹¤.
 
-use_java ¸¦ 1 ·Î ÁöÁ¤À» Çß´õ¶óµµ text browser (lynx, links, w3m) ÀÇ °æ¿ì¿¡´Â use_java 0 À¸·Î
-ÀÛµ¿À» ÇÑ´Ù. shell ¿¡¼­ »ç¿ëÀ» ÇßÀ» °æ¿ì ¿ª½Ã ¸¶Âù°¡Áö ÀÌ´Ù. use_java ´Â java script °¡ Áö¿ø
-ÀÌ µÇ´Â ºê¶ó¿ìÁ®¿¡¼­¸¸ Àû¿ëÀÌ µÈ´Ù.
+use_java ë¥¼ 1 ë¡œ ì§€ì •ì„ í–ˆë”ë¼ë„ text browser (lynx, links, w3m) ì˜ ê²½ìš°ì—ëŠ” use_java 0 ìœ¼ë¡œ
+ì‘ë™ì„ í•œë‹¤. shell ì—ì„œ ì‚¬ìš©ì„ í–ˆì„ ê²½ìš° ì—­ì‹œ ë§ˆì°¬ê°€ì§€ ì´ë‹¤. use_java ëŠ” java script ê°€ ì§€ì›
+ì´ ë˜ëŠ” ë¸Œë¼ìš°ì ¸ì—ì„œë§Œ ì ìš©ì´ ëœë‹¤.
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
-if(!$string) perror_lib(&quot;¹®ÀÚ¿­ÀÌ ºñ¾ú½À´Ï´Ù.&quot;);
-if(!$string) perror_lib(&quot;¹®ÀÚ¿­ÀÌ ºñ¾ú½À´Ï´Ù.&quot;,1);
-if(!$string) perror_lib(&quot;¹®ÀÚ¿­ÀÌ ºñ¾ú½À´Ï´Ù.&quot;,1,&quot;http://test.com/login.php&quot;);
-if(!$string) perror_lib(&quot;¹®ÀÚ¿­ÀÌ ºñ¾ú½À´Ï´Ù.&quot;,0,&quot;http://test.com/login.php&quot;,3);
+if(!$string) perror_lib(&quot;ë¬¸ìì—´ì´ ë¹„ì—ˆìŠµë‹ˆë‹¤.&quot;);
+if(!$string) perror_lib(&quot;ë¬¸ìì—´ì´ ë¹„ì—ˆìŠµë‹ˆë‹¤.&quot;,1);
+if(!$string) perror_lib(&quot;ë¬¸ìì—´ì´ ë¹„ì—ˆìŠµë‹ˆë‹¤.&quot;,1,&quot;http://test.com/login.php&quot;);
+if(!$string) perror_lib(&quot;ë¬¸ìì—´ì´ ë¹„ì—ˆìŠµë‹ˆë‹¤.&quot;,0,&quot;http://test.com/login.php&quot;,3);
 
-<FONT ID=RE>Âü°í</FONT>
+<span id="RE">ì°¸ê³ </span>
 pnotice_lib()

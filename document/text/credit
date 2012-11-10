@@ -1,39 +1,39 @@
-<FONT ID=RE>CHECK FUNCTION</FONT>
+<span id="RE">CHECK FUNCTION</span>
 
-check_filename_lib()           ±èÁ¤±Õ <http://www.oops.org>
-check_htmltable_lib()          ±èÁ¤±Õ <http://www.oops.org>
-check_uristr_lib()             ±èÁ¤±Õ <http://www.oops.org>
-get_microtime_lib()            ±èÁ¤±Õ <http://www.oops.org>
-human_fsize_lib()              ±èÁ¤±Õ <http://www.oops.org>
-is_email_lib()                 ±èÁ¤±Õ <http://www.oops.org>
-is_hangul_lib()                ±èÁ¤±Õ <http://www.oops.org>
-is_iis_lib()                   ±èÁ¤±Õ <http://www.oops.org>
-is_url_lib()                   ±èÁ¤±Õ <http://www.oops.org>
-is_windows_lib()               ±èÁ¤±Õ <http://www.oops.org>
+check_filename_lib()           ê¹€ì •ê·  <http://www.oops.org>
+check_htmltable_lib()          ê¹€ì •ê·  <http://www.oops.org>
+check_uristr_lib()             ê¹€ì •ê·  <http://www.oops.org>
+get_microtime_lib()            ê¹€ì •ê·  <http://www.oops.org>
+human_fsize_lib()              ê¹€ì •ê·  <http://www.oops.org>
+is_email_lib()                 ê¹€ì •ê·  <http://www.oops.org>
+is_hangul_lib()                ê¹€ì •ê·  <http://www.oops.org>
+is_iis_lib()                   ê¹€ì •ê·  <http://www.oops.org>
+is_url_lib()                   ê¹€ì •ê·  <http://www.oops.org>
+is_windows_lib()               ê¹€ì •ê·  <http://www.oops.org>
 
-<FONT ID=RE>FILESYSTEM FUNCTION</FONT>
+<span id="RE">FILESYSTEM FUNCTION</span>
 
-filelist_lib()                 ±èÁ¤±Õ <http://www.oops.org>
-getfile_lib()                  ±èÁ¤±Õ <http://www.oops.org>
-getfiletype_lib()              ±èÁ¤±Õ <http://www.oops.org>
-putfile_lib()                  ±èÁ¤±Õ <http://www.oops.org>
-readfile_lib()                 ±èÁ¤±Õ <http://www.oops.org>
+filelist_lib()                 ê¹€ì •ê·  <http://www.oops.org>
+getfile_lib()                  ê¹€ì •ê·  <http://www.oops.org>
+getfiletype_lib()              ê¹€ì •ê·  <http://www.oops.org>
+putfile_lib()                  ê¹€ì •ê·  <http://www.oops.org>
+readfile_lib()                 ê¹€ì •ê·  <http://www.oops.org>
 
-<FONT ID=RE>HTML FUNCTION</FONT>
+<span id="RE">HTML FUNCTION</span>
 
-agentinfo_lib()                ±èÁ¤±Õ <http://www.oops.org>
-autolink_lib()                 ±èÁ¤±Õ <http://www.oops.org>
-get_hostname_lib()             ±èÁ¤±Õ <http://www.oops.org>
-movepage_lib()                 ±èÁ¤±Õ <http://www.oops.org>
-perror_lib()                   ±èÁ¤±Õ <http://www.oops.org>
-pnotice_lib()                  ±èÁ¤±Õ <http://www.oops.org>
+agentinfo_lib()                ê¹€ì •ê·  <http://www.oops.org>
+autolink_lib()                 ê¹€ì •ê·  <http://www.oops.org>
+get_hostname_lib()             ê¹€ì •ê·  <http://www.oops.org>
+movepage_lib()                 ê¹€ì •ê·  <http://www.oops.org>
+perror_lib()                   ê¹€ì •ê·  <http://www.oops.org>
+pnotice_lib()                  ê¹€ì •ê·  <http://www.oops.org>
 
-<FONT ID=RE>PARSE FUNCTION</FONT>
+<span id="RE">PARSE FUNCTION</span>
 
-ncrencode_lib()                ±èÁ¤±Õ <http://www.oops.org>, ¹æÃ¢Çö <winchild@kldp.org>
-uniencode_lib()                ±èÁ¤±Õ <http://www.oops.org>, ¹æÃ¢Çö <winchild@kldp.org>
-unidecode_lib()                ±èÁ¤±Õ <http://www.oops.org>, ¹æÃ¢Çö <winchild@kldp.org>
-utf8encode_lib()               ±èÁ¤±Õ <http://www.oops.org>, ÃÖÇö¼ö <http://baby.web119.com>
-utf8decode_lib()               ±èÁ¤±Õ <http://www.oops.org>, ÃÖÇö¼ö <http://baby.web119.com>
-substr_lib()                   ±èÁ¤±Õ <http://www.oops.org>
+ncrencode_lib()                ê¹€ì •ê·  <http://www.oops.org>, ë°©ì°½í˜„ <winchild@kldp.org>
+uniencode_lib()                ê¹€ì •ê·  <http://www.oops.org>, ë°©ì°½í˜„ <winchild@kldp.org>
+unidecode_lib()                ê¹€ì •ê·  <http://www.oops.org>, ë°©ì°½í˜„ <winchild@kldp.org>
+utf8encode_lib()               ê¹€ì •ê·  <http://www.oops.org>, ìµœí˜„ìˆ˜ <http://baby.web119.com>
+utf8decode_lib()               ê¹€ì •ê·  <http://www.oops.org>, ìµœí˜„ìˆ˜ <http://baby.web119.com>
+substr_lib()                   ê¹€ì •ê·  <http://www.oops.org>
 

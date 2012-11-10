@@ -1,25 +1,25 @@
-<FONT class="title">check_uristr_lib()</FONT>
+<span class="title">check_uristr_lib()</span>
 
 (required korean module)
 
-check_uristr_lib -- GET ¶Ç´Â POST ·Î ³Ñ¾î°¡´Â º¯¼ö Ã¼Å©
+check_uristr_lib -- GET ë˜ëŠ” POST ë¡œ ë„˜ì–´ê°€ëŠ” ë³€ìˆ˜ ì²´í¬
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>int check_uristr_lib (string variable)</B>
+<b>int check_uristr_lib (string variable)</b>
 
-GET ÀÌ³ª POST ·Î º¯¼ö¸¦ Ã¼Å©ÇÑ´Ù. ¹®ÀÚ¿­¿¡ ¸ÞÅ¸ Ä³¸¯ÅÍ°¡ Á¸ÀçÇÒ °æ¿ì, 1À» ¸®ÅÏÇÑ´Ù.
-ÀÌ ÇÔ¼ö¿¡¼­ °É¸®´Â ¹®ÀÚ´Â ÇÑ±Û,¾ËÆÄºª, _, - ¹®ÀÚ¸¦ Á¦¿ÜÇÏ°í´Â ¸ðµÎ ¿¡·¯¸Þ¼¼Áö°¡ Ãâ·ÂµÈ´Ù.
+GET ì´ë‚˜ POST ë¡œ ë³€ìˆ˜ë¥¼ ì²´í¬í•œë‹¤. ë¬¸ìžì—´ì— ë©”íƒ€ ìºë¦­í„°ê°€ ì¡´ìž¬í•  ê²½ìš°, 1ì„ ë¦¬í„´í•œë‹¤.
+ì´ í•¨ìˆ˜ì—ì„œ ê±¸ë¦¬ëŠ” ë¬¸ìžëŠ” í•œê¸€,ì•ŒíŒŒë²³, _, - ë¬¸ìžë¥¼ ì œì™¸í•˜ê³ ëŠ” ëª¨ë‘ ì—ëŸ¬ë©”ì„¸ì§€ê°€ ì¶œë ¥ëœë‹¤.
 
-check_filename_lib ÇÔ¼ö¿ÍÀÇ ´Ù¸¥Á¡Àº µµÆ®(.) ¹®ÀÚ¸¦ Çã¶ôÇÏÁö ¾Ê´Â´Ù´Â Á¡ÀÌ´Ù.
+check_filename_lib í•¨ìˆ˜ì™€ì˜ ë‹¤ë¥¸ì ì€ ë„íŠ¸(.) ë¬¸ìžë¥¼ í—ˆë½í•˜ì§€ ì•ŠëŠ”ë‹¤ëŠ” ì ì´ë‹¤.
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
 $s = &quot;asdf..asdf&quot;;
 if (check_uristr_lib($s)) {
-  echo &quot;»ç¿ëÇÒ ¼ö ¾ø´Â ¹®ÀÚ°¡ µé¾î ÀÖ½À´Ï´Ù.&quot;;
+  echo &quot;ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ë¬¸ìžê°€ ë“¤ì–´ ìžˆìŠµë‹ˆë‹¤.&quot;;
 }
 
-<FONT ID=RE>ÂüÁ¶</FONT>
-check_filename_lib()
+<span id="RE">ì°¸ì¡°</span>
+check_filename_lib ()
 

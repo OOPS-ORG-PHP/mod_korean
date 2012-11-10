@@ -1,18 +1,18 @@
-<FONT class="title">version_lib()</FONT>
+<span class="title">version_lib()</span>
 
 (required korean module)
 
-version_lib -- korean extension ÀÇ ¹öÀüÀ» Ãâ·Â
+version_lib -- korean extension ì˜ ë²„ì „ì„ ì¶œë ¥
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>unsigned char version_lib(void)</B>
+<b>unsigned char version_lib(void)</b>
 
-korean extension ÀÇ ¹öÀüÀ» Ãâ·Â
+korean extension ì˜ ë²„ì „ì„ ì¶œë ¥
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
 echo version_lib();
 
-°á°ú : 0.0.1
+ê²°ê³¼ : 0.0.1
 

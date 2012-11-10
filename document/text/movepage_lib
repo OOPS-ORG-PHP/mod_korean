@@ -1,16 +1,16 @@
-<FONT class="title">movepage_lib()</FONT>
+<span class="title">movepage_lib()</span>
 
 (required korean module)
 
-movepage_lib -- ÆäÀÌÁö¸¦ ÀÌµ¿½ÃÅ°´Â ÇÔ¼ö
+movepage_lib -- í˜ì´ì§€ë¥¼ ì´ë™ì‹œí‚¤ëŠ” í•¨ìˆ˜
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>void movepage_lib(string url, int timeout)</B>
+<b>void movepage_lib(string url, int timeout)</b>
 
 
-¿øÇÏ´Â ÆäÀÌÁö·Î ÁöÁ¤ÇÑ ½Ã°£ ÀÌÈÄ¿¡ reflesh ÇÑ »óÅÂ·Î ÀÌµ¿À» ½ÃÄÑÁØ´Ù.
+ì›í•˜ëŠ” í˜ì´ì§€ë¡œ ì§€ì •í•œ ì‹œê°„ ì´í›„ì— reflesh í•œ ìƒíƒœë¡œ ì´ë™ì„ ì‹œì¼œì¤€ë‹¤.
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
 movepage_lib(&quot;http://www.oops.org&quot;,30);

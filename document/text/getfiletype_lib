@@ -1,16 +1,16 @@
-<FONT class="title">getfiletype_lib()</FONT>
+<span class="title">getfiletype_lib()</span>
 
 (required korean module)
 
-getfiletype_lib -- ÆÄÀÏ ÀÌ¸§¿¡¼­ È®ÀåÀÚ¸¦ ¹Ş¾Æ¿È
+getfiletype_lib -- íŒŒì¼ ì´ë¦„ì—ì„œ í™•ì¥ìë¥¼ ë°›ì•„ì˜´
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>int getfiletype_lib (string filename)</B>
+<b>int getfiletype_lib (string filename)</b>
 
-ÀÌ ÇÔ¼ö¿¡ ÆÄÀÏ ÀÌ¸§À» Åë°ú ½ÃÅ³ °æ¿ì ÇØ´ç ÆÄÀÏÀÇ È®ÀåÀÚ¸¦ º¯¼ö·Î ¹Ş´Â´Ù.
+ì´ í•¨ìˆ˜ì— íŒŒì¼ ì´ë¦„ì„ í†µê³¼ ì‹œí‚¬ ê²½ìš° í•´ë‹¹ íŒŒì¼ì˜ í™•ì¥ìë¥¼ ë³€ìˆ˜ë¡œ ë°›ëŠ”ë‹¤.
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
 $a = getfiletype_lib(&quot;aaa.txt&quot;);
 echo $a =&gt; txt

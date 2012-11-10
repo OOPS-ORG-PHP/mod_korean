@@ -1,15 +1,15 @@
-<FONT class="title">autolink_lib()</FONT>
+<span class="title">autolink_lib()</span>
 
 (required korean module)
 
-autolink_lib -- TEXT Áß URL ÀÌ³ª EMAIL À» ÀÚµ¿À¸·Î ¸µÅ©
+autolink_lib -- TEXT ì¤‘ URL ì´ë‚˜ EMAIL ì„ ìë™ìœ¼ë¡œ ë§í¬
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>string autolink_lib(string str)</B>
+<b>string autolink_lib(string str)</b>
 
-¹®ÀÚ¿­¿¡ µé¾î ÀÖ´Â url °ú email ÁÖ·Î¸¦ ÀÚµ¿À¸·Î hyper link ¸¦ ¸¸µç´Ù.
+ë¬¸ìì—´ì— ë“¤ì–´ ìˆëŠ” url ê³¼ email ì£¼ë¡œë¥¼ ìë™ìœ¼ë¡œ hyper link ë¥¼ ë§Œë“ ë‹¤.
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
 $str = autolink_lib($str);
