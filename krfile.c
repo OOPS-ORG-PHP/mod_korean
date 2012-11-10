@@ -163,7 +163,7 @@ PHP_FUNCTION(putfile_lib)
 {
 	unsigned char filepath[MAXPATHLENGTH] = { 0, };
 	char * fname = NULL,
-		 * input = NULL;
+		 * input = "";
 	int    flen  = 0,
 		   inlen = 0,
 		   mode  = 0;

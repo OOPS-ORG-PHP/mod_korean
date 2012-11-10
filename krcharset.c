@@ -153,7 +153,7 @@ PHP_FUNCTION(unidecode_lib)
 		RETURN_EMPTY_STRING ();
 
 	if ( clen == 0 ) {
-		php_error(E_ERROR, "Can't use null value of argument 1");
+		php_error(E_ERROR, "missing 2st argument.");
 		RETURN_FALSE;
 	}
 
@@ -178,7 +178,7 @@ PHP_FUNCTION(unidecode_lib)
 
 /* }}} */
 
-/* {{{ proto string utf8encode_lib(string str)
+/* {{{ proto string utf8encode_lib(string str[, string from_charset)
    Return utf8 string from euc-kr or cp949 */
 PHP_FUNCTION(utf8encode_lib)
 {
@@ -219,7 +219,7 @@ PHP_FUNCTION(utf8encode_lib)
 }
 /* }}} */
 
-/* {{{ proto string utf8decode_lib(string str, string type)
+/* {{{ proto string utf8decode_lib(string str[, string to_charset])
    Return euc-kr or cp949 or unicode string from utf8 */
 PHP_FUNCTION(utf8decode_lib)
 {
