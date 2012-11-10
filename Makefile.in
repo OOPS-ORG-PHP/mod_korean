@@ -1,8 +1,0 @@
-# $Id$
-
-LTLIBRARY_NAME          = libkorean.la
-LTLIBRARY_SOURCES       = korean.c krparse.c krcheck.c krregex.c krerror.c krfile.c krnetwork.c krimage.c krmail.c krmath.c krcharset.c
-LTLIBRARY_SHARED_NAME   = korean.la
-LTLIBRARY_SHARED_LIBADD = $(KOREAN_SHARED_LIBADD)
-
-include $(top_srcdir)/build/dynlib.mk

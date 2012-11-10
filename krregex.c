@@ -25,67 +25,79 @@
 #include "php.h"
 #include "php_ini.h"
 #include "ext/standard/info.h"
+#include "php_kr.h"
 #include "krregex.h"
 #include "php_krparse.h"
 
-unsigned char *kr_regex_replace (unsigned char *regex_o, unsigned char *replace_o, unsigned char *str_o)
+UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // {{{
 {
-	size_t str_len = strlen(str_o);
-	zval *replaces;
-	unsigned char *buf_o;
-	TSRMLS_FETCH();
+	size_t   str_len = 0;
+	zval   * replaces;
+	UChar  * buf_o;
 
-	MAKE_STD_ZVAL(replaces);
-	ZVAL_STRING(replaces, replace_o, 1);
+	TSRMLS_FETCH ();
+
+	if ( str_o != NULL )
+		str_len = strlen (str_o);
+
+	MAKE_STD_ZVAL (replaces);
+	ZVAL_STRING (replaces, replace_o, 1);
 		
-	buf_o = (unsigned char *) php_pcre_replace(regex_o, strlen(regex_o), str_o,str_len, replaces,0, &str_len, -1, 0 TSRMLS_CC);
+	buf_o = (UChar *) php_pcre_replace (
+			regex_o, strlen(regex_o), str_o, str_len, replaces,0, &str_len, -1, 0 TSRMLS_CC
+	);
 
 	return buf_o;
-}
+} // }}}
 
-unsigned char *kr_regex_replace_arr (unsigned char *regex_o[], unsigned char *replace_o[], unsigned char *str_o, unsigned int regex_no)
+UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * str_o, unsigned int regex_no) // {{{
 {
 	unsigned int i;
-	size_t str_len = strlen(str_o);
+	size_t str_len = 0;
 #ifdef PHP_WIN32
-	zval *replaces[100];
+	zval * replaces[100];
 #else
-	zval *replaces[regex_no];
+	zval * replaces[regex_no];
 #endif
-	unsigned char * o_str = NULL;
-	unsigned char * c_str = NULL;
-	TSRMLS_FETCH();
+	UChar * o_str = NULL;
+	UChar * c_str = NULL;
 
-	for ( i=0; i<regex_no ; i++ )
-   	{
-		MAKE_STD_ZVAL(replaces[i]);
-		ZVAL_STRING(replaces[i],replace_o[i],1);
-		if( i == 0 )
-	   	{
-			o_str = (unsigned char *) php_pcre_replace(regex_o[i],
-				   										strlen(regex_o[i]),
-													   	str_o,
-														str_len,
-													   	replaces[i],
-													   	0,
-													   	&str_len,
-													   	-1, 0 TSRMLS_CC);
-			c_str = emalloc (sizeof(unsigned char *) * str_len + 1);
+	TSRMLS_FETCH ();
+
+	if ( str_o != NULL )
+		str_len = strlen (str_o);
+
+	for ( i=0; i<regex_no ; i++ ) {
+		MAKE_STD_ZVAL (replaces[i]);
+		ZVAL_STRING (replaces[i], replace_o[i], 1);
+
+		if( i == 0 ) {
+			o_str = (UChar *) php_pcre_replace (
+						regex_o[i],
+				   		strlen(regex_o[i]),
+						str_o,
+						str_len,
+						replaces[i],
+						0,
+						&str_len,
+						-1, 0 TSRMLS_CC
+					);
+			c_str = emalloc (sizeof (UChar *) * (str_len + 1));
 			strcpy (c_str, o_str);
-		}
-	   	else
-	   	{
+		} else {
 			o_str = NULL;
-			o_str = (unsigned char *) php_pcre_replace(regex_o[i],
-				  										strlen(regex_o[i]),
-													   	c_str,
-													   	str_len,
-													   	replaces[i],
-													   	0,
-													   	&str_len,
-													   	-1, 0 TSRMLS_CC);
+			o_str = (UChar *) php_pcre_replace(
+						regex_o[i],
+				  		strlen(regex_o[i]),
+						c_str,
+						str_len,
+						replaces[i],
+						0,
+						&str_len,
+						-1, 0 TSRMLS_CC
+					);
 			efree (c_str);
-			c_str = emalloc (sizeof(unsigned char *) * str_len + 1);
+			c_str = emalloc (sizeof (UChar *) * (str_len + 1));
 			strcpy (c_str, o_str);
 		}
 
@@ -96,42 +108,37 @@ unsigned char *kr_regex_replace_arr (unsigned char *regex_o[], unsigned char *re
 		efree (c_str);
 
 	return o_str;
-}
+} // }}}
 
-unsigned int checkReg(unsigned char *str, unsigned char *regex_o)
+unsigned int checkReg (UChar * str, UChar * regex_o) // {{{
 {
 	regex_t preg;
 
-	if (regcomp(&preg, regex_o, REG_EXTENDED) != 0)
-   	{
-		php_error(E_WARNING," Problem REGEX compile in PHP");
+	if ( regcomp (&preg, regex_o, REG_EXTENDED) != 0 ) {
+		php_error (E_WARNING," Problem REGEX compile in PHP");
 		return 0;
 	}
 
-	if (regexec(&preg, str, 0, NULL, 0) == 0)
-   	{
-		regfree(&preg);
+	if ( regexec (&preg, str, 0, NULL, 0) == 0 ) {
+		regfree (&preg);
 		return 1;
-	}
-   	else
-   	{
-		regfree(&preg);
+	} else {
+		regfree (&preg);
 		return 0;
 	}
-}
+} // }}}
 
-int pcre_match (unsigned char *regex, unsigned char *str)
+int pcre_match (UChar * regex, UChar * str) // {{{
 {
-	pcre *re = NULL;
-	pcre_extra *extra = NULL;
-	int preg_options = 0, *offsets, val = 0;
+	pcre * re = NULL;
+	pcre_extra * extra = NULL;
+	int preg_options = 0, * offsets, val = 0;
 	unsigned int size_offsets;
 	int num_subpats;
 
 	/* Compile regex or get it from cache. */
-	if ((re = pcre_get_compiled_regex(regex, &extra, &preg_options TSRMLS_CC)) == NULL) {
+	if ( (re = pcre_get_compiled_regex (regex, &extra, &preg_options TSRMLS_CC)) == NULL )
 		return -1;
-	}
 
 	pcre_fullinfo (re, extra, PCRE_INFO_CAPTURECOUNT, &num_subpats);
 	num_subpats++;
@@ -139,14 +146,13 @@ int pcre_match (unsigned char *regex, unsigned char *str)
 	offsets = (int *) safe_emalloc (size_offsets, sizeof (int), 0);
 
 	/* Execute the regular expression. */
-	if ((pcre_exec(re, extra, str, strlen(str), 0, 0, offsets, size_offsets)) > 0) {
+	if ( (pcre_exec (re, extra, str, strlen (str), 0, 0, offsets, size_offsets)) > 0 )
 		val = 1;
-	}
 
-	safe_efree(offsets);
+	safe_efree (offsets);
 
 	return val;
-}
+} // }}}
 
 /*
  * Local variables:

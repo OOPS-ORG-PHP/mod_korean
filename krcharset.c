@@ -1,22 +1,20 @@
-/*
-  +----------------------------------------------------------------------+
-  | PHP Version 4                                                        |
-  +----------------------------------------------------------------------+
-  | Copyright (c) 1997-2002 The PHP Group                                |
-  +----------------------------------------------------------------------+
-  | This source file is subject to version 2.02 of the PHP license,      |
-  | that is bundled with this package in the file LICENSE, and is        |
-  | available at through the world-wide-web at                           |
-  | http://www.php.net/license/2_02.txt.                                 |
-  | If you did not receive a copy of the PHP license and are unable to   |
-  | obtain it through the world-wide-web, please send a note to          |
-  | license@php.net so we can mail you a copy immediately.               |
-  +----------------------------------------------------------------------+
-  | Author: JoungKyun Kim <http://www.oops.org>                          |
-  +----------------------------------------------------------------------+
+/**
+ * Project: mod_korean ::
+ * File:    krcharset.c
+ *
+ * Copyright (c) 2012 JoungKyun.Kim
+ *
+ * LICENSE: GPL
+ *
+ * @category    Text
+ * @package     mod_korean
+ * @author      JoungKyun.Kim <http://oops.org>
+ * @copyright   2012 OOPS.org
+ * @license     GPL
+ * @version     SVN: $Id$
+ * @since       File available since release 0.0.1
+ */
 
-  $Id$
-*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,6 +33,7 @@
 #include "krregex.h"
 #include "php_krparse.h"
 #include "SAPI.h"
+#include "php_kr.h"
 
 /* include charset */
 #include "charset/iso8859.h"
@@ -44,6 +43,8 @@
 #include "charset/gb2312.h"
 #include "charset/big5.h"
 
+/* {{{ [[ Global Varivales ]]
+ */
 static XUChar table_rev_latin2 [ 1024] = { 0, };
 static XUChar table_rev_koi8r_1[ 1024] = { 0, };
 static XUChar table_rev_koi8r_2[ 1024] = { 0, };
@@ -56,84 +57,47 @@ static XUChar table_rev_big5   [65536] = { 0, };
 //static char xu_language[3] = {0, 0, 0};
 static int  xu_locale_encoding = XU_CONV_NONE;
 static int  XUINITTABLE_CHECK = 0;
+/* }}} */
 
 /* {{{ proto string ncrencode_lib (string str [, int type])
    Return ncr code from euc-kr */
 PHP_FUNCTION(ncrencode_lib)
 {
-	pval **arg1, **arg2;
-	int argc;
-	unsigned int type;
-	unsigned char *string;
+	char * string = NULL;
+	char * input  = NULL;
+	int    inlen  = 0;
+	int    type   = 0;
 
-	argc = ZEND_NUM_ARGS();
+	if ( kr_parameters ("s|b", &input, &inlen, &type) == FAILURE )
+		return;
 
-	switch(argc)
-   	{
-		case 1:
-			if(zend_get_parameters_ex(1, &arg1) == FAILURE)
-		   	{
-				WRONG_PARAM_COUNT;
-			}
-			break;
-		case 2:
-			if(zend_get_parameters_ex(2, &arg1, &arg2) == FAILURE)
-		   	{
-				WRONG_PARAM_COUNT;
-			}
-			convert_to_long_ex(arg2);
-			break;
-		default:
-			WRONG_PARAM_COUNT;
-	}
+	if ( inlen == 0 )
+		RETURN_EMPTY_STRING ();
 
-	if (argc > 1 && Z_LVAL_PP(arg2) == 1) { type = 1; }
-	else { type = 0; }
-
-	convert_to_string_ex(arg1);
-
-	if (strlen(Z_STRVAL_PP(arg1)) > 0)
-   	{
-		string = krNcrEncode(Z_STRVAL_PP(arg1), type);
-		RETVAL_STRING(string, 1);
-		safe_efree(string);
-	}
-   	else { RETURN_EMPTY_STRING(); }
+	string = krNcrEncode (input, type);
+	RETVAL_STRING (string, 1);
+	safe_efree (string);
 }
 
 /* }}} */
 
-/* {{{ proto string ncrencode_lib (string str [, int type])
+/* {{{ proto string ncrencode_lib (string str)
    Return ncr code from euc-kr */
 PHP_FUNCTION(ncrdecode_lib)
 {
-	pval **arg1;
-	int argc;
-	static char *retstr;
+	char * string = NULL;
+	char * input  = NULL;
+	char   inlen  = 0;
 
-	argc = ZEND_NUM_ARGS();
+	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
+		return;
 
-	switch(argc)
-   	{
-		case 1:
-			if(zend_get_parameters_ex(1, &arg1) == FAILURE)
-		   	{
-				WRONG_PARAM_COUNT;
-			}
-			break;
-		default:
-			WRONG_PARAM_COUNT;
-	}
+	if ( inlen == 0 )
+		RETURN_EMPTY_STRING ();
 
-	convert_to_string_ex(arg1);
-
-	if (strlen(Z_STRVAL_PP(arg1)) > 0)
-   	{
-		retstr = krNcrDecode(Z_STRVAL_PP(arg1));
-		RETVAL_STRING(retstr, 1);
-		safe_efree(retstr);
-	}
-   	else { RETURN_EMPTY_STRING(); }
+	string = krNcrDecode (input);
+	RETVAL_STRING (string, 1);
+	safe_efree (string);
 }
 
 /* }}} */
@@ -142,68 +106,24 @@ PHP_FUNCTION(ncrdecode_lib)
    Return string that convert to unicode from euc-kr or cp949 */
 PHP_FUNCTION(uniencode_lib)
 {
-	pval **arg1, **arg2, **arg3;
-	int argc;
-	unsigned char *str, *start, *end, *string;
+	char * input;
+	int    inlen;
+	char * prefix  = "\\u";
+	int    prelen  = 2;
+	char * postfix = "";
+	int    postlen = 0;
+	unsigned char * string  = NULL;
 
-	argc = ZEND_NUM_ARGS();
+	if ( kr_parameters ("s|ss", &input, &inlen, &prefix, &prelen, &postfix, &postlen) == FAILURE )
+		return;
 
-	switch(argc)
-   	{
-		case 1:
-			if(zend_get_parameters_ex(1, &arg1) == FAILURE)
-		   	{
-				WRONG_PARAM_COUNT;
-			}
-			break;
-		case 2:
-			if(zend_get_parameters_ex(2, &arg1, &arg2) == FAILURE)
-		   	{
-				WRONG_PARAM_COUNT;
-			}
-			convert_to_string_ex(arg2);
-			break;
-		case 3:
-			if(zend_get_parameters_ex(3, &arg1, &arg2, &arg3) == FAILURE)
-		   	{
-				WRONG_PARAM_COUNT;
-			}
-			convert_to_string_ex(arg2);
-			convert_to_string_ex(arg3);
-			break;
-		default:
-			WRONG_PARAM_COUNT;
-	}
+	if ( inlen == 0 )
+		RETURN_EMPTY_STRING ();
 
-	convert_to_string_ex(arg1);
-	str  = Z_STRVAL_PP(arg1);
-
-	if (strlen(str) == 0)
-   	{
-		php_error(E_ERROR, "Can't use null value of argument 1");
+	if ( (string = uniConv (input, 0, 0, prefix, postfix)) == NULL )
 		RETURN_FALSE;
-	}
 
-	if (argc < 2)
-   	{
-		start = "\\u";
-		end   = "";
-	}
-   	else if (argc == 2)
-   	{
-		start = Z_STRVAL_PP(arg2);
-		end   = "";
-	}
-   	else
-   	{
-		start = Z_STRVAL_PP(arg2);
-		end   = Z_STRVAL_PP(arg3);
-	}
-
-	string = uniConv(str, 0, 0, start, end);
-
-	if ( string == NULL ) { RETURN_FALSE; }
-	RETVAL_STRING(string,1);
+	RETVAL_STRING (string, 1);
 	safe_efree (string);
 }
 
@@ -213,93 +133,46 @@ PHP_FUNCTION(uniencode_lib)
    Return string to convert to cp949 or euc-kr from unicode */
 PHP_FUNCTION(unidecode_lib)
 {
-	pval **arg1, **arg2, **arg3, **arg4;
-	int argc;
-	unsigned int type, subtype;
-	unsigned char *str, *to, *start, *end, *string;
+	char * input   = NULL;
+	int    inlen   = 0;
+	char * cset    = NULL;
+	int    clen    = 0;
+	char * prefix  = "\\u";
+	int    prelen  = 2;
+	char * postfix = "";
+	int    postlen = 0;
 
-	argc = ZEND_NUM_ARGS();
+	int    type    = 0;
+	unsigned char * string  = NULL;
 
-	switch(argc)
-   	{
-		case 2:
-			if(zend_get_parameters_ex(2, &arg1, &arg2) == FAILURE)
-		   	{
-				WRONG_PARAM_COUNT;
-			}
-			break;
-		case 3:
-			if(zend_get_parameters_ex(3, &arg1, &arg2, &arg3) == FAILURE)
-		   	{
-				WRONG_PARAM_COUNT;
-			}
-			convert_to_string_ex(arg3);
-			break;
-		case 4:
-			if(zend_get_parameters_ex(4, &arg1, &arg2, &arg3, &arg4) == FAILURE)
-		   	{
-				WRONG_PARAM_COUNT;
-			}
-			convert_to_string_ex(arg3);
-			convert_to_string_ex(arg4);
-			break;
-		default:
-			WRONG_PARAM_COUNT;
-	}
+	if ( kr_parameters ("ss|ss",
+		&input, &inlen, &cset, &clen, &prefix, &prelen, &postfix, &postlen) == FAILURE )
+		return;
 
-	convert_to_string_ex(arg1);
-	convert_to_string_ex(arg2);
+	if ( inlen == 0 )
+		RETURN_EMPTY_STRING ();
 
-	str  = Z_STRVAL_PP(arg1);
-	to   = Z_STRVAL_PP(arg2);
-
-	if (strlen(str) == 0 || strlen(to) == 0)
-   	{
+	if ( clen == 0 ) {
 		php_error(E_ERROR, "Can't use null value of argument 1");
 		RETURN_FALSE;
 	}
 
-	if (strcasecmp(to, "euc-kr") && strcasecmp(to, "euc_kr") && strcasecmp(to, "cp949"))
-   	{
-		php_error(E_ERROR, "Unknown encoding \"%s\"", to);
+	if (
+			strcasecmp (cset, "euc-kr") &&
+			strcasecmp (cset, "euc_kr") && 
+			strcasecmp (cset, "cp949")
+		)
+	{
+		php_error(E_ERROR, "Unknown encoding \"%s\"", cset);
 		RETURN_FALSE;
 	}
 
-	if (!strcasecmp(to, "euc-kr") || !strcasecmp(to, "euc_kr"))
-   	{
-		type = 1;
-		subtype = 1;
-	}
-   	else if (!strcasecmp(to,"cp949"))
-   	{
-		type = 1;
-		subtype = 0;
-	}
-   	else
-   	{
-		type = 1;
-		subtype = 0;
-	}
+	type = ( ! strcasecmp (cset, "euc-kr") || ! strcasecmp (cset, "euc_kr")) ? 1 : 0;
 
-	if (argc < 3)
-   	{
-		start = "\\u";
-		end   = "";
-	}
-   	else if (argc == 3)
-   	{
-		start = Z_STRVAL_PP(arg3);
-		end   = "";
-	}
-   	else
-   	{
-		start = Z_STRVAL_PP(arg3);
-		end   = Z_STRVAL_PP(arg4);
-	}
-	string = uniConv(str, type, subtype, start, end);
+	if ( (string = uniConv(input, 1, type, prefix, postfix)) == NULL )
+		RETURN_FALSE;
 
-	if ( string == NULL ) { RETURN_FALSE; }
-	RETVAL_STRING(string,1);
+	RETVAL_STRING (string, 1);
 	safe_efree (string);
 }
 
@@ -309,58 +182,39 @@ PHP_FUNCTION(unidecode_lib)
    Return utf8 string from euc-kr or cp949 */
 PHP_FUNCTION(utf8encode_lib)
 {
-	zval **src, **characterset;
-	char *utf8;
-	int  utf8length = 0, length = 0;
-	int  charactersetcode=0;
+	char * input = NULL;
+	int    inlen = 0;
+	char * cset  = "EUC-KR";
+	int    clen  = 6;
+	int    ccode = 0;
+	int    ulen  = 0;
 
-	switch(ZEND_NUM_ARGS())
-	{
-		case 1:
-			if (zend_get_parameters_ex(1, &src) == FAILURE )
-			{
-				WRONG_PARAM_COUNT;
-			}
-			break;
-		case 2:
-			if ( zend_get_parameters_ex(2, &src, &characterset) == FAILURE )
-			{
-				WRONG_PARAM_COUNT;
-			}
-			convert_to_string_ex(characterset);
-			break;
-		default:
-			WRONG_PARAM_COUNT;
-	}
+	char * utf8  = NULL;
 
-	convert_to_string_ex(src);
+	if ( kr_parameters ("s|s", &input, &inlen, &cset, &clen) == FAILURE )
+		return;
 
-	if( !Z_STRLEN_PP(src) )
-	{
-		RETURN_EMPTY_STRING();
-	}
+	if ( inlen == 0 )
+		RETURN_EMPTY_STRING ();
 
-	length = Z_STRLEN_PP(src);
-	utf8 = (char *)emalloc(length *6);
+	utf8 = (char *) emalloc (inlen * 6);
 
 	if ( ZEND_NUM_ARGS() == 1 )
-	{
-		charactersetcode = XU_CONV_CP949;
-	}
-	else
-	{
-		if (!strcasecmp(Z_STRVAL_PP(characterset), "EUC-KR")) { charactersetcode = XU_CONV_CP949; }
-		else if (!strcasecmp(Z_STRVAL_PP(characterset), "BIG5")) { charactersetcode = XU_CONV_BIG5; }
-		else if (!strcasecmp(Z_STRVAL_PP(characterset), "CHI")) { charactersetcode = XU_CONV_BIG5; }
-		else if (!strcasecmp(Z_STRVAL_PP(characterset), "SJIS")) { charactersetcode = XU_CONV_SJIS; }
-		else if (!strcasecmp(Z_STRVAL_PP(characterset), "JPN")) { charactersetcode = XU_CONV_SJIS; }
-		else { charactersetcode = XU_CONV_CP949; }
+		ccode = XU_CONV_CP949;
+	else {
+		if      ( ! strcasecmp (cset, "EUC-KR") ) ccode = XU_CONV_CP949;
+		else if ( ! strcasecmp (cset, "CP949") )  ccode = XU_CONV_CP949;
+		else if ( ! strcasecmp (cset, "BIG5") )   ccode = XU_CONV_BIG5;
+		else if ( ! strcasecmp (cset, "CHI") )    ccode = XU_CONV_BIG5;
+		else if ( ! strcasecmp (cset, "SJIS") )   ccode = XU_CONV_SJIS;
+		else if ( ! strcasecmp (cset, "JPN") )    ccode = XU_CONV_SJIS;
+		else                                      ccode = XU_CONV_CP949;
 	}
 
-	XUCodeConv(utf8, length * 6, XU_CONV_UTF8, Z_STRVAL_PP(src), length, charactersetcode);
-	utf8length = strlen(utf8);
+	XUCodeConv (utf8, inlen * 6, XU_CONV_UTF8, input, inlen, ccode);
+	ulen = strlen (utf8);
 
-	RETVAL_STRINGL(utf8, utf8length, 1);
+	RETVAL_STRINGL (utf8, ulen, 1);
 	safe_efree (utf8);
 }
 /* }}} */
@@ -369,46 +223,43 @@ PHP_FUNCTION(utf8encode_lib)
    Return euc-kr or cp949 or unicode string from utf8 */
 PHP_FUNCTION(utf8decode_lib)
 {
-	zval **srcstr, **characterset;
-	static char *newstr, *ncr;
-	int  newstrlength,srclenth;
-	int  charactersetcode=0;
+	char * input = NULL;
+	int    inlen = 0;
+	char * cset  = "EUC-KR";
+	int    clen  = 6;
 
-	if(ZEND_NUM_ARGS() != 2 || zend_get_parameters_ex(2, &srcstr, &characterset) == FAILURE)
-	{   
-		WRONG_PARAM_COUNT;
-	}
-	convert_to_string_ex(srcstr);
-	convert_to_string_ex(characterset);
-	if( !Z_STRLEN_PP(srcstr) || !Z_STRLEN_PP(characterset) )
-	{
-		RETURN_EMPTY_STRING();
-	}
+	char * str   = NULL;
+	int    slen  = 0;
+	int    ccode = 0;
+	char * ncr   = NULL;
 
-	srclenth = Z_STRLEN_PP(srcstr);
-	newstr = (char *)emalloc(srclenth*6);
+	if ( kr_parameters ("s|s", &input, &inlen, &cset, &clen) == FAILURE )
+		return;
 
-	if (!strcasecmp(Z_STRVAL_PP(characterset), "EUC-KR")) { charactersetcode = XU_CONV_CP949; }
-	else if (!strcasecmp(Z_STRVAL_PP(characterset), "CHI")) { charactersetcode = XU_CONV_BIG5; }
-	else if (!strcasecmp(Z_STRVAL_PP(characterset), "BIG5")) { charactersetcode = XU_CONV_BIG5; }
-	else if (!strcasecmp(Z_STRVAL_PP(characterset), "JPN")) { charactersetcode = XU_CONV_SJIS; }
-	else if (!strcasecmp(Z_STRVAL_PP(characterset), "SJIS")) { charactersetcode = XU_CONV_SJIS; }
-	else { charactersetcode = XU_CONV_CP949; }
+	if ( inlen == 0 )
+		RETURN_EMPTY_STRING ();
 
-	XUCodeConv(newstr, srclenth * 6, charactersetcode, Z_STRVAL_PP(srcstr), srclenth, XU_CONV_UTF8);
-	newstrlength = strlen(newstr);
+	str = (char *) emalloc (inlen * 6);
 
-	if (!strcasecmp(Z_STRVAL_PP(characterset), "EUC-KR"))
-	{
-		ncr = (char *) krNcrEncode(newstr, 1);
-		RETVAL_STRING(ncr, 1);
-		safe_efree(ncr);
-	}
-	else
-	{
-		RETVAL_STRINGL(newstr, newstrlength, 1);
-	}
-	safe_efree (newstr);
+	if      ( ! strcasecmp (cset, "EUC-KR") ) ccode = XU_CONV_CP949;
+	else if ( ! strcasecmp (cset, "CP949") )  ccode = XU_CONV_CP949;
+	else if ( ! strcasecmp (cset, "CHI") )    ccode = XU_CONV_BIG5;
+	else if ( ! strcasecmp (cset, "BIG5") )   ccode = XU_CONV_BIG5;
+	else if ( ! strcasecmp (cset, "JPN") )    ccode = XU_CONV_SJIS;
+	else if ( ! strcasecmp (cset, "SJIS") )   ccode = XU_CONV_SJIS;
+	else                                      ccode = XU_CONV_CP949;
+
+	XUCodeConv (str, inlen * 6, ccode, input, inlen, XU_CONV_UTF8);
+	slen = strlen (str);
+
+	if ( ccode == XU_CONV_CP949 ) {
+		ncr = (char *) krNcrEncode (str, 1);
+		RETVAL_STRING (ncr, 1);
+		safe_efree (ncr);
+	} else
+		RETVAL_STRINGL(str, slen, 1);
+
+	safe_efree (str);
 }
 /* }}} */
 
@@ -423,7 +274,7 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 	unsigned int ncr;
 	size_t len;
 	unsigned char rc[9];
-	static unsigned char *ret = NULL;
+	unsigned char *ret = NULL;
 
 	if ( str_o == NULL ) { return NULL; }
 	else { len = strlen(str_o); }
@@ -529,7 +380,7 @@ unsigned char *krNcrDecode (unsigned char *str_o)
 {
 	unsigned int slen, i = 0, tmp, first, second;
 	unsigned char rc[3], tmpstr[8];
-	static unsigned char *ret = NULL;
+	unsigned char *ret = NULL;
 
 	ret = (unsigned char *) emalloc (sizeof(char) * strlen(str_o) * 2);
 	memset (ret, '\0', sizeof(ret));
@@ -610,7 +461,7 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 	unsigned int aryno;
 	size_t len;
 	unsigned char rc[256];
-	static unsigned char *ret = NULL;
+	unsigned char *ret = NULL;
 
 	int regno,hexv,firsti,secondi;
 	long slen = strlen(start);
@@ -813,6 +664,51 @@ unsigned int hex2dec (unsigned char *str_o, unsigned int type) {
 		default :
 			return ((buf[0] * 16 * 16 * 16) + (buf[1] * 16 * 16) + (buf[2] * 16) + buf[3]);
 			
+	}
+}
+/* }}} */
+
+/* {{{ int is_utf8 (char * s) */
+int is_utf8 (char * s)
+{
+	int len, i, check, j;
+
+	// utf-8 bomb character
+	if ( s[0] == 0xef && s[1] == 0xbb && s[2] == 0xbf )
+		return 0;
+
+	// 적어도 utf8 1글자의 길이는 3byte여야 함
+	if ( (len = strlen (s)) < 3 )
+		return 1;
+
+	for ( i=0; i<len; i++ ) {
+		// ASCII 영역은 건너띈다.
+		if ( ! (s[i] & 0x80) )
+			continue;
+
+		// utf8 is must 110xxxxxxx
+		// 0x40 -> 01000000
+		if ( ! (s[i] & 0x40) )
+			return 1;
+
+		{
+			UChar p = (UChar) s[i];
+
+			if ( (p >> 5) == 0x06 )      // 1st of 2byte utf8
+				check = 1;
+			else if ( (p >> 4) == 0x0e ) // 1st of 3byte utf8
+				check = 2;
+		}
+
+		if ( (i + check) >= len )
+			return 1;
+
+		i++;
+		for ( j=i; j<(i + check); j++ ) {
+			if ( ((UChar) s[j] >> 6) != 0x02 )
+				return 1;
+		}
+		return 0;
 	}
 }
 /* }}} */

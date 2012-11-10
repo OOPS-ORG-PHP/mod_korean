@@ -26,13 +26,13 @@ PHP_FUNCTION(getfile_lib);
 PHP_FUNCTION(putfile_lib);
 PHP_FUNCTION(filelist_lib);
 
-int writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o);
-unsigned char *readfile(unsigned char *filename);
-unsigned char *human_file_size (double size_o, int sub_o, int unit, double cunit);
-unsigned int check_filedev (unsigned char *path_f, unsigned char *filename);
-unsigned char *includePath (unsigned char *filepath);
-int numberOfchar (char *str, char chk);
-int pcre_match (unsigned char *regex, unsigned char *str);
+int writefile (unsigned char * filename, unsigned char * str_o, unsigned int mode_o);
+unsigned char * readfile (unsigned char * filename);
+char * human_file_size (double size_o, int sub_o, int unit, int cunit);
+unsigned int check_filedev (unsigned char * path_f, unsigned char * filename);
+unsigned char * includePath (unsigned char * filepath);
+int numberOfchar (char * str, char chk);
+int pcre_match (unsigned char * regex, unsigned char * str);
 
 #define FILEBUFS 4096
 #define MAXPATHLENGTH 1024
