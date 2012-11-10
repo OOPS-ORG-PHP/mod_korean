@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id$
+$Id: php_krmath.h,v 1.2 2002-09-18 10:14:10 oops Exp $
 */
 
 #ifndef PHP_KRMATH_H
@@ -23,12 +23,3 @@ $Id$
 char *kr_math_number_format(double d, int dec, char dec_point, char thousand_sep);
 
 #endif  /* end PHP_KRMATH_H */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

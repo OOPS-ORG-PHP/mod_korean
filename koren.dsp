@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "KOREAN_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\main" /I "..\..\Zend" /I "..\..\TSRM" /D "NDEBUG" /D ZEND_DEBUG=0 /D ZTS=1 /D "COMPILE_DL_KOREAN" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ZEND_WIN32" /D "PHP_WIN32" /D "HAVE_KRLIBGD=1" /D "HAVE_GD2" /D "HAVE_GD_PNG" /D "HAVE_GD_JPG" /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\main" /I "..\..\Zend" /I "..\..\TSRM" /D "NDEBUG" /D ZEND_DEBUG=0 /D ZTS=1 /D "COMPILE_DL_KOREAN" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ZEND_WIN32" /D "PHP_WIN32" /D "HAVE_KRLIBGD=1" /D "HAVE_GD_PNG" /D "HAVE_GD_JPG" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
-# ADD LINK32 php4ts.lib freetype2.lib gd2.lib libjpeg.lib libtiff.lib libpng.lib zlib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib resolv.lib lib44bsd95.lib /nologo /dll /machine:I386 /out:"..\..\Release_TS/php_korean.dll" /libpath:"..\..\Release_TS" /libpath:"..\..\Release_TS_Inline"
+# ADD LINK32 php4ts.lib freetype2.lib gd.lib libjpeg.lib libtiff.lib libpng.lib zlib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib resolv.lib lib44bsd95.lib /nologo /dll /machine:I386 /out:"..\..\Release_TS/php_korean.dll" /libpath:"..\..\Release_TS" /libpath:"..\..\Release_TS_Inline"
 
 !ELSEIF  "$(CFG)" == "korean - Win32 Debug_TS"
 
@@ -69,7 +69,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "KOREAN_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\main" /I "..\..\Zend" /I "..\..\TSRM" /D ZEND_DEBUG=1 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "KOREAN_EXPORTS" /D "COMPILE_DL_KOREAN" /D ZTS=1 /D "ZEND_WIN32" /D "PHP_WIN32" /D "HAVE_KRLIBGD=1" /D "HAVE_GD2" /D "HAVE_GD_PNG" /D "HAVE_GD_JPG" /YX /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\main" /I "..\..\Zend" /I "..\..\TSRM" /D ZEND_DEBUG=1 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "KOREAN_EXPORTS" /D "COMPILE_DL_KOREAN" /D ZTS=1 /D "ZEND_WIN32" /D "PHP_WIN32" /D "HAVE_KRLIBGD=1" /D "HAVE_GD_PNG" /D "HAVE_GD_JPG" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "_DEBUG"
@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 php4ts_debug.lib freetype2.lib gd2.lib libjpeg.lib libtiff.lib libpng.lib zlib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib resolv.lib lib44bsd95.lib /nologo /dll /debug /machine:I386 /out:"..\..\Debug_TS/php_korean.dll" /pdbtype:sept /libpath:"..\..\Debug_TS"
+# ADD LINK32 php4ts_debug.lib freetype2.lib gd.lib libjpeg.lib libtiff.lib libpng.lib zlib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib resolv.lib lib44bsd95.lib /nologo /dll /debug /machine:I386 /out:"..\..\Debug_TS/php_korean.dll" /pdbtype:sept /libpath:"..\..\Debug_TS"
 
 !ENDIF 
 
@@ -109,10 +109,6 @@ SOURCE=.\krerror.c
 # Begin Source File
 
 SOURCE=.\krparse.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\krcharset.c
 # End Source File
 # Begin Source File
 
@@ -173,10 +169,6 @@ SOURCE=.\php_krparse.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\php_krcharset.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\php_krmail.h
 # End Source File
 # Begin Source File
@@ -197,27 +189,7 @@ SOURCE=.\krregex.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\charset\big5.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\charset\gb2312.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\charset\iso8859.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\charset\jis0208.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\charset\koi8r.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\charset\ksc5601.h
+SOURCE=.\unicode_cp949_ncr_table.h
 # End Source File
 # Begin Source File
 

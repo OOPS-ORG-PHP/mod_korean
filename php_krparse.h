@@ -14,23 +14,36 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id$
+$Id: php_krparse.h,v 1.9 2002-09-05 05:42:03 oops Exp $
 */
 
 #ifndef PHP_KRPARSE_H
 #define PHP_KRPARSE_H
 
+PHP_FUNCTION(ncrencode_lib);
+PHP_FUNCTION(ncrdecode_lib);
+PHP_FUNCTION(uniencode_lib);
+PHP_FUNCTION(unidecode_lib);
+PHP_FUNCTION(utf8encode_lib);
+PHP_FUNCTION(utf8decode_lib);
 PHP_FUNCTION(agentinfo_lib);
 PHP_FUNCTION(autolink_lib);
 PHP_FUNCTION(substr_lib);
 PHP_FUNCTION(postposition_lib);
 
+unsigned char *krNcrEncode (unsigned char *str_o, int type);
+unsigned char *krNcrDecode (unsigned char *str_o);
+unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end);
+unsigned int getNcrIDX (unsigned char str1, unsigned char str2);
+unsigned int getNcrArrayNo (unsigned int key);
+unsigned int getUniIDX (unsigned int key);
+unsigned int hex2dec (unsigned char *str_o, unsigned int type);
+int comp (const void *s1, const void *s2);
+unsigned char *convUTF8 (unsigned char *str_o, int type);
 unsigned char *autoLink (unsigned char *str_o);
-unsigned char *get_useragent (void);
-unsigned char *get_serverenv (unsigned char *para);
+unsigned char *get_useragent(void);
+unsigned char *get_serverenv(unsigned char *para);
 int get_postposition (unsigned char *str);
-unsigned char * strtrim (unsigned char *str);
-void safe_efree (void * str);
 
 #define b_NAME br
 #define b_OS os
@@ -38,12 +51,3 @@ void safe_efree (void * str);
 #define b_LANG ln
 
 #endif /* PHP_KRPARSE_H */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */
