@@ -6,6 +6,7 @@ Sat Nov 10 2012
 by JoungKyun.Kim <http://oops.org>
 	- fixed deprecated zend_get_parameters_ex
 	- support utf8
+	- update gd php bundle library on 5.4.8
 
 Fri Nov  2 2012
 by JoungKyun.Kim <http://oops.org>

@@ -213,7 +213,7 @@ if test "$PHP_KOREAN" != "no"; then
       krextra_sources="libgd/gd.c libgd/gd_png.c libgd/gd_jpeg.c libgd/gd_gif_in.c libgd/gd_io.c \
                        libgd/gd_gif_out.c libgd/gd_io_file.c libgd/gd_ss.c libgd/gd_io_ss.c \
                        libgd/gdtables.c libgd/gdhelpers.c libgd/gd_io_dp.c libgd/gd_topal.c \
-                       libgd/gd_security.c"
+                       libgd/gd_security.c libgd/gd_arc.c"
     fi
 
     dnl These are always available with bundled library
