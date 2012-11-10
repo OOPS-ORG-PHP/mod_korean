@@ -18,11 +18,9 @@ class maildaemon_lib {
   function maildaemon_lib($v) {
     $this->debug = $v->debug ? $v->debug : $v['debug'];
     $this->ofhtml = $v->ofhtml ? $v->ofhtml : $v['ofhtml'];
-    if ( ! $this->helo ) {
-      if($_SERVER['SERVER_NAME']) $this->helo = $_SERVER['SERVER_NAME'];
-      if(preg_match("/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/",$this->helo))
-        $this->helo = "OOPS-PHPLibrarySMTP";
-    }
+    if($_SERVER['SERVER_NAME']) $this->helo = $_SERVER['SERVER_NAME'];
+    if(!$this->helo || preg_match("/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/",$this->helo))
+      $this->helo = "OOPS-PHPLibrarySMTP";
     $this->from = $v->from ? $v->from : $v['from'];
     $this->to   = $v->to ? $v->to : $v['to'];
     $this->body = $v->text ? $v->text."\r\n." : $v['text']."\r\n.";
@@ -34,9 +32,6 @@ class maildaemon_lib {
     $to = preg_replace("/[ ]+/"," ",$to);
     $to_addr = explode(" ",trim(str_replace(",","",$to)));
     $from_addr = trim(preg_replace("/.*<([^>]+)>/i","\\1",$this->from));
-
-    if ( $ret_r ) unset ($ret_r);
-    $ret_r = array ();
 
     for($i=0;$i<sizeof($to_addr);$i++) {
       $to_addr[$i] = trim(preg_replace("/<|>/","",$to_addr[$i]));
@@ -56,12 +51,12 @@ class maildaemon_lib {
         $this->send("quit");
         $this->sockets("close");
 
-        if($this->failed)
-          $ret_r[] = $to_addr[$i];
+        if($this->failed) {
+          $this->errno = $i + 1;
+          break;
+        }
       }
     }
-
-    return $ret_r;
   }
 
   function getMX($email) {
@@ -490,13 +485,12 @@ function mailsource_lib($ln,$from,$to,$subject,$body,$pbody="",$attach="") {
   return $parse->text;
 }
 
-function sockmail_lib($source, $from, $to, $helohost = "", $debug = 0) {
+function sockmail_lib($source, $from, $to, $debug = 0) {
   $inputs->debug = $debug;
   $inputs->ofhtml = 0;
   $inputs->from = trim($from);
   $inputs->to = trim($to);
   $inputs->text = trim($source);
-  $inputs->helo = trim ($heloshost);
 
   $ret = new maildaemon_lib($inputs);
 

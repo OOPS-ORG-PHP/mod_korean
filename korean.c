@@ -1,22 +1,25 @@
-/**
- * Project: mod_korean::
- * File:    korean.c
- *
- * Copyright (c) 2012 JoungKyun.Kim
- *
- * LICENSE: GPL
- *
- * @category    Text
- * @package     mod_korean
- * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   2012 OOPS.org
- * @license     GPL
- * @version     SVN: $Id$
- * @since       File available since release 0.0.1
- */
+/*
+  +----------------------------------------------------------------------+
+  | PHP Version 4                                                        |
+  +----------------------------------------------------------------------+
+  | Copyright (c) 1997-2002 The PHP Group                                |
+  +----------------------------------------------------------------------+
+  | This source file is subject to version 2.02 of the PHP license,      |
+  | that is bundled with this package in the file LICENSE, and is        |
+  | available at through the world-wide-web at                           |
+  | http://www.php.net/license/2_02.txt.                                 |
+  | If you did not receive a copy of the PHP license and are unable to   |
+  | obtain it through the world-wide-web, please send a note to          |
+  | license@php.net so we can mail you a copy immediately.               |
+  +----------------------------------------------------------------------+
+  | Author: JoungKyun Kim <http://www.oops.org>                          |
+  +----------------------------------------------------------------------+
+
+  $Id: korean.c,v 1.30 2003-07-14 04:20:15 oops Exp $
+*/
 
 /*
- * PHP5 Korean String modue "korean" - only korean
+ * PHP4 Korean String modue "korean" - only korean
  */
 
 #ifdef HAVE_CONFIG_H
@@ -28,7 +31,6 @@
 #include "SAPI.h"
 #include "ext/standard/info.h"
 
-#include "php_kr.h"
 #include "krregex.h"
 #include "php_korean.h"
 #include "php_krparse.h"
@@ -51,7 +53,7 @@ static int le_korean;
  *
  * Every user visible function must have an entry in korean_functions[].
  */
-const zend_function_entry korean_functions[] = {
+function_entry korean_functions[] = {
 	PHP_FE(buildno_lib,			NULL)
 	PHP_FE(version_lib,			NULL)
 	PHP_FE(ncrencode_lib,		NULL)
@@ -62,7 +64,7 @@ const zend_function_entry korean_functions[] = {
 	PHP_FE(utf8decode_lib,		NULL)
 	PHP_FE(postposition_lib,	NULL)
 	PHP_FE(check_uristr_lib,	NULL)
-	PHP_FALIAS(check_filename_lib, check_uristr_lib, NULL)
+	PHP_FE(check_filename_lib,	NULL)
 	PHP_FE(check_htmltable_lib,	NULL)
 	PHP_FE(is_iis_lib,			NULL)
 	PHP_FE(is_windows_lib,		NULL)
@@ -164,60 +166,96 @@ PHP_FUNCTION(version_lib)
  *  print move action to url */
 PHP_FUNCTION(movepage_lib)
 {
-	char * url    = NULL;
-	int    urllen = 0;
-    int    time   = 0;
+	pval **url, **timeout;
+	unsigned int time = 0;
 
-	if ( kr_parameters ("s|l", &url, &urllen, &time) == FAILURE )
-		return;
+	switch(ZEND_NUM_ARGS())
+   	{
+		case 1:
+			if(zend_get_parameters_ex(1, &url) == FAILURE)
+		   	{
+				WRONG_PARAM_COUNT;
+			}
+			break;
+		case 2:
+			if(zend_get_parameters_ex(2, &url, &timeout) == FAILURE)
+		   	{
+				WRONG_PARAM_COUNT;
+			}
+			convert_to_long_ex(timeout);
+			time = Z_LVAL_PP(timeout);
+			break;
+		default:
+			WRONG_PARAM_COUNT;
+	}
+	convert_to_string_ex(url);
 
-	if ( urllen == 0 ) {
-		php_error (E_WARNING, "1st argument is missing.");
-		RETURN_FALSE;
+	if (Z_STRLEN_PP(url) == 0)
+   	{
+		php_error(E_ERROR,"Can't permit NULL value of url address\n");
 	}
 
-	php_printf ("<meta http-equiv=\"refresh\" content=\"%d; url=%s\">", time, url);
-	RETURN_TRUE;
-	//zend_bailout();
+	php_printf("<META http-equiv=\"refresh\" content=\"%d;URL=%s\">\n", time, Z_STRVAL_PP(url));
+	zend_bailout();
 }
 /* }}} */
 
 /* {{{ proto float get_microtime_lib(int old, int new) */
 PHP_FUNCTION(get_microtime_lib)
 {
-	char * old;
-	int    oldlen;
-	char * new;
-	int    newlen;
+	pval **old, **new;
+	unsigned char *old_o, *new_o, *old_f, *old_t, *new_f, *new_t;
+	unsigned char *pt_o, *pt_n, ret[10];
 
-	char * start_sec;
-	char * start_mil;
-	char * end_sec;
-	char * end_mil;
-	char * buf;
-	char   ret[10] = { 0, };
+	switch(ZEND_NUM_ARGS())
+	{
+		case 2:
+			if(zend_get_parameters_ex(2, &old, &new) == FAILURE)
+			{
+				WRONG_PARAM_COUNT;
+			}
+			convert_to_string_ex(old);
+			convert_to_string_ex(new);
+			old_o = Z_STRVAL_PP(old);
+			new_o = Z_STRVAL_PP(new);
+			break;
+		default:
+			WRONG_PARAM_COUNT;
+	}
 
-	if ( kr_parameters ("ss", &old, &oldlen, &new, &newlen) == FAILURE )
-		return;
-
-	if ( oldlen == 0 || newlen == 0 )
+	if ( strlen(old_o) == 0 || strlen(new_o) == 0 )
+	{
 		RETURN_FALSE;
+	}
 
-	if ( (buf = strchr (old, ' ')) == NULL )
+	pt_o = strchr(old_o,' ');
+
+	if (pt_o != NULL)
+	{
+		old_f = estrdup(old_o);
+		old_f[pt_o-old_o] = '\0';
+		old_t = estrdup(&old_o[pt_o-old_o+1]);
+	} else {
 		RETURN_FALSE;
+	}
 
-	*buf = 0;
-	start_sec = buf + 1;
-	start_mil = old;
+	pt_n = strchr(new_o, ' ');
 
-	if ( (buf = strchr (new, ' ')) == NULL )
+	if (pt_n != NULL)
+	{
+		new_f = estrdup(new_o);
+		new_f[pt_n-new_o] = '\0';
+		new_t = estrdup(&new_o[pt_n-new_o+1]);
+	} else {
 		RETURN_FALSE;
+	}
 
-	*buf = 0;
-	end_sec = buf + 1;
-	end_mil = new;
+	sprintf(ret,"%.2f", ((atof(new_t) + atof(new_f)) - (atof(old_t) + atof(old_f))));
 
-	sprintf(ret,"%.2f", ((atoi (end_sec) + atof (end_mil)) - (atoi (start_sec) + atof (start_mil))));
+	efree(old_f);
+	efree(old_t);
+	efree(new_f);
+	efree(new_t);
 
 	RETURN_STRING(ret, 1);
 }
