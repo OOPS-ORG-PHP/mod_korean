@@ -114,7 +114,7 @@ PHP_FUNCTION(imgresize_lib)
 	if ( plen == 0 )
 		RETURN_FALSE;
 
-	if ( nlen == 0 ) {
+	if ( tlen == 0 ) {
 #ifdef HAVE_GD_JPG
 		new_type = JPGNEWTYPE;
 #elif HAVE_GD_GIF_CREATE

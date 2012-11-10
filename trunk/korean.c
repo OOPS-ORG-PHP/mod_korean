@@ -171,10 +171,12 @@ PHP_FUNCTION(movepage_lib)
 	if ( kr_parameters ("s|l", &url, &urllen, &time) == FAILURE )
 		return;
 
-	if ( urllen == 0 )
-		php_error(E_ERROR,"Can't permit NULL value of url address\n");
+	if ( urllen == 0 ) {
+		php_error (E_WARNING, "1st argument is missing.");
+		RETURN_FALSE;
+	}
 
-	php_printf ("<meta http-equiv=\"refresh\" content=\"%d; url=%s\">\n", time, url);
+	php_printf ("<meta http-equiv=\"refresh\" content=\"%d; url=%s\">", time, url);
 	RETURN_TRUE;
 	//zend_bailout();
 }

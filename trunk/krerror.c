@@ -41,17 +41,20 @@ PHP_FUNCTION(perror_lib)
 	int    mlen  = 0;
 	int    java  = 0;
 	int    sec   = 5;
+	char * ret;
 
-	if ( kr_parameters ("s|lsl", &input, &inlen, &java, &move, &mlen, &time) == FAILURE )
+	if ( kr_parameters ("s|bsl", &input, &inlen, &java, &move, &mlen, &sec) == FAILURE )
 		return;
 
 	if ( inlen == 0 )
 		input = "Problem in your request!";
 
-	if ( mlen == 0 )
+	if ( ! mlen )
 		move = "1";
 
-	php_printf ("%s\n", print_error (input, java, move, sec));
+	ret = print_error (input, java, move, sec);
+	php_printf ("%s\n", ret);
+	safe_efree (ret);
 }
 /* }}} */
 
@@ -62,8 +65,9 @@ PHP_FUNCTION(pnotice_lib)
 	char * input = NULL;
 	int    inlen = 0;
 	int    java  = 0;
+	char * ret;
 
-	if ( kr_parameters ("s|l", &input, &inlen, &java) == FAILURE )
+	if ( kr_parameters ("s|b", &input, &inlen, &java) == FAILURE )
 		return;
 
 	if ( inlen == 0 ) {
@@ -71,7 +75,9 @@ PHP_FUNCTION(pnotice_lib)
 		RETURN_FALSE;
 	}
 
-	php_printf ("%s", print_error (input, java, "notice", 0));
+	ret = print_error (input, java, "notice", 0);
+	php_printf ("%s\n", ret);
+	safe_efree (ret);
 }
 /* }}} */
 
@@ -87,7 +93,6 @@ unsigned char * print_error (unsigned char * str_o, unsigned int java_o, unsigne
 				  * mv = NULL;
 	unsigned char * result,
 				  * agent_o;
-	static char     ret[1024];
 
 	TSRMLS_FETCH();
 
@@ -106,15 +111,13 @@ unsigned char * print_error (unsigned char * str_o, unsigned int java_o, unsigne
 		if ( strcmp (move_o, "notice") && strcmp (move_o, "1")) {
 			buf_move = (unsigned char *) kr_regex_replace ("/ /i", "%20", move_o);
 			mv = emalloc (sizeof (char) * (strlen (buf_move) + 60));
-			sprintf (mv, "<meta http-equiv=\"refresh\" content=\"%d;url=%s\">\n", sec_o,buf_move);
+			sprintf (mv, "<meta http-equiv=\"refresh\" content=\"%d; url=%s\">\n", sec_o, buf_move);
 			mv[strlen (mv)] = '\0';
 
 			result = emalloc (sizeof (char) * (strlen (buf) + strlen (mv) + 3));
 			sprintf (result, "%s\n%s\n", buf, mv);
 			safe_efree (mv);
-		}
-	   	else
-	   	{
+		} else {
 			result = emalloc (sizeof (char) * (strlen (buf) + 2));
 			sprintf (result, "%s\n", buf);
 		}
@@ -124,18 +127,18 @@ unsigned char * print_error (unsigned char * str_o, unsigned int java_o, unsigne
 		buf = emalloc (sizeof (char) * (strlen (buf_str) + 60));
 		if ( ! strcmp (move_o, "1") )
 		{
-			sprintf (buf, "<script type=\"javascript\">\nalert('%s');\nhistory.back();\n</script>\n", buf_str);
+			sprintf (buf, "<script type=\"javascript\">\n\talert('%s');\nhistory.back();\n</script>\n", buf_str);
 
 			result = emalloc (sizeof (char) * (strlen (buf) + 2));
 			sprintf (result, "%s\n", buf);
 		}
 	   	else
 	   	{
-			sprintf (buf, "<script type=\"javascript\">\nalert('%s')\n</script>\n", buf_str);
+			sprintf (buf, "<script type=\"javascript\">\n\talert('%s')\n</script>\n", buf_str);
 			if ( strcmp (move_o, "notice") ) {
 				buf_move = (unsigned char *) kr_regex_replace ("/ /i","%20", move_o);
 				mv = emalloc (sizeof (char) * (strlen (buf_move) + 50));
-				sprintf (mv, "<meta http-equiv=\"refresh\" content=\"0;url=%s\">\n", buf_move);
+				sprintf (mv, "<meta http-equiv=\"refresh\" content=\"%d; url=%s\">\n", sec_o, buf_move);
 				mv[strlen (mv)] = '\0';
 
 				result = emalloc (sizeof (char) * (strlen (buf) + strlen (mv) + 3));
@@ -148,12 +151,9 @@ unsigned char * print_error (unsigned char * str_o, unsigned int java_o, unsigne
 		}
 	}
 
-	memset (ret, '\0', sizeof (ret));
-	memmove (ret, result, strlen (result));
 	safe_efree (buf);
-	safe_efree (result);
 
-	return ret;
+	return result;
 }
 
 /*

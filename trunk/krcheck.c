@@ -200,9 +200,8 @@ PHP_FUNCTION(check_uristr_lib)
 	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
 		return;
 
-	if ( inlen < 1 ) {
+	if ( ! inlen )
 		RETURN_LONG(0);
-	}
 
 	ret = chkMetaChar (input, 0);
 	RETURN_LONG(ret);
@@ -220,7 +219,7 @@ PHP_FUNCTION(is_email_lib)
 	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
 		return;
 
-	if ( inlen < 1 || checkAddr (input, 0) != 1 )
+	if ( ! inlen || checkAddr (input, 0) != 1 )
 		RETURN_EMPTY_STRING ();
 	
 	RETURN_STRING (input, 1);
@@ -238,7 +237,7 @@ PHP_FUNCTION(is_url_lib)
 	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
 		return;
 
-	if ( inlen < 1 || checkAddr (input, 1) != 1 )
+	if ( ! inlen || checkAddr (input, 1) != 1 )
 		RETURN_EMPTY_STRING ();
 	
 	RETURN_STRING (input, 1);
@@ -246,7 +245,7 @@ PHP_FUNCTION(is_url_lib)
 /* }}} */
 
 /* {{{ proto string is_hangul_lib(char charactor)
- *    check first 1byte is hangul or not. if it is hangul, return 1 nor return 0 */
+ *    check first 1byte is hangul or not. if it is hangul, return true nor return false */
 PHP_FUNCTION(is_hangul_lib)
 {
 	char * input = NULL;
@@ -255,13 +254,13 @@ PHP_FUNCTION(is_hangul_lib)
 	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
 		return;
 
-	if ( inlen < 1 )
-		RETURN_LONG (0);
+	if ( ! inlen )
+		RETURN_FALSE;
 
 	if ( input[0] >= 0xffffffa1 && input[0] <= 0xfffffffe )
 		RETURN_LONG (1);
 
-	RETURN_LONG (0);
+	RETURN_FALSE;
 }
 /* }}} */
 
@@ -275,7 +274,7 @@ PHP_FUNCTION(check_htmltable_lib)
 	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
 		return;
 
-	if ( inlen < 1 )
+	if ( ! inlen )
 		RETURN_LONG (1);
 
 	RETURN_LONG (check_table (input));
