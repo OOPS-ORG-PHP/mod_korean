@@ -11,24 +11,14 @@ extern "C" {
 
 #include "php_compat.h"
 
-#define GD_MAJOR_VERSION 2
-#define GD_MINOR_VERSION 0
-#define GD_RELEASE_VERSION 35
-#define GD_EXTRA_VERSION ""
-#define GD_VERSION_STRING "2.0.35"
-
-#ifdef NETWARE
-/* default fontpath for netware systems */
-#define DEFAULT_FONTPATH "sys:/java/nwgfx/lib/x11/fonts/ttf;."
-#define PATHSEPARATOR ";"
-#elif defined(WIN32)
-/* default fontpath for windows systems */
-#define DEFAULT_FONTPATH "c:\\winnt\\fonts;c:\\windows\\fonts;."
-#define PATHSEPARATOR ";"
-#else
+#ifndef WIN32
 /* default fontpath for unix systems */
 #define DEFAULT_FONTPATH "/usr/X11R6/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/truetype:/usr/X11R6/lib/X11/fonts/TTF:/usr/share/fonts/TrueType:/usr/share/fonts/truetype:/usr/openwin/lib/X11/fonts/TrueType:/usr/X11R6/lib/X11/fonts/Type1:."
 #define PATHSEPARATOR ":"
+#else
+/* default fontpath for windows systems */
+#define DEFAULT_FONTPATH "c:\\winnt\\fonts;c:\\windows\\fonts;."
+#define PATHSEPARATOR ";"
 #endif
 
 /* gd.h: declarations file for the graphic-draw module.
@@ -247,17 +237,8 @@ gdImagePtr gdImageCreateFromPng(FILE *fd);
 gdImagePtr gdImageCreateFromPngCtx(gdIOCtxPtr in);
 gdImagePtr gdImageCreateFromWBMP(FILE *inFile);
 gdImagePtr gdImageCreateFromWBMPCtx(gdIOCtx *infile);
-gdImagePtr gdImageCreateFromJpeg(FILE *infile, int ignore_warning);
-gdImagePtr gdImageCreateFromJpegCtx(gdIOCtx *infile, int ignore_warning);
-gdImagePtr gdImageCreateFromWebp(FILE *fd);
-gdImagePtr gdImageCreateFromWebpCtx(gdIOCtxPtr in);
-gdImagePtr gdImageCreateFromWebpPtr (int size, void *data);
-
-int gdJpegGetVersionInt();
-const char * gdPngGetVersionString();
-
-int gdJpegGetVersionInt();
-const char * gdJpegGetVersionString();
+gdImagePtr gdImageCreateFromJpeg(FILE *infile);
+gdImagePtr gdImageCreateFromJpegCtx(gdIOCtx *infile);
 
 /* A custom data source. */
 /* The source function must return -1 on error, otherwise the number
@@ -296,7 +277,6 @@ void gdImageDestroy(gdImagePtr im);
 
 void gdImageSetPixel(gdImagePtr im, int x, int y, int color);
 
-int gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 int gdImageGetPixel(gdImagePtr im, int x, int y);
 
 void gdImageAABlend(gdImagePtr im);
@@ -320,14 +300,6 @@ void gdImageString(gdImagePtr im, gdFontPtr f, int x, int y, unsigned char *s, i
 void gdImageStringUp(gdImagePtr im, gdFontPtr f, int x, int y, unsigned char *s, int color);
 void gdImageString16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
 void gdImageStringUp16(gdImagePtr im, gdFontPtr f, int x, int y, unsigned short *s, int color);
-
-/*
- * The following functions are required to be called prior to the
- * use of any sort of threads in a module load / shutdown function
- * respectively.
- */
-void gdFontCacheMutexSetup();
-void gdFontCacheMutexShutdown();
 
 /* 2.0.16: for thread-safe use of gdImageStringFT and friends,
  * call this before allowing any thread to call gdImageStringFT.
@@ -474,8 +446,8 @@ void gdImageGifCtx(gdImagePtr im, gdIOCtx *out);
  * compression (smallest files) but takes a long time to compress, and
  * -1 selects the default compiled into the zlib library.
  */
-void gdImagePngEx(gdImagePtr im, FILE * out, int level, int basefilter);
-void gdImagePngCtxEx(gdImagePtr im, gdIOCtx * out, int level, int basefilter);
+void gdImagePngEx(gdImagePtr im, FILE * out, int level);
+void gdImagePngCtxEx(gdImagePtr im, gdIOCtx * out, int level);
 
 void gdImageWBMP(gdImagePtr image, int fg, FILE *out);
 void gdImageWBMPCtx(gdImagePtr image, int fg, gdIOCtx *out);
@@ -491,8 +463,6 @@ void *gdImageWBMPPtr(gdImagePtr im, int *size, int fg);
        0 is lowest. 10 is about the lowest useful setting. */
 void gdImageJpeg(gdImagePtr im, FILE *out, int quality);
 void gdImageJpegCtx(gdImagePtr im, gdIOCtx *out, int quality);
-
-void gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantization);
 
 /* Best to free this memory with gdFree(), not free() */
 void *gdImageJpegPtr(gdImagePtr im, int *size, int quality);
@@ -521,7 +491,7 @@ void* gdImagePngPtr(gdImagePtr im, int *size);
 
 /* Best to free this memory with gdFree(), not free() */
 void* gdImageGdPtr(gdImagePtr im, int *size);
-void *gdImagePngPtrEx(gdImagePtr im, int *size, int level, int basefilter);
+void *gdImagePngPtrEx(gdImagePtr im, int *size, int level);
 
 /* Best to free this memory with gdFree(), not free() */
 void* gdImageGd2Ptr(gdImagePtr im, int cs, int fmt, int *size);
@@ -592,13 +562,6 @@ void gdImageAlphaBlending(gdImagePtr im, int alphaBlendingArg);
 void gdImageAntialias(gdImagePtr im, int antialias);
 void gdImageSaveAlpha(gdImagePtr im, int saveAlphaArg);
 
-enum gdPixelateMode {
-	GD_PIXELATE_UPPERLEFT,
-	GD_PIXELATE_AVERAGE
-};
-
-int gdImagePixelate(gdImagePtr im, int block_size, const unsigned int mode);
-
 /* Macros to access information about images. */
 
 /* Returns nonzero if the image is a truecolor image,
@@ -664,7 +627,7 @@ int gdImageBrightness(gdImagePtr src, int brightness);
 int gdImageContrast(gdImagePtr src, double contrast);
 
 /* Simply adds or substracts respectively red, green or blue to a pixel */
-int gdImageColor(gdImagePtr src, const int red, const int green, const int blue, const int alpha);
+int gdImageColor(gdImagePtr src, int red, int green, int blue);
 
 /* Image convolution by a 3x3 custom matrix */
 int gdImageConvolution(gdImagePtr src, float ft[3][3], float filter_div, float offset);
