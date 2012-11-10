@@ -1,24 +1,24 @@
-<span class="title">pnotice_lib()</span>
+<FONT ID=title>pnotice_lib()</FONT>
 
 (required korean module)
 
-pnotice_lib -- ê²½ê³  ë©”ì„¸ì§€ ë˜ëŠ” ì „ë‹¬ ë©”ì„¸ì§€ë¥¼ ì¶œë ¥
+pnotice_lib -- °æ°í ¸Þ¼¼Áö ¶Ç´Â Àü´Þ ¸Þ¼¼Áö¸¦ Ãâ·Â
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>void pnotice_lib(string str [, int use_java] )</b>
+<B>void pnotice_lib(string str [, int use_java] )</B>
 
-ì§€ì •í•œ ë¬¸ìžì—´ì„ ì¶œë ¥ì„ í•˜ê³  ë‹¤ìŒì„ ì§„í–‰í•œë‹¤. perror ì™€ì˜ ì°¨ì´ëŠ” print_error ëŠ” ì—ëŸ¬ë©”ì„¸ì§€ë¥¼
-ì¶œë ¥í•˜ê³  ì´ì „í™”ë©´ìœ¼ë¡œ ì „í™˜ë˜ëŠ” ê²ƒì— ë¹„í•´ print_notice ëŠ” ë©”ì„¸ì§€ë¥¼ ì¶œë ¥í•˜ê³  ê·¸ ë‹¤ìŒì„ ì§„í–‰í•˜ê²Œ
-ëœë‹¤.
+ÁöÁ¤ÇÑ ¹®ÀÚ¿­À» Ãâ·ÂÀ» ÇÏ°í ´ÙÀ½À» ÁøÇàÇÑ´Ù. perror ¿ÍÀÇ Â÷ÀÌ´Â print_error ´Â ¿¡·¯¸Þ¼¼Áö¸¦
+Ãâ·ÂÇÏ°í ÀÌÀüÈ­¸éÀ¸·Î ÀüÈ¯µÇ´Â °Í¿¡ ºñÇØ print_notice ´Â ¸Þ¼¼Áö¸¦ Ãâ·ÂÇÏ°í ±× ´ÙÀ½À» ÁøÇàÇÏ°Ô
+µÈ´Ù.
 
-use_java ë¥¼ 1 ë¡œ ì§€ì •ì„ í•˜ë©´ JAVA script ALERT ì„ ì´ìš©í•˜ì—¬ ì¶œë ¥ì„ í•œë‹¤. ì‰˜ì—ì„œ ì´ í•¨ìˆ˜ë¥¼ ì‚¬ìš©
-í•  ê²½ìš°ì—ëŠ” use_java ë¥¼ ì£¼ì§€ ì•Šìœ¼ë©´ ëœë‹¤.
+use_java ¸¦ 1 ·Î ÁöÁ¤À» ÇÏ¸é JAVA script ALERT À» ÀÌ¿ëÇÏ¿© Ãâ·ÂÀ» ÇÑ´Ù. ½©¿¡¼­ ÀÌ ÇÔ¼ö¸¦ »ç¿ë
+ÇÒ °æ¿ì¿¡´Â use_java ¸¦ ÁÖÁö ¾ÊÀ¸¸é µÈ´Ù.
 
-<span id="RE">ì˜ˆì œ</span>
+<FONT ID=RE>¿¹Á¦</FONT>
 
-pnotice_lib(&quot;ê²½ê³  ì˜ˆì œ ìž…ë‹ˆë‹¤.&quot;);
-echo &quot;ì´ ë©”ì„¸ì§€ê°€ ë³´ì—¬ì•¼ í•©ë‹ˆë‹¤.&quot;;
+pnotice_lib(&quot;°æ°í ¿¹Á¦ ÀÔ´Ï´Ù.&quot;);
+echo &quot;ÀÌ ¸Þ¼¼Áö°¡ º¸¿©¾ß ÇÕ´Ï´Ù.&quot;;
 
-<span id="RE">ì°¸ê³ </span>
+<FONT ID=RE>Âü°í</FONT>
 perror_lib()

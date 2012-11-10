@@ -1,7 +1,7 @@
 <?
-$phpversion = "5.4.8";
-$version = "0.1.5";
-$updates = "2011.11.11";
+$phpversion = "4.3.1";
+$version = "0.0.5";
+$updates = "2003.03.02";
 
 $list[] = "main";
 $list[] = "check";
@@ -29,7 +29,6 @@ $filesystem[2] = "getfile_lib";
 $filesystem[3] = "getfiletype_lib";
 $filesystem[4] = "putfile_lib";
 $filesystem[5] = "readfile_lib";
-$filesystem[6] = "pcregrep_lib";
 
 $html[1] = "agentinfo_lib";
 $html[2] = "autolink_lib";
@@ -60,9 +59,9 @@ function auto_link($str) {
   $regex[http] = "(http|https|ftp|telnet|news|mms):\/\/(([\xA1-\xFEa-z0-9:_\-]+\.[\xA1-\xFEa-z0-9,:;&#=_~%\[\]?\/.,+\-]+)([.]*[\/a-z0-9\[\]]|=[\xA1-\xFE]+))";
   $regex[mail] = "([\xA1-\xFEa-z0-9_.-]+)@([\xA1-\xFEa-z0-9_-]+\.[\xA1-\xFEa-z0-9._-]*[a-z]{2,3}(\?[\xA1-\xFEa-z0-9=&\?]+)*)";
 
-  # &lt; ë¡œ ì‹œì‘í•´ì„œ 3ì¤„ë’¤ì— &gt; ê°€ ë‚˜ì˜¬ ê²½ìš°ì™€
-  # IMG tag ì™€ A tag ì˜ ê²½ìš° ë§í¬ê°€ ì—¬ëŸ¬ì¤„ì— ê±¸ì³ ì´ë£¨ì–´ì ¸ ìˆì„ ê²½ìš°
-  # ì´ë¥¼ í•œì¤„ë¡œ í•©ì¹¨ (í•©ì¹˜ë©´ì„œ ë¶€ê°€ ì˜µì…˜ë“¤ì€ ëª¨ë‘ ì‚­ì œí•¨)
+  # &lt; ·Î ½ÃÀÛÇØ¼­ 3ÁÙµÚ¿¡ &gt; °¡ ³ª¿Ã °æ¿ì¿Í
+  # IMG tag ¿Í A tag ÀÇ °æ¿ì ¸µÅ©°¡ ¿©·¯ÁÙ¿¡ °ÉÃÄ ÀÌ·ç¾îÁ® ÀÖÀ» °æ¿ì
+  # ÀÌ¸¦ ÇÑÁÙ·Î ÇÕÄ§ (ÇÕÄ¡¸é¼­ ºÎ°¡ ¿É¼ÇµéÀº ¸ğµÎ »èÁ¦ÇÔ)
   $src[] = "/<([^<>\n]*)\n([^<>\n]+)\n([^<>\n]*)>/i";
   $tar[] = "<\\1\\2\\3>";
   $src[] = "/<([^<>\n]*)\n([^\n<>]*)>/i";
@@ -70,11 +69,11 @@ function auto_link($str) {
   $src[] = "/<(A|IMG)[^>]*(HREF|SRC)[^=]*=[ '\"\n]*($regex[http]|mailto:$regex[mail])[^>]*>/i";
   $tar[] = "<\\1 \\2=\"\\3\">";
 
-  # email í˜•ì‹ì´ë‚˜ URL ì— í¬í•¨ë  ê²½ìš° URL ë³´í˜¸ë¥¼ ìœ„í•´ @ ì„ ì¹˜í™˜
+  # email Çü½ÄÀÌ³ª URL ¿¡ Æ÷ÇÔµÉ °æ¿ì URL º¸È£¸¦ À§ÇØ @ À» Ä¡È¯
   $src[] = "/(http|https|ftp|telnet|news|mms):\/\/([^ \n@]+)@/i";
   $tar[] = "\\1://\\2_HTTPAT_\\3";
 
-  # íŠ¹ìˆ˜ ë¬¸ìë¥¼ ì¹˜í™˜ ë° htmlì‚¬ìš©ì‹œ link ë³´í˜¸
+  # Æ¯¼ö ¹®ÀÚ¸¦ Ä¡È¯ ¹× html»ç¿ë½Ã link º¸È£
   $src[] = "/&(quot|gt|lt)/i";
   $tar[] = "!\\1";
   $src[] = "/<a([^>]*)href=[\"' ]*($regex[http])[\"']*[^>]*>/i";
@@ -84,7 +83,7 @@ function auto_link($str) {
   $src[] = "/<([^>]*)(background|codebase|src)[ \n]*=[\n\"' ]*($regex[http])[\"']*/i";
   $tar[] = "<\\1\\2=\"\\4_orig://\\5\"";
 
-  # ë§í¬ê°€ ì•ˆëœ urlë° email address ìë™ë§í¬
+  # ¸µÅ©°¡ ¾ÈµÈ url¹× email address ÀÚµ¿¸µÅ©
   $src[] = "/((SRC|HREF|BASE|GROUND)[ ]*=[ ]*|[^=]|^)($regex[http])/i";
   $tar[] = "\\1<A HREF=\"\\3\" TARGET=\"_blank\">\\3</a>";
   $src[] = "/($regex[mail])/i";
@@ -94,7 +93,7 @@ function auto_link($str) {
   $src[] = "/<\/A><\/A>/i";
   $tar[] = "</A>";
 
-  # ë³´í˜¸ë¥¼ ìœ„í•´ ì¹˜í™˜í•œ ê²ƒë“¤ì„ ë³µêµ¬
+  # º¸È£¸¦ À§ÇØ Ä¡È¯ÇÑ °ÍµéÀ» º¹±¸
   $src[] = "/!(quot|gt|lt)/i";
   $tar[] = "&\\1";
   $src[] = "/(http|https|ftp|telnet|news|mms)_orig/i";
@@ -104,21 +103,21 @@ function auto_link($str) {
   $src[] = "/$regex[file]/i";
   $tar[] = "\\1";
 
-  # email ì£¼ì†Œë¥¼ ë³€í˜•ì‹œí‚´
+  # email ÁÖ¼Ò¸¦ º¯Çü½ÃÅ´
   $src[] = "/$regex[mail]/i";
   $tar[] = "\\1 AT \\2";
   $src[] = "/<A HREF=\"mailto:([^ ]+) at ([^\">]+)/i";
   $tar[] = "<A HREF=\"./mail.php?target=\\1_golbange_\\2";
 
-  # email ì£¼ì†Œë¥¼ ë³€í˜•í•œ ë’¤ URL ì†ì˜ @ ì„ ë³µêµ¬
+  # email ÁÖ¼Ò¸¦ º¯ÇüÇÑ µÚ URL ¼ÓÀÇ @ À» º¹±¸
   $src[] = "/_HTTPAT_/";
   $tar[] = "@";
 
-  # ì´ë¯¸ì§€ì— ë³´ë”ê°’ 0 ì„ ì‚½ì…
+  # ÀÌ¹ÌÁö¿¡ º¸´õ°ª 0 À» »ğÀÔ
   $src[] = "/<(IMG SRC=\"[^\"]+\")>/i";
   $tar[] = "<\\1 BORDER=0>";
 
-  # IE ê°€ ì•„ë‹Œ ê²½ìš° embed tag ë¥¼ ì‚­ì œí•¨
+  # IE °¡ ¾Æ´Ñ °æ¿ì embed tag ¸¦ »èÁ¦ÇÔ
   if($agent[br] != "MSIE") {
     $src[] = "/<embed/i";
     $tar[] = "&lt;embed";
