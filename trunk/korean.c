@@ -180,8 +180,6 @@ PHP_FUNCTION(movepage_lib)
 }
 /* }}} */
 
-
-
 /* {{{ proto float get_microtime_lib(int old, int new) */
 PHP_FUNCTION(get_microtime_lib)
 {
