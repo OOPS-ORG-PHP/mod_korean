@@ -15,7 +15,7 @@
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
 
-$Id$
+$Id: php_krcharset.h,v 1.3 2002-11-28 10:04:12 oops Exp $
 */
 
 #ifndef PHP_KRCHARSET_H
@@ -35,7 +35,6 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type);
 unsigned char *krNcrDecode (unsigned char *str_o);
 unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end);
 unsigned int hex2dec (unsigned char *str_o, unsigned int type);
-int is_utf8 (char * str);
 
 #define LKMS_VECTOR_SIZE	16
 #define MEMORY_SHORTAGE		-1000
@@ -90,12 +89,3 @@ extern int XUutf8Decode(char* dest, int max, const XUChar* text, int length);
 extern int XUutf8Len(const char* text, int max);
 
 #endif /* PHP_KRCHARSET_H */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

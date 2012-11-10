@@ -1,74 +1,81 @@
-<span class="title">sockmail_lib()</span>
+<FONT ID=title>sockmail_lib()</FONT>
 
 (required korean module)
 
-sockmail_lib -- ë©”ì¼ ë°ëª¬ì— ì˜ì¡´í•˜ì§€ ì•Šê³  ë©”ì¼ì„ ë°œì†¡í•˜ëŠ” í•¨ìˆ˜
+sockmail_lib -- ¸ŞÀÏ µ¥¸ó¿¡ ÀÇÁ¸ÇÏÁö ¾Ê°í ¸ŞÀÏÀ» ¹ß¼ÛÇÏ´Â ÇÔ¼ö
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>int sockmail_lib(string mail [, string from [, string to [, string to helo_host [, int debug ] ] ] ])</b>
+<B>int sockmail_lib(string mail [, string from [, string to [, int debug ] ] ])</B>
 
-sockmail_lib í•¨ìˆ˜ëŠ” ì„œë²„ì˜ smtp daemon ì— ì˜ì¡´í•˜ì§€ ì•Šê³  php korean extension ìì²´ì˜ ê¸°ëŠ¥ìœ¼ë¡œ
-ë©”ì¼ì„ ë°œì†¡í•˜ëŠ” í•¨ìˆ˜ì´ë‹¤.
+sockmail_lib ÇÔ¼ö´Â ¼­¹öÀÇ smtp daemon ¿¡ ÀÇÁ¸ÇÏÁö ¾Ê°í php korean extension ÀÚÃ¼ÀÇ ±â´ÉÀ¸·Î
+¸ŞÀÏÀ» ¹ß¼ÛÇÏ´Â ÇÔ¼öÀÌ´Ù.
 
-ì´ í•¨ìˆ˜ëŠ” ë©”ì¼ ë°œì†¡ ì‹¤íŒ¨ì‹œì— ì‹¤íŒ¨í•œ ë©”ì¼ ì£¼ì†Œ (rcpt to) ë¥¼ ë°°ì—´ë¡œ ë°˜í™˜ì„ í•œë‹¤. ëª¨ë‘ ì„±ê³µí–ˆì„
-ê²½ìš°, ë¹ˆ ë°°ì—´ì´ ë°˜í™˜ì´ ëœë‹¤. to ì—ëŠ” ë©”ì¼ì´ 1ê°œ ì´ìƒì´ë©´ ëª¨ë‘ ë°˜ì˜ ë˜ë©°, 1 ê°œì´ìƒì˜ to ì¼ ê²½
-ìš°ì—ë„ ì‹¤íŒ¨í•œ ë©”ì¼ ì£¼ì†Œë“¤ì€ ë°°ì—´ë¡œ ë°˜í™˜ì´ ëœë‹¤. (í•˜ë‹¨ ì˜ˆì œ ì°¸ì¡°)
+ÀÌ ÇÔ¼ö´Â ¸ŞÀÏ ¹ß¼Û¿¡ ¼º°øÀ» ÇÏ¿´À» °æ¿ì¿¡´Â 0 À» ¹İÈ¯ÇÏ¸ç, ¸ŞÀÏ ¹ß¼Û ½ÇÆĞ½Ã¿¡´Â 1 À» ¸®ÅÏÇÑ
+´Ù. ¸¸¾à TO ¸¦ ¿©·¯¸íÀ¸·Î ÁöÁ¤À» ÇßÀ» °æ¿ì, ¸ŞÀÏ ¹ß¼Û ½ÇÆĞ½Ã¿¡´Â ¸î ¹øÂ° ÁöÁ¤ÀÌ µÇ¾î ÀÖ´Â À¯
+Àú¿¡°Ô·ÎÀÇ ¸ŞÀÏ ¹ß¼ÛÀÌ ¸®ÅÏµÇ¾ú´ÂÁö¸¦ º¸¿©ÁØ´Ù. ¿¹¸¦ µé¾î
 
-ì°¸ê³ ë¡œ cc ì—­ì‹œ to ë¡œ ì¸ì‹í•œë‹¤.
+$to = "test@test.com, recv@recv.com, man@man.com";
+..
+$ret = sockmail_lib($mailtext, $from, $to);
 
+ÀÇ °æ¿ì¿¡¼­ $ret °ªÀÌ
 
-í•¨ìˆ˜ì— ì‚¬ìš©ì´ ë˜ì–´ì§€ëŠ” íŒŒë¼ë¯¸í„°ë“¤ì€ ì•„ë˜ë¥¼ ì°¸ê³ í•œë‹¤.
+0 ÀÏ °æ¿ì : test@test.com, recv@recv.com, man@man.com ¸ğµÎ ¹ß¼Û ¼º°ø
+1 ÀÏ °æ¿ì : test@test.com ·Î ¹ß¼Û ½ÇÆĞ. recv@recv.com, man@man.com ´Â ¹ß¼Û ¾ÈÇÔ.
+2 ÀÏ °æ¿ì : test@test.com ·Î ¹ß¼Û ¼º°ø, recv@recv.com À¸·Î ¹ß¼Û ½ÇÆĞ. man@man.com ´Â ¹ß¼Û ¾È
+            ÇÔ.
+3 ÀÏ °æ¿ì : test@test.com, recv@recv.com ¹ß¼Û ¼º°ø, man@man.com ¹ß¼Û ½ÇÆĞ
 
-mail  ë©”ì¼ ë³¸ë¬¸ì´ ë“¤ì–´ê°„ë‹¤.  í—¤ë”ë¶€í„° ë©”ì¼ ë³¸ë¬¸ê¹Œì§€ ì™„ë²½í•˜ê²Œ êµ¬ì„±ì´ ë˜ì–´ì ¸ ìˆì–´ì•¼ í•œë‹¤. ì´ëŠ”
-      mailsource_lib í•¨ìˆ˜ë¥¼ ì´ìš©í•˜ì—¬ ìƒì„±ì„ í•  ìˆ˜ ìˆë‹¤. ë§Œì•½ ì„ì˜ë¡œ êµ¬ì„±ì„ í•  ê²½ìš°ì—ëŠ”, From
-      ê³¼ To ëŠ” ê¼­ í•œë¼ì¸ì”©ìœ¼ë¡œ êµ¬ì„±í•´ì•¼ í•œë‹¤.
+¿Í °°ÀÌ ÇØ¼®ÇÒ ¼ö ÀÖ´Ù.
 
-      ì˜ëª»ëœ ì˜ˆ)
+ÇÔ¼ö¿¡ »ç¿ëÀÌ µÇ¾îÁö´Â ÆÄ¶ó¹ÌÅÍµéÀº ¾Æ·¡¸¦ Âü°íÇÑ´Ù.
+
+mail  ¸ŞÀÏ º»¹®ÀÌ µé¾î°£´Ù.  Çì´õºÎÅÍ ¸ŞÀÏ º»¹®±îÁö ¿Ïº®ÇÏ°Ô ±¸¼ºÀÌ µÇ¾îÁ® ÀÖ¾î¾ß ÇÑ´Ù. ÀÌ´Â
+      mailsource_lib ÇÔ¼ö¸¦ ÀÌ¿ëÇÏ¿© »ı¼ºÀ» ÇÒ ¼ö ÀÖ´Ù. ¸¸¾à ÀÓÀÇ·Î ±¸¼ºÀ» ÇÒ °æ¿ì¿¡´Â, From
+      °ú To ´Â ²À ÇÑ¶óÀÎ¾¿À¸·Î ±¸¼ºÇØ¾ß ÇÑ´Ù.
+
+      Àß¸øµÈ ¿¹)
       To: test@test.com, sender@sender.com
           recv@recv.com
 
-from  ë³´ë‚´ëŠ” ì‚¬ëŒì˜ ì£¼ì†Œë¥¼ ì§€ì •í•œë‹¤. ì´ íŒŒë¼ë¯¸í„°ë¥¼ ì§€ì •í•˜ì§€ ì•Šì•˜ì„ ê²½ìš°ì—ëŠ” ìœ„ì˜ mail íŒŒë¼ë¯¸
-      í„°ì˜ í—¤ë”ì˜ From: ë¶€ë¶„ì—ì„œ íŒŒì‹±ì„ í•˜ì—¬ ê°’ì„ ì–»ëŠ”ë‹¤.  from ì˜ ê°’ì€ ì•„ë˜ì˜ í˜•íƒœë¡œ ì§€ì •ì´
-      ê°€ëŠ¥í•˜ë‹¤.
+from  º¸³»´Â »ç¶÷ÀÇ ÁÖ¼Ò¸¦ ÁöÁ¤ÇÑ´Ù. ÀÌ ÆÄ¶ó¹ÌÅÍ¸¦ ÁöÁ¤ÇÏÁö ¾Ê¾ÒÀ» °æ¿ì¿¡´Â À§ÀÇ mail ÆÄ¶ó¹Ì
+      ÅÍÀÇ Çì´õÀÇ From: ºÎºĞ¿¡¼­ ÆÄ½ÌÀ» ÇÏ¿© °ªÀ» ¾ò´Â´Ù.  from ÀÇ °ªÀº ¾Æ·¡ÀÇ ÇüÅÂ·Î ÁöÁ¤ÀÌ
+      °¡´ÉÇÏ´Ù.
 
-      "ë³´ë‚¸ì´" &lt;sender@sender.com&gt; 
-      ë³´ë‚¸ì´ &lt;sender@sender.com&gt;
+      "º¸³½ÀÌ" &lt;sender@sender.com&gt; 
+      º¸³½ÀÌ &lt;sender@sender.com&gt;
       &lt;sender@sender.com&gt;
       sender@sender.com
 
-to    ë°›ì„ ì‚¬ëŒì˜ ë©”ì¼ì£¼ì†Œë¥¼ ì§€ì •í•œë‹¤. ë°›ì„ ì‚¬ëŒì˜ ë©”ì¼ì£¼ì†ŒëŠ” from ì˜ í˜•ì‹ì„ ë”°ë¥¸ë‹¤. ë˜í•œ to
-      íŒŒë¼ë¯¸í„°ëŠ” ì‰¼í‘œ(,) ë¥¼ ì‚¬ìš©í•˜ì—¬ ì—¬ëŸ¬ëª…ì—ê²Œ ë©”ì¼ì„ ë°œì†¡í•  ìˆ˜ ìˆë‹¤. ì•„ë˜ì˜ ì˜ˆë¥¼ ì°¸ê³ í•œë‹¤.
+to    ¹ŞÀ» »ç¶÷ÀÇ ¸ŞÀÏÁÖ¼Ò¸¦ ÁöÁ¤ÇÑ´Ù. ¹ŞÀ» »ç¶÷ÀÇ ¸ŞÀÏÁÖ¼Ò´Â from ÀÇ Çü½ÄÀ» µû¸¥´Ù. ¶ÇÇÑ to
+      ÆÄ¶ó¹ÌÅÍ´Â ½°Ç¥(,) ¸¦ »ç¿ëÇÏ¿© ¿©·¯¸í¿¡°Ô ¸ŞÀÏÀ» ¹ß¼ÛÇÒ ¼ö ÀÖ´Ù. ¾Æ·¡ÀÇ ¿¹¸¦ Âü°íÇÑ´Ù.
 
-      "ë³´ë‚¸ì´" &lt;sender@sender.com&gt;, sender@sender.com, test@test.com
-
-helo_host
-      SMTP ì— HELO êµ¬ë¬¸ì— ì ì–´ì¤„ í˜¸ìŠ¤íŠ¸ ëª…ì„ ì ëŠ”ë‹¤. sendmail ì˜ -f ì˜µì…˜ê³¼ ë™ì¼í•˜ë‹¤ê³  ë³´ë©´ëœ
-      ë‹¤.
+      "º¸³½ÀÌ" &lt;sender@sender.com&gt;, sender@sender.com, test@test.com
       
-debug ë©”ì¼ ë°œì†¡ ì²˜ë¦¬ ê³¼ì •ì„ ì¶œë ¥ì„ í•œë‹¤.
+debug ¸ŞÀÏ ¹ß¼Û Ã³¸® °úÁ¤À» Ãâ·ÂÀ» ÇÑ´Ù.
 
 
-<span id="RE">ì˜ˆì œ</span>
+<FONT ID=RE>¿¹Á¦</FONT>
 
-ì˜ˆì œë¥¼ ë³¼ ë•Œ ì£¼ì˜í•  ê²ƒì´ ìˆë‹¤. ì•„ë˜ì— ë‚˜ì˜¤ëŠ” ì´ë©”ì¼ í‘œê¸°í˜•ì‹ &quot;user AT domain.com&quot; ì€ ë©”ì¼ ìˆ˜
-ì§‘ê¸°ì˜ ìˆ˜ì§‘ì„ ë§‰ê¸° ìœ„í•œ ë³€í™˜ëœ í‘œì‹œì´ë‹¤. ì•Œì•„ì„œ AT ì„ @ ìœ¼ë¡œ ìƒê°í•˜ê¸° ë°”ë€ë‹¤.
+¿¹Á¦¸¦ º¼ ¶§ ÁÖÀÇÇÒ °ÍÀÌ ÀÖ´Ù. ¾Æ·¡¿¡ ³ª¿À´Â ÀÌ¸ŞÀÏ Ç¥±âÇü½Ä &quot;user AT domain.com&quot; Àº ¸ŞÀÏ ¼ö
+Áı±âÀÇ ¼öÁıÀ» ¸·±â À§ÇÑ º¯È¯µÈ Ç¥½ÃÀÌ´Ù. ¾Ë¾Æ¼­ AT À» @ À¸·Î »ı°¢ÇÏ±â ¹Ù¶õ´Ù.
 
 $ln = &quot;ko&quot;;
-$from = &quot;ë³´ë‚´ëŠ”ì´ &lt;sender@domain.org&gt;&quot;;
-$to = &quot;ë°›ëŠ” ì´ &lt;reciever@to.org</a>&gt;, \&quot;ì–´ë“œë¯¼\&quot; &lt;admin@domain.org</a>&gt;, who@domain.org&quot;;
-$subject = &quot;subject ì•ˆì— \&quot;ë”°ì˜´í‘œ\&quot; ê°€ ìˆìŠµë‹ˆë‹¤.&quot;;
+$from = &quot;º¸³»´ÂÀÌ &lt;sender@domain.org&gt;&quot;;
+$to = &quot;¹Ş´Â ÀÌ &lt;reciever@to.org</a>&gt;, \&quot;¾îµå¹Î\&quot; &lt;admin@domain.org</a>&gt;, who@domain.org&quot;;
+$subject = &quot;subject ¾È¿¡ \&quot;µû¿ÈÇ¥\&quot; °¡ ÀÖ½À´Ï´Ù.&quot;;
 $body = &quot;&lt;html&gt;\n&quot;.
-        &quot;&lt;head&gt;&lt;title&gt;&gt;html ë¬¸ì„œ&lt;/title&gt;&lt;/head&gt;\n&quot;.
+        &quot;&lt;head&gt;&lt;title&gt;&gt;html ¹®¼­&lt;/title&gt;&lt;/head&gt;\n&quot;.
         &quot;&lt;body&gt;\n&quot;.
-        &quot;html ë¬¸ì„œë¥¼ ì‘ì„±í•©ë‹ˆë‹¤.\n\n&quot;.
+        &quot;html ¹®¼­¸¦ ÀÛ¼ºÇÕ´Ï´Ù.\n\n&quot;.
         &quot;&lt;table border=1 width=500&gt;\n&quot;.
         &quot;&lt;tr&gt;\n&quot;.
-        &quot;&lt;td&gt; 1 ì´ì£ &lt;/td&gt;\n&quot;.
-        &quot;&lt;td&gt; 2 ì£  &lt;/td&gt;\n&quot;.
+        &quot;&lt;td&gt; 1 ÀÌÁÒ&lt;/td&gt;\n&quot;.
+        &quot;&lt;td&gt; 2 ÁÒ &lt;/td&gt;\n&quot;.
         &quot;&lt;/tr&gt;\n&lt;tr&gt;\n&quot;.
         &quot;&lt;td colspan=2&gt;\n&quot;.
-        &quot;COLSPAN=2 ì…ë‹ˆë‹¤.\n&quot;.
+        &quot;COLSPAN=2 ÀÔ´Ï´Ù.\n&quot;.
         &quot;&lt;/td&gt;\n&lt;/tr&gt;\n&quot;.
         &quot;&lt;/table&gt;\n&quot;.
         &quot;&lt;/body&gt;\n&lt;/html&gt;&quot;;
@@ -78,12 +85,22 @@ $mailmsg = mailsource_lib($ln,$from,$to,$subject,$body,&quot;&quot;,$attach);
 
 $ret = sockmail_lib($mailmsg, $from, $to);
 
-if ( is_array ($ret) ) {
-  foreach ( $ret as $v ) {
-    echo "$v ë¡œì˜ ë°œì†¡ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.<br>\n"
+if ($ret) {
+  switch ($ret) {
+    case 1:
+      target = "reciever@to.org";
+      break;
+    case 2:
+      target = "admin@domian.org";
+      break;
+    case 3:
+      target = "who@domain.org";
   }
+
+  echo "$target ·ÎÀÇ ¹ß¼Û¿¡ ½ÇÆĞ Çß½À´Ï´Ù. ¸ŞÀÏ ¹ß¼ÛÀ» ÁßÁöÇÕ´Ï´Ù.";
 }
 
-<span id="RE">ì°¸ê³ </span>
+
+<FONT ID=RE>Âü°í</FONT>
 mailsource_lib</A>()
 

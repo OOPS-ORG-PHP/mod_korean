@@ -1,29 +1,29 @@
-<span class="title">unidecode_lib()</span>
+<FONT ID=title>unidecode_lib()</FONT>
 
 (required korean module)
 
-unidecode_lib -- UNICODE í…Œì´ë¸”ì„ EUC-KR, CP949 ë¡œ ë³€í™˜
+unidecode_lib -- UNICODE Å×ÀÌºíÀ» EUC-KR, CP949 ·Î º¯È¯
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>string unidecode_lib (string str , string to_charset [, string start, string end] )</b>
+<B>string unidecode_lib (string str , string to_charset [, string start, string end] )</B>
 
-UNICODE ë¬¸ìë¥¼ EUC-KR, CP949 ë¬¸ìì…‹ìœ¼ë¡œ ë³€í™˜ì„ í•œë‹¤.
+UNICODE ¹®ÀÚ¸¦ EUC-KR, CP949 ¹®ÀÚ¼ÂÀ¸·Î º¯È¯À» ÇÑ´Ù.
 
-to_charset ì€ ë³€í™˜í•  ë¬¸ìì…‹ì„ ì§€ì •í•˜ë©°, EUC-KR ê³¼ CP949 ë¡œ ì§€ì •ì„ í•  ìˆ˜ ìˆë‹¤. EUC-KR ë¡œ ì§€ì •ì„
-í–ˆì„ ê²½ìš°ì—ëŠ” EUC-KR ë²”ìœ„ì™¸ì˜ 2 byte ë¬¸ìë“¤ì„ NCR ì½”ë“œë¡œ ë³€í™˜í•´ì„œ ì¶œë ¥ì„ í•œë‹¤.
+to_charset Àº º¯È¯ÇÒ ¹®ÀÚ¼ÂÀ» ÁöÁ¤ÇÏ¸ç, EUC-KR °ú CP949 ·Î ÁöÁ¤À» ÇÒ ¼ö ÀÖ´Ù. EUC-KR ·Î ÁöÁ¤À»
+ÇßÀ» °æ¿ì¿¡´Â EUC-KR ¹üÀ§¿ÜÀÇ 2 byte ¹®ÀÚµéÀ» NCR ÄÚµå·Î º¯È¯ÇØ¼­ Ãâ·ÂÀ» ÇÑ´Ù.
 
-start ì™€ end ëŠ” uniencode_lib() í•¨ìˆ˜ì™€ ë™ì¼í•˜ë‹¤.
+start ¿Í end ´Â uniencode_lib() ÇÔ¼ö¿Í µ¿ÀÏÇÏ´Ù.
 
-<span id="RE">ì˜ˆì œ</span>
+<FONT ID=RE>¿¹Á¦</FONT>
 
 $a = &quot;U+D55C;U+AE00;aU+C640; U+B620;U+BC29;U+AC01;U+D558;&quot;;<BR>
-$a = <b>unidecode_lib</b>($a,&quot;euc-kr&quot;,&quot;U+&quot;,&quot;;&quot;);<BR>
-return => í•œê¸€aì™€ &amp;#46624;ë°©ê°í•˜
+$a = <B>unidecode_lib</B>($a,&quot;euc-kr&quot;);<BR>
+return => ÇÑ±Ûa¿Í &amp;amp;#46624;¹æ°¢ÇÏ
 
 $a = &quot;U-D55C;U-AE00;aU-C640; U-B620;U-BC29;U-AC01;U-D558;&quot;;<BR>
-$a = <b>unidecode_lib</b>($a,&quot;cp949&quot;,&quot;U-&quot;,&quot;;&quot;);<BR>
-return => í•œê¸€aì™€ ë˜ ë°©ê°í•˜
+$a = <B>unidecode_lib</B>($a,&quot;cp949&quot;,&quot;U-&quot;,&quot;;&quot;);<BR>
+return => ÇÑ±Ûa¿Í Œc¹æ°¢ÇÏ
 
-<span id="RE">ì°¸ê³ </span>
+<FONT ID=RE>Âü°í</FONT>
 uniencode_lib()

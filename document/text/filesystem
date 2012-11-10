@@ -1,25 +1,21 @@
-<span class="title">II. FILE SYSTEM í•¨ìˆ˜</span>
-</PRE>
+<FONT id=title>II. FILE SYSTEM ÇÔ¼ö</FONT>
 
-<TABLE BORDER=1 WIDTH="100%" CELLPADDING=4 CELLSPACING=1>
+<TABLE BORDER=1 WIDTH=100% WIDTH=0 CELLPADDING=4 CELLSPACING=1>
 <TR>
-<TD ALIGN="center"><b>ì£¼ì˜</b></TD>
+<TD ALIGN=center><B>ÁÖÀÇ</B></TD>
 </TR>
 <TR>
 <TD><PRE>
-ì´ ëª¨ë“ˆì€ ìƒë‹¹ížˆ ì‹¤í—˜ì ì¸ ëª¨ë“ˆì´ë‹¤. ì´ëŠ” ì´ í•¨ìˆ˜ë“¤ì´ ì œëŒ€ë¡œ ìž‘ë™ì„ í•˜ì§€ ëª»í•  ìˆ˜ë„ ìžˆë‹¤ëŠ” ì˜ë¯¸ì´ë‹¤.
-ì´ í•¨ìˆ˜ë“¤ì´ PHP ì •ì‹ ë²„ì ¼ì— í¬í•¨ì´ ë ì§€ëŠ” ì•„ì§ ë¯¸ì§€ìˆ˜ ì´ë‹¤. í˜„ìž¬ PHP ê·¸ë£¹ì— ì—°ë½ì„ í•˜ì§€ë„ ì•Šì€ ìƒíƒœ
-ì´ë©°, ë˜í•œ ì¼ë³¸ì—ì„œ ìž‘ì—…ì„ í•˜ê³  ìžˆëŠ” mbstring í•¨ìˆ˜ì™€ì˜ ê´€ê³„ë„ ì–´ë–»ê²Œ ë ì§€ ì•Œ ìˆ˜ê°€ ì—†ë‹¤.
+ÀÌ ¸ðµâÀº »ó´çÈ÷ ½ÇÇèÀûÀÎ ¸ðµâÀÌ´Ù. ÀÌ´Â ÀÌ ÇÔ¼öµéÀÌ Á¦´ë·Î ÀÛµ¿À» ÇÏÁö ¸øÇÒ ¼öµµ ÀÖ´Ù´Â ÀÇ¹ÌÀÌ´Ù.
+ÀÌ ÇÔ¼öµéÀÌ PHP Á¤½Ä ¹öÁ¯¿¡ Æ÷ÇÔÀÌ µÉÁö´Â ¾ÆÁ÷ ¹ÌÁö¼ö ÀÌ´Ù. ÇöÀç PHP ±×·ì¿¡ ¿¬¶ôÀ» ÇÏÁöµµ ¾ÊÀº »óÅÂ
+ÀÌ¸ç, ¶ÇÇÑ ÀÏº»¿¡¼­ ÀÛ¾÷À» ÇÏ°í ÀÖ´Â mbstring ÇÔ¼ö¿ÍÀÇ °ü°èµµ ¾î¶»°Ô µÉÁö ¾Ë ¼ö°¡ ¾ø´Ù.
 
-ë˜í•œ, ì´ í•¨ìˆ˜ë“¤ì€ ì˜¤ë¡œì§€ í•œêµ­ì–´ í™˜ê²½ë§Œì„ ê³ ë ¤í•˜ì—¬ ìž‘ì„±ì„ í•œë‹¤.
+¶ÇÇÑ, ÀÌ ÇÔ¼öµéÀº ¿À·ÎÁö ÇÑ±¹¾î È¯°æ¸¸À» °í·ÁÇÏ¿© ÀÛ¼ºÀ» ÇÑ´Ù.
 </PRE></TD>
 </TR>
 </TABLE>
 
-<PRE>
-File System ê´€ë ¨ í•¨ìˆ˜ëŠ” íŒŒì¼ ë¦¬ìŠ¤íŠ¸, íŒŒì¼ ë‚´ìš©, íŒŒì¼ ì“°ê¸°ë“± íŒŒì¼ ì‹œìŠ¤í…œê³¼ ê´€ë ¨ëœ í•¨ìˆ˜ë“¤ì˜ ëª¨ìŒì´ë‹¤.
+File System °ü·Ã ÇÔ¼ö´Â ÆÄÀÏ ¸®½ºÆ®, ÆÄÀÏ ³»¿ë, ÆÄÀÏ ¾²±âµî ÆÄÀÏ ½Ã½ºÅÛ°ú °ü·ÃµÈ ÇÔ¼öµéÀÇ ¸ðÀ½ÀÌ´Ù.
 
-win32 ìš©ì—ì„œ íŒŒì¼ ê²½ë¡œë¥¼ ìƒëŒ€ê²½ë¡œë¡œ ì‚¬ìš©í•  ê²½ìš°ì—ëŠ” realpath() í•¨ìˆ˜ë¥¼ ì´ìš©í•˜ì—¬ ì ˆëŒ€ ê²½ë¡œí™”ë¥¼ í•´ì„œ
-ì‚¬ìš©í•´ì•¼ í•œë‹¤.
-<b>ì°¨ë¡€</b>
+<B>Â÷·Ê</B>
 
