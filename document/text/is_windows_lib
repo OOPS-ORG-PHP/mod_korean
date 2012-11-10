@@ -1,15 +1,15 @@
-<span class="title">is_windows_lib()</span>
+<FONT class="title">is_windows_lib()</FONT>
 
 (required korean module)
 
-is_windows_lib -- ìš´ì˜ë˜ëŠ” OS ê°€ windows ì¸ì§€ ì²´í¬
+is_windows_lib -- ¿î¿µµÇ´Â OS °¡ windows ÀÎÁö Ã¼Å©
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>int is_windows_lib(void)</b>
+<B>int is_windows_lib(void)</B>
 
-ìš´ì˜ì²´ì œê°€ windows machine ì¸ì§€ íŒë‹¨ì„ í•œë‹¤. ìš´ì˜ì²´ì œê°€ windows ì´ë©´ 1 ì„ ë¦¬í„´í•˜ê³  ì•„ë‹ˆë©° 0
-ì„ ë¦¬í„´í•œë‹¤.
+¿î¿µÃ¼Á¦°¡ windows machine ÀÎÁö ÆÇ´ÜÀ» ÇÑ´Ù. ¿î¿µÃ¼Á¦°¡ windows ÀÌ¸é 1 À» ¸®ÅÏÇÏ°í ¾Æ´Ï¸ç 0
+À» ¸®ÅÏÇÑ´Ù.
 
-<span id="RE">ì°¸ì¡°</span>
+<FONT ID=RE>ÂüÁ¶</FONT>
 is_iis_lib()

@@ -1,38 +1,38 @@
-<span class="title">postposition_lib()</span>
+<FONT class="title">postposition_lib()</FONT>
 
 (required korean module and over buildno 200209051157)
 
-postposition_lib -- í•´ë‹¹ ë‹¨ì–´ì˜ ì¢…ì„±ì„ êµ¬ë¶„í•˜ì—¬ ì¡°ì‚¬ë¥¼ ì •í•¨
+postposition_lib -- ÇØ´ç ´Ü¾îÀÇ Á¾¼ºÀ» ±¸ºÐÇÏ¿© Á¶»ç¸¦ Á¤ÇÔ
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>string postposition_lib(string str, string postposition, int utf8)</b>
+<B>string postposition_lib(string str, string postposition, int utf8)</B>
 
-í•´ë‹¹ ë‹¨ì–´ì˜ ì¢…ì„±ì„ êµ¬ë¶„í•˜ì—¬ ì¡°ì‚¬ë¥¼ ê²°ì •í•œë‹¤. int utf8 ì˜ ê°’ì„ 1 ë¡œ ì§€ì •í•  ê²½ìš°ì—ëŠ”
-utf8 ë¡œ ì¸ì½”ë”©ëœ ë¬¸ìžì—´ì„ ì œì–´í•  ìˆ˜ ìžˆë‹¤.
+ÇØ´ç ´Ü¾îÀÇ Á¾¼ºÀ» ±¸ºÐÇÏ¿© Á¶»ç¸¦ °áÁ¤ÇÑ´Ù. int utf8 ÀÇ °ªÀ» 1 ·Î ÁöÁ¤ÇÒ °æ¿ì¿¡´Â
+utf8 ·Î ÀÎÄÚµùµÈ ¹®ÀÚ¿­À» Á¦¾îÇÒ ¼ö ÀÖ´Ù.
 
-str          ì¡°ì‚¬ê°€ ë¶™ì„ ë‹¨ì–´ë‚˜ ë¬¸ìž¥ì„ ì§€ì •. ë§Œì•½, ë‹¨ì–´ì˜ ë§ˆì§€ë§‰ì´ ì˜ì–´ì¼ ê²½ìš°ì—ëŠ”
-             ë§ˆì§€ë§‰ ê¸€ìžê°€ ì˜ì–´ ëª¨ìŒì¼ ê²½ìš°ì™€ ëì—ì„œ 2 ê¸€ìžê°€ &quot;er, ed, or&quot; ì¼ ê²½ìš°
-             ì—ëŠ” ì¢…ì„±ì´ ì—†ëŠ” ê²ƒìœ¼ë¡œ íŒë‹¨ì„ í•˜ì—¬ ì²˜ë¦¬ í•œë‹¤. ì´ ë¶€ë¶„ì€ ì•„ë§ˆ ê³„ì† ì—…
-             ë°ì´íŠ¸ ë˜ì–´ì•¼ í•  ë¬¸ì œì¼ ê²ƒì´ë‹¤.
+str          Á¶»ç°¡ ºÙÀ» ´Ü¾î³ª ¹®ÀåÀ» ÁöÁ¤. ¸¸¾à, ´Ü¾îÀÇ ¸¶Áö¸·ÀÌ ¿µ¾îÀÏ °æ¿ì¿¡´Â
+             ¸¶Áö¸· ±ÛÀÚ°¡ ¿µ¾î ¸ðÀ½ÀÏ °æ¿ì¿Í ³¡¿¡¼­ 2 ±ÛÀÚ°¡ &quot;er, ed, or&quot; ÀÏ °æ¿ì
+             ¿¡´Â Á¾¼ºÀÌ ¾ø´Â °ÍÀ¸·Î ÆÇ´ÜÀ» ÇÏ¿© Ã³¸® ÇÑ´Ù. ÀÌ ºÎºÐÀº ¾Æ¸¶ °è¼Ó ¾÷
+             µ¥ÀÌÆ® µÇ¾î¾ß ÇÒ ¹®Á¦ÀÏ °ÍÀÌ´Ù.
 
-postposition str ì— ë¶™ì¼ ì¡°ì‚¬ë¥¼ ì§€ì •. &quot;ì´, ê°€, ì€, ëŠ”, ì„, ë¥¼, ì•„, ì•¼&quot; ì¤‘ì—ì„œ ì§€ì •
-             í•œë‹¤. &quot;ì´, ê°€&quot; ì™€ &quot;ì„, ë¥¼&quot; ì˜ ê´€ê³„ì²˜ëŸ¼ ìŒìœ¼ë¡œ ì‚¬ìš©ë˜ëŠ” ê²ƒë“¤ì€ &quot;ì´&quot; ë˜
-             ëŠ” &quot;ê°€&quot; í•˜ë‚˜ë§Œ ì§€ì •ì„ í•˜ë©´ postposition_lib() í•¨ìˆ˜ì—ì„œ ì•Œì•„ì„œ &quot;ì´&quot; ì™€
-             &quot;ê°€&quot; ì¤‘ì— ì–´ëŠ ê²ƒì„ ì‚¬ìš©í•  ì§€ë¥¼ íŒë‹¨ì„ í•œë‹¤.
+postposition str ¿¡ ºÙÀÏ Á¶»ç¸¦ ÁöÁ¤. &quot;ÀÌ, °¡, Àº, ´Â, À», ¸¦, ¾Æ, ¾ß&quot; Áß¿¡¼­ ÁöÁ¤
+             ÇÑ´Ù. &quot;ÀÌ, °¡&quot; ¿Í &quot;À», ¸¦&quot; ÀÇ °ü°èÃ³·³ ½ÖÀ¸·Î »ç¿ëµÇ´Â °ÍµéÀº &quot;ÀÌ&quot; ¶Ç
+             ´Â &quot;°¡&quot; ÇÏ³ª¸¸ ÁöÁ¤À» ÇÏ¸é postposition_lib() ÇÔ¼ö¿¡¼­ ¾Ë¾Æ¼­ &quot;ÀÌ&quot; ¿Í
+             &quot;°¡&quot; Áß¿¡ ¾î´À °ÍÀ» »ç¿ëÇÒ Áö¸¦ ÆÇ´ÜÀ» ÇÑ´Ù.
 
-utf8         utf8 ë¡œ ì¸ì½”ë”©ëœ ë¬¸ìžì—´ì„ ì²˜ë¦¬í•  ê²½ìš°ì—ëŠ” ì´ ê°’ì„ 1 ë¡œ ì§€ì •ì„ í•œë‹¤.
+utf8         utf8 ·Î ÀÎÄÚµùµÈ ¹®ÀÚ¿­À» Ã³¸®ÇÒ °æ¿ì¿¡´Â ÀÌ °ªÀ» 1 ·Î ÁöÁ¤À» ÇÑ´Ù.
 
-<span id="RE">ì˜ˆì œ</span>
+<FONT ID=RE>¿¹Á¦</FONT>
 
-$a = &quot;ì² ìˆ˜&quot;;
-$b = &quot;ì˜ë§Œ&quot;;
+$a = &quot;Ã¶¼ö&quot;;
+$b = &quot;¿µ¸¸&quot;;
 
-echo $a.postposition_lib($a, &quot;ì„&quot;).&quot;\n&quot;;
-=&gt; ì² ìˆ˜ë¥¼
-echo $b.postposition_lib($b, &quot;ê°€&quot;).&quot;\n&quot;;
-=&gt; ì˜ë§Œì´
-echo utf8encode_lib($a).postposition_lib(utf8encode_lib($a), utf8encode_lib(&quot;ê°€&quot;), 1).&quot;\n&quot;;
-=&gt; ì² ìˆ˜ê°€
+echo $a.postposition_lib($a, &quot;À»&quot;).&quot;\n&quot;;
+=&gt; Ã¶¼ö¸¦
+echo $b.postposition_lib($b, &quot;°¡&quot;).&quot;\n&quot;;
+=&gt; ¿µ¸¸ÀÌ
+echo utf8encode_lib($a).postposition_lib(utf8encode_lib($a), utf8encode_lib(&quot;°¡&quot;), 1).&quot;\n&quot;;
+=&gt; Ã¶¼ö°¡
 
 
