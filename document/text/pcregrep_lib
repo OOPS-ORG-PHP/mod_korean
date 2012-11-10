@@ -1,19 +1,19 @@
-<span class="title">pcregrep_lib()</span>
+<FONT ID=title>pcregrep_lib()</FONT>
 
 (required korean module over BUILDNO 200305140401) 
 
-pcregrep_lib -- ì§€ì • ë””ë ‰í† ë¦¬ì˜ íŒŒì¼ ë¦¬ìŠ¤íŠ¸ë¥¼ ê°€ì ¸ì˜´
+pcregrep_lib -- ÁöÁ¤ µğ·ºÅä¸®ÀÇ ÆÄÀÏ ¸®½ºÆ®¸¦ °¡Á®¿È
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>array pcregrep_lib(string regex, string text [, int opt])</b>
+<B>array pcregrep_lib(string regex, string text [, int opt])</B>
 
-ì‹œìŠ¤í…œì˜ grep ê³¼ ë¹„ìŠ·í•œ ì—­í• ì„ í•œë‹¤. text ì— ì£¼ì–´ì§„ ë¬¸ìì—´ì—ì„œ regex ì™€ ë§¤ì¹˜ë˜ëŠ” í–‰ì„ ë³€ìˆ˜ë¡œ
-ë°›ëŠ”ë‹¤. opt ë¥¼ 1 ë¡œ ì£¼ì—ˆì„ ê²½ìš°, regex ì™€ ë§¤ì¹˜ë˜ì§€ ì•ŠëŠ” í–‰ë§Œ ë³€ìˆ˜ë¡œ ë°›ëŠ”ë‹¤.
+½Ã½ºÅÛÀÇ grep °ú ºñ½ÁÇÑ ¿ªÇÒÀ» ÇÑ´Ù. text ¿¡ ÁÖ¾îÁø ¹®ÀÚ¿­¿¡¼­ regex ¿Í ¸ÅÄ¡µÇ´Â ÇàÀ» º¯¼ö·Î
+¹Ş´Â´Ù. opt ¸¦ 1 ·Î ÁÖ¾úÀ» °æ¿ì, regex ¿Í ¸ÅÄ¡µÇÁö ¾Ê´Â Çà¸¸ º¯¼ö·Î ¹Ş´Â´Ù.
 
-ì •ê·œì‹ì€ pcre í˜¸í™˜ ì •ê·œì‹ì´ ì ìš©ì´ ëœë‹¤.
+Á¤±Ô½ÄÀº pcre È£È¯ Á¤±Ô½ÄÀÌ Àû¿ëÀÌ µÈ´Ù.
 
-<span id="RE">ì˜ˆì œ</span>
+<FONT ID=RE>¿¹Á¦</FONT>
 
 $a = &quot;I'm a boy\n&quot;.
      &quot;You are the student\n&quot;.

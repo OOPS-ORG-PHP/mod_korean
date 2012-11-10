@@ -1,15 +1,15 @@
-<span class="title">is_email_lib()</span>
+<FONT ID=title>is_email_lib()</FONT>
 
 (required korean module)
 
-is_email_lib -- email ì£¼ì†Œë¥¼ ì²´í¬
+is_email_lib -- email ÁÖ¼Ò¸¦ Ã¼Å©
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>string is_email_lib (string email)</b>
+<B>string is_email_lib (string email)</B>
 
-E-MAIL ì£¼ì†Œê°€ ì •í™•í•œ ê²ƒì¸ì§€ ê²€ì‚¬í•˜ëŠ” í•¨ìˆ˜. email ì£¼ì†Œê°€ ë§ìœ¼ë©´ email ì£¼ì†Œë¥¼ ë¦¬í„´í•˜ê³  í‹€ë¦¬ë©´
-null ê°’ì„ ë¦¬í„´í•œë‹¤. 
+E-MAIL ÁÖ¼Ò°¡ Á¤È®ÇÑ °ÍÀÎÁö °Ë»çÇÏ´Â ÇÔ¼ö. email ÁÖ¼Ò°¡ ¸ÂÀ¸¸é email ÁÖ¼Ò¸¦ ¸®ÅÏÇÏ°í Æ²¸®¸é
+null °ªÀ» ¸®ÅÏÇÑ´Ù. 
 
-<span id="RE">ì°¸ì¡°</span>
+<FONT ID=RE>ÂüÁ¶</FONT>
 is_url_lib()
