@@ -1,10 +1,10 @@
-<?
-$to = preg_replace("/_golbange_/","@",$_GET[target]);
+<?php
+$to = preg_replace ('/_golbange_/', '@', $_GET['target']);
 
-if($_GET[target] && preg_match("/@/",$to)) {
+if ( $_GET['target'] && preg_match ('/@/', $to) 0) {
   Header("Location: mailto:$to");
 }
 
-echo "<SCRIPT>history.back()</SCRIPT>";
+echo '<script type="javascript">history.back()</script>';
 exit;
 ?>
