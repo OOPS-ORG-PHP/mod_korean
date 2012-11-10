@@ -1,4 +1,4 @@
-if [ -f Makefile ]; then
+if [ -f Makefile ];
 	make distclean
 fi
 rm -rf autom4te.cache/ build/ include/ modules/

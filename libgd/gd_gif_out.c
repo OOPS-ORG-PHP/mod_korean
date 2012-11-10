@@ -117,8 +117,9 @@ void gdImageGif (gdImagePtr im, FILE * outFile)
 void gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out)
 {
 	gdImagePtr pim = 0, tim = im;
-	int interlace, BitsPerPixel;
+	int interlace, transparent, BitsPerPixel;
 	interlace = im->interlace;
+	transparent = im->transparent;
 	if (im->trueColor) {
 		/* Expensive, but the only way that produces an
 			acceptable result: mix down to a palette
@@ -132,7 +133,7 @@ void gdImageGifCtx(gdImagePtr im, gdIOCtxPtr out)
 	BitsPerPixel = colorstobpp(tim->colorsTotal);
 	/* All set, let's do it. */
 	GIFEncode(
-		out, tim->sx, tim->sy, tim->interlace, 0, tim->transparent, BitsPerPixel,
+		out, tim->sx, tim->sy, interlace, 0, transparent, BitsPerPixel,
 		tim->red, tim->green, tim->blue, tim);
 	if (pim) {
 		/* Destroy palette based temporary image. */
@@ -263,12 +264,10 @@ GIFEncode(gdIOCtxPtr fp, int GWidth, int GHeight, int GInterlace, int Background
         int ColorMapSize;
         int InitCodeSize;
         int i;
-		GifCtx ctx;
-
-		memset(&ctx, 0, sizeof(ctx));
+	GifCtx ctx;
         ctx.Interlace = GInterlace;
-		ctx.in_count = 1;
-
+	ctx.in_count = 1;
+	memset(&ctx, 0, sizeof(ctx));
         ColorMapSize = 1 << BitsPerPixel;
 
         RWidth = ctx.Width = GWidth;

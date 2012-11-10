@@ -7,7 +7,7 @@
 /* JCE: Arrange HAVE_LIBPNG so that it can be set in gd.h */
 #ifdef HAVE_LIBPNG
 
-#include "png.h"		/* includes zlib.h and setjmp.h */
+#include <png.h>		/* includes zlib.h and setjmp.h */
 #include "gdhelpers.h"
 
 #define TRUE 1
@@ -36,16 +36,13 @@
 
   ---------------------------------------------------------------------------*/
 
-const char * gdPngGetVersionString()
-{
-	return PNG_LIBPNG_VER_STRING;
-}
-
-#ifdef PNG_SETJMP_SUPPORTED
+#ifndef PNG_SETJMP_NOT_SUPPORTED
 typedef struct _jmpbuf_wrapper
 {
 	jmp_buf jmpbuf;
 } jmpbuf_wrapper;
+
+static jmpbuf_wrapper gdPngJmpbufStruct;
 
 static void gdPngErrorHandler (png_structp png_ptr, png_const_charp msg)
 {
@@ -61,7 +58,7 @@ static void gdPngErrorHandler (png_structp png_ptr, png_const_charp msg)
 	 * been defined.
 	 */
 
-	php_gd_error_ex(E_WARNING, "gd-png:  fatal libpng error: %s", msg);
+	php_gd_error_ex(E_ERROR, "gd-png:  fatal libpng error: %s", msg);
 
 	jmpbuf_ptr = png_get_error_ptr (png_ptr);
 	if (jmpbuf_ptr == NULL) { /* we are completely hosed now */
@@ -74,11 +71,7 @@ static void gdPngErrorHandler (png_structp png_ptr, png_const_charp msg)
 
 static void gdPngReadData (png_structp png_ptr, png_bytep data, png_size_t length)
 {
-	int check;
-	check = gdGetBuf(data, length, (gdIOCtx *) png_get_io_ptr(png_ptr));
-	if (check != length) {
-		png_error(png_ptr, "Read Error: truncated data");
-	}
+	gdGetBuf(data, length, (gdIOCtx *) png_get_io_ptr(png_ptr));
 }
 
 static void gdPngWriteData (png_structp png_ptr, png_bytep data, png_size_t length)
@@ -115,9 +108,6 @@ gdImagePtr gdImageCreateFromPngPtr (int size, void *data)
 gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 {
 	png_byte sig[8];
-#ifdef PNG_SETJMP_SUPPORTED
-	jmpbuf_wrapper jbw;
-#endif
 	png_structp png_ptr;
 	png_infop info_ptr;
 	png_uint_32 width, height, rowbytes, w, h;
@@ -136,21 +126,18 @@ gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 
 	/* Make sure the signature can't match by dumb luck -- TBB */
 	/* GRR: isn't sizeof(infile) equal to the size of the pointer? */
-	memset (sig, 0, sizeof(sig));
+	memset (infile, 0, sizeof(infile));
 
 	  /* first do a quick check that the file really is a PNG image; could
 	   * have used slightly more general png_sig_cmp() function instead
 	   */
-	if (gdGetBuf(sig, 8, infile) < 8) {
+	gdGetBuf(sig, 8, infile);
+	if (!png_check_sig (sig, 8)) { /* bad signature */
 		return NULL;
 	}
 
-	if (png_sig_cmp(sig, 0, 8) != 0) { /* bad signature */
-		return NULL;
-	}
-
-#ifdef PNG_SETJMP_SUPPORTED
-	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, &jbw, gdPngErrorHandler, NULL);
+#ifndef PNG_SETJMP_NOT_SUPPORTED
+	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, &gdPngJmpbufStruct, gdPngErrorHandler, NULL);
 #else
 	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 #endif
@@ -175,8 +162,8 @@ gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 	/* setjmp() must be called in every non-callback function that calls a
 	 * PNG-reading libpng function
 	 */
-#ifdef PNG_SETJMP_SUPPORTED
-	if (setjmp(jbw.jmpbuf)) {
+#ifndef PNG_SETJMP_NOT_SUPPORTED
+	if (setjmp(gdPngJmpbufStruct.jmpbuf)) {
 		php_gd_error("gd-png error: setjmp returns error condition");
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
@@ -190,8 +177,7 @@ gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 	png_read_info(png_ptr, info_ptr);	/* read all PNG info up to image data */
 
 	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, NULL, NULL);
-	if ((color_type == PNG_COLOR_TYPE_RGB) || (color_type == PNG_COLOR_TYPE_RGB_ALPHA)
-		|| color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
+	if ((color_type == PNG_COLOR_TYPE_RGB) || (color_type == PNG_COLOR_TYPE_RGB_ALPHA)) {
 		im = gdImageCreateTrueColor((int) width, (int) height);
 	} else {
 		im = gdImageCreate((int) width, (int) height);
@@ -199,6 +185,8 @@ gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 	if (im == NULL) {
 		php_gd_error("gd-png error: cannot allocate gdImage struct");
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+		gdFree(image_data);
+		gdFree(row_pointers);
 
 		return NULL;
 	}
@@ -208,22 +196,6 @@ gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 	} else if (bit_depth < 8) {
 		png_set_packing (png_ptr); /* expand to 1 byte per pixel */
 	}
-
-	/* setjmp() must be called in every non-callback function that calls a
-	 * PNG-reading libpng function
-	 */
-#ifdef PNG_SETJMP_SUPPORTED
-	if (setjmp(jbw.jmpbuf)) {
-		php_gd_error("gd-png error: setjmp returns error condition");
-		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-		gdFree(image_data);
-		gdFree(row_pointers);
-		if (im) {
-			gdImageDestroy(im);
-		}
-		return NULL;
-	}
-#endif
 
 	switch (color_type) {
 		case PNG_COLOR_TYPE_PALETTE:
@@ -250,6 +222,7 @@ gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 			}
 			break;
 		case PNG_COLOR_TYPE_GRAY:
+		case PNG_COLOR_TYPE_GRAY_ALPHA:
 			/* create a fake palette and check for single-shade transparency */
 			if ((palette = (png_colorp) gdMalloc (256 * sizeof (png_color))) == NULL) {
 				php_gd_error("gd-png error: cannot allocate gray palette");
@@ -290,9 +263,6 @@ gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 				 */
 			}
 			break;
-
-		case PNG_COLOR_TYPE_GRAY_ALPHA:
-			png_set_gray_to_rgb(png_ptr);
 
 			case PNG_COLOR_TYPE_RGB:
 			case PNG_COLOR_TYPE_RGB_ALPHA:
@@ -366,7 +336,6 @@ gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 			}
 			break;
 
-		case PNG_COLOR_TYPE_GRAY_ALPHA:
 		case PNG_COLOR_TYPE_RGB_ALPHA:
 			for (h = 0; h < height; h++) {
 				int boffset = 0;
@@ -415,17 +384,17 @@ gdImagePtr gdImageCreateFromPngCtx (gdIOCtx * infile)
 	return im;
 }
 
-void gdImagePngEx (gdImagePtr im, FILE * outFile, int level, int basefilter)
+void gdImagePngEx (gdImagePtr im, FILE * outFile, int level)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
-	gdImagePngCtxEx(im, out, level, basefilter);
+	gdImagePngCtxEx(im, out, level);
 	out->gd_free(out);
 }
 
 void gdImagePng (gdImagePtr im, FILE * outFile)
 {
 	gdIOCtx *out = gdNewFileCtx(outFile);
-  	gdImagePngCtxEx(im, out, -1, -1);
+  	gdImagePngCtxEx(im, out, -1);
 	out->gd_free(out);
 }
 
@@ -433,18 +402,18 @@ void * gdImagePngPtr (gdImagePtr im, int *size)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
-	gdImagePngCtxEx(im, out, -1, -1);
+	gdImagePngCtxEx(im, out, -1);
 	rv = gdDPExtractData(out, size);
 	out->gd_free(out);
 
 	return rv;
 }
 
-void * gdImagePngPtrEx (gdImagePtr im, int *size, int level, int basefilter)
+void * gdImagePngPtrEx (gdImagePtr im, int *size, int level)
 {
 	void *rv;
 	gdIOCtx *out = gdNewDynamicCtx(2048, NULL);
-	gdImagePngCtxEx(im, out, level, basefilter);
+	gdImagePngCtxEx(im, out, level);
 	rv = gdDPExtractData(out, size);
 	out->gd_free(out);
 	return rv;
@@ -452,14 +421,14 @@ void * gdImagePngPtrEx (gdImagePtr im, int *size, int level, int basefilter)
 
 void gdImagePngCtx (gdImagePtr im, gdIOCtx * outfile)
 {
-	gdImagePngCtxEx(im, outfile, -1, -1);
+	gdImagePngCtxEx(im, outfile, -1);
 }
 
 /* This routine is based in part on code from Dale Lutz (Safe Software Inc.)
  *  and in part on demo code from Chapter 15 of "PNG: The Definitive Guide"
  *  (http://www.cdrom.com/pub/png/pngbook.html).
  */
-void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level, int basefilter)
+void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level)
 {
 	int i, j, bit_depth = 0, interlace_type;
 	int width = im->sx;
@@ -474,10 +443,9 @@ void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level, int basefilte
 	png_infop info_ptr;
 	volatile int transparent = im->transparent;
 	volatile int remap = FALSE;
-#ifdef PNG_SETJMP_SUPPORTED
-	jmpbuf_wrapper jbw;
 
-	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, &jbw, gdPngErrorHandler, NULL);
+#ifndef PNG_SETJMP_NOT_SUPPORTED
+	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, &gdPngJmpbufStruct, gdPngErrorHandler, NULL);
 #else
 	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 #endif
@@ -494,8 +462,8 @@ void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level, int basefilte
 		return;
     }
 
-#ifdef PNG_SETJMP_SUPPORTED
-	if (setjmp(jbw.jmpbuf)) {
+#ifndef PNG_SETJMP_NOT_SUPPORTED
+	if (setjmp (gdPngJmpbufStruct.jmpbuf)) {
 		php_gd_error("gd-png error: setjmp returns error condition");
 		png_destroy_write_struct (&png_ptr, &info_ptr);
 
@@ -515,14 +483,7 @@ void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level, int basefilte
 	/*  png_set_filter(png_ptr, 0, PNG_FILTER_NONE);  */
 
 	/* 2.0.12: this is finally a parameter */
-	if (level != -1 && (level < 0 || level > 9)) {
-		php_gd_error("gd-png error: compression level must be 0 through 9");
-		return;
-	}
 	png_set_compression_level(png_ptr, level);
-	if (basefilter >= 0) {
-		png_set_filter(png_ptr, PNG_FILTER_TYPE_BASE, basefilter);
-	}
 
 	/* can set this to a smaller value without compromising compression if all
 	 * image data is 16K or less; will save some decoder memory [min == 8]
@@ -546,10 +507,6 @@ void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level, int basefilte
 				mapping[i] = colors;
 				++colors;
 			}
-		}
-		if (colors == 0) {
-			php_gd_error("gd-png error: no colors in palette");
-			goto bail;
 		}
 		if (colors < im->colorsTotal) {
 			remap = TRUE;
@@ -705,12 +662,7 @@ void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level, int basefilte
 					 */
 					a = gdTrueColorGetAlpha(thisPixel);
 					/* Andrew Hull: >> 6, not >> 7! (gd 2.0.5) */
-					if (a == 127) {
-						*pOutputRow++ = 0;
-					} else {
-						*pOutputRow++ = 255 - ((a << 1) + (a >> 6));
-					}
-
+					*pOutputRow++ = 255 - ((a << 1) + (a >> 6));
 				}
 			}
 		}
@@ -748,7 +700,6 @@ void gdImagePngCtxEx (gdImagePtr im, gdIOCtx * outfile, int level, int basefilte
 		}
 	}
 	/* 1.6.3: maybe we should give that memory BACK! TBB */
- bail:
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 }
 
