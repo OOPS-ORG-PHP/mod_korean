@@ -2,6 +2,11 @@ PHP Korean Extexsions Changelog
 
 * 0.1.5
 --------------------------------------------------------------------------------
+Sat Nov 10 2012
+by JoungKyun.Kim <http://oops.org>
+	- fixed deprecated zend_get_parameters_ex
+	- support utf8
+
 Fri Nov  2 2012
 by JoungKyun.Kim <http://oops.org>
 	- support PHP 5.4
