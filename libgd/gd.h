@@ -249,6 +249,15 @@ gdImagePtr gdImageCreateFromWBMP(FILE *inFile);
 gdImagePtr gdImageCreateFromWBMPCtx(gdIOCtx *infile);
 gdImagePtr gdImageCreateFromJpeg(FILE *infile, int ignore_warning);
 gdImagePtr gdImageCreateFromJpegCtx(gdIOCtx *infile, int ignore_warning);
+gdImagePtr gdImageCreateFromWebp(FILE *fd);
+gdImagePtr gdImageCreateFromWebpCtx(gdIOCtxPtr in);
+gdImagePtr gdImageCreateFromWebpPtr (int size, void *data);
+
+int gdJpegGetVersionInt();
+const char * gdPngGetVersionString();
+
+int gdJpegGetVersionInt();
+const char * gdJpegGetVersionString();
 
 /* A custom data source. */
 /* The source function must return -1 on error, otherwise the number
@@ -287,6 +296,7 @@ void gdImageDestroy(gdImagePtr im);
 
 void gdImageSetPixel(gdImagePtr im, int x, int y, int color);
 
+int gdImageGetTrueColorPixel (gdImagePtr im, int x, int y);
 int gdImageGetPixel(gdImagePtr im, int x, int y);
 
 void gdImageAABlend(gdImagePtr im);
@@ -482,6 +492,8 @@ void *gdImageWBMPPtr(gdImagePtr im, int *size, int fg);
 void gdImageJpeg(gdImagePtr im, FILE *out, int quality);
 void gdImageJpegCtx(gdImagePtr im, gdIOCtx *out, int quality);
 
+void gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantization);
+
 /* Best to free this memory with gdFree(), not free() */
 void *gdImageJpegPtr(gdImagePtr im, int *size, int quality);
 
@@ -579,6 +591,13 @@ void gdImageInterlace(gdImagePtr im, int interlaceArg);
 void gdImageAlphaBlending(gdImagePtr im, int alphaBlendingArg);
 void gdImageAntialias(gdImagePtr im, int antialias);
 void gdImageSaveAlpha(gdImagePtr im, int saveAlphaArg);
+
+enum gdPixelateMode {
+	GD_PIXELATE_UPPERLEFT,
+	GD_PIXELATE_AVERAGE
+};
+
+int gdImagePixelate(gdImagePtr im, int block_size, const unsigned int mode);
 
 /* Macros to access information about images. */
 

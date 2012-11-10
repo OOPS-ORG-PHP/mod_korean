@@ -1,11 +1,11 @@
 /*
- * gd_security.c
- *
- * Implements buffer overflow check routines.
- *
- * Written 2004, Phil Knirsch.
- * Based on netpbm fixes by Alan Cox.
- *
+   * gd_security.c
+   *
+   * Implements buffer overflow check routines.
+   *
+   * Written 2004, Phil Knirsch.
+   * Based on netpbm fixes by Alan Cox.
+   *
  */
 
 #ifdef HAVE_CONFIG_H
