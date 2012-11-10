@@ -2,17 +2,17 @@
 
 (required korean module)
 
-buildno_lib -- korean extension ì˜ ë¹Œë“œë„˜ë²„ë¥¼ ì¶œë ¥
+buildno_lib -- korean extension ÀÇ ºôµå³Ñ¹ö¸¦ Ãâ·Â
 
-<FONT ID="RE">ì„¤ëª…</FONT>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>unsigned char buildno_lib(void)</b>
+<B>unsigned char buildno_lib(void)</B>
 
-korean extension ì˜ ë¹Œë“œëœ ë‚ ì§œë¥¼ ë…„ì›”ì¼ì‹œë¶„ ì˜ ë¬¸ìì—´ë¡œ ì¶œë ¥
+korean extension ÀÇ ºôµåµÈ ³¯Â¥¸¦ ³â¿ùÀÏ½ÃºĞ ÀÇ ¹®ÀÚ¿­·Î Ãâ·Â
 
-<FONT ID="RE">ì˜ˆì œ</FONT>
+<FONT ID=RE>¿¹Á¦</FONT>
 
 echo buildno_lib();
 
-ê²°ê³¼ : 200207250037
+°á°ú : 200207250037
 

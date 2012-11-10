@@ -1,19 +1,19 @@
-<span class="title">is_hangul_lib()</span>
+<FONT class="title">is_hangul_lib()</FONT>
 
 (required korean module)
 
-is_hangul_lib -- ë¬¸ì ë˜ëŠ” ë¬¸ìì—´ì˜ ì²« ë°”ì´íŠ¸ê°€ í•œê¸€ì¸ì§€ë¥¼ ê²€ì‚¬.
+is_hangul_lib -- ¹®ÀÚ ¶Ç´Â ¹®ÀÚ¿­ÀÇ Ã¹ ¹ÙÀÌÆ®°¡ ÇÑ±ÛÀÎÁö¸¦ °Ë»ç.
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>int is_hangul_lib (char charactor)</b>
+<B>int is_hangul_lib (char charactor)</B>
 
-ì´ í•¨ìˆ˜ì— ë“¤ì–´ì˜¨ ë¬¸ì ë˜ëŠ” ë¬¸ìì—´ì˜ ì²«ë°”ì´íŠ¸ê°€ í•œê¸€ì˜ ë²”ìœ„ ë‚´ (0xA1A1 - 0xFEFE) ì—
-ë“¤ì–´ ìˆëŠ” ë¬¸ìê°€ ì¡´ì¬ í•˜ëŠ”ì§€ë¥¼ í…ŒìŠ¤íŠ¸í•˜ì—¬ ì¡´ì¬í•˜ë©´ 1ì„ ë°˜í™˜í•œë‹¤. ì—†ìœ¼ë©´ 0ì„ ë°˜í™˜í•œë‹¤.
+ÀÌ ÇÔ¼ö¿¡ µé¾î¿Â ¹®ÀÚ ¶Ç´Â ¹®ÀÚ¿­ÀÇ Ã¹¹ÙÀÌÆ®°¡ ÇÑ±ÛÀÇ ¹üÀ§ ³» (0xA1A1 - 0xFEFE) ¿¡
+µé¾î ÀÖ´Â ¹®ÀÚ°¡ Á¸Àç ÇÏ´ÂÁö¸¦ Å×½ºÆ®ÇÏ¿© Á¸ÀçÇÏ¸é 1À» ¹İÈ¯ÇÑ´Ù. ¾øÀ¸¸é 0À» ¹İÈ¯ÇÑ´Ù.
 
-<span id="RE">ì˜ˆì œ</span>
+<FONT ID=RE>¿¹Á¦</FONT>
 
-$str = &quot;abcdeí•œfg&quot;;
+$str = &quot;abcdeÇÑfg&quot;;
 
 for($i=0;$i&lt;strlen($str);$i++) {
   if (is_hangul_lib($str[$i])) {

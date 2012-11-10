@@ -1,4 +1,4 @@
-dnl $Id$
+dnl $Id: config.m4,v 1.22 2006-03-15 15:36:31 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -54,11 +54,6 @@ if test "$PHP_KOREAN" != "no"; then
     with_zlib_dir=no
   fi
 
-  if test -z "$PHP_LIBDIR"; then
-    parch=`uname -m`
-    test "$parch" = "x86_64" && PHP_LIBDIR="lib64" || PHP_LIBDIR="lib"
-  fi
-
   dnl In this case given --enable-korean-gd option
   dnl
   if test "$enable_korean_gd" != "no" ; then
@@ -69,11 +64,11 @@ if test "$PHP_KOREAN" != "no"; then
     fi
 
     for j in $GD_SEARCH_PATHS; do
-      for i in include include/gd1.3 include/gd include gd1.3 gd ""; do
+      for i in include/gd1.3 include/gd include gd1.3 gd ""; do
         test -f $j/$i/gd.h && KOREAN_INCLUDE=$j/$i
       done
 
-      for i in $PHP_LIBDIR $PHP_LIBDIR/gd1.3 $PHP_LIBDIR/gd $PHP_LIBDIR gd1.3 gd ""; do
+      for i in lib/gd1.3 lib/gd lib gd1.3 gd ""; do
         test -f $j/$i/libgd.$SHLIB_SUFFIX_NAME -o -f $j/$i/libgd.a && KOREAN_LIB=$j/$i
       done
     done
@@ -125,7 +120,7 @@ if test "$PHP_KOREAN" != "no"; then
 
     dnl JPEG Libaray Check
     for i in $with_jpeg_dir /usr/local /usr; do
-      test -f $i/$PHP_LIBDIR/libjpeg.$SHLIB_SUFFIX_NAME -o -f $i/$PHP_LIBDIR/libjpeg.a && KR_JPEG_DIR=$i && break
+      test -f $i/lib/libjpeg.$SHLIB_SUFFIX_NAME -o -f $i/lib/libjpeg.a && KR_JPEG_DIR=$i && break
     done
 
 
@@ -136,16 +131,16 @@ if test "$PHP_KOREAN" != "no"; then
     PHP_CHECK_LIBRARY(jpeg,jpeg_read_header,
     [
       PHP_ADD_INCLUDE($KR_JPEG_DIR/include)
-      PHP_ADD_LIBRARY_WITH_PATH(jpeg, $KR_JPEG_DIR/$PHP_LIBDIR, KOREAN_SHARED_LIBADD)
+      PHP_ADD_LIBRARY_WITH_PATH(jpeg, $KR_JPEG_DIR/lib, KOREAN_SHARED_LIBADD)
     ],[
       AC_MSG_ERROR([Problem with libjpeg.(a|so). Please check config.log for more information.]) 
     ],[
-      -L$KR_JPEG_DIR/$PHP_LIBDIR
+      -L$KR_JPEG_DIR/lib
     ])
 
     dnl PNG Libaray Check
     for i in $with_png_dir /usr/local /usr; do
-      test -f $i/$PHP_LIBDIR/libpng.$SHLIB_SUFFIX_NAME -o -f $i/$PHP_LIBDIR/libpng.a && KR_PNG_DIR=$i && break
+      test -f $i/lib/libpng.$SHLIB_SUFFIX_NAME -o -f $i/lib/libpng.a && KR_PNG_DIR=$i && break
     done
 
     if test -z "$KR_PNG_DIR" ; then
@@ -163,7 +158,7 @@ if test "$PHP_KOREAN" != "no"; then
     dnl ZLIB Libaray Check
     if test "$PHP_ZLIB_DIR" = "no"; then
       for i in /usr/local /usr $PHP_ZLIB_DIR; do
-        test -f $i/$PHP_LIBDIR/libz.$SHLIB_SUFFIX_NAME -o -f $i/$PHP_LIBDIR/libz.a && KR_ZLIB_DIR=$i && break
+        test -f $i/lib/libz.$SHLIB_SUFFIX_NAME -o -f $i/lib/libz.a && KR_ZLIB_DIR=$i && break
       done
 
       if test -z "$KR_ZLIB_DIR"; then
@@ -200,20 +195,19 @@ if test "$PHP_KOREAN" != "no"; then
     PHP_CHECK_LIBRARY(png,png_write_image,
     [
       PHP_ADD_INCLUDE($KR_PNG_DIR/include)
-      PHP_ADD_LIBRARY_WITH_PATH(z, $KR_ZLIB_DIR/$PHP_LIBDIR, KOREAN_SHARED_LIBADD)
-      PHP_ADD_LIBRARY_WITH_PATH(png, $KR_PNG_DIR/$PHP_LIBDIR, KOREAN_SHARED_LIBADD)
+      PHP_ADD_LIBRARY_WITH_PATH(z, $KR_ZLIB_DIR/lib, KOREAN_SHARED_LIBADD)
+      PHP_ADD_LIBRARY_WITH_PATH(png, $KR_PNG_DIR/lib, KOREAN_SHARED_LIBADD)
     ],[
       AC_MSG_ERROR([Problem with libpng.(a|so) or libz.(a|so). Please check config.log for more information.]) 
     ],[
-      -L$KR_ZLIB_DIR/$PHP_LIBDIR -lz -L$KR_PNG_DIR/$PHP_LIBDIR
+      -L$KR_ZLIB_DIR/lib -lz -L$KR_PNG_DIR/lib
     ])
 
     KR_MODULE_TYPE=builtin
     if test "$include_gdlib" = "yes"; then
       krextra_sources="libgd/gd.c libgd/gd_png.c libgd/gd_jpeg.c libgd/gd_gif_in.c libgd/gd_io.c \
                        libgd/gd_gif_out.c libgd/gd_io_file.c libgd/gd_ss.c libgd/gd_io_ss.c \
-                       libgd/gdtables.c libgd/gdhelpers.c libgd/gd_io_dp.c libgd/gd_topal.c \
-                       libgd/gd_security.c libgd/gd_arc.c"
+                       libgd/gdtables.c libgd/gdhelpers.c libgd/gd_io_dp.c libgd/gd_topal.c"
     fi
 
     dnl These are always available with bundled library

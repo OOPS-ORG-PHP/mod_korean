@@ -1,74 +1,74 @@
-<span class="title">mailsource_lib()</span>
+<FONT class="title">mailsource_lib()</FONT>
 
 (required korean module)
 
-mailsource_lib -- ë©”ì¼ì„ ë°œì†¡í•  ì–‘ì‹ì„ ìƒì„±
+mailsource_lib -- ¸ŞÀÏÀ» ¹ß¼ÛÇÒ ¾ç½ÄÀ» »ı¼º
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>string mailsource_lib (string language, string from ,string to, string subject,
-                       string body [, string plainbody [, string attach ]])</b>
+<B>string mailsource_lib (string language, string from ,string to, string subject,
+                       string body [, string plainbody [, string attach ]])</B>
 
-ì–¸ì–´, ë³´ë‚´ëŠ” ì£¼ì†Œ, ë°›ëŠ” ì£¼ì†Œ, ë©”ì¼ ì œëª©, ë©”ì¼ ë³¸ë¬¸, ì²¨ë¶€íŒŒì¼ë“±ì˜ ì£¼ì†Œë¥¼ ì´ìš©í•˜ì—¬ ë©”ì¼ì˜ í—¤ë”
-ì™€ ë³¸ë¬¸ì„ íŒŒì‹±í•œë‹¤.
+¾ğ¾î, º¸³»´Â ÁÖ¼Ò, ¹Ş´Â ÁÖ¼Ò, ¸ŞÀÏ Á¦¸ñ, ¸ŞÀÏ º»¹®, Ã·ºÎÆÄÀÏµîÀÇ ÁÖ¼Ò¸¦ ÀÌ¿ëÇÏ¿© ¸ŞÀÏÀÇ Çì´õ
+¿Í º»¹®À» ÆÄ½ÌÇÑ´Ù.
 
-ì´ í•¨ìˆ˜ëŠ” <A HREF=http://www.php.net/manual/en/function.mail.php TARGET=_blank>mail</A>() í•¨ìˆ˜ë¥¼ ì´ìš©í•˜ì—¬ ì²¨ë¶€íŒŒì¼ê¹Œì§€ ë°œì†¡í•  ìˆ˜ ìˆê²Œ ì‚¬ìš©í•˜ëŠ”ë° ìœ ìš©í•˜ë‹¤.  <A HREF=http://www.php.net/manual/en/function.mail.php TARGET=_blank>mail</A>() í•¨
-ìˆ˜ë¥¼ ì´ìš©í•˜ì—¬ ì²¨ë¶€íŒŒì¼ì„ ë³´ë‚´ëŠ” ê²ƒì€ í•˜ë‹¨ì˜ ì˜ˆì œë¥¼ ì°¸ê³ í•˜ë„ë¡ í•œë‹¤.
+ÀÌ ÇÔ¼ö´Â <A HREF=http://www.php.net/manual/en/function.mail.php TARGET=_blank>mail</A>() ÇÔ¼ö¸¦ ÀÌ¿ëÇÏ¿© Ã·ºÎÆÄÀÏ±îÁö ¹ß¼ÛÇÒ ¼ö ÀÖ°Ô »ç¿ëÇÏ´Âµ¥ À¯¿ëÇÏ´Ù.  <A HREF=http://www.php.net/manual/en/function.mail.php TARGET=_blank>mail</A>() ÇÔ
+¼ö¸¦ ÀÌ¿ëÇÏ¿© Ã·ºÎÆÄÀÏÀ» º¸³»´Â °ÍÀº ÇÏ´ÜÀÇ ¿¹Á¦¸¦ Âü°íÇÏµµ·Ï ÇÑ´Ù.
 
-ë©”ì¼ ì œëª©ê³¼ ë©”ì¼ ë³¸ë¬¸ì€ BASE 64 ì¸ì½”ë”©ì„ í•˜ì—¬ íŒŒì‹±í•˜ë©°, ì²¨ë¶€íŒŒì¼ ì—­ì‹œ BASE64 ì¸ì½”ë”©ì„ ì§€ì›í•œ
-ë‹¤. ë³¸ë¬¸ì˜ ê²½ìš°ì—ëŠ” text/palin ê³¼ text/html ì˜ Multi-Part ë¡œ êµ¬ì„±ì´ ëœë‹¤.
+¸ŞÀÏ Á¦¸ñ°ú ¸ŞÀÏ º»¹®Àº BASE 64 ÀÎÄÚµùÀ» ÇÏ¿© ÆÄ½ÌÇÏ¸ç, Ã·ºÎÆÄÀÏ ¿ª½Ã BASE64 ÀÎÄÚµùÀ» Áö¿øÇÑ
+´Ù. º»¹®ÀÇ °æ¿ì¿¡´Â text/palin °ú text/html ÀÇ Multi-Part ·Î ±¸¼ºÀÌ µÈ´Ù.
 
-ì²¨ë¶€íŒŒì¼ì˜ ê°¯ìˆ˜ëŠ” í˜„ì¬ 1 ê°œë§Œ ì§€ì›ì´ ëœë‹¤. ì•„ì§ ì„ì˜ì˜ ë³€ìˆ˜ ê°¯ìˆ˜ë¥¼ ì „ë‹¬í•˜ëŠ” ë°©ë²•ì„ ëª°ë¼ì„œ ìš°
-ì„  1 ê°œë§Œ ì§€ì›í•˜ë„ë¡ ì‘ì„± í•˜ì˜€ë‹¤.
+Ã·ºÎÆÄÀÏÀÇ °¹¼ö´Â ÇöÀç 1 °³¸¸ Áö¿øÀÌ µÈ´Ù. ¾ÆÁ÷ ÀÓÀÇÀÇ º¯¼ö °¹¼ö¸¦ Àü´ŞÇÏ´Â ¹æ¹ıÀ» ¸ô¶ó¼­ ¿ì
+¼± 1 °³¸¸ Áö¿øÇÏµµ·Ï ÀÛ¼º ÇÏ¿´´Ù.
 
-ì´ í•¨ìˆ˜ëŠ” sockmail_lib() ë¥¼ ì§€ì›í•˜ê¸° ìœ„í•œ í•¨ìˆ˜ì´ë‹¤. ì´ í•¨ìˆ˜ëŠ” ì„œë²„ì˜ ë©”ì¼ ë°ëª¬ì— ì˜ì¡´í•˜ì§€ ì•Š
-ê³  oops php extension ìì²´ì—ì„œ ë©”ì¼ì„ ë°œì†¡í•  ìˆ˜ ìˆë„ë¡ í•˜ê¸° ìœ„í•œ í•¨ìˆ˜ì´ë‹¤.
+ÀÌ ÇÔ¼ö´Â sockmail_lib() ¸¦ Áö¿øÇÏ±â À§ÇÑ ÇÔ¼öÀÌ´Ù. ÀÌ ÇÔ¼ö´Â ¼­¹öÀÇ ¸ŞÀÏ µ¥¸ó¿¡ ÀÇÁ¸ÇÏÁö ¾Ê
+°í oops php extension ÀÚÃ¼¿¡¼­ ¸ŞÀÏÀ» ¹ß¼ÛÇÒ ¼ö ÀÖµµ·Ï ÇÏ±â À§ÇÑ ÇÔ¼öÀÌ´Ù.
 
-ê° íŒŒë¼ë¯¸í„°ì˜ ì„¤ëª…ì€ ë‹¤ìŒê³¼ ê°™ë‹¤.
+°¢ ÆÄ¶ó¹ÌÅÍÀÇ ¼³¸íÀº ´ÙÀ½°ú °°´Ù.
 
-language  ë©”ì¼ì˜ ì–¸ì–´ íƒ€ì…ì„ ì„¤ì •í•œë‹¤. í˜„ì¬ëŠ” ko/en ë§Œ ì§€ì›ì„ í•œë‹¤. ko ë¡œ ì§€ì •ì„ í–ˆì„ ê²½ìš°ì—
-          ëŠ” Charset ì´ EUC-KR ë¡œ ì„¤ì •ì´ ë˜ë©°, en ìœ¼ë¡œ ì„¤ì •ì„ í–ˆì„ ê²½ìš°ì—ëŠ” iso-8859-1 ë¡œ ì§€
-          ì •ì´ ëœë‹¤. ê°’ì€ ëŒ€ì†Œë¬¸ìë¥¼ êµ¬ë¶„í•˜ì§€ ì•ŠëŠ”ë‹¤. ê¸°ë³¸ê°’ì€ en ì´ë‹¤.
+language  ¸ŞÀÏÀÇ ¾ğ¾î Å¸ÀÔÀ» ¼³Á¤ÇÑ´Ù. ÇöÀç´Â ko/en ¸¸ Áö¿øÀ» ÇÑ´Ù. ko ·Î ÁöÁ¤À» ÇßÀ» °æ¿ì¿¡
+          ´Â Charset ÀÌ EUC-KR ·Î ¼³Á¤ÀÌ µÇ¸ç, en À¸·Î ¼³Á¤À» ÇßÀ» °æ¿ì¿¡´Â iso-8859-1 ·Î Áö
+          Á¤ÀÌ µÈ´Ù. °ªÀº ´ë¼Ò¹®ÀÚ¸¦ ±¸ºĞÇÏÁö ¾Ê´Â´Ù. ±âº»°ªÀº en ÀÌ´Ù.
 
-from      ë³´ë‚´ëŠ” ì´ì˜ ì£¼ì†Œë¥¼ ì§€ì •í•œë‹¤. ë³´ë‚´ëŠ” ì´ì˜ ì£¼ì†ŒëŠ” ë‹¤ìŒì˜ í‘œí˜„ ì–‘ì‹ì´ ê°€ëŠ¥í•˜ë‹¤.
-          sender@domain.com, ë³´ë‚´ëŠ”ì´ <sender@domain.com>, "ë³´ë‚´ëŠ”ì´" <sender@domain.com>
+from      º¸³»´Â ÀÌÀÇ ÁÖ¼Ò¸¦ ÁöÁ¤ÇÑ´Ù. º¸³»´Â ÀÌÀÇ ÁÖ¼Ò´Â ´ÙÀ½ÀÇ Ç¥Çö ¾ç½ÄÀÌ °¡´ÉÇÏ´Ù.
+          sender@domain.com, º¸³»´ÂÀÌ <sender@domain.com>, "º¸³»´ÂÀÌ" <sender@domain.com>
 
-to        ë°›ëŠ” ì´ì˜ ì£¼ì†Œë¥¼ ì§€ì •í•œë‹¤. ë°›ëŠ” ì´ëŠ” ì‰¼í‘œ(,)ë¥¼ ì´ìš©í•˜ì—¬ ì—¬ëŸ¬ëª…ì„ ì§€ì •í•  ìˆ˜ ìˆë‹¤.
+to        ¹Ş´Â ÀÌÀÇ ÁÖ¼Ò¸¦ ÁöÁ¤ÇÑ´Ù. ¹Ş´Â ÀÌ´Â ½°Ç¥(,)¸¦ ÀÌ¿ëÇÏ¿© ¿©·¯¸íÀ» ÁöÁ¤ÇÒ ¼ö ÀÖ´Ù.
 
-subject   ë©”ì¼ì˜ ì œëª©ì„ ì§€ì •í•œë‹¤. base64 ì¸ì½”ë”©ì´ ëœë‹¤.
+subject   ¸ŞÀÏÀÇ Á¦¸ñÀ» ÁöÁ¤ÇÑ´Ù. base64 ÀÎÄÚµùÀÌ µÈ´Ù.
 
-body      ë©”ì¼ ë³¸ë¬¸ì„ ì§€ì •í•œë‹¤. plain/html ëª¨ë‘ ì‚¬ìš©í•  ìˆ˜ ìˆë‹¤.
+body      ¸ŞÀÏ º»¹®À» ÁöÁ¤ÇÑ´Ù. plain/html ¸ğµÎ »ç¿ëÇÒ ¼ö ÀÖ´Ù.
 
-plainbody ìƒëµ ê°€ëŠ¥í•˜ë‹¤. body ë¥¼ html ì–‘ì‹ìœ¼ë¡œ ì‚¬ìš©í•œë‹¤ë©´, html ì„ ì§€ì›í•˜ì§€ ì•ŠëŠ” ë©”ì¼ í´ë¼ì´
-          ì–¸íŠ¸ë“¤ì„ ìœ„í•œ plain ìœ¼ë¡œ ëœ ë‚´ìš©ì„ ì ì–´ ì£¼ë„ë¡ í•œë‹¤. ë§Œì•½ plainbody ë¥¼ ì§€ì •í•˜ì§€ ì•Š
-          ì„ ê²½ìš°ì—ëŠ” body ì˜ ë‚´ìš©ì¤‘ì—ì„œ html tag ë¥¼ ì‚­ì œí•œ ë‚´ìš©ì„ plain part ë¡œ ë³´ë‚´ê²Œ ëœë‹¤.
+plainbody »ı·« °¡´ÉÇÏ´Ù. body ¸¦ html ¾ç½ÄÀ¸·Î »ç¿ëÇÑ´Ù¸é, html À» Áö¿øÇÏÁö ¾Ê´Â ¸ŞÀÏ Å¬¶óÀÌ
+          ¾ğÆ®µéÀ» À§ÇÑ plain À¸·Î µÈ ³»¿ëÀ» Àû¾î ÁÖµµ·Ï ÇÑ´Ù. ¸¸¾à plainbody ¸¦ ÁöÁ¤ÇÏÁö ¾Ê
+          À» °æ¿ì¿¡´Â body ÀÇ ³»¿ëÁß¿¡¼­ html tag ¸¦ »èÁ¦ÇÑ ³»¿ëÀ» plain part ·Î º¸³»°Ô µÈ´Ù.
 
-attach    ì²¨ë¶€íŒŒì¼ì˜ ì ˆëŒ€ ê²½ë¡œë¥¼ ì§€ì •í•˜ë„ë¡ í•œë‹¤. ìƒëµ ê°€ëŠ¥í•˜ë‹¤.
+attach    Ã·ºÎÆÄÀÏÀÇ Àı´ë °æ·Î¸¦ ÁöÁ¤ÇÏµµ·Ï ÇÑ´Ù. »ı·« °¡´ÉÇÏ´Ù.
 
 
 
-<span id="RE">ì˜ˆì œ</span>
+<FONT ID=RE>¿¹Á¦</FONT>
 
-ì˜ˆì œë¥¼ ë³¼ ë•Œ ì£¼ì˜í•  ê²ƒì´ ìˆë‹¤. ì•„ë˜ì— ë‚˜ì˜¤ëŠ” ì´ë©”ì¼ í‘œê¸°í˜•ì‹ &quot;user AT domain.com&quot; ì€ ë©”ì¼ ìˆ˜
-ì§‘ê¸°ì˜ ìˆ˜ì§‘ì„ ë§‰ê¸° ìœ„í•œ ë³€í™˜ëœ í‘œì‹œì´ë‹¤. ì•Œì•„ì„œ AT ì„ @ ìœ¼ë¡œ ìƒê°í•˜ê¸° ë°”ë€ë‹¤.
+¿¹Á¦¸¦ º¼ ¶§ ÁÖÀÇÇÒ °ÍÀÌ ÀÖ´Ù. ¾Æ·¡¿¡ ³ª¿À´Â ÀÌ¸ŞÀÏ Ç¥±âÇü½Ä &quot;user AT domain.com&quot; Àº ¸ŞÀÏ ¼ö
+Áı±âÀÇ ¼öÁıÀ» ¸·±â À§ÇÑ º¯È¯µÈ Ç¥½ÃÀÌ´Ù. ¾Ë¾Æ¼­ AT À» @ À¸·Î »ı°¢ÇÏ±â ¹Ù¶õ´Ù.
 
-# ì²¨ë¶€íŒŒì¼ì„ ë³´ë‚´ì§€ ì•Šì„ ê²½ìš°
+# Ã·ºÎÆÄÀÏÀ» º¸³»Áö ¾ÊÀ» °æ¿ì
 
 $ln = &quot;ko&quot;;
-$from = &quot;ë³´ë‚´ëŠ”ì´ &lt;sender@domain.org&gt;&quot;;
-$to = &quot;ë°›ëŠ” ì´ &lt;reciever@to.org&gt;, \&quot;ì–´ë“œë¯¼\&quot; &lt;admin@domain.org&gt;, who@domain.org&quot;;
-$subject = &quot;subject ì•ˆì— \&quot;ë”°ì˜´í‘œ\&quot; ê°€ ìˆìŠµë‹ˆë‹¤.&quot;;
+$from = &quot;º¸³»´ÂÀÌ &lt;sender@domain.org&gt;&quot;;
+$to = &quot;¹Ş´Â ÀÌ &lt;reciever@to.org&gt;, \&quot;¾îµå¹Î\&quot; &lt;admin@domain.org&gt;, who@domain.org&quot;;
+$subject = &quot;subject ¾È¿¡ \&quot;µû¿ÈÇ¥\&quot; °¡ ÀÖ½À´Ï´Ù.&quot;;
 $body = &quot;&lt;html&gt;\n&quot;.
-        &quot;&lt;head&gt;&lt;title&gt;&gt;html ë¬¸ì„œ&lt;/title&gt;&lt;/head&gt;\n&quot;.
+        &quot;&lt;head&gt;&lt;title&gt;&gt;html ¹®¼­&lt;/title&gt;&lt;/head&gt;\n&quot;.
         &quot;&lt;body&gt;\n&quot;.
-        &quot;html ë¬¸ì„œë¥¼ ì‘ì„±í•©ë‹ˆë‹¤.\n\n&quot;.
+        &quot;html ¹®¼­¸¦ ÀÛ¼ºÇÕ´Ï´Ù.\n\n&quot;.
         &quot;&lt;table border=1 width=500&gt;\n&quot;.
         &quot;&lt;tr&gt;\n&quot;.
-        &quot;&lt;td&gt; 1 ì´ì£ &lt;/td&gt;\n&quot;.
-        &quot;&lt;td&gt; 2 ì£  &lt;/td&gt;\n&quot;.
+        &quot;&lt;td&gt; 1 ÀÌÁÒ&lt;/td&gt;\n&quot;.
+        &quot;&lt;td&gt; 2 ÁÒ &lt;/td&gt;\n&quot;.
         &quot;&lt;/tr&gt;\n&lt;tr&gt;\n&quot;.
         &quot;&lt;td colspan=2&gt;\n&quot;.
-        &quot;COLSPAN=2 ì…ë‹ˆë‹¤.\n&quot;.
+        &quot;COLSPAN=2 ÀÔ´Ï´Ù.\n&quot;.
         &quot;&lt;/td&gt;\n&lt;/tr&gt;\n&quot;.
         &quot;&lt;/table&gt;\n&quot;.
         &quot;&lt;/body&gt;\n&lt;/html&gt;&quot;;
@@ -111,26 +111,26 @@ tM+02S4KPC90ZD4KPC90cj4KPC90YWJsZT4KPC9ib2R5Pgo8L2h0bWw+
 
 ----=_NextPart_000_0003_D5016B9B.16AFB9B6--
 
-ìœ„ì˜ ê²½ìš°ì—ëŠ” plain text ë¥¼ ì§€ì •í•˜ì§€ ì•Šì•„ì„œ, body ì˜ ë‚´ìš©ì„ íŒŒì‹±ì„ í•œ ê²°ê³¼ì´ë‹¤.
+À§ÀÇ °æ¿ì¿¡´Â plain text ¸¦ ÁöÁ¤ÇÏÁö ¾Ê¾Æ¼­, body ÀÇ ³»¿ëÀ» ÆÄ½ÌÀ» ÇÑ °á°úÀÌ´Ù.
 
 
-# ì²¨ë¶€íŒŒì¼ì„ ë³´ë‚´ëŠ” ê²½ìš°
+# Ã·ºÎÆÄÀÏÀ» º¸³»´Â °æ¿ì
 
 $ln = &quot;ko&quot;;
-$from = &quot;ë³´ë‚´ëŠ”ì´ &lt;sender@domain.org&gt;&quot;;
-$to = &quot;ë°›ëŠ” ì´ &lt;reciever@to.org&gt;, \&quot;ì–´ë“œë¯¼\&quot; &lt;admin@domain.org&gt;, who@domain.org&quot;;
-$subject = &quot;subject ì•ˆì— \&quot;ë”°ì˜´í‘œ\&quot; ê°€ ìˆìŠµë‹ˆë‹¤.&quot;;
+$from = &quot;º¸³»´ÂÀÌ &lt;sender@domain.org&gt;&quot;;
+$to = &quot;¹Ş´Â ÀÌ &lt;reciever@to.org&gt;, \&quot;¾îµå¹Î\&quot; &lt;admin@domain.org&gt;, who@domain.org&quot;;
+$subject = &quot;subject ¾È¿¡ \&quot;µû¿ÈÇ¥\&quot; °¡ ÀÖ½À´Ï´Ù.&quot;;
 $body = &quot;&lt;html&gt;\n&quot;.
-        &quot;&lt;head&gt;&lt;title&gt;&gt;html ë¬¸ì„œ&lt;/title&gt;&lt;/head&gt;\n&quot;.
+        &quot;&lt;head&gt;&lt;title&gt;&gt;html ¹®¼­&lt;/title&gt;&lt;/head&gt;\n&quot;.
         &quot;&lt;body&gt;\n&quot;.
-        &quot;html ë¬¸ì„œë¥¼ ì‘ì„±í•©ë‹ˆë‹¤.\n\n&quot;.
+        &quot;html ¹®¼­¸¦ ÀÛ¼ºÇÕ´Ï´Ù.\n\n&quot;.
         &quot;&lt;table border=1 width=500&gt;\n&quot;.
         &quot;&lt;tr&gt;\n&quot;.
-        &quot;&lt;td&gt; 1 ì´ì£ &lt;/td&gt;\n&quot;.
-        &quot;&lt;td&gt; 2 ì£  &lt;/td&gt;\n&quot;.
+        &quot;&lt;td&gt; 1 ÀÌÁÒ&lt;/td&gt;\n&quot;.
+        &quot;&lt;td&gt; 2 ÁÒ &lt;/td&gt;\n&quot;.
         &quot;&lt;/tr&gt;\n&lt;tr&gt;\n&quot;.
         &quot;&lt;td colspan=2&gt;\n&quot;.
-        &quot;COLSPAN=2 ì…ë‹ˆë‹¤.\n&quot;.
+        &quot;COLSPAN=2 ÀÔ´Ï´Ù.\n&quot;.
         &quot;&lt;/td&gt;\n&lt;/tr&gt;\n&quot;.
         &quot;&lt;/table&gt;\n&quot;.
         &quot;&lt;/body&gt;\n&lt;/html&gt;&quot;;
@@ -229,24 +229,24 @@ UkVHX0ggKi8=
 ----=_NextPart_000_0003_D5018259.34109528--
 
 
-ë§Œì•½ mailsource_lib() í•¨ìˆ˜ë¥¼ ì´ìš©í•˜ì—¬, php ì˜ mail() í•¨ìˆ˜ë¥¼ ì‚¬ìš©í•˜ê³  ì‹¶ì„ ê²½ìš°ì—ëŠ” ë‹¤ìŒê³¼ ê°™
-ì´ í•  ìˆ˜ ìˆë‹¤.
+¸¸¾à mailsource_lib() ÇÔ¼ö¸¦ ÀÌ¿ëÇÏ¿©, php ÀÇ mail() ÇÔ¼ö¸¦ »ç¿ëÇÏ°í ½ÍÀ» °æ¿ì¿¡´Â ´ÙÀ½°ú °°
+ÀÌ ÇÒ ¼ö ÀÖ´Ù.
 
 $ln = &quot;ko&quot;;
-$from = &quot;ë³´ë‚´ëŠ”ì´ &lt;sender@domain.org&gt;&quot;;
-$to = &quot;ë°›ëŠ” ì´ &lt;reciever@to.org&gt;, \&quot;ì–´ë“œë¯¼\&quot; &lt;admin@domain.org&gt;, who@domain.org&quot;;
-$subject = &quot;subject ì•ˆì— \&quot;ë”°ì˜´í‘œ\&quot; ê°€ ìˆìŠµë‹ˆë‹¤.&quot;;
+$from = &quot;º¸³»´ÂÀÌ &lt;sender@domain.org&gt;&quot;;
+$to = &quot;¹Ş´Â ÀÌ &lt;reciever@to.org&gt;, \&quot;¾îµå¹Î\&quot; &lt;admin@domain.org&gt;, who@domain.org&quot;;
+$subject = &quot;subject ¾È¿¡ \&quot;µû¿ÈÇ¥\&quot; °¡ ÀÖ½À´Ï´Ù.&quot;;
 $body = &quot;&lt;html&gt;\n&quot;.
-        &quot;&lt;head&gt;&lt;title&gt;&gt;html ë¬¸ì„œ&lt;/title&gt;&lt;/head&gt;\n&quot;.
+        &quot;&lt;head&gt;&lt;title&gt;&gt;html ¹®¼­&lt;/title&gt;&lt;/head&gt;\n&quot;.
         &quot;&lt;body&gt;\n&quot;.
-        &quot;html ë¬¸ì„œë¥¼ ì‘ì„±í•©ë‹ˆë‹¤.\n\n&quot;.
+        &quot;html ¹®¼­¸¦ ÀÛ¼ºÇÕ´Ï´Ù.\n\n&quot;.
         &quot;&lt;table border=1 width=500&gt;\n&quot;.
         &quot;&lt;tr&gt;\n&quot;.
-        &quot;&lt;td&gt; 1 ì´ì£ &lt;/td&gt;\n&quot;.
-        &quot;&lt;td&gt; 2 ì£  &lt;/td&gt;\n&quot;.
+        &quot;&lt;td&gt; 1 ÀÌÁÒ&lt;/td&gt;\n&quot;.
+        &quot;&lt;td&gt; 2 ÁÒ &lt;/td&gt;\n&quot;.
         &quot;&lt;/tr&gt;\n&lt;tr&gt;\n&quot;.
         &quot;&lt;td colspan=2&gt;\n&quot;.
-        &quot;COLSPAN=2 ì…ë‹ˆë‹¤.\n&quot;.
+        &quot;COLSPAN=2 ÀÔ´Ï´Ù.\n&quot;.
         &quot;&lt;/td&gt;\n&lt;/tr&gt;\n&quot;.
         &quot;&lt;/table&gt;\n&quot;.
         &quot;&lt;/body&gt;\n&lt;/html&gt;&quot;;
@@ -273,8 +273,8 @@ $body = trim(preg_replace($bodysrc,$bodydes,$a));
 mail($to, $subject, $body, $head, &quot;-f $from&quot;);
 
 
-<span id="RE">ì°¸ê³ </span>
-sockmail_lib(), <a href="http://www.php.net/manual/en/function.mail.php" target="_blank">mail</A>()
+<FONT ID=RE>Âü°í</FONT>
+sockmail_lib(), <A HREF=http://www.php.net/manual/en/function.mail.php TARGET=_blank>mail</A>()
 
 
 
