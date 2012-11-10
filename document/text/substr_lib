@@ -1,31 +1,29 @@
-<span class="title">substr_lib()</span>
+<FONT ID=title>substr_lib()</FONT>
 
 (required korean module)
 
-substr_lib -- 2 byte ë¥¼ ì²˜ë¦¬í•˜ëŠ” substr() í•¨ìˆ˜
+substr_lib -- 2 byte ¸¦ Ã³¸®ÇÏ´Â substr() ÇÔ¼ö
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>string substr_lib(string str, int start [, int length [, int utf8 ] ])</b>
+<B>string substr_lib(string str, int start [, int length [, int utf8 ] ])</B>
 
-ì‚¬ìš©ë²•ì€ substr ê³¼ ë™ì¼í•˜ë‹¤. ë‹¤ë¥¸ì ì€ ë‚´ë¶€ì ìœ¼ë¡œ 2 byte ë¥¼ ì²˜ë¦¬í•´ ì£¼ë©°, KSX
-1001 ë²”ìœ„ì™¸ì˜ ë¬¸ì (ë˜ ë°©ê°í•˜ ë‚˜ ì•„í–í– ì™€ ê°™ì€ ë¬¸ì) ì™€ NCR code ë“¤ì— ëŒ€í•œ
-ì²˜ë¦¬ ë£¨í‹´ì´ í¬í•¨ì´ ë˜ì–´ ìˆë‹¤. utf8 ë¬¸ìì—´ì„ ìë¥´ê³  ì‹¶ì„ ê²½ìš°ì—ëŠ” 4ë²ˆì§¸ íŒŒë¼
-ë¯¸í„°(int utf8) ì„ 1 ë¡œ ì§€ì •ì„ í•˜ë©´ ë‚´ë¶€ì ìœ¼ë¡œ utf8 ì„ cp949 ë¡œ ë””ì½”ë”© í•œ í›„
-ìë¥¸ë‹¤ìŒ ë‹¤ì‹œ utf8 ë¡œ ì¸ì½”ë”©ì„ í•´ ì£¼ê²Œ ëœë‹¤.
+»ç¿ë¹ıÀº substr °ú µ¿ÀÏÇÏ´Ù. ´Ù¸¥Á¡Àº ³»ºÎÀûÀ¸·Î 2 byte ¸¦ Ã³¸®ÇØ ÁÖ¸ç, KSX
+1001 ¹üÀ§¿ÜÀÇ ¹®ÀÚ (Œc¹æ°¢ÇÏ ³ª ¾ÆÁdÁd ¿Í °°Àº ¹®ÀÚ) ¿Í NCR code µé¿¡ ´ëÇÑ
+Ã³¸® ·çÆ¾ÀÌ Æ÷ÇÔÀÌ µÇ¾î ÀÖ´Ù. utf8 ¹®ÀÚ¿­À» ÀÚ¸£°í ½ÍÀ» °æ¿ì¿¡´Â 4¹øÂ° ÆÄ¶ó
+¹ÌÅÍ(int utf8) À» 1 ·Î ÁöÁ¤À» ÇÏ¸é ³»ºÎÀûÀ¸·Î utf8 À» cp949 ·Î µğÄÚµù ÇÑ ÈÄ
+ÀÚ¸¥´ÙÀ½ ´Ù½Ã utf8 ·Î ÀÎÄÚµùÀ» ÇØ ÁÖ°Ô µÈ´Ù.
 
-ì£¼ì˜í•  ê²ƒì€ utf8 íŒŒë¼ë¯¸í„°ëŠ” cp949 ì™€ euc-kr ì¼ë•Œë§Œ ì§€ì›ì´ ëœë‹¤.
+ÁÖÀÇÇÒ °ÍÀº utf8 ÆÄ¶ó¹ÌÅÍ´Â cp949 ¿Í euc-kr ÀÏ¶§¸¸ Áö¿øÀÌ µÈ´Ù.
 
-0.1.5 ë¶€í„°ëŠ” utf8 ì˜µì…˜ì„ ì£¼ì§€ ì•Šì•„ë„ ë‚´ë¶€ì—ì„œ utf8 ê°ì§€ë¥¼ í•œë‹¤.
-
-$str = &quot;í•œê¸€a ì™€ ë˜ ë°©ê°í•˜&quot;;
+$str = &quot;ÇÑ±Ûa ¿Í Œc¹æ°¢ÇÏ&quot;;
 echo substr_lib($str, 0, 10).&quot;\n&quot;;
 
-$str = &quot;í•œê¸€a ì™€ ë˜ ë°©ê°í•˜&quot;;
+$str = &quot;ÇÑ±Ûa ¿Í Œc¹æ°¢ÇÏ&quot;;
 $str = utf8encode_lib($str);
 $str = substr_lib($str, 0, 10, 1);
 echo utf8decode_lib($str, &quot;cp949&quot;);
 
 
-<span id="RE">ì°¸ê³ </span>
+<FONT ID=RE>Âü°í</FONT>
 <A HREF=http://www.php.net/manual/kr/function.substr.php TARGET=_blank>substr</A>()

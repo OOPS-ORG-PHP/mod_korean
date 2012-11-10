@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id$
+$Id: php_krmail.h,v 1.4 2002-12-12 16:58:35 oops Exp $
 */
 
 #ifndef PHP_KRMAIL_H
@@ -24,25 +24,21 @@ $Id$
 
 PHP_FUNCTION(mailsource_lib);
 
-UChar * generate_mail (UChar *o_ln, UChar *o_form, UChar *o_to,
-			       UChar *o_title, UChar *o_text, UChar *o_ptext,
-			       UChar *o_attach);
-UChar * generate_from (UChar *email, char *set);
-UChar * generate_to (UChar *toaddr, char *set);
-UChar * generate_title (UChar *title, UChar *set);
-UChar * generate_header (UChar *from, UChar *to, UChar *subject, char *boundary, UChar *is_attach);
-UChar * generate_body (UChar *bset, UChar *bboundary, UChar *btext, UChar *bptext);
-UChar * generate_attach (UChar *path, UChar *bound);
+unsigned char * generate_mail (unsigned char *o_ln, unsigned char *o_form, unsigned char *o_to,
+			       unsigned char *o_title, unsigned char *o_text, unsigned char *o_ptext,
+			       unsigned char *o_attach);
+unsigned char * generate_from (unsigned char *email, char *set);
+unsigned char * generate_to (unsigned char *toaddr, char *set);
+unsigned char * generate_title (unsigned char *title, unsigned char *set);
+unsigned char * generate_header (unsigned char *from, unsigned char *to, unsigned char *subject, char *boundary, unsigned char *is_attach);
+unsigned char * generate_body (unsigned char *bset, unsigned char *bboundary, unsigned char *btext, unsigned char *bptext);
+unsigned char * generate_attach (unsigned char *path, unsigned char *bound);
 char * make_boundary ();
 char * generate_mail_id (char * id);
 char * generate_date ();
-UChar * html_to_plain (UChar * text);
-UChar * body_encode (const UChar *str, int chklen);
-UChar *generate_mime (UChar *filename);
-
-UChar *kr_regex_replace(UChar *regex_o, UChar *replace_o, UChar *str_o);
-UChar *kr_regex_replace_arr(UChar *regex[], UChar *replace[], UChar *str, unsigned int regex_no);
-PHPAPI extern UChar *php_base64_encode(const UChar *, int, int *);
+unsigned char * html_to_plain (unsigned char * text);
+unsigned char * body_encode (unsigned char *str, int chklen);
+unsigned char *generate_mime (unsigned char *filename);
 
 #endif  /* end PHP_KRMAIL_H */
 

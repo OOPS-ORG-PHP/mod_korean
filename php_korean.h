@@ -15,11 +15,14 @@
   | Author:                                                              |
   +----------------------------------------------------------------------+
 
-  $Id$
+  $Id: php_korean.h,v 1.33 2002-12-12 17:49:27 oops Exp $
 */
 
 #ifndef PHP_KOREAN_H
 #define PHP_KOREAN_H
+
+extern zend_module_entry korean_module_entry;
+#define phpext_korean_ptr &korean_module_entry
 
 #ifdef PHP_WIN32
 #define PHP_KOREAN_API __declspec(dllexport)
@@ -30,9 +33,6 @@
 #ifdef ZTS
 #include "TSRM.h"
 #endif
-
-extern zend_module_entry korean_module_entry;
-#define korean_module_ptr &korean_module_entry
 
 PHP_MINIT_FUNCTION(korean);
 PHP_MSHUTDOWN_FUNCTION(korean);
@@ -71,10 +71,8 @@ ZEND_END_MODULE_GLOBALS(korean)
 #define KOREAN_G(v) (korean_globals.v)
 #endif
 
-#define BUILDNO "201211110226"
-#define BUILDVER "0.1.5"
-
-#define phpext_korean_ptr korean_module_ptr
+#define BUILDNO "200212130248"
+#define BUILDVER "0.0.3"
 
 #endif	/* PHP_KOREAN_H */
 
