@@ -15,7 +15,7 @@
   | Author:                                                              |
   +----------------------------------------------------------------------+
 
-  $Id$
+  $Id: php_krnetwork.h,v 1.8 2002-12-12 16:58:35 oops Exp $
 */
 
 #ifndef PHP_KRNETWORK_H
@@ -29,7 +29,7 @@ static char *kr_gethostbyaddr(char *ip);
 int socksend (int sock, int deb, unsigned char *var, unsigned char *target);
 unsigned char *get_mx_record (unsigned char *str);
 void debug_msg (unsigned char *msg, int info, int bar);
-int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char *text, unsigned char *host, int debug);
+int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char *text, int debug);
 unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsigned char *recfile);
 
 #endif

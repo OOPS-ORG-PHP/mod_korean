@@ -1,22 +1,22 @@
-<span class="title">ncrdecode_lib()</span>
+<FONT ID=title>ncrdecode_lib()</FONT>
 
 (required korean module)
 
-ncrdecode_lib -- NCR code ë¥¼ CP949 ë¬¸ìì—´ë¡œ ë³€í™˜
+ncrdecode_lib -- NCR code ¸¦ CP949 ¹®ÀÚ¿­·Î º¯È¯
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>string ncrdecode_lib (string str)</b>
+<B>string ncrdecode_lib (string str)</B>
 
-ncrdecode_lib() í•¨ìˆ˜ëŠ” 16 ì§„ìˆ˜ NCR code ë¡œ ë˜ì–´ìˆëŠ” ë¬¸ìë¥¼ CP949 í…Œì´ë¸”ë¡œ ë³€í™˜ì„ í•œë‹¤.
+ncrdecode_lib() ÇÔ¼ö´Â 16 Áø¼ö NCR code ·Î µÇ¾îÀÖ´Â ¹®ÀÚ¸¦ CP949 Å×ÀÌºí·Î º¯È¯À» ÇÑ´Ù.
 
-<span id="RE">ì˜ˆì œ</span>
+<FONT ID=RE>¿¹Á¦</FONT>
 
-$a = &quot;í•œê¸€a ì™€ ë˜ ë°©ê°í•˜&quot;;
+$a = &quot;ÇÑ±Ûa ¿Í Œc¹æ°¢ÇÏ&quot;;
 $a = ncrencode_lib($a);
 echo ncrdecode_lib($a);
 
-return =&gt; &quot;í•œê¸€a ì™€ ë˜ ë°©ê°í•˜&quot;;
+return =&gt; &quot;ÇÑ±Ûa ¿Í Œc¹æ°¢ÇÏ&quot;;
 
-<span id="RE">ì°¸ê³ </span>
+<FONT ID=RE>Âü°í</FONT>
 ncrencode_lib()
