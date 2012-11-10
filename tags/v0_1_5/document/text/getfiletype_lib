@@ -1,0 +1,16 @@
+<span class="title">getfiletype_lib()</span>
+
+(required korean module)
+
+getfiletype_lib -- 파일 이름에서 확장자를 받아옴
+
+<span id="RE">설명</span>
+
+<b>int getfiletype_lib (string filename)</b>
+
+이 함수에 파일 이름을 통과 시킬 경우 해당 파일의 확장자를 변수로 받는다.
+
+<span id="RE">예제</span>
+
+$a = getfiletype_lib(&quot;aaa.txt&quot;);
+echo $a =&gt; txt

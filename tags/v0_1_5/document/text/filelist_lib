@@ -1,0 +1,42 @@
+<span class="title">filelist_lib()</span>
+
+(required korean module)
+
+filelist_lib -- 지정 디렉토리의 파일 리스트를 가져옴
+
+<span id="RE">설명</span>
+
+<b>array filelist_lib(string path, [ string mode, [ string regex ] ])</b>
+
+지정한 디렉토리에 있는 디렉토리 리스트를 배열로 구하는 함수.  파일, 디렉토리, 링크 별로 리스
+트를 구할 수 있으며, 조합 역시 가능하다.
+
+win32 용에서 경로를 상대경로로 사용할 경우에는 realpath() 함수를 이용하여 절대 경로화를 해서
+사용해야 한다.
+
+mode value :
+  f  : 지정한 디렉토리의 파일만 받음
+  d  : 지정한 디렉토리의 디렉토리만 받음
+  l  : 지정한 디렉토리의 링크만 받음
+  fd : 지정한 디렉토리의 파일과 디렉토리만 받음
+  fl : 지정한 디렉토리의 파일과 링크만 받음
+  dl : 지정한 디렉토리의 디렉토리와 링크만 받음
+
+  아무것도 지정하지 않았을 경우에는 fdl 모두 받음
+
+REGEX
+  mode 값 또는 전체 리스트에서 정규표현식을 이용하여 리스트를 구함
+
+<span id="RE">예제</span>
+
+/home/backup 하위의 디렉토리 리스트를 받을 경우
+$a = filelist_lib(&quot;/home/backup&quot;,&quot;d&quot;);
+for($i=0;$i&lt;sizeof($a);$i++) {
+  echo $a[$i].&quot;\n&quot;;
+}
+
+/home/backup 에 있는 파일 중, tar.gz 파일들만 받을 경우
+$a = filelist_lib(&quot;/home/backup&quot;,&quot;f&quot;,&quot;tar\.gz$&quot;);
+for($i=0;$i&lt;sizeof($a);$i++) {
+  echo $a[$i].&quot;\n&quot;;
+}

@@ -1,0 +1,5 @@
+sockmail_lib()
+  - ipaddress 로 발송할 때의 처리
+
+check api
+  - UTF-8 체크, 현재는 euc-kr만 체크 됨
