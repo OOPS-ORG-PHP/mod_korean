@@ -1,25 +1,25 @@
-<FONT class="title">check_filename_lib()</FONT>
+<span class="title">check_filename_lib()</span>
 
 (required korean module)
 
-check_filename_lib -- GET ÀÌ³ª POST ·Î ³Ñ¾î¿À´Â º¯¼ö Ã¼Å©
+check_filename_lib -- GET ì´ë‚˜ POST ë¡œ ë„˜ì–´ì˜¤ëŠ” ë³€ìˆ˜ ì²´í¬
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>int check_filename_lib(string variable)</B>
+<b>int check_filename_lib(string variable)</b>
 
-ÁÖ·Î °æ·Î¸íÀÌ³ª º¯¼ö¸¦ ³Ñ°Ü ÁÙ¶§ ºÒ¹ýÀûÀÎ Á¢±ÙÀ» ¸·±â À§ÇØ »ç¿ëÀ» ÇÑ´Ù. ¹®ÀÚ¿­¿¡ ¸ÞÅ¸ Ä³¸¯ÅÍ
-°¡ Á¸ÀçÇÒ °æ¿ì, 1 À» ¹ÝÈ¯ÇÑ´Ù.
+ì£¼ë¡œ ê²½ë¡œëª…ì´ë‚˜ ë³€ìˆ˜ë¥¼ ë„˜ê²¨ ì¤„ë•Œ ë¶ˆë²•ì ì¸ ì ‘ê·¼ì„ ë§‰ê¸° ìœ„í•´ ì‚¬ìš©ì„ í•œë‹¤. ë¬¸ìžì—´ì— ë©”íƒ€ ìºë¦­í„°
+ê°€ ì¡´ìž¬í•  ê²½ìš°, 1 ì„ ë°˜í™˜í•œë‹¤.
 
-ÀÌ ÇÔ¼ö¿¡¼­ °É¸®´Â ¹®ÀÚ´Â <B>ÇÑ±Û,¾ËÆÄºª, _, -, .</B> ¹®ÀÚ¸¦ Á¦¿ÜÇÏ°í´Â ¸ðµÎ ¿¡·¯¸Þ¼¼Áö°¡ Ãâ·ÂµÈ´Ù.
-dot(.) ´Â Çã¿ëÀÌ µÇÁö¸¸ ¿¬¼ÓµÈ dot ¹®ÀÚ (..) ´Â ¿¡·¯ ¸Þ¼¼Áö°¡ Ãâ·ÂÀÌ µÈ´Ù.
+ì´ í•¨ìˆ˜ì—ì„œ ê±¸ë¦¬ëŠ” ë¬¸ìžëŠ” <b>í•œê¸€,ì•ŒíŒŒë²³, _, -, .</b> ë¬¸ìžë¥¼ ì œì™¸í•˜ê³ ëŠ” ëª¨ë‘ ì—ëŸ¬ë©”ì„¸ì§€ê°€ ì¶œë ¥ëœë‹¤.
+dot(.) ëŠ” í—ˆìš©ì´ ë˜ì§€ë§Œ ì—°ì†ëœ dot ë¬¸ìž (..) ëŠ” ì—ëŸ¬ ë©”ì„¸ì§€ê°€ ì¶œë ¥ì´ ëœë‹¤.
 
-ÀÌ´Â ÆÄÀÏ °æ·Î °°Àº °Í¿¡ ¸ÞÅ¸ Ä³¸¯ÅÍ¸¦ Æ÷ÇÔÇØ¼­ ½©»óÀÇ ¸í·ÉÀ» ½ÇÇàÇÏ´Â °ÍÀ» ¹æÁöÇÏ±â À§ÇØ
-»ç¿ëÇÑ´Ù.
+ì´ëŠ” íŒŒì¼ ê²½ë¡œ ê°™ì€ ê²ƒì— ë©”íƒ€ ìºë¦­í„°ë¥¼ í¬í•¨í•´ì„œ ì‰˜ìƒì˜ ëª…ë ¹ì„ ì‹¤í–‰í•˜ëŠ” ê²ƒì„ ë°©ì§€í•˜ê¸° ìœ„í•´
+ì‚¬ìš©í•œë‹¤.
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
 $s = &quot;asdf..asdf&quot;;
-if (check_filename_lib($s)) {
-  echo &quot;»ç¿ëÇÒ ¼ö ¾ø´Â ¹®ÀÚ°¡ Á¸ÀçÇÕ´Ï´Ù.&quot;;
+if (check_filename_lib ($s)) {
+  echo &quot;ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ë¬¸ìžê°€ ì¡´ìž¬í•©ë‹ˆë‹¤.&quot;;
 }

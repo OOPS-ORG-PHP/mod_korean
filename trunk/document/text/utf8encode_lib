@@ -1,23 +1,23 @@
-<FONT class="title">utf8encode_lib()</FONT>
+<span class="title">utf8encode_lib()</span>
 
 (required korean module)
 
-utf8encode -- 2byte ¹®ÀÚ¸¦ UTF8 ·Î º¯È¯
+utf8encode -- 2byte ë¬¸ìë¥¼ UTF8 ë¡œ ë³€í™˜
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>string utf8encode_lib(string str [, string charset])</B>
+<b>string utf8encode_lib(string str [, string charset])</b>
 
-charset À¸·Î ÁöÁ¤µÈ 2 byte ¹®ÀÚ¼ÂÀ» UTF8 ·Î º¯È¯ÇÑ´Ù. charset ÀÌ ÁöÁ¤µÇÁö
-¾ÊÀ¸¸é, ±âº»°ªÀ¸·Î EUC-KR ÀÌ´Ù. Áö¿øµÇ´Â charset Àº EUC-KR, BIG5, SJIS ÀÌ
-´Ù. KSX 1001 ¹üÀ§¿ÜÀÇ ¹®ÀÚ ¿ª½Ã EUC-KR ·Î ÁöÁ¤ÇÏ¿© ³»ºÎÀûÀ¸·Î Ã³¸®°¡ °¡´É
-ÇÏ¹Ç·Î, ÇÑ±¹¾î Ã³¸®¸¦ ECU-KR ·Î ÇÑ´Ù°í »ı°¢À» ÇÏ¸é µÈ´Ù.
+charset ìœ¼ë¡œ ì§€ì •ëœ 2 byte ë¬¸ìì…‹ì„ UTF8 ë¡œ ë³€í™˜í•œë‹¤. charset ì´ ì§€ì •ë˜ì§€
+ì•Šìœ¼ë©´, ê¸°ë³¸ê°’ìœ¼ë¡œ EUC-KR ì´ë‹¤. ì§€ì›ë˜ëŠ” charset ì€ EUC-KR, BIG5, SJIS ì´
+ë‹¤. KSX 1001 ë²”ìœ„ì™¸ì˜ ë¬¸ì ì—­ì‹œ EUC-KR ë¡œ ì§€ì •í•˜ì—¬ ë‚´ë¶€ì ìœ¼ë¡œ ì²˜ë¦¬ê°€ ê°€ëŠ¥
+í•˜ë¯€ë¡œ, í•œêµ­ì–´ ì²˜ë¦¬ë¥¼ ECU-KR ë¡œ í•œë‹¤ê³  ìƒê°ì„ í•˜ë©´ ëœë‹¤.
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
-$str = &quot;ÇÑ±Ûa¿Í Œc¹æ°¢ÇÏ&quot;;
+$str = &quot;í•œê¸€aì™€ ë˜ ë°©ê°í•˜&quot;;
 $str = utf8encode_lib($str, &quot;EUC-KR&quot;);
 echo $str.&quot;\n&quot;;
 
-<FONT ID=RE>Âü°í</FONT>
+<span id="RE">ì°¸ê³ </span>
 utf8decode_lib()

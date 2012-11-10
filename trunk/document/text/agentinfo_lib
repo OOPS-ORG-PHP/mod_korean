@@ -1,54 +1,54 @@
-<FONT class="title">agentinfo_lib()</FONT>
+<span class="title">agentinfo_lib()</span>
 
 (required korean module)
 
-agentinfo_lib -- ºê¶ó¿ìÁ®ÀÇ Á¤º¸¸¦ ±¸ÇÔ
+agentinfo_lib -- ë¸Œë¼ìš°ì ¸ì˜ ì •ë³´ë¥¼ êµ¬í•¨
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>array agentinfo_lib(void)</B>
+<b>array agentinfo_lib(void)</b>
 
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-agentinfo_lib() ÇÔ¼ö´Â Á¢¼ÓÇÏ´Â À¯ÀúÀÇ ºê¶ó¿ìÁ®ÀÇ Á¤º¸¸¦ ¹è¿­°ªÀ¸·Î ±¸ÇÏ°Ô µÈ´Ù. ±¸ÇÒ¼ö ÀÖ´Â
-ºê¶ó¿ìÁ®ÀÇ Á¤º¸´Â ´ÙÀ½°ú °°´Ù.
+agentinfo_lib() í•¨ìˆ˜ëŠ” ì ‘ì†í•˜ëŠ” ìœ ì €ì˜ ë¸Œë¼ìš°ì ¸ì˜ ì •ë³´ë¥¼ ë°°ì—´ê°’ìœ¼ë¡œ êµ¬í•˜ê²Œ ëœë‹¤. êµ¬í• ìˆ˜ ìžˆëŠ”
+ë¸Œë¼ìš°ì ¸ì˜ ì •ë³´ëŠ” ë‹¤ìŒê³¼ ê°™ë‹¤.
 
-[br] ºê¶ó¿ìÁ® Á¾·ù
-  MSIE, Mozilla, Netscape, Lynx, Links, w3m, opera, Konqueror, other À» ±¸ºÐÇÔ.
+[br] ë¸Œë¼ìš°ì ¸ ì¢…ë¥˜
+  MSIE, Mozilla, Netscape, Lynx, Links, w3m, opera, Konqueror, other ì„ êµ¬ë¶„í•¨.
 
-[os] ¿î¿µÃ¼Á¦
-  agent Á¤º¸¿¡¼­ OS ¸¦ ±¸ºÐÇÒ ¼ö ÀÖÀ» °æ¿ì OS ÀÇ Á¾·ù¸¦ ±¸ÇÔ
+[os] ìš´ì˜ì²´ì œ
+  agent ì •ë³´ì—ì„œ OS ë¥¼ êµ¬ë¶„í•  ìˆ˜ ìžˆì„ ê²½ìš° OS ì˜ ì¢…ë¥˜ë¥¼ êµ¬í•¨
 
-[ln] ¾ð¾î (netscape, mozila)
-  agent Á¤º¸¿¡¼­ ¾ð¾î¸¦ ±¸ºÐÇÒ ¼ö ÀÖÀ» °æ¿ì ¾ð¾î¸¦ ±¸ÇÔ. ko ¿Í en ¸¸ °¡´É. ³ª¸ÓÁö´Â other ·Î
-  Ã³¸®µÊ.
+[ln] ì–¸ì–´ (netscape, mozila)
+  agent ì •ë³´ì—ì„œ ì–¸ì–´ë¥¼ êµ¬ë¶„í•  ìˆ˜ ìžˆì„ ê²½ìš° ì–¸ì–´ë¥¼ êµ¬í•¨. ko ì™€ en ë§Œ ê°€ëŠ¥. ë‚˜ë¨¸ì§€ëŠ” other ë¡œ
+  ì²˜ë¦¬ë¨.
 
-[vr] ºê¶ó¿ìÁ® ¹öÁ¯ Á¤º¸
-  agent Á¤º¸¿¡¼­ ºê¶ó¿ìÁ® ¹öÁ¯¸¦ ±¸ºÐÇÒ ¼ö ÀÖÀ» °æ¿ì ºê¶ó¿ìÁ® ¹öÁ¯À» ±¸ÇÔ
+[vr] ë¸Œë¼ìš°ì ¸ ë²„ì ¼ ì •ë³´
+  agent ì •ë³´ì—ì„œ ë¸Œë¼ìš°ì ¸ ë²„ì ¼ë¥¼ êµ¬ë¶„í•  ìˆ˜ ìžˆì„ ê²½ìš° ë¸Œë¼ìš°ì ¸ ë²„ì ¼ì„ êµ¬í•¨
 
-[co] ºê¶ó¿ìÁ® È£È¯ Á¤º¸
-  ºê¶ó¿ìÁ®°£ ºñ½ÁÇÑ ÀÛµ¿À» ÇÏ´Â °Í³¢¸®ÀÇ ¸ðÀ½ Á¤º¸¸¦ °¡Áø´Ù.
+[co] ë¸Œë¼ìš°ì ¸ í˜¸í™˜ ì •ë³´
+  ë¸Œë¼ìš°ì ¸ê°„ ë¹„ìŠ·í•œ ìž‘ë™ì„ í•˜ëŠ” ê²ƒë¼ë¦¬ì˜ ëª¨ìŒ ì •ë³´ë¥¼ ê°€ì§„ë‹¤.
 
-  msie    =&gt; msie ÀÇ °è¿­·Î, msie, opera °¡ ¿©±â¿¡ ÇØ´çµÈ´Ù.
-  mozilla =&gt; mozilla °è¿­·Î, mozilla, netscape, konqueror °¡ ÇØ´çµÈ´Ù.
-  TextBR  =&gt; lynx, links, w3m µî ÅØ½ºÆ® ºê¶ó¿ìÁ®¸¦ ÁöÄª
+  msie    =&gt; msie ì˜ ê³„ì—´ë¡œ, msie, opera ê°€ ì—¬ê¸°ì— í•´ë‹¹ëœë‹¤.
+  mozilla =&gt; mozilla ê³„ì—´ë¡œ, mozilla, netscape, konqueror ê°€ í•´ë‹¹ëœë‹¤.
+  TextBR  =&gt; lynx, links, w3m ë“± í…ìŠ¤íŠ¸ ë¸Œë¼ìš°ì ¸ë¥¼ ì§€ì¹­
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
 $a = agentinfo_lib();
 echo &quot;browser : $a[br]\n&quot;.
      &quot;os      : $a[os]\n&quot;.
      &quot;lang    : $a[ln]\n&quot;.
      &quot;version : $a[vr]\n&quot;.
-     &quot;È£È¯    : $a[co]\n&quot;;
+     &quot;í˜¸í™˜    : $a[co]\n&quot;;
 
-À§ÀÇ °á°ú´Â Windows 2000 ÀÇ IE5.x ¿¡¼­ Á¢¼ÓÇßÀ» °æ¿ì
+ìœ„ì˜ ê²°ê³¼ëŠ” Windows 2000 ì˜ IE5.x ì—ì„œ ì ‘ì†í–ˆì„ ê²½ìš°
 
 browser : MSIE
 os      : NT4.0
 lang    :
 version : 6.0
-È£È¯    : msie
+í˜¸í™˜    : msie
 
-°ú °°ÀÌ Ãâ·Â µÈ´Ù.
+ê³¼ ê°™ì´ ì¶œë ¥ ëœë‹¤.

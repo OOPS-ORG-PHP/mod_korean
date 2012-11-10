@@ -1,22 +1,22 @@
-<FONT class="title">get_microtime_lib()</FONT>
+<span class="title">get_microtime_lib()</span>
  
 (required korean module)
 
-get_microtime_lib -- ¼öÇà ½Ã°£À» ¹Ğ¸®ÃÊ·Î ±¸ÇÏ´Â ÇÔ¼ö
+get_microtime_lib -- ìˆ˜í–‰ ì‹œê°„ì„ ë°€ë¦¬ì´ˆë¡œ êµ¬í•˜ëŠ” í•¨ìˆ˜
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>int get_microtime_lib(int start, int end)</B>
+<b>int get_microtime_lib(int start, int end)</b>
 
-php ÀÇ microtime À» ÀÌ¿ëÇÏ¿© ¾ò¾îÁö´Â °ªÀ» ºñ±³ÇÏ¿© °æ°ú ½Ã°£À» ¹Ğ¸®ÃÊ·Î ±¸ÇÏ´Â ÇÔ¼ö
+php ì˜ microtime ì„ ì´ìš©í•˜ì—¬ ì–»ì–´ì§€ëŠ” ê°’ì„ ë¹„êµí•˜ì—¬ ê²½ê³¼ ì‹œê°„ì„ ë°€ë¦¬ì´ˆë¡œ êµ¬í•˜ëŠ” í•¨ìˆ˜
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
 $time1 = microtime();
-...... ¾î¶°ÇÑ ·çÆ¾ ......
+...... ì–´ë– í•œ ë£¨í‹´ ......
 $time2 = microtime();
 
 $time = get_microtime_lib($time1,$time2);
 echo &quot;$time sec&quot;;
 
-À§ÀÇ °á°ú´Â 2.75 sec ¿Í °°ÀÌ Ãâ·ÂÀÌ µÈ´Ù.
+ìœ„ì˜ ê²°ê³¼ëŠ” 2.75 sec ì™€ ê°™ì´ ì¶œë ¥ì´ ëœë‹¤.

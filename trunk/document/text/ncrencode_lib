@@ -1,33 +1,33 @@
-<FONT class="title">ncrencode_lib()</FONT>
+<span class="title">ncrencode_lib()</span>
 
 (required korean module)
 
-ncrencode_lib -- CP949 ¹®ÀÚ¿­À» UHC (ncr code) ·Î º¯È¯
+ncrencode_lib -- CP949 ë¬¸ìžì—´ì„ UHC (ncr code) ë¡œ ë³€í™˜
 
-<FONT ID=RE>¼³¸í</FONT>
+<span id="RE">ì„¤ëª…</span>
 
-<B>string ncrencode_lib (string str [, int type])</B>
+<b>string ncrencode_lib (string str [, int type])</b>
 
-ncrencode_lib() ÇÔ¼ö´Â CP949 Å×ÀÌºíÀÇ 2 byte ¹®ÀÚ¸¦ 16Áø¼ö NCR ÄÚµå·Î º¯°æÀ» ÇÑ´Ù.
-type À» 1 ·Î ÁöÁ¤ÇßÀ» °æ¿ì¿¡´Â EUC-KR ÀÇ ¹üÀ§¿ÜÀÇ 2 byte ¹®ÀÚ¸¸ 16 Áø¼ö NCR ÄÚµå·Î
-º¯°æÀ» ÇÑ´Ù.
+ncrencode_lib() í•¨ìˆ˜ëŠ” CP949 í…Œì´ë¸”ì˜ 2 byte ë¬¸ìžë¥¼ 16ì§„ìˆ˜ NCR ì½”ë“œë¡œ ë³€ê²½ì„ í•œë‹¤.
+type ì„ 1 ë¡œ ì§€ì •í–ˆì„ ê²½ìš°ì—ëŠ” EUC-KR ì˜ ë²”ìœ„ì™¸ì˜ 2 byte ë¬¸ìžë§Œ 16 ì§„ìˆ˜ NCR ì½”ë“œë¡œ
+ë³€ê²½ì„ í•œë‹¤.
 
-ÀÌ ÇÔ¼ö´Â GD ¿¡¼­ ÇÑ±ÛÀ» »ç¿ëÇÒ ¶§, GD ¿¡ µû·Î ÇÑ±Û ÆÐÄ¡¸¦ ÇÏÁö ¾Ê°í ÇÑ±ÛÀ» »ç¿ëÇÒ
-¶§ À¯¿ëÇÏ°Ô »ç¿ëÇÒ ¼ö ÀÖ´Ù.
+ì´ í•¨ìˆ˜ëŠ” GD ì—ì„œ í•œê¸€ì„ ì‚¬ìš©í•  ë•Œ, GD ì— ë”°ë¡œ í•œê¸€ íŒ¨ì¹˜ë¥¼ í•˜ì§€ ì•Šê³  í•œê¸€ì„ ì‚¬ìš©í• 
+ë•Œ ìœ ìš©í•˜ê²Œ ì‚¬ìš©í•  ìˆ˜ ìžˆë‹¤.
 
-type À» 1 ·Î ÁöÁ¤ÇÒ °æ¿ì´Â, MSIE ÀÇ °æ¿ì¿¡´Â KSX1001 ÀÌ¿ÜÀÇ ¹üÀ§¸¦ ¾Ë¾Æ¼­ NCR ÄÚµå
-·Î º¯È¯À» ÇØ ÁÖ³ª Å¸ ºê¶ó¿ìÁ®¿¡¼­´Â Àß Áö¿øÀÌ µÇÁö ¾ÊÀ¸¹Ç·Î ´Ù¸¥ ºê¶ó¿ìÁ®ÀÇ È£È¯¼º
-À» »ý°¢ÇÒ ¶§ ÀÌ ÇÔ¼ö¸¦ »ç¿ëÇÒ ¼ö ÀÖ´Ù.
+type ì„ 1 ë¡œ ì§€ì •í•  ê²½ìš°ëŠ”, MSIE ì˜ ê²½ìš°ì—ëŠ” KSX1001 ì´ì™¸ì˜ ë²”ìœ„ë¥¼ ì•Œì•„ì„œ NCR ì½”ë“œ
+ë¡œ ë³€í™˜ì„ í•´ ì£¼ë‚˜ íƒ€ ë¸Œë¼ìš°ì ¸ì—ì„œëŠ” ìž˜ ì§€ì›ì´ ë˜ì§€ ì•Šìœ¼ë¯€ë¡œ ë‹¤ë¥¸ ë¸Œë¼ìš°ì ¸ì˜ í˜¸í™˜ì„±
+ì„ ìƒê°í•  ë•Œ ì´ í•¨ìˆ˜ë¥¼ ì‚¬ìš©í•  ìˆ˜ ìžˆë‹¤.
 
-<FONT ID=RE>¿¹Á¦</FONT>
+<span id="RE">ì˜ˆì œ</span>
 
-$a = &quot;ÇÑ±Ûa ¿Í Œc¹æ°¢ÇÏ&quot;;
+$a = &quot;í•œê¸€a ì™€ ë˜ ë°©ê°í•˜&quot;;
 $a = ncrencode_lib($a);
 return => &amp;#54620;&amp;#44544;a &amp;#50752; &amp;#46624;&amp;#48169;&amp;#44033;&amp;#54616;
 
-$a = &quot;ÇÑ±Ûa ¿Í Œc¹æ°¢ÇÏ&quot;;
+$a = &quot;í•œê¸€a ì™€ ë˜ ë°©ê°í•˜&quot;;
 $a = ncrencode_lib($a,1);
-return => ÇÑ±Ûa ¿Í &amp;#46624;¹æ°¢ÇÏ
+return => í•œê¸€a ì™€ &amp;#46624;ë°©ê°í•˜
 
-<FONT ID=RE>Âü°í</FONT>
+<span id="RE">ì°¸ê³ </span>
 ncrdecode_lib()
