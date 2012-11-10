@@ -109,17 +109,13 @@ function get_microtime_lib($old, $new) {
 
 # 파일 크기를 단위별로 출력하는 함수
 #
-function human_fsize_lib($bfsize, $sub = "0", $unit = 0) {
-
-  $unit = ($unit != 1) ? "Bytes" : "Bits";
-  $units = ($unit != 1) ? "B" : "b";
-
-  $BYTES = number_format($bfsize) . " $unit"; // 3자리를 기준으로 컴마
+function human_fsize_lib($bfsize, $sub = "0") {
+  $BYTES = number_format($bfsize) . " Bytes"; // 3자리를 기준으로 컴마
   
   if($bfsize < 1024) return $BYTES; # Bytes 범위
-  elseif($bfsize < 1048576) $bfsize = number_format($bfsize/1024,1) . " K{$units}"; # KBytes 범위
-  elseif($bfsize < 1073741827) $bfsize = number_format($bfsize/1048576,1) . " M{$units}"; # MB 범위
-  else $bfsize = number_format($bfsize/1073741827,1) . " G{$units}"; # GB 범위
+  elseif($bfsize < 1048576) $bfsize = number_format($bfsize/1024,1) . " KB"; # KBytes 범위
+  elseif($bfsize < 1073741827) $bfsize = number_format($bfsize/1048576,1) . " MB"; # MB 범위
+  else $bfsize = number_format($bfsize/1073741827,1) . " GB"; # GB 범위
 
   if($sub) $bfsize .= "($BYTES)";
 

@@ -1,4 +1,6 @@
 <?
+include "codetables/ksc5601.php";
+
 function substr_lib($str,$from,$length=0,$utf8=0) {
 
   if ($utf8) { $str = utf8decode_lib($str, "cp949"); }
@@ -141,7 +143,7 @@ function charencode_lib($one, $two, $opt=0, $hanja=0, $start='\u', $end='') {
   } else {
     if ($two < 0xa1 || $two > 0xfe) { $ret = "?"; }
     else {
-      $ncr = ($one - 0xca) * 94 + ($two - 0xa1);
+      $ncr = ($one - 0xca) * 94 - ($two - 0xa1);
 
       switch ($opt) {
         case 1: $ret = "&#".$GLOBALS['table_ksc5601_hanja'][$ncr].";"; break;

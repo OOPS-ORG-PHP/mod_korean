@@ -125,7 +125,7 @@ function autolink_lib($str) {
   $tar[] = "<\\1\\2\\3>";
   $src[] = "/<([^<>\n]*)\n([^\n<>]*)>/i";
   $tar[] = "<\\1\\2>";
-  $src[] = "/<(A|IMG)[^>=]*(HREF|SRC)[^=]*=[ '\"\n]*({$regex['http']}|mailto:{$regex['mail']})[^>]*>/i";
+  $src[] = "/<(A|IMG)[^>]*(HREF|SRC)[^=]*=[ '\"\n]*({$regex['http']}|mailto:{$regex['mail']})[^>]*>/i";
   $tar[] = "<\\1 \\2=\"\\3\">";
 
   # email 형식이나 URL 에 포함될 경우 URL 보호를 위해 @ 을 치환

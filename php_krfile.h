@@ -14,28 +14,24 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id$
+$Id: php_krfile.h,v 1.9 2002-12-12 16:56:30 oops Exp $
 */
 #ifndef PHP_KRFILE_H
 #define PHP_KRFILE_H
 
 PHP_FUNCTION(human_fsize_lib);
 PHP_FUNCTION(getfiletype_lib);
-PHP_FUNCTION(pcregrep_lib);
 PHP_FUNCTION(getfile_lib);
 PHP_FUNCTION(putfile_lib);
 PHP_FUNCTION(filelist_lib);
 
-int writefile (unsigned char * filename, unsigned char * str_o, unsigned int mode_o);
-unsigned char * readfile (unsigned char * filename);
-char * human_file_size (double size_o, int sub_o, int unit, int cunit);
-unsigned int check_filedev (unsigned char * path_f, unsigned char * filename);
-unsigned char * includePath (unsigned char * filepath);
-int numberOfchar (char * str, char chk);
-int pcre_match (unsigned char * regex, unsigned char * str);
+void writefile(unsigned char *filename, unsigned char *str_o, unsigned int mode_o);
+unsigned char *readfile(unsigned char *filename);
+unsigned char *human_file_size (double size_o, int sub_o);
+unsigned int check_filedev (unsigned char *path_f, unsigned char *filename);
+unsigned char *includePath (unsigned char *filepath);
 
 #define FILEBUFS 4096
-#define MAXPATHLENGTH 1024
 #define RETURN_FILE_TYPE 1
 #define RETURN_DIR_TYPE 2
 #define RETURN_LINK_TYPE 3

@@ -1,309 +1,95 @@
-<span id="title">I. PHP Korean Extension</span>
-</pre>
+<FONT id=title>I. PHP4 Korean Extensions</FONT>
 
-<TABLE BORDER=1 WIDTH=""100%"" CELLPADDING=4 CELLSPACING=1>
+<TABLE BORDER=1 WIDTH=100% WIDTH=0 CELLPADDING=4 CELLSPACING=1>
 <TR>
-<TD align="center"><b>ì£¼ì˜</b></TD>
+<TD ALIGN=center><B>ÁÖÀÇ</B></TD>
 </TR>
 <TR>
-<TD><pre>
-ì´ ëª¨ë“ˆì€ ìƒë‹¹íˆ ì‹¤í—˜ì ì¸ ëª¨ë“ˆì´ë‹¤. ì´ëŠ” ì´ í•¨ìˆ˜ë“¤ì´ ì œëŒ€ë¡œ ì‘ë™ì„ í•˜ì§€ ëª»í•  ìˆ˜ë„ ìˆë‹¤ëŠ” ì˜ë¯¸ì´ë‹¤.
-ì´ í•¨ìˆ˜ë“¤ì´ PHP ì •ì‹ ë²„ì ¼ì— í¬í•¨ì„ í•˜ê¸° ìœ„í•´ ë¦¬í¬íŒ…ì„ í•  ì˜ì‚¬ë„ ë³„ë¡œ ì—†ë‹¤. ë˜í•œ ì¼ë³¸ì—ì„œ ì‘ì—…ì„ í•˜
-ê³  ìˆëŠ” mbstring í•¨ìˆ˜ì™€ì˜ ê´€ê³„ë„ ì–´ë–»ê²Œ ë ì§€ ì•Œ ìˆ˜ê°€ ì—†ë‹¤.
+<TD><PRE>
+ÀÌ ¸ğµâÀº »ó´çÈ÷ ½ÇÇèÀûÀÎ ¸ğµâÀÌ´Ù. ÀÌ´Â ÀÌ ÇÔ¼öµéÀÌ Á¦´ë·Î ÀÛµ¿À» ÇÏÁö ¸øÇÒ ¼öµµ ÀÖ´Ù´Â ÀÇ¹ÌÀÌ´Ù.
+ÀÌ ÇÔ¼öµéÀÌ PHP Á¤½Ä ¹öÁ¯¿¡ Æ÷ÇÔÀ» ÇÏ±â À§ÇØ ¸®Æ÷ÆÃÀ» ÇÒ ÀÇ»çµµ º°·Î ¾ø´Ù. ¶ÇÇÑ ÀÏº»¿¡¼­ ÀÛ¾÷À» ÇÏ
+°í ÀÖ´Â mbstring ÇÔ¼ö¿ÍÀÇ °ü°èµµ ¾î¶»°Ô µÉÁö ¾Ë ¼ö°¡ ¾ø´Ù.
 
-ë˜í•œ, ì´ í•¨ìˆ˜ë“¤ì€ ì˜¤ë¡œì§€ í•œêµ­ì–´ í™˜ê²½ë§Œì„ ê³ ë ¤í•˜ì—¬ ì‘ì„±ì„ í•œë‹¤.
-</pre></TD>
+¶ÇÇÑ, ÀÌ ÇÔ¼öµéÀº ¿À·ÎÁö ÇÑ±¹¾î È¯°æ¸¸À» °í·ÁÇÏ¿© ÀÛ¼ºÀ» ÇÑ´Ù.
+</PRE></TD>
 </TR>
 </TABLE>
 
-<pre>
-<span id="title">Introduction</span>
+<FONT id=title>Introduction</FONT>
 
-korean extension ì€ PHP4 4.3 ì´ìƒ ë²„ì „ì—ì„œ ì‘ë™í•˜ëŠ” í•œêµ­ì–´ í™˜ê²½ì˜ ê°œë°œì— í•„ìš”í•œ
-í•¨ìˆ˜ë“¤ì„ ì œê³µí•œë‹¤.  ê°œë°œìê°€ ë°°í¬í•˜ë˜ oops phplib ë¼ëŠ” library ë¥¼ php extension
-ìœ¼ë¡œ ëª¨ë‘ êµ¬í˜„í•˜ì˜€ìœ¼ë©°, ëª‡ëª‡ ì¶”ê°€ëœ í•¨ìˆ˜ë“¤ì´ ì¡´ì¬í•œë‹¤.
+korean extension Àº PHP4 4.2 ÀÌ»ó ¹öÀü¿¡¼­ ÀÛµ¿ÇÏ´Â ÇÑ±¹¾î È¯°æÀÇ °³¹ß¿¡ ÇÊ¿äÇÑ
+ÇÔ¼öµéÀ» Á¦°øÇÑ´Ù.  °³¹ßÀÚ°¡ ¹èÆ÷ÇÏ´ø oops phplib ¶ó´Â library ¸¦ php extension
+À¸·Î ¸ğµÎ ±¸ÇöÇÏ¿´À¸¸ç, ¸î¸î Ãß°¡µÈ ÇÔ¼öµéÀÌ Á¸ÀçÇÑ´Ù.
 
-korean extension ì˜ buildno ê°€ 200212410255 ë¶€í„°ëŠ” php 4.3.0 ë¶€í„° ì»´íŒŒì¼ì´ ê°€ëŠ¥
-í•˜ë‹¤.
+korean extension ÀÇ buildno °¡ 200212410255 ºÎÅÍ´Â php 4.3.0 ºÎÅÍ ÄÄÆÄÀÏÀÌ °¡´É
+ÇÏ´Ù. ÀÌ¹Ì »ı¼ºÀÌ µÇ¾îÁø binary ´Â 4.2 ºÎÅÍ »ç¿ëÀÌ °¡´ÉÇÏ´Ù.
 
-ì¤‘ìš” íŠ¹ì§•ìœ¼ë¡œëŠ”, EUC-KR, CP949, UTF8, NCR code ë“±ì˜ charset ë³€í™˜ì´ ê°€ëŠ¥í•˜ë©°, ì›¹
-ìƒì—ì„œ ìœ ìš©í•˜ê²Œ ì‚¬ìš©í•  ë§Œí•œ í•¨ìˆ˜ë“¤ì´ ì œê³µì´ ëœë‹¤.
-
-korean extension ì€ korean extension source ì•ˆì˜ phplib ë””ë ‰í† ë¦¬ì—  pure php ì½”
-ë“œë¡œë„ êµ¬í˜„ì´ ë˜ì–´ ìˆë‹¤.
+Áß¿ä Æ¯Â¡À¸·Î´Â, EUC-KR, CP949, UTF8, NCR code µîÀÇ charset º¯È¯ÀÌ °¡´ÉÇÏ¸ç, À¥
+»ó¿¡¼­ À¯¿ëÇÏ°Ô »ç¿ëÇÒ ¸¸ÇÑ ÇÔ¼öµéÀÌ Á¦°øÀÌ µÈ´Ù.
 
 
-<a name="changelog">&nbsp;</a>
-<span id="title">Changelog</span>
+<A NAME=changelog>
+<FONT id=title>Changelog</FONT>
 
-PHP Korean Extexsions Changelog About Version REP_VERSION_REP
+PHP Korean Extexsions Changelog About CVS
 
-* 0.1.2
-Sun Mar 19 2006
---------------------------------------------------------------------------------
+* Sun Dec  1 2002
   by JoungKyun Kim <http://www.oops.org>
-    - fixed documents with html 4 validate
-    - fixed sockmail_lib function removed upper html print out
-    - fixed segmentation fault in get_mx_record function
-
-
-* 0.1.1
-Thu Mar 16 2006
---------------------------------------------------------------------------------
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed gdImageCreatePaletteFromTrueColor link bug in bundle gd library
-    - fixed substr_lib ascii range parsing bug
-    - fixed buffer over flow on body_encode function in krmail.c
-    - changed err code E_ERROR to E_WARNING when mailresource_lib function failed
-    - fixed out of memory of kr_regex_replace_arr function
-    - add helo host argument in sockmail_lib function
-    - when sending fail, don't stop function any more.
-
-
-* 0.1.0
-Sun Feb 12 2006
---------------------------------------------------------------------------------
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - update libgd on php 5.1.2
-    - changed create location of tmpfile to PG(upload_tmp_dir)
-    - added open basedir check
-
-
-* 0.0.9
-Thu Apr 21 2005
---------------------------------------------------------------------------------
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed warning messages
-
-
-* 0.0.8
---------------------------------------------------------------------------------
-Tue Sep 14 2004
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - rewrite strtrim internal function
-    - changed efree funtion to safe_efree function
-    - fixed mail sent problem
-
-
-* 0.0.7
---------------------------------------------------------------------------------
-Mon Jul 27 2004
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed gd dependency problem
-    - gd bundle libaray update
-
-Mon May 31 2004
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed bundle gd library
-
-Wed Dec 10 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - rewrite pcregrep_lib function
-    - rewrite krregex.h
-    - rewrite get_serverenv function
-
-Tue Dec  2 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed efree bug of pcre_match function
-    - rewrite pcregrep_lib function
-
-
-* 0.0.6
---------------------------------------------------------------------------------
-Mon Sep 15 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed fail mail and rcpt rutine on some smtp server in sockmail_lib fucntion
-    - fixed setlocale on date of mail header in mailsource_lib function
-
-Thu Sep  4 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - changed to int type from void on putfile_lib function
-
-Sun Aug 31 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed miss free on pcre_match function
-
-Wed Jul 16 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed autolink_lib function bug
-
-Mon Jul 14 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - update human_fsize_lib
-    - added gif out patch on libgd
-
-Mon Jun  2 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - update libgd
-
-Wed May 28 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed segment fault when return null byte in pcregrep_lib
-
-Mon May 26 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added unit option in human_fsize_lib function
-
-Tue May 14 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - rewrite readfile_lib fucntion with same function of readfile
-    - added pcregrep_lib function and pcre_match internal function
-
-
-* 0.0.5
---------------------------------------------------------------------------------
-Sun Mar  2 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed failure of static compile
-    - registed new gd library file
-    - removed gd gif read on windows
-
-Sat Mar  1 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed conftest bug of config.m4
-    - fixed bug of width value have 0 on imgresize_lib function
-    - fixed koren.dsp
-
-Fri Feb 21 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed segmentation fault error of VCWD_REALPATH on FreeBSD
-
-Tue Jan  7 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed gdSinT undefined error when don't include gd extension
-    - modified phpinfo data
-    - enabled to use on account mode
-
-* 0.0.4
---------------------------------------------------------------------------------
-Mon Jan  6 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added script version of korean extension
-
-Wed Jan  1 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added gd version check rutine on krimage.c
-    - fixed setment fault of mailsource_lib function
-    - modified html_to_plain function on krmail.c
-
-Mon Dec 30 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added small gd library
-    - update krimage.c
-    - modified config.m4
-
-Sat Dec 29 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added small gd library
-    - modified config.m4
-    - limits under 4.3.0
-
-Sat Dec 28 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added PHP_NEW_EXTENSION in config.m4 for over 4.2.x
-
-Thu Dec 26 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed typo in agentinfo_lib function
-
-Sun Dec 22 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed segment error on readfile function
-
-
-* 0.0.3
---------------------------------------------------------------------------------
-
-Thu Dec 13 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - release 0.0.3
-    - fixed bad useful variables with realpath
-    - fixed gabage return value
-
-Wed Dec 12 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - fixed readfile function on krfile.c
-    - fixed case of null string return on readfile_lib
-    - fixed realpath under win32
-    - updated doucments
-
-Mon Dec 10 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - removed unuseless variables
-    - changed system function to file stream function on readfile function
-
-* 0.0.2
---------------------------------------------------------------------------------
-Mon Dec  9 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - release 0.0.2
-    - changed file stream function to row system function on readfile_lib functoin
-    - fixed segment falut of mail function
-    - fixed bug that changed addr variable in get_hostname_lib function
-    - changed upper case to lower case start charactors of unicode function
-    - fixed segment fault on sutstr_lib function
-    - update document
-
-Sun Dec  1 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
     - rewrite human_fsize_lib function
     - rewrite check_table function
     - fixed segmentation falut on krNcrEncode, krNcrDecode function
 
-Wed Nov 30 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Wed Nov 30 2002
+  by JoungKyun Kim <http://www.oops.org>
     - modified project file of MSVC
 
-Wed Nov 27 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Wed Nov 27 2002
+  by JoungKyun Kim <http://www.oops.org>
     - rewrite unicode ncrcode function
 
-Wed Nov 27 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Wed Nov 27 2002
+  by JoungKyun Kim <http://www.oops.org>
     - rewrite utf8encode_lib, utf8decode_lib function
     - fixed memory free problems
     - removed convUTF8 function in krcharset.c
 
-Tue Nov 26 2002
-  by HyunSoo Choi &lt;http://baby.web119.com&gt;
-    - added new utf8 function
+* Tue Nov 26 2002
+  by HyunSoo Choi <http://baby.web119.com>
+        - added new utf8 function
 
-Thu Oct 24 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Thu Oct 24 2002
+  by JoungKyun Kim <http://www.oops.org>
     - added memory free for estrdup variables
 
-Sun Sep 22 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Sun Sep 22 2002
+  by JoungKyun Kim <http://www.oops.org>
     - added memory free some variables
 
-
-* 0.0.1
---------------------------------------------------------------------------------
-Thu Sep 19 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Thu Sep 19 2002
+  by JoungKyun Kim <http://www.oops.org>
     - release 0.0.1
     - fixed postposition_lib functoin
     - fixed mailresource_lib function overflow error on windows envionment
 
-Wed Sep 18 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Wed Sep 18 2002
+  by JoungKyun Kim <http://www.oops.org>
     - supported windows
 
-Sun Sep  8 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Sun Sep  8 2002
+  by JoungKyun Kim <http://www.oops.org>
     - fixed get_hostname_lib returns null value if reverse value is 0
     - fixed proxy type on get_hostname_lib
 
-Tue Sep  5 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Tue Sep  5 2002
+  by JoungKyun Kim <http://www.oops.org>
     - added postposition_lib function
 
-Tue Sep  3 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Tue Sep  3 2002
+  by JoungKyun Kim <http://www.oops.org>
     - removed unuseless variables
 
-Sun Sep  1 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Sun Sep  1 2002
+  by JoungKyun Kim <http://www.oops.org>
     - modified config.m4 for phpize
       use --enable-korean-gd instead of --with-gd for image function
     - fixed segment fault error on sockhttp function
@@ -311,59 +97,27 @@ Sun Sep  1 2002
     - removed include pcre.h header
     - support apache 2
 
-Thu Aug 29 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Thu Aug 29 2002
+  by JoungKyun Kim <http://www.oops.org>
     - supported cygwin
       cygwin doesn't support gd and shared extension mode.
 
-Thu Aug 23 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Thu Aug 23 2002
+  by JoungKyun Kim <http://www.oops.org>
     - supported php 4.3
     - patched read file function that can't read binary file
 
-Thu Aug 22 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - added ncrdecode_lib() function
-    - removed result_except_ksx_1001 function
-    - modified rutine of 2 byte NCR code except range of KSX 1001 on substr_lib() function
-    - modifed include header on krnetwork.c
-    - changed url information of phpinfo()
-    - modified readfile_lib() function
-    - restored gd library check on config.m4
-
-Sun Aug 18 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - changed krNcrConv function to krNcrEncode
-
-Fri Aug 16 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - removed include of dns.c on krnetwork.c
-    - removed include of files that includes ext/standard dir
-    - added krmath.c, php_krmath.h
-    - incresed run time speed on string parse function
-
-Wed Aug 14 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - remove bin2hex, hex2bin, bin2dec function on krparse.c
-    - arranged string variables
-    - update uniConv function on krparsc.c
-
-Tue Aug 13 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - changed duplicate name of array variables with /ext/standard/image.c
-    - arranged string variables
-
-Sun Aug 11 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Sun Aug 12 2002
+  by JoungKyun Kim <http://www.oops.org>
     - changed mime type on generate_attach() function
     - added rutine of 2 byte charactor except range of KSX 1001 on substr_lib() function
     - added rutine of 2 byte NCR code except range of KSX 1001 on substr_lib() function
 
-Sat Aug 10 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+* Sat Aug 10 2002
+  by JoungKyun Kim <http://www.oops.org>
     - supported apache 2
 
-Fri Aug  9 2002
+* Wed Aug  9 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - fixed mime type of attach file on mailsource_lib() function
     - changed us-ascii from iso-8859-1 on mailsource_lib() function
@@ -372,146 +126,146 @@ Fri Aug  9 2002
     - fixed Segmentation fault on sockmail_lib() function
     - changed variable type of mxrecord on sockmail_lib() function for FreeBSD
 
-Wed Aug  7 2002
+* Wed Aug  7 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - added mailsource_lib() function
 
-Fri Jul 25 2002
+* Fri Jul 25 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - added remove rutine of utf 8 init charactors on utf8_decode function
     - changed print value of php_info()
     - changed name of builddate_lib function to buildno_lib
     - added version_lib function ( print version of korean extension )
 
-Fri Jul 18 2002
+* Fri Jul 18 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - fixed problem of null new_type parameter in imgresize_lib function
 
-Wed Jul  3 2002
+* Wed Jul  3 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - added include_path option on readfile_lib function
 
-Sun Jun 30 2002
+* Sun Jun 30 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - enable to control of remote image on imgResize_lib function
 
-Wed Jun 19 2002
+* Wed Jun 19 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - modified information of php.ini
 
-Sat Jun 15 2002
+* Sat Jun 15 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - added other browser in get_agent_lib function
 
-Thu Jun 14 2002
+* Thu Jun 14 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - added gd libaray if installed gd is no regular library directory
 
-Thu Jun 13 2002
+* Thu Jun 13 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
-    - modified config.m4 for supported gd
+    - modified config.m4 for supported gd for other OS except Redhat
 
-Fri Jun  7 2002
+* Fri Jun  7 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - fixed reallocation error in uniencode_lib function
 
-Mon Jun  3 2002
+* Mon Jun  3 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - added imgresize_lib function (added krimage.c, php_krimage.h)
+      supported thumbnail image
 
-Fri May 24 2002
+* Fri May 24 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - fixed typo in convUTF6 function
 
-Thu May 23 2002
+* Thu May 23 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - fixed segmentation fault utf8decod function
     - added operation of utf8 in substr_lib
 
-Thu May 16 2002
+* Thu May 16 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
     - fixed segmentation fault when use perror_lib or pnotice_lib in shell
 
-Tue May 14 2002
+* Tue May 14 2002
   by JoungKyun Kim &lt;http://www.oops.org&gt;
+    - Release 0.1.1
     - fixed duplicated regist krerror.c in Makefile.in
 
 
-<a name="install">&nbsp;</a>
-<span id="title">Installation</span>
+<A NAME=install>
+<FONT id=title>Installation</FONT>
 
-ë¨¼ì €, <a
- href="ftp://mirror.oops.org/pub/oops/php/extensions/mod_korean/"
- target="_blank">ftp://mirror.oops.org/pub/oops/php/extensions/mod_korean/</a>ì—ì„œ ì••ì¶• íŒŒì¼ì„
-ë°›ëŠ”ë‹¤. ë˜ëŠ” CVS ì—ì„œ ë°›ë„ë¡ í•œë‹¤. ì••ì¶• íŒŒì¼ì„ í’€ë©´ korean ì´ë¼ëŠ” ë””ë ‰í† ë¦¬ê°€ ìƒ
-ì„±ì´ ëœë‹¤.  ì´ ë””ë ‰í† ë¦¬ë¥¼ php-source/ext/korean ìœ¼ë¡œ ìœ„ì¹˜ë¥¼ í•œë‹¤. ìƒˆë¡œìš´ ëª¨ë“ˆì„
-ì¶”ê°€í–ˆìœ¼ë¯€ë¡œ php-source top ë””ë ‰í† ë¦¬ì—ì„œ ./buildconf -f ë¥¼ ì‹¤í–‰í•˜ì—¬ ìƒˆë¡œìš´ ëª¨ë“ˆ
-ì„ ë“±ë¡í•œë‹¤. ë‹¤ìŒ ./configure --enable-korean ì˜µì…˜ìœ¼ë¡œ ì»´íŒŒì¼ì„ ì‹œì‘í•˜ë©´ ëœë‹¤.
+¸ÕÀú <A HREF=ftp://mirror.oops.org/pub/Linux/Source/php-extension/snapshot/ TARGET=_blank>ftp://mirror.oops.org/pub/Linux/Source/php-extension/snapshot/</A> ¿¡¼­ ¾ĞÃà ÆÄ
+ÀÏÀ» ¹Ş´Â´Ù. ¶Ç´Â CVS ¿¡¼­ ¹Şµµ·Ï ÇÑ´Ù. ¾ĞÃà ÆÄÀÏÀ» Ç®¸é korean ÀÌ¶ó´Â µğ·ºÅä¸®
+°¡ »ı¼ºÀÌ µÈ´Ù. ÀÌ µğ·ºÅä¸®¸¦ php-source/ext/korean À¸·Î À§Ä¡¸¦ ÇÑ´Ù. »õ·Î¿î ¸ğ
+µâÀ» Ãß°¡ÇßÀ¸¹Ç·Î php-source top µğ·ºÅä¸®¿¡¼­ ./buildconf ¸¦ ½ÇÇàÇÏ¿© »õ·Î¿î ¸ğ
+µâÀ» µî·ÏÇÑ´Ù. ´ÙÀ½ ./configure --enable-korean ¿É¼ÇÀ¸·Î ÄÄÆÄÀÏÀ» ½ÃÀÛÇÏ¸é µÈ´Ù.
 
-extension ì„ php ëª¨ë“ˆë¡œ ì»´íŒŒì¼ì„ í•˜ê¸°ë¥¼ ì›í•œë‹¤ë©´ --enable-korean=shared ë¡œ ì»´íŒŒ
-ì¼ì„ í•˜ë©´ extension ì´ php-source/module ì— korean.so ë¡œ ë‚¨ê²Œ ëœë‹¤.
+extension À» php ¸ğµâ·Î ÄÄÆÄÀÏÀ» ÇÏ±â¸¦ ¿øÇÑ´Ù¸é --enable-korean=shared ·Î ÄÄÆÄ
+ÀÏÀ» ÇÏ¸é extension ÀÌ php-source/module ¿¡ korean.so ·Î ³²°Ô µÈ´Ù.
 
-image ê´€ë ¨ í•¨ìˆ˜ëŠ” korean extension ìì²´ì—ì„œ gd library ë¥¼ ì œê³µì„ í•œë‹¤.  ë§Œì•½ ì‹œ
-ìŠ¤í…œì˜ gd library ë¥¼ ì´ìš©í•˜ì—¬ ì»´íŒŒì¼ì„ í•˜ê³  ì‹¶ë‹¤ë©´ --enable-korean-gd ì˜µì…˜ì„ ì£¼
-ë„ë¡ í•œë‹¤. korean extension ì˜ gd library ì—ì„œëŠ” GIF/JPG/PNG ë¥¼ ì§€ì›í•˜ë©°, GIFëŠ”
-read ë§Œ ì§€ì›ì´ ëœë‹¤.
+image °ü·Ã ÇÔ¼ö´Â korean extension ÀÚÃ¼¿¡¼­ gd library ¸¦ Á¦°øÀ» ÇÑ´Ù.  ¸¸¾à ½Ã
+½ºÅÛÀÇ gd library ¸¦ ÀÌ¿ëÇÏ¿© ÄÄÆÄÀÏÀ» ÇÏ°í ½Í´Ù¸é --enable-korean-gd ¿É¼ÇÀ» ÁÖ
+µµ·Ï ÇÑ´Ù. korean extension ÀÇ gd library ¿¡¼­´Â GIF/JPG/PNG ¸¦ Áö¿øÇÏ¸ç, GIF´Â
+read ¸¸ Áö¿øÀÌ µÈ´Ù.
 
-ë§Œì•½ apache ì›¹ì„œë²„ê°€ DSO ë¥¼ ì§€ì›í•˜ë„ë¡ ì„¤ì¹˜ê°€ ë˜ì–´ ìˆë‹¤ë©´, php ë¥¼ ìƒˆë¡œ ì„¤ì¹˜í•˜ì§€
-ì•Šê³  oops php extension ì„ ì„¤ì¹˜í•  ìˆ˜ ìˆë‹¤.  apache ê°€ DSO ë¥¼ ì§€ì› í•˜ëŠ”ì§€ ì—¬ë¶€ëŠ”
-httpd -l ëª…ë ¹ì„ ì‹¤í–‰í•œ í›„ì—, mod_so.c ê°€ ë¦¬ìŠ¤íŠ¸ì— ë‚˜ì˜¤ë©´ DSO ë¥¼ ì§€ì›í•˜ëŠ” ê²ƒì´ë‹¤.
+¸¸¾à apache À¥¼­¹ö°¡ DSO ¸¦ Áö¿øÇÏµµ·Ï ¼³Ä¡°¡ µÇ¾î ÀÖ´Ù¸é, php ¸¦ »õ·Î ¼³Ä¡ÇÏÁö
+¾Ê°í oops php extension À» ¼³Ä¡ÇÒ ¼ö ÀÖ´Ù.  apache °¡ DSO ¸¦ Áö¿ø ÇÏ´ÂÁö ¿©ºÎ´Â
+httpd -l ¸í·ÉÀ» ½ÇÇàÇÑ ÈÄ¿¡, mod_so.c °¡ ¸®½ºÆ®¿¡ ³ª¿À¸é DSO ¸¦ Áö¿øÇÏ´Â °ÍÀÌ´Ù.
 
-DSO ë¥¼ ì§€ì›í•˜ê³ , php ì—ì„œ extension ì„ ëª¨ë“ˆë¡œ ì‚¬ìš©í•  ê²½ìš°, ë‹¤ìŒì˜ ê³¼ì •ìœ¼ë¡œ ì„¤ì¹˜
-ë¥¼ í•˜ë©´ ëœë‹¤.
+DSO ¸¦ Áö¿øÇÏ°í, php ¿¡¼­ extension À» ¸ğµâ·Î »ç¿ëÇÒ °æ¿ì, ´ÙÀ½ÀÇ °úÁ¤À¸·Î ¼³Ä¡
+¸¦ ÇÏ¸é µÈ´Ù.
 
-DSO ë¡œ ì„¤ì¹˜í•  ê²½ìš°ì—ëŠ” phpize ë¥¼ ì´ìš©í•œ ë°©ë²•ê³¼ í’€ ì†ŒìŠ¤ë¥¼ ì´ìš©í•˜ì—¬ ì„¤ì¹˜í•˜ëŠ” ë°©ë²•
-ì´ ìˆë‹¤.
+DSO ·Î ¼³Ä¡ÇÒ °æ¿ì¿¡´Â phpize ¸¦ ÀÌ¿ëÇÑ ¹æ¹ı°ú Ç® ¼Ò½º¸¦ ÀÌ¿ëÇÏ¿© ¼³Ä¡ÇÏ´Â ¹æ¹ı
+ÀÌ ÀÖ´Ù.
 
 
-1. phpize ê°€ ì¡´ì¬í•  ê²½ìš°
+1. phpize °¡ Á¸ÀçÇÒ °æ¿ì
 
-find /usr -name phpize ë¥¼ ì‹¤í–‰í–ˆì„ ê²½ìš° phpize ì˜ path ë¥¼ ì°¾ì„ ìˆ˜ ìˆì„ ê²½ìš°ì—ëŠ”
-ë‹¤ìŒì˜ ë°©ë²•ì„ ì´ìš©í•˜ì—¬ ì„¤ì¹˜ë¥¼ í•œë‹¤. ë§Œì•½ ì°¾ì§€ ëª»í•  ê²½ìš°ì—ëŠ” 2ë²ˆ í•­ëª©ì„ ì°¸ê³ í•œë‹¤.
+find /usr -name phpize ¸¦ ½ÇÇàÇßÀ» °æ¿ì phpize ÀÇ path ¸¦ Ã£À» ¼ö ÀÖÀ» °æ¿ì¿¡´Â
+´ÙÀ½ÀÇ ¹æ¹ıÀ» ÀÌ¿ëÇÏ¿© ¼³Ä¡¸¦ ÇÑ´Ù. ¸¸¾à Ã£Áö ¸øÇÒ °æ¿ì¿¡´Â 2¹ø Ç×¸ñÀ» Âü°íÇÑ´Ù.
 
 $ cd /tmp
-$ tar xvfpz korean-REP_VERSION_REP.tar.gz
+$ tar xvfpz korean-2002xxxx.tar.g
 $ cd korean
 $ /path/phpize
 $ ./configure --with-php-config=/usr/local/bin/php-config
 $ make
 
---with-php-config ì˜ ê°’ì€ php-config ëª…ë ¹ì–´ì˜ ì ˆëŒ€ ê²½ë¡œë¥¼ ì§€ì •ì„ í•œë‹¤.
+--with-php-config ÀÇ °ªÀº php-config ¸í·É¾îÀÇ Àı´ë °æ·Î¸¦ ÁöÁ¤À» ÇÑ´Ù.
 
-make ë¥¼ ë§ˆì¹˜ë©´ modules ë””ë ‰í† ë¦¬ì— korean.so ê°€ ìƒì„±ì´ ëœë‹¤. ì´ íŒŒì¼ì„ php extension
-ì´ ì¡´ì¬í•˜ëŠ” ë””ë ‰í† ë¦¬ì— ë„£ì–´ì£¼ê³ , php.ini ì—ì„œ
+make ¸¦ ¸¶Ä¡¸é modules µğ·ºÅä¸®¿¡ korean.so °¡ »ı¼ºÀÌ µÈ´Ù. ÀÌ ÆÄÀÏÀ» php extension
+ÀÌ Á¸ÀçÇÏ´Â µğ·ºÅä¸®¿¡ ³Ö¾îÁÖ°í, php.ini ¿¡¼­
 
 extension=korean.so
 
-ë¥¼ ë“±ë¡í•œ í›„ì—, apache ë¥¼ ì¬ì‹œì‘ í•˜ë©´ ëœë‹¤. ë§Œì•½ extension ëª¨ë“ˆë¡œ ì‚¬ìš©í•˜ì§€ ì•Šì„
-ê²½ìš°ì—ëŠ” php.ini ì˜ extension_dir ì„ ì ˆëŒ€ ê²½ë¡œë¡œ ì„ì˜ì˜ ë””ë ‰í† ë¦¬ë¥¼ ì§€ì •í•´ ì¤€ ë‹¤
-ìŒ ì§€ì •í•œ ë””ë ‰í† ë¦¬ì— korean.so ë¥¼ ë³µì‚¬í•˜ê³ , ìœ„ì˜ extension=korean.so ë¥¼ php.ini
-ì— ë“±ë¡í•œ í›„ì— apache ë¥¼ ì¬ì‹œì‘ í•˜ë©´ ëœë‹¤.
+¸¦ µî·ÏÇÑ ÈÄ¿¡, apache ¸¦ Àç½ÃÀÛ ÇÏ¸é µÈ´Ù. ¸¸¾à extension ¸ğµâ·Î »ç¿ëÇÏÁö ¾ÊÀ»
+°æ¿ì¿¡´Â php.ini ÀÇ extension_dir À» Àı´ë °æ·Î·Î ÀÓÀÇÀÇ µğ·ºÅä¸®¸¦ ÁöÁ¤ÇØ ÁØ ´Ù
+À½ ÁöÁ¤ÇÑ µğ·ºÅä¸®¿¡ korean.so ¸¦ º¹»çÇÏ°í, À§ÀÇ extension=korean.so ¸¦ php.ini
+¿¡ µî·ÏÇÑ ÈÄ¿¡ apache ¸¦ Àç½ÃÀÛ ÇÏ¸é µÈ´Ù.
 
-ë‹¤ìŒ phpinfo() í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•˜ì—¬, korean ìœ¼ë¡œ ê²€ìƒ‰í•´ì„œ, ì •ë³´ê°€ ë‚˜ì˜¤ëŠ”ì§€ í™•ì¸ì„ í•˜
-ë©´ ëœë‹¤.
+´ÙÀ½ phpinfo() ÇÔ¼ö¸¦ È£ÃâÇÏ¿©, korean À¸·Î °Ë»öÇØ¼­, Á¤º¸°¡ ³ª¿À´ÂÁö È®ÀÎÀ» ÇÏ
+¸é µÈ´Ù.
 
-2. DSO ë¡œ ì„¤ì¹˜í•˜ê¸° ìœ„í•˜ì—¬ apxs ì˜ ìœ„ì¹˜ë¥¼ í™•ì¸
+2. DSO ·Î ¼³Ä¡ÇÏ±â À§ÇÏ¿© apxs ÀÇ À§Ä¡¸¦ È®ÀÎ
 $ find /usr -name apxs
 /usr/sbin/apxs
 
 $ cd /tmp
 
-# gz íŒŒì¼ì„ ë°›ì•˜ì„ ê²½ìš°
-$ tar xvfpz php-REP_PHPVERSION_REP.tar.gz
+# gz ÆÄÀÏÀ» ¹Ş¾ÒÀ» °æ¿ì
+$ tar xvfpz php-4.3.0.tar.gz
 
-# bzip2 íŒŒì¼ì„ ë°›ì•˜ì„ ê²½ìš°
-$ bzip -cd php-REP_PHPVERSION_REP.tar.bz2 | tar xvf -
+# bzip2 ÆÄÀÏÀ» ¹Ş¾ÒÀ» °æ¿ì
+$ bzip -cd php-4.3.0.tar.bz2 | tar xvf -
 
-$ cd php-<?=$phpversoin?>/ext
-$ tar xvfpz korean-REP_VERSION_REP.tar.gz
+$ cd php-4.3.0/ext
+$ tar xvfpz korean-20020xxx.tar.gz
 $ cd ../
 $ ./buildconf
 
-# ìì‹ ì˜ ì„œë²„ê°€ Pentium ll ì´ìƒì¼ ê²½ìš°
+# ÀÚ½ÅÀÇ ¼­¹ö°¡ Pentium ll ÀÌ»óÀÏ °æ¿ì
 $ export CFLAGS="-O3 -march=i686"
 $ ./configure --with-apxs=/usr/sbin/apxs --with-regex=php --enable-korean=shared
 $ .......
@@ -519,31 +273,30 @@ $ .......
 $ cd ext/korean
 $ make
 
-ê¹Œì§€ í•˜ë©´ php-REP_PHPVERSION_REP/modules ì— korea.so ê°€ ìƒì„±ì´ ëœë‹¤. ì´ íŒŒì¼ì„ php extension
-ì´ ì¡´ì¬í•˜ëŠ” ë””ë ‰í† ë¦¬ì— ë„£ì–´ì£¼ê³ , php.ini ì—ì„œ
+±îÁö ÇÏ¸é php-4.3.0/modules ¿¡ korea.so °¡ »ı¼ºÀÌ µÈ´Ù. ÀÌ ÆÄÀÏÀ» php extension
+ÀÌ Á¸ÀçÇÏ´Â µğ·ºÅä¸®¿¡ ³Ö¾îÁÖ°í, php.ini ¿¡¼­
 
 extension=korean.so
 
-ë¥¼ ë“±ë¡í•œ í›„ì—, apache ë¥¼ ì¬ì‹œì‘ í•˜ë©´ ëœë‹¤. ë§Œì•½ extension ëª¨ë“ˆë¡œ ì‚¬ìš©í•˜ì§€ ì•Šì„
-ê²½ìš°ì—ëŠ” php.ini ì˜ extension_dir ì„ ì ˆëŒ€ ê²½ë¡œë¡œ ì„ì˜ì˜ ë””ë ‰í† ë¦¬ë¥¼ ì§€ì •í•´ ì¤€ ë‹¤
-ìŒ ì§€ì •í•œ ë””ë ‰í† ë¦¬ì— korean.so ë¥¼ ë³µì‚¬í•˜ê³ , ìœ„ì˜ extension=korean.so ë¥¼ php.ini
-ì— ë“±ë¡í•œ í›„ì— apache ë¥¼ ì¬ì‹œì‘ í•˜ë©´ ëœë‹¤.
+¸¦ µî·ÏÇÑ ÈÄ¿¡, apache ¸¦ Àç½ÃÀÛ ÇÏ¸é µÈ´Ù. ¸¸¾à extension ¸ğµâ·Î »ç¿ëÇÏÁö ¾ÊÀ»
+°æ¿ì¿¡´Â php.ini ÀÇ extension_dir À» Àı´ë °æ·Î·Î ÀÓÀÇÀÇ µğ·ºÅä¸®¸¦ ÁöÁ¤ÇØ ÁØ ´Ù
+À½ ÁöÁ¤ÇÑ µğ·ºÅä¸®¿¡ korean.so ¸¦ º¹»çÇÏ°í, À§ÀÇ extension=korean.so ¸¦ php.ini
+¿¡ µî·ÏÇÑ ÈÄ¿¡ apache ¸¦ Àç½ÃÀÛ ÇÏ¸é µÈ´Ù.
 
-ë‹¤ìŒ phpinfo() í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•˜ì—¬, korean ìœ¼ë¡œ ê²€ìƒ‰í•´ì„œ, ì •ë³´ê°€ ë‚˜ì˜¤ëŠ”ì§€ í™•ì¸ì„ í•˜
-ë©´ ëœë‹¤.
+´ÙÀ½ phpinfo() ÇÔ¼ö¸¦ È£ÃâÇÏ¿©, korean À¸·Î °Ë»öÇØ¼­, Á¤º¸°¡ ³ª¿À´ÂÁö È®ÀÎÀ» ÇÏ
+¸é µÈ´Ù.
 
-3. ì •ì ìœ¼ë¡œ ì»´íŒŒì¼ í•˜ê¸°
+3. Á¤ÀûÀ¸·Î ÄÄÆÄÀÏ ÇÏ±â
 
-php source ì˜ ext ë””ë ‰í† ë¦¬ì— korean-REP_VERSION_REP.tar.gz ì˜ ì••ì¶•ì„ í’€ê³  php sourceì˜
-top path ì—ì„œ ./buildconf ë¥¼ í•œë²ˆ ì‹¤í–‰ì„ í•˜ì—¬ configure íŒŒì¼ì„ ì¬ì‘ì„± í•œ í›„, ì´
-configure ì— --enable-korean ì´ ë“±ë¡ì´ ë˜ì—ˆëŠ”ì§€ í™•ì¸ì„ í•œ í›„, configure ì—ì„œ
---enable-korean ì˜µì…˜ì„ ì¶”ê°€í•˜ì—¬ ì„¤ì¹˜ë¥¼ í•˜ë©´ ëœë‹¤.
+php source ÀÇ ext µğ·ºÅä¸®¿¡ korean-2002xxxx.tar.gz ÀÇ ¾ĞÃàÀ» Ç®°í php sourceÀÇ
+top path ¿¡¼­ ./buildconf ¸¦ ÇÑ¹ø ½ÇÇàÀ» ÇÏ¿© configure ÆÄÀÏÀ» ÀçÀÛ¼º ÇÑ ÈÄ, ÀÌ
+configure ¿¡ --enable-korean ÀÌ µî·ÏÀÌ µÇ¾ú´ÂÁö È®ÀÎÀ» ÇÑ ÈÄ¿¡, configure ¿¡¼­
+--enable-korean ¿É¼ÇÀ» Ãß°¡ÇÏ¿© ¼³Ä¡¸¦ ÇÏ¸é µÈ´Ù.
 
-CVS íŒŒì¼ ë°›ê¸°
+CVS ÆÄÀÏ ¹Ş±â
 
-cvs -d :pserver:anonymous@cvs.oops.org:/data/cvs/php login
+cvs -d :pserver:anonymous@cvs.oops.org:/data/cvs/oops login
 password: cvs
-cvs -d :pserver:anonymous@cvs.oops.org:/data/cvs/php co mod_korean
+cvs -d :pserver:anonymous@cvs.oops.org:/data/cvs/oops checkout korean
 
-CVS tree ëŠ” http://cvs.oops.org/index.cgi/mod_korean/?cvsroot=OOPS-PHP ì—ì„œ í™•
-ì¸í•  ìˆ˜ ìˆë‹¤.
+CVS tree ´Â http://cvs.oops.org/index.cgi/korean/ ¿¡¼­ È®ÀÎÇÒ ¼ö ÀÖ´Ù.

@@ -1,37 +1,24 @@
-<span class="title">readfile_lib()</span>
+<FONT ID=title>readfile_lib()</FONT>
 
 (required korean module)
 
-readfile_lib -- íŒŒì¼ì´ë‚˜ ì›¹ë¬¸ì„œì˜ ì†ŒìŠ¤ë¥¼ ë³€ìˆ˜ë¡œ ë°›ìŒ
+readfile_lib -- ÆÄÀÏÀÌ³ª À¥¹®¼­ÀÇ ¼Ò½º¸¦ º¯¼ö·Î ¹ŞÀ½
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>string readfile_lib(string filename [, int use_include_path])</b>
+<B>string readfile_lib(string filename [, int use_include_path])</B>
 
-PHP ì˜ ì •ê·œí•¨ìˆ˜ readfile() í•¨ìˆ˜ì™€ ë™ì¼í•œ ê¸°ëŠ¥ì„ ê°€ì§€ê³  ìˆìœ¼ë‚˜, readfile() í•¨ìˆ˜ê°€
-ë³€ìˆ˜ë¡œ ë°›ì§€ ì•Šê³  ì¶œë ¥ì„ í•˜ëŠ” ê²ƒì— ë°˜í•´ readfile_lib() í•¨ìˆ˜ëŠ” ë³€ìˆ˜ë¡œ í•´ë‹¹ ê°’ì„ ë°›
-ê²Œ ëœë‹¤. íŒŒì¼ê³¼ url ìƒì˜ íŒŒì¼ì˜ ë‚´ìš©ì„ ëª¨ë‘ ë³€ìˆ˜ë¡œ ë°›ì„ ìˆ˜ ìˆë‹¤.
+PHP ÀÇ Á¤±ÔÇÔ¼ö readfile() ÇÔ¼ö¿Í µ¿ÀÏÇÑ ±â´ÉÀ» °¡Áö°í ÀÖÀ¸³ª, readfile() ÇÔ¼ö°¡
+º¯¼ö·Î ¹ŞÁö ¾Ê°í Ãâ·ÂÀ» ÇÏ´Â °Í¿¡ ¹İÇØ readfile_lib() ÇÔ¼ö´Â º¯¼ö·Î ÇØ´ç °ªÀ» ¹Ş
+°Ô µÈ´Ù. ÆÄÀÏ°ú url »óÀÇ ÆÄÀÏÀÇ ³»¿ëÀ» ¸ğµÎ º¯¼ö·Î ¹ŞÀ» ¼ö ÀÖ´Ù.
 
-readfile ì„ ì´ìš©í•˜ì—¬ readfile_lib ì™€ ê°™ì´ í•˜ë ¤ë©´ ë‹¤ìŒì˜ ê³¼ì •ê³¼ ê°™ë‹¤.
+use_include_path ÀÇ °ªÀ» 1 ·Î ÁöÁ¤ÇÏ°í path °¡ Á¸ÀçÇÏÁö ¾Ê´Â ÆÄÀÏÀ» ÁöÁ¤ÇÒ °æ¿ì
+¿¡´Â php ÀÇ include_path ¿¡¼­ ÆÄÀÏÀ» Ã£°Ô µÈ´Ù.
 
-ob_start()
-readfile($path);
-$text = ob_get_contents();
-ob_end_clean();
-
-ì€
-
-$text = readfile_lib($path);
-
-ì™€ ê°™ì€ ê²°ê³¼ë¥¼ ê°€ì§„ë‹¤.
-
-use_include_path ì˜ ê°’ì„ 1 ë¡œ ì§€ì •í•˜ê³  path ê°€ ì¡´ì¬í•˜ì§€ ì•ŠëŠ” íŒŒì¼ì„ ì§€ì •í•  ê²½ìš°
-ì—ëŠ” php ì˜ include_path ì—ì„œ íŒŒì¼ì„ ì°¾ê²Œ ëœë‹¤.
-
-win32 ìš©ì—ì„œ íŒŒì¼ ê²½ë¡œë¥¼ ìƒëŒ€ê²½ë¡œë¡œ ì‚¬ìš©í•  ê²½ìš°ì—ëŠ” realpath() í•¨ìˆ˜ë¥¼ ì´ìš©í•˜ì—¬
-ì ˆëŒ€ ê²½ë¡œí™”ë¥¼ í•´ì„œ ì‚¬ìš©í•´ì•¼ í•œë‹¤.
+win32 ¿ë¿¡¼­ ÆÄÀÏ °æ·Î¸¦ »ó´ë°æ·Î·Î »ç¿ëÇÒ °æ¿ì¿¡´Â realpath() ÇÔ¼ö¸¦ ÀÌ¿ëÇÏ¿©
+Àı´ë °æ·ÎÈ­¸¦ ÇØ¼­ »ç¿ëÇØ¾ß ÇÑ´Ù.
  
-<span id="RE">ì˜ˆì œ</span>
+<FONT ID=RE>¿¹Á¦</FONT>
 
 $file = &quot;http://test.com/index.html&quot;;
 $a = readfile_lib($file);
@@ -41,5 +28,5 @@ or
 $file = &quot;/home/httpd/html/test.txt&quot;;
 $a = readfile_lib($file);
 
-<span id="RE">ì°¸ê³ </span>
+<FONT ID=RE>Âü°í</FONT>
 <A HREF=http://www.php.net/manual/kr/function.readfile.php TARGET=_blank>readfile</A>()

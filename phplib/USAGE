@@ -1,46 +1,19 @@
 
 Script of korean extension 사용법
 
-korean extension scrit version 의 사용법은 크게 2가지로 root 의 권한을 가지고
-작업을 할 수 있을 경우와 그렇지 않을 경우로 작업을 할 수 있다. 만약 이 말이 무
-슨 말인지 모르겠다면 2. 일반 계정에서의 사용법을 따라 하도록 한다.
+1. 임의의 디렉토리를 생성한다.
+   mkdir /usr/include/phplib
 
-1. Root 의 권한을 가지고 있을 때
+2. 소스를 생성한 디렉토리에 복사한다.
+   mv * /usr/include/phplib
 
-  1) 임의의 경로에 phplib 디렉토리를 생성한다.
-     mkdir -p /usr/include/phplib
+3. php.ini 의 include_path 에 생성한 디렉토리 경로를 추가한다.
+   include_path = "./:/usr/include/phplib"
 
-  2) 소스를 생성한 디렉토리에 복사한다.
-     mv * /usr/include/phplib
+4. 웹서버를 재시작 한다.
 
-  3) php.ini 의 include_path 에 생성한 디렉토리 경로를 추가한다.
-     include_path = "./:/usr/include/phplib"
-
-  4) 웹서버를 재시작 한다.
-
-  5) 아래와 같이 function_header.php 를 호출하여 사용을 한다.
-     include "function_header.php";
-
-  주의할 사항은 절대 $krext_dlpath 라는 변수 이름을 사용하지 않아야 한다.
-
-2. 일반 계정에서의 사용법
-
-  계정 이름은 oops 라고 가정을 한다.
-
-  1) 임의의 경로에 phplib 디렉토리를 생성한다.
-     mkdir -p /home/oops/phplib
-
-  2) 소스를 생성한 디렉토리에 복사한다.
-     mv * /home/oops/phplib
-
-  3) 호출을 할 디렉토리에 가장 상단에 다음의 루틴을 포함한다.
-
-     $krext_extdir = "/home/oops/phplib";
-     $krext_relapath = relapath("./");
-     $krext_len = strlen(preg_replace("/[^\/]/", "", $krext_realpath));
-     for ($i=0; $i<$krext_len; $i++) $krext_dotpath .= "/..";
-     $krext_dlpath = str_replace("//", "/", "{$kr_ext_dotpath}{$krext_extdir}/");
-     include "{$krext_dlpath}function_header.ph";
+5. 아래와 같이 function_header.php 를 호출하여 사용을 한다.
+   include "function_header.php";
 
 함수의 사용법은 http://devel.oops.org/manual/korean/ 을 참고한다.
 
