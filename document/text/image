@@ -1,34 +1,34 @@
-<span class="title">V. IMAGE í•¨ìˆ˜</span>
+<FONT class="title">V. IMAGE ÇÔ¼ö</FONT>
 </PRE>
 
 <TABLE BORDER=1 WIDTH="100%" CELLPADDING=4 CELLSPACING=1>
 <TR>
-<TD ALIGN="center"><b>ì£¼ì˜</b></TD>
+<TD ALIGN="center"><B>ÁÖÀÇ</B></TD>
 </TR>
 <TR>
 <TD><PRE>
-ì´ ëª¨ë“ˆì€ ìƒë‹¹ížˆ ì‹¤í—˜ì ì¸ ëª¨ë“ˆì´ë‹¤. ì´ëŠ” ì´ í•¨ìˆ˜ë“¤ì´ ì œëŒ€ë¡œ ìž‘ë™ì„ í•˜ì§€ ëª»í•  ìˆ˜ë„ ìžˆë‹¤ëŠ” ì˜ë¯¸ì´ë‹¤.
-ì´ í•¨ìˆ˜ë“¤ì´ PHP ì •ì‹ ë²„ì ¼ì— í¬í•¨ì´ ë ì§€ëŠ” ì•„ì§ ë¯¸ì§€ìˆ˜ ì´ë‹¤. í˜„ìž¬ PHP ê·¸ë£¹ì— ì—°ë½ì„ í•˜ì§€ë„ ì•Šì€ ìƒíƒœ
-ì´ë©°, ë˜í•œ ì¼ë³¸ì—ì„œ ìž‘ì—…ì„ í•˜ê³  ìžˆëŠ” mbstring í•¨ìˆ˜ì™€ì˜ ê´€ê³„ë„ ì–´ë–»ê²Œ ë ì§€ ì•Œ ìˆ˜ê°€ ì—†ë‹¤.
+ÀÌ ¸ðµâÀº »ó´çÈ÷ ½ÇÇèÀûÀÎ ¸ðµâÀÌ´Ù. ÀÌ´Â ÀÌ ÇÔ¼öµéÀÌ Á¦´ë·Î ÀÛµ¿À» ÇÏÁö ¸øÇÒ ¼öµµ ÀÖ´Ù´Â ÀÇ¹ÌÀÌ´Ù.
+ÀÌ ÇÔ¼öµéÀÌ PHP Á¤½Ä ¹öÁ¯¿¡ Æ÷ÇÔÀÌ µÉÁö´Â ¾ÆÁ÷ ¹ÌÁö¼ö ÀÌ´Ù. ÇöÀç PHP ±×·ì¿¡ ¿¬¶ôÀ» ÇÏÁöµµ ¾ÊÀº »óÅÂ
+ÀÌ¸ç, ¶ÇÇÑ ÀÏº»¿¡¼­ ÀÛ¾÷À» ÇÏ°í ÀÖ´Â mbstring ÇÔ¼ö¿ÍÀÇ °ü°èµµ ¾î¶»°Ô µÉÁö ¾Ë ¼ö°¡ ¾ø´Ù.
 
-ë˜í•œ, ì´ í•¨ìˆ˜ë“¤ì€ ì˜¤ë¡œì§€ í•œêµ­ì–´ í™˜ê²½ë§Œì„ ê³ ë ¤í•˜ì—¬ ìž‘ì„±ì„ í•œë‹¤.
+¶ÇÇÑ, ÀÌ ÇÔ¼öµéÀº ¿À·ÎÁö ÇÑ±¹¾î È¯°æ¸¸À» °í·ÁÇÏ¿© ÀÛ¼ºÀ» ÇÑ´Ù.
 </PRE></TD>
 </TR>
 </TABLE>
 
 <PRE>
-image ê´€ë ¨ í•¨ìˆ˜ë“¤ì€ php compile ì‹œì— --with-gd ì˜µì…˜ì„ ì£¼ì–´ì•¼ ì ìš©ì´ ëœë‹¤. korean extension ë¹Œë“œ ë„˜
-ë²„ 20020901 ë¶€í„°ëŠ” --enable-korean-gd ë¥¼ ì£¼ì–´ì•¼ í•œë‹¤. ë¹Œë“œ ë„˜ë²„ëŠ” php_korean.h ì— ì •ì˜ ë˜ì–´ ìžˆìœ¼ë‹ˆ
-í™•ì¸í•˜ê³  ì„¤ì¹˜ë¥¼ í•˜ê¸° ë°”ëž€ë‹¤. ë˜ëŠ”, ./configure --help | grep korean ìœ¼ë¡œ í™•ì¸í•˜ì˜€ì„ ê²½ìš° korean-gd
-ê°€ ì¡´ìž¬í•  ê²½ìš°ì—ëŠ” ì´ ì˜µì…˜ì„ ì£¼ë„ë¡ í•œë‹¤.
+image °ü·Ã ÇÔ¼öµéÀº php compile ½Ã¿¡ --with-gd ¿É¼ÇÀ» ÁÖ¾î¾ß Àû¿ëÀÌ µÈ´Ù. korean extension ºôµå ³Ñ
+¹ö 20020901 ºÎÅÍ´Â --enable-korean-gd ¸¦ ÁÖ¾î¾ß ÇÑ´Ù. ºôµå ³Ñ¹ö´Â php_korean.h ¿¡ Á¤ÀÇ µÇ¾î ÀÖÀ¸´Ï
+È®ÀÎÇÏ°í ¼³Ä¡¸¦ ÇÏ±â ¹Ù¶õ´Ù. ¶Ç´Â, ./configure --help | grep korean À¸·Î È®ÀÎÇÏ¿´À» °æ¿ì korean-gd
+°¡ Á¸ÀçÇÒ °æ¿ì¿¡´Â ÀÌ ¿É¼ÇÀ» ÁÖµµ·Ï ÇÑ´Ù.
 
-korean extension 0.0.4 ë¶€í„°ëŠ” libgd ë¥¼ ì§€ì›í•˜ê¸° ë•Œë¬¸ì— ìœ„ì˜ ê³¼ì •ì´ í•„ìš” ì—†ë‹¤. libgd ë¥¼ ì´ìš©í•˜ì—¬ ì»´
-íŒŒì¼ì„ í•  ê²½ìš° GIF/JPG/PNG ê°€ ì§€ì›ì´ ë˜ë©°, GIF ëŠ” READ ë§Œ ê°€ëŠ¥í•˜ë‹¤. ë§Œì•½ GIF patch ê°€ ëœ GDë¥¼ ì´ìš©
-í•˜ì—¬ ë¹Œë“œë¥¼ í•˜ê³  ì‹¶ì„ ê²½ìš°ì—ëŠ” --enable-korean-gd=/path ë¥¼ ì£¼ê³  ì»´íŒŒì¼ì„ í•˜ëŠ” ê²ƒìœ¼ë¡œ ê°€ëŠ¥í•˜ë‹¤.
+korean extension 0.0.4 ºÎÅÍ´Â libgd ¸¦ Áö¿øÇÏ±â ¶§¹®¿¡ À§ÀÇ °úÁ¤ÀÌ ÇÊ¿ä ¾ø´Ù. libgd ¸¦ ÀÌ¿ëÇÏ¿© ÄÄ
+ÆÄÀÏÀ» ÇÒ °æ¿ì GIF/JPG/PNG °¡ Áö¿øÀÌ µÇ¸ç, GIF ´Â READ ¸¸ °¡´ÉÇÏ´Ù. ¸¸¾à GIF patch °¡ µÈ GD¸¦ ÀÌ¿ë
+ÇÏ¿© ºôµå¸¦ ÇÏ°í ½ÍÀ» °æ¿ì¿¡´Â --enable-korean-gd=/path ¸¦ ÁÖ°í ÄÄÆÄÀÏÀ» ÇÏ´Â °ÍÀ¸·Î °¡´ÉÇÏ´Ù.
 
-ì¦‰, ì´ ê¸°ëŠ¥ì„ ì‚¬ìš©í•˜ê¸° ìœ„í•´ì„œëŠ” 0.0.3 ê¹Œì§€ëŠ” ì‹œìŠ¤í…œì— gd library ê°€ ì„¤ì¹˜ë˜ì–´ ìžˆì–´ì•¼ í•˜ë©°, image ê´€
-ë ¨ ì˜µì…˜ì„ ì§€ì •í•´ì•¼ í–ˆìœ¼ë‚˜, 0.0.4 ë¶€í„°ëŠ” image ê´€ë ¨ ì˜µì…˜ì„ ì£¼ì§€ ì•Šì•„ë„, ë˜í•œ ì‹œìŠ¤í…œì— gd library ê°€
-ì„¤ì¹˜ë˜ì–´ ìžˆì§€ ì•Šì•„ë„ ìƒê´€ì´ ì—†ë‹¤ëŠ” ì–˜ê¸°ì´ë‹¤.
+Áï, ÀÌ ±â´ÉÀ» »ç¿ëÇÏ±â À§ÇØ¼­´Â 0.0.3 ±îÁö´Â ½Ã½ºÅÛ¿¡ gd library °¡ ¼³Ä¡µÇ¾î ÀÖ¾î¾ß ÇÏ¸ç, image °ü
+·Ã ¿É¼ÇÀ» ÁöÁ¤ÇØ¾ß ÇßÀ¸³ª, 0.0.4 ºÎÅÍ´Â image °ü·Ã ¿É¼ÇÀ» ÁÖÁö ¾Ê¾Æµµ, ¶ÇÇÑ ½Ã½ºÅÛ¿¡ gd library °¡
+¼³Ä¡µÇ¾î ÀÖÁö ¾Ê¾Æµµ »ó°üÀÌ ¾ø´Ù´Â ¾ê±âÀÌ´Ù.
 
-<b>ì°¨ë¡€</b>
+<B>Â÷·Ê</B>
 

@@ -1,4 +1,4 @@
-dnl $Id$
+dnl $Id: config.m4,v 1.23 2008-07-15 11:37:55 oops Exp $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -54,11 +54,6 @@ if test "$PHP_KOREAN" != "no"; then
     with_zlib_dir=no
   fi
 
-  if test -z "$PHP_LIBDIR"; then
-    parch=`uname -m`
-    test "$parch" = "x86_64" && PHP_LIBDIR="lib64" || PHP_LIBDIR="lib"
-  fi
-
   dnl In this case given --enable-korean-gd option
   dnl
   if test "$enable_korean_gd" != "no" ; then
@@ -69,11 +64,11 @@ if test "$PHP_KOREAN" != "no"; then
     fi
 
     for j in $GD_SEARCH_PATHS; do
-      for i in include include/gd1.3 include/gd include gd1.3 gd ""; do
+      for i in include/gd1.3 include/gd include gd1.3 gd ""; do
         test -f $j/$i/gd.h && KOREAN_INCLUDE=$j/$i
       done
 
-      for i in $PHP_LIBDIR $PHP_LIBDIR/gd1.3 $PHP_LIBDIR/gd $PHP_LIBDIR gd1.3 gd ""; do
+      for i in $PHP_LIBDIR/gd1.3 $PHP_LIBDIR/gd $PHP_LIBDIR gd1.3 gd ""; do
         test -f $j/$i/libgd.$SHLIB_SUFFIX_NAME -o -f $j/$i/libgd.a && KOREAN_LIB=$j/$i
       done
     done
@@ -212,8 +207,7 @@ if test "$PHP_KOREAN" != "no"; then
     if test "$include_gdlib" = "yes"; then
       krextra_sources="libgd/gd.c libgd/gd_png.c libgd/gd_jpeg.c libgd/gd_gif_in.c libgd/gd_io.c \
                        libgd/gd_gif_out.c libgd/gd_io_file.c libgd/gd_ss.c libgd/gd_io_ss.c \
-                       libgd/gdtables.c libgd/gdhelpers.c libgd/gd_io_dp.c libgd/gd_topal.c \
-                       libgd/gd_security.c libgd/gd_arc.c"
+                       libgd/gdtables.c libgd/gdhelpers.c libgd/gd_io_dp.c libgd/gd_topal.c"
     fi
 
     dnl These are always available with bundled library

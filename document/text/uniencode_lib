@@ -1,31 +1,31 @@
-<span class="title">uniencode_lib()</span>
+<FONT class="title">uniencode_lib()</FONT>
 
 (required korean module)
 
-uniencode_lib -- CP949 í…Œì´ë¸”ì„ UNICODE ë¡œ ë³€í™˜
+uniencode_lib -- CP949 Å×ÀÌºíÀ» UNICODE ·Î º¯È¯
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>string uniencode_lib (string str [, string start [, string end ] ] )</b>
+<B>string uniencode_lib (string str [, string start [, string end ] ] )</B>
 
-CP949 ë˜ëŠ” EUC-KR ì˜ ë¬¸ìì…‹ì„ NATIVE UNICODE ë¡œ ë³€í™˜ì„ í•œë‹¤.
+CP949 ¶Ç´Â EUC-KR ÀÇ ¹®ÀÚ¼ÂÀ» NATIVE UNICODE ·Î º¯È¯À» ÇÑ´Ù.
 
-start ëŠ” NATIVE UNICODE ì˜ hex ê°’ ì•ìª½ì˜ ë¬¸ìì—´ì„ ì§€ì •í•˜ë©°, end ëŠ” hex ê°’ ë’¤ì˜
-ë¬¸ìì—´ì„ ì˜ë¯¸í•œë‹¤. ì´ëŠ” NATIVE UNICODE ì˜ ê²½ìš° \uD55C ì™€ ê°™ì´ í‘œí˜„ì„ í•˜ëŠ”ë° ì—¬
-ê¸°ì„œëŠ” \u ê°€ start ê°€ ëœë‹¤.
+start ´Â NATIVE UNICODE ÀÇ hex °ª ¾ÕÂÊÀÇ ¹®ÀÚ¿­À» ÁöÁ¤ÇÏ¸ç, end ´Â hex °ª µÚÀÇ
+¹®ÀÚ¿­À» ÀÇ¹ÌÇÑ´Ù. ÀÌ´Â NATIVE UNICODE ÀÇ °æ¿ì \uD55C ¿Í °°ÀÌ Ç¥ÇöÀ» ÇÏ´Âµ¥ ¿©
+±â¼­´Â \u °¡ start °¡ µÈ´Ù.
 
-uniencode_lib í•¨ìˆ˜ì—ì„œëŠ” start ì™€ end ê°€ ì§€ì •ì´ ë˜ì§€ ì•Šì•˜ì„ ê²½ìš° ê¸°ë³¸ê°’ìœ¼ë¡œ
-start ëŠ” &quot;\u&quot; ë¡œ end ëŠ” NULL ê°’ì„ ê°€ì§„ë‹¤.
+uniencode_lib ÇÔ¼ö¿¡¼­´Â start ¿Í end °¡ ÁöÁ¤ÀÌ µÇÁö ¾Ê¾ÒÀ» °æ¿ì ±âº»°ªÀ¸·Î
+start ´Â &quot;\u&quot; ·Î end ´Â NULL °ªÀ» °¡Áø´Ù.
 
-<span id="RE">ì˜ˆì œ</span>
+<FONT ID=RE>¿¹Á¦</FONT>
 
-$a = &quot;í•œê¸€a ì™€ ë˜ ë°©ê°í•˜&quot;;<BR>
-$a = <b>uniencode_lib</b>($a);<BR>
+$a = &quot;ÇÑ±Ûa ¿Í Œc¹æ°¢ÇÏ&quot;;<BR>
+$a = <B>uniencode_lib</B>($a);<BR>
 return => \uD55C\uAE00a\uC640 \uB620\uBC29\uAC01\uD558
 
-$a = &quot;í•œê¸€a ì™€ ë˜ ë°©ê°í•˜&quot;;<BR>
-$a = <b>uniencode_lib</b>($a,&quot;U-&quot;,&quot;;&quot;);<BR>
+$a = &quot;ÇÑ±Ûa ¿Í Œc¹æ°¢ÇÏ&quot;;<BR>
+$a = <B>uniencode_lib</B>($a,&quot;U-&quot;,&quot;;&quot;);<BR>
 return => U-D55C;U-AE00;aU-C640; U-B620;U-BC29;U-AC01;U-D558;
 
-<span id="RE">ì°¸ê³ </span>
+<FONT ID=RE>Âü°í</FONT>
 unidecode_lib()

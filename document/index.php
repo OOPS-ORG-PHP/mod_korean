@@ -1,9 +1,9 @@
-<?php
+<?
 include "functionlist.php";
 
 if ($_GET[part]) { $files = $list[$_GET[part]]; }
 
-# í•¨ìˆ˜ ë¦¬ìŠ¤íŠ¸ ì¶œë ¥
+# ÇÔ¼ö ¸®½ºÆ® Ãâ·Â
 if(!$_GET[func] || preg_match("/^credit|copy|ref$/i",$_GET[func])) {
   for($i=1;$i<sizeof($list);$i++) {
     $plist .= "&nbsp;<IMG SRC=\"./img/box-0.gif\" BORDER=0 WIDTH=11 HEIGHT=7 ALT=\"\">".
@@ -16,7 +16,7 @@ if(!$_GET[func] || preg_match("/^credit|copy|ref$/i",$_GET[func])) {
   }
 }
 
-# ì•ë’¤ í˜ì´ì§€
+# ¾ÕµÚ ÆäÀÌÁö
 $caretl = "<IMG SRC=\"./img/caret-l.gif\" border=0 WIDTH=11 HEIGHT=7 ALT=\"\">";
 $caretr = "<IMG SRC=\"./img/caret-r.gif\" border=0 WIDTH=11 HEIGHT=7 ALT=\"\">";
 if(!$_GET[part]) {
@@ -68,7 +68,7 @@ if(!$_GET[part]) {
   }
 }
 
-# ë³¸ë¬¸ ì¶œë ¥
+# º»¹® Ãâ·Â
 $_GET[part] = ! $_GET[part] ? "0" : $_GET[part];
 
 if (!$_GET[part]) $file = "./text/main";
@@ -97,7 +97,7 @@ if ($_GET[func] == "ref") {
   $txt = fread($p,filesize($file));
   fclose($p);
 
-  /* func ë³€ìˆ˜ê°€ ì—†ì„ ê²½ìš° ë¦¬ìŠ¤íŠ¸ ì¶œë ¥ */
+  /* func º¯¼ö°¡ ¾øÀ» °æ¿ì ¸®½ºÆ® Ãâ·Â */
   if (!$_GET[func]) {
     for($i=1;$i<=sizeof(${$list[$_GET[part]]});$i++) {
       $flist .= ${$list[$_GET[part]]}[$i]."\n";
@@ -126,5 +126,5 @@ $rdes = array("$version", "$phpversion");
 $txt = preg_replace($rsrc, $rdes, $txt);
 $txt = auto_link($txt);
 
-include "html.template";
+include "template";
 ?>

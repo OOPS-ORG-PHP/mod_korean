@@ -1,27 +1,27 @@
-<span class="title">check_htmltable_lib()</span>
+<FONT class="title">check_htmltable_lib()</FONT>
 
 (required korean module)
 
-check_htmltable_lib -- table íƒœê·¸ê°€ ì œëŒ€ë¡œ ì‚¬ìš©ë˜ì—ˆëŠ”ì§€ ê²€ì‚¬
+check_htmltable_lib -- table ÅÂ±×°¡ Á¦´ë·Î »ç¿ëµÇ¾ú´ÂÁö °Ë»ç
 
-<span id="RE">ì„¤ëª…</span>
+<FONT ID=RE>¼³¸í</FONT>
 
-<b>int check_htmltable_lib(string text)</b>
+<B>int check_htmltable_lib(string text)</B>
 
-html ì„ ì‚¬ìš©í•˜ì—¬ ê¸€ì„ ì“°ê¸°ê°€ ê°€ëŠ¥í•  ë•Œ table ì…ë ¥ì´ ì˜ëª»ë˜ì–´ ë””ìì¸ì´ ë§ê°€ì§€ëŠ” ê²ƒì„ ë°©ì§€í•˜ê±°
-ë‚˜ ë˜ëŠ” table íƒœê·¸ë¥¼ ì œëŒ€ë¡œ ì‚¬ìš©í•˜ì˜€ëŠ”ì§€ ì²´í¬ë¥¼ í•˜ì—¬ ì—ëŸ¬ ì½”ë“œë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜ì´ë‹¤.
+html À» »ç¿ëÇÏ¿© ±ÛÀ» ¾²±â°¡ °¡´ÉÇÒ ¶§ table ÀÔ·ÂÀÌ Àß¸øµÇ¾î µğÀÚÀÎÀÌ ¸Á°¡Áö´Â °ÍÀ» ¹æÁöÇÏ°Å
+³ª ¶Ç´Â table ÅÂ±×¸¦ Á¦´ë·Î »ç¿ëÇÏ¿´´ÂÁö Ã¼Å©¸¦ ÇÏ¿© ¿¡·¯ ÄÚµå¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼öÀÌ´Ù.
 
 RETURN VALUE
 
-0 => ì˜¬ë°”ë¥¸ íƒœê·¸ ì‚¬ìš© (OK)
-1 => open ëœ table tag ìˆ˜ì™€ close ëœ table tag ìˆ˜ê°€ í‹€ë¦¼
-2 => table ì— ì œëŒ€ë¡œ ì—´ë¦¬ì§€ ì•Šì•˜ê±°ë‚˜ ë˜ëŠ” ë‹«íˆì§€ ì•Šì•˜ìŒ
-3 => table ì˜ ì—´ê³  ë‹«ëŠ” ìˆœì„œê°€ í‹€ë ¸ê±°ë‚˜ ì œëŒ€ë¡œ ë˜ì–´ ìˆì§€ ì•ŠìŒ
+0 => ¿Ã¹Ù¸¥ ÅÂ±× »ç¿ë (OK)
+1 => open µÈ table tag ¼ö¿Í close µÈ table tag ¼ö°¡ Æ²¸²
+2 => table ¿¡ Á¦´ë·Î ¿­¸®Áö ¾Ê¾Ò°Å³ª ¶Ç´Â ´İÈ÷Áö ¾Ê¾ÒÀ½
+3 => table ÀÇ ¿­°í ´İ´Â ¼ø¼­°¡ Æ²·È°Å³ª Á¦´ë·Î µÇ¾î ÀÖÁö ¾ÊÀ½
 
-<span id="RE">ì˜ˆì œ</span>
+<FONT ID=RE>¿¹Á¦</FONT>
 
 $str = &quot;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&quot;;
-if ( check_htmltable_lib ($str) ) {
-  echo &quot;TABLE íƒœê·¸ë¥¼ ì˜ëª» ì‚¬ìš©í•˜ì˜€ìŠµë‹ˆë‹¤.&quot;;
+if(check_htmltable_lib($str)) {
+  echo &quot;TABLE ÅÂ±×¸¦ Àß¸ø »ç¿ëÇÏ¿´½À´Ï´Ù.&quot;;
 }
 

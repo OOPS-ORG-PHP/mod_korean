@@ -51,8 +51,8 @@ static long php_jpeg_emit_message(j_common_ptr jpeg_info, int level)
 	char message[JMSG_LENGTH_MAX];
 	jmpbuf_wrapper *jmpbufw;
 	int ignore_warning = 0;
-
-	jmpbufw = (jmpbuf_wrapper *) jpeg_info->client_data;
+	
+    jmpbufw = (jmpbuf_wrapper *) jpeg_info->client_data;
 
 	if (jmpbufw != 0) {
 		ignore_warning = jmpbufw->ignore_warning;
@@ -101,32 +101,6 @@ static void fatal_jpeg_error (j_common_ptr cinfo)
 
 	exit (99);
 }
-
-int gdJpegGetVersionInt()
-{
-	return JPEG_LIB_VERSION;
-}
-
-const char * gdJpegGetVersionString()
-{
-	switch(JPEG_LIB_VERSION) {
-		case 62:
-			return "6b";
-			break;
-
-		case 70:
-			return "7";
-			break;
-
-		case 80:
-			return "8";
-			break;
-
-		default:
-			return "unknown";
-	}
-}
-
 
 /*
  * Write IM to OUTFILE as a JFIF-formatted JPEG image, using quality

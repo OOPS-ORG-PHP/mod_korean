@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 | Author: JoungKyun Kim <http://www.oops.org>                          |
 +----------------------------------------------------------------------+
-$Id$
+$Id: krregex.h,v 1.11 2008-08-09 16:16:52 oops Exp $
 */
 #ifndef KRREGEX_H
 #define KRREGEX_H
@@ -78,7 +78,6 @@ make changes to pcre.in. */
 it is needed here for malloc. */
 
 #include <stdlib.h>
-#include <regex.h>
 
 /* Allow for C++ users */
 
