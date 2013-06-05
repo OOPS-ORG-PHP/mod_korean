@@ -1,4 +1,4 @@
-<?
+<?php
 $phpversion = "5.4.8";
 $version = "0.1.5";
 $updates = "2011.11.11";
