@@ -67,10 +67,10 @@ OOPS Development Organization <a href="http://devel.oops.org/"><font style="colo
 <tr><td bgcolor="#cccccc"><img src="./img/blank.gif" width=1 height=1 border=0 alt=""></td></tr>
 <tr><td>
 <br>
-&nbsp;<img src="./img/box-0.gif" border=0 width=11 height=7 alt=""><a href=./>처음</a><br>
-&nbsp;<img src="./img/box-0.gif" border=0 width=11 height=7 alt=""><a href=./>소개</a><br>
-&nbsp;<img src="./img/box-0.gif" border=0 width=11 height=7 alt=""><a href=./#changelog>개발상황</a><br>
-&nbsp;<img src="./img/box-0.gif" border=0 width=11 height=7 alt=""><a href=./#install>설치</a><br>
+&nbsp;<img src="./img/box-0.gif" border=0 width=11 height=7 alt=""><a href="./">처음</a><br>
+&nbsp;<img src="./img/box-0.gif" border=0 width=11 height=7 alt=""><a href="./">소개</a><br>
+&nbsp;<img src="./img/box-0.gif" border=0 width=11 height=7 alt=""><a href="./#changelog">개발상황</a><br>
+&nbsp;<img src="./img/box-0.gif" border=0 width=11 height=7 alt=""><a href="./#install">설치</a><br>
 <?=$plist?>
 
 </td></tr>
