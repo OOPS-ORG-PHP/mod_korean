@@ -47,6 +47,10 @@
 
 struct stat filestat;
 
+#if ! defined(E_DEPRECATED)
+#define E_DEPRECATED E_WARNING
+#endif
+
 /* {{{ proto int human_fsize_lib(int filesize, int sub, int unit, int cunit)
  * filesize => init value (byte or bit)
  * sub      => whether print origianl value (ex: 7.5 MB (7,500,000 bytes))
