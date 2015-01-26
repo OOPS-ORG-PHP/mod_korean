@@ -23,6 +23,7 @@ $Id$
 PHP_FUNCTION(imgresize_lib);
 
 #define HAVE_GD_GIF_CREATE 1
+#define HAVE_GD_GIF_READ 1
 #define HAVE_GD_GIF_CTX 1
 
 #define	GIFNEWTYPE	1
