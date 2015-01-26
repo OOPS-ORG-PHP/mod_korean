@@ -2,6 +2,10 @@ PHP Korean Extexsions Changelog
 
 * 0.1.6
 --------------------------------------------------------------------------------
+Mon Jan 26 2014
+by JoungKyun.Kim <http://oops.org>
+	- fixed unread gif format on imgresize_lib
+
 Sat Jun 22 2013
 by JoungKyun.Kim <http://oops.org>
 	- fixed compile failure with `E_DEPRECATED' undeclared under PHP 5.2
