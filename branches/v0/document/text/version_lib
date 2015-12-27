@@ -1,0 +1,18 @@
+<span class="title">version_lib()</span>
+
+(required korean module)
+
+version_lib -- korean extension 의 버전을 출력
+
+<span id="RE">설명</span>
+
+<b>unsigned char version_lib(void)</b>
+
+korean extension 의 버전을 출력
+
+<span id="RE">예제</span>
+
+echo version_lib();
+
+결과 : 0.0.1
+
