@@ -193,7 +193,7 @@ PHP_FUNCTION(get_hostname_lib)
 
 	safe_efree(host);
 
-	RETVAL_STRING(ret, 1);
+	RETVAL_STRING(ret);
 	safe_efree (ret);
 }
 /* }}} */
@@ -240,7 +240,7 @@ PHP_FUNCTION(readfile_lib)
 		string = (UChar *) sockhttp (filepath, retSize, 0, "");
 		if (string != NULL)
 		{
-			RETVAL_STRINGL(string, *retSize, 1);
+			RETVAL_STRINGL(string, *retSize);
 			safe_efree (filepath);
 			safe_efree (string);
 		}
@@ -260,7 +260,7 @@ PHP_FUNCTION(readfile_lib)
 		if( stat (getfilename, &filestat) == 0 )
 		{
 			string = (UChar *) readfile(getfilename);
-			RETVAL_STRINGL(string, filestat.st_size, 1);
+			RETVAL_STRINGL(string, filestat.st_size);
 			safe_efree (filename);
 			safe_efree (filepath);
 			safe_efree (string);
@@ -289,7 +289,7 @@ PHP_FUNCTION(readfile_lib)
 		return;
 
 	stream = php_stream_open_wrapper (filepath, "rb",
-			(use_include_path ? USE_PATH : 0) | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
+			(use_include_path ? USE_PATH : 0) | REPORT_ERRORS, NULL);
 
 	if (stream) {
 		string = emalloc (sizeof (char) * 8192);
@@ -305,7 +305,7 @@ PHP_FUNCTION(readfile_lib)
 		}
 		php_stream_close(stream);
 
-		RETVAL_STRINGL(string, len, 1);
+		RETVAL_STRINGL(string, len);
 		safe_efree(string);
 	} else {
 		RETURN_EMPTY_STRING();
@@ -371,7 +371,7 @@ PHP_FUNCTION(sockmail_lib)
 			strncpy (err_host, t_addr + 1, strlen (t_addr) - 2);
 
 			if ( sock_sendmail (faddr, t_addr, text, hlen ? hhost : "", debug) == 1)
-				add_next_index_string (return_value, err_host, 1);
+				add_next_index_string (return_value, err_host);
 
 			efree (err_host);
 		} while ( (mailaddr = strtok_r (NULL, delimiters, &btoken)) != NULL );

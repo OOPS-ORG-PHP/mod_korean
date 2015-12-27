@@ -75,7 +75,7 @@ PHP_FUNCTION(ncrencode_lib)
 		RETURN_EMPTY_STRING ();
 
 	string = krNcrEncode (input, type);
-	RETVAL_STRING (string, 1);
+	RETVAL_STRING (string);
 	safe_efree (string);
 }
 
@@ -96,7 +96,7 @@ PHP_FUNCTION(ncrdecode_lib)
 		RETURN_EMPTY_STRING ();
 
 	string = krNcrDecode (input);
-	RETVAL_STRING (string, 1);
+	RETVAL_STRING (string);
 	safe_efree (string);
 }
 
@@ -123,7 +123,7 @@ PHP_FUNCTION(uniencode_lib)
 	if ( (string = uniConv (input, 0, 0, prefix, postfix)) == NULL )
 		RETURN_FALSE;
 
-	RETVAL_STRING (string, 1);
+	RETVAL_STRING (string);
 	safe_efree (string);
 }
 
@@ -172,7 +172,7 @@ PHP_FUNCTION(unidecode_lib)
 	if ( (string = uniConv(input, 1, type, prefix, postfix)) == NULL )
 		RETURN_FALSE;
 
-	RETVAL_STRING (string, 1);
+	RETVAL_STRING (string);
 	safe_efree (string);
 }
 
@@ -214,7 +214,7 @@ PHP_FUNCTION(utf8encode_lib)
 	XUCodeConv (utf8, inlen * 6, XU_CONV_UTF8, input, inlen, ccode);
 	ulen = strlen (utf8);
 
-	RETVAL_STRINGL (utf8, ulen, 1);
+	RETVAL_STRINGL (utf8, ulen);
 	safe_efree (utf8);
 }
 /* }}} */
@@ -254,10 +254,10 @@ PHP_FUNCTION(utf8decode_lib)
 
 	if ( ccode == XU_CONV_CP949 ) {
 		ncr = (char *) krNcrEncode (str, 1);
-		RETVAL_STRING (ncr, 1);
+		RETVAL_STRING (ncr);
 		safe_efree (ncr);
 	} else
-		RETVAL_STRINGL(str, slen, 1);
+		RETVAL_STRINGL(str, slen);
 
 	safe_efree (str);
 }

@@ -31,83 +31,70 @@
 
 UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // {{{
 {
-	size_t   str_len = 0;
-	zval   * replaces;
-	UChar  * buf_o;
+	zend_string * buf;
+	zend_string * regex;
+	zend_string * subject;
+	zval        * replaces;
 
 	TSRMLS_FETCH ();
 
-	if ( str_o != NULL )
-		str_len = strlen (str_o);
+	regex = zend_string_init (regex_o, strlen (regex_o), 0);
+	subject = zend_string_init (str_o, strlen (str_o), 0);
 
-	MAKE_STD_ZVAL (replaces);
-	ZVAL_STRING (replaces, replace_o, 1);
-		
-	buf_o = (UChar *) php_pcre_replace (
-			regex_o, strlen(regex_o), str_o, str_len, replaces,0, &str_len, -1, 0 TSRMLS_CC
+	replaces = NULL;
+	ZVAL_STRING (replaces, replace_o);
+
+	buf = php_pcre_replace (
+			regex, subject, ZSTR_VAL (subject), (int) ZSTR_LEN (subject), replaces, 0, -1, 0
 	);
 
-	return buf_o;
+	zend_string_free (regex);
+	zend_string_free (subject);
+
+	return (UChar *) ZSTR_VAL (buf);
 } // }}}
 
 UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * str_o, unsigned int regex_no) // {{{
 {
+	zend_string * buf;
+	zend_string * regex;
+	zend_string * subject;
+
 	unsigned int i;
-	size_t str_len = 0;
 #ifdef PHP_WIN32
 	zval * replaces[100];
 #else
 	zval * replaces[regex_no];
 #endif
-	UChar * o_str = NULL;
-	UChar * c_str = NULL;
 
 	TSRMLS_FETCH ();
 
-	if ( str_o != NULL )
-		str_len = strlen (str_o);
+	subject = zend_string_init (str_o, strlen (str_o), 0);
 
 	for ( i=0; i<regex_no ; i++ ) {
-		MAKE_STD_ZVAL (replaces[i]);
-		ZVAL_STRING (replaces[i], replace_o[i], 1);
-
-		if( i == 0 ) {
-			o_str = (UChar *) php_pcre_replace (
-						regex_o[i],
-				   		strlen(regex_o[i]),
-						str_o,
-						str_len,
-						replaces[i],
-						0,
-						&str_len,
-						-1, 0 TSRMLS_CC
-					);
-			c_str = emalloc (sizeof (UChar *) * (str_len + 1));
-			strcpy (c_str, o_str);
-		} else {
-			o_str = NULL;
-			o_str = (UChar *) php_pcre_replace(
-						regex_o[i],
-				  		strlen(regex_o[i]),
-						c_str,
-						str_len,
-						replaces[i],
-						0,
-						&str_len,
-						-1, 0 TSRMLS_CC
-					);
-			efree (c_str);
-			c_str = emalloc (sizeof (UChar *) * (str_len + 1));
-			strcpy (c_str, o_str);
+		regex = zend_string_init (regex_o[i], strlen (regex_o[i]), 0);
+		if ( i != 0 ) {
+			subject = zend_string_dup (buf, 0);
+			zend_string_free (buf);
 		}
 
-		str_len = strlen(o_str);
+		replaces[i] = NULL;
+		ZVAL_STRING (replaces[i], replace_o[i]);
+
+		buf = php_pcre_replace(
+				regex,
+		  		subject,
+				ZSTR_VAL (subject),
+				ZSTR_LEN (subject),
+				replaces[i],
+				0, -1, 0
+		);
+
+		zend_string_free (regex);
+		zend_string_free (subject);
 	}
 
-	if ( c_str != NULL )
-		efree (c_str);
-
-	return o_str;
+	return (UChar *) ZSTR_VAL (buf);
 } // }}}
 
 unsigned int checkReg (UChar * str, UChar * regex_o) // {{{
@@ -135,10 +122,17 @@ int pcre_match (UChar * regex, UChar * str) // {{{
 	int preg_options = 0, * offsets, val = 0;
 	unsigned int size_offsets;
 	int num_subpats;
+	zend_string * regex_string = NULL;
+
+	regex_string = zend_string_init (regex, strlen (regex), 0);
 
 	/* Compile regex or get it from cache. */
-	if ( (re = pcre_get_compiled_regex (regex, &extra, &preg_options TSRMLS_CC)) == NULL )
+	if ( (re = pcre_get_compiled_regex (regex_string, &extra, &preg_options)) == NULL ) {
+		zend_string_free (regex_string);
 		return -1;
+	}
+
+	zend_string_free (regex_string);
 
 	pcre_fullinfo (re, extra, PCRE_INFO_CAPTURECOUNT, &num_subpats);
 	num_subpats++;

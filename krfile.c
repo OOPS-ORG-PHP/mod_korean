@@ -71,7 +71,7 @@ PHP_FUNCTION(human_fsize_lib)
 	cunit = cunit ? 1000 : 1024;
 
 	ret = human_file_size (fsize, sub, unit, cunit);
-	RETVAL_STRING (ret, 1);
+	RETVAL_STRING (ret);
 	safe_efree (ret);
 }
 /* }}} */
@@ -150,7 +150,7 @@ PHP_FUNCTION(filelist_lib)
 			if ( rlen && regexec(&preg,d->d_name, 0, NULL, 0) != 0)
 				continue;
 
-			add_next_index_string (return_value, d->d_name, 1);
+			add_next_index_string (return_value, d->d_name);
 		}
 	}
 
@@ -227,7 +227,7 @@ PHP_FUNCTION(getfile_lib)
 	PHP_KR_CHECK_OPEN_BASEDIR (getfilename);
 	str = readfile (getfilename);
 
-	RETVAL_STRINGL (str, chksize, 1);
+	RETVAL_STRINGL (str, chksize);
 	safe_efree (str);
 }
 /* }}} */
@@ -249,7 +249,7 @@ PHP_FUNCTION(getfiletype_lib)
 	if ( (ext = strrchr (input, '.')) == NULL )
 		RETURN_EMPTY_STRING ();
 
-	RETURN_STRING (ext + 1, 1);
+	RETURN_STRING (ext + 1);
 }
 /* }}} */
 
@@ -324,7 +324,7 @@ PHP_FUNCTION(pcregrep_lib)
 		RETURN_EMPTY_STRING();
 	}
 
-	RETVAL_STRINGL(str, len - 1, 1);
+	RETVAL_STRINGL(str, len - 1);
 	safe_efree (str);
 }
 /* }}} */
