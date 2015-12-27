@@ -222,7 +222,7 @@ PHP_FUNCTION(is_email_lib)
 	if ( ! inlen || checkAddr (input, 0) != 1 )
 		RETURN_EMPTY_STRING ();
 	
-	RETURN_STRING (input, 1);
+	RETURN_STRING (input);
 }
 /* }}} */
 
@@ -240,7 +240,7 @@ PHP_FUNCTION(is_url_lib)
 	if ( ! inlen || checkAddr (input, 1) != 1 )
 		RETURN_EMPTY_STRING ();
 	
-	RETURN_STRING (input, 1);
+	RETURN_STRING (input);
 }
 /* }}} */
 

@@ -47,7 +47,7 @@ PHP_FUNCTION(autolink_lib)
 	if ( inlen == 0 )
 		RETURN_EMPTY_STRING ();
 
-	RETURN_STRING (autoLink (input), 1);
+	RETURN_STRING (autoLink (input));
 }
 /* }}} */
 
@@ -121,12 +121,12 @@ PHP_FUNCTION(substr_lib)
 	if ( utf ) {
 		retstr = (UChar *) emalloc (sizeof (char) * strlen (tmpstr + f) * 6);
 		XUCodeConv (retstr, strlen (tmpstr + f) * 6, XU_CONV_UTF8, tmpstr + f, strlen (tmpstr + f), XU_CONV_CP949);
-		RETVAL_STRINGL(retstr, strlen (retstr), 1);
+		RETVAL_STRINGL(retstr, strlen (retstr));
 	}
    	else
    	{
 		retstr = krNcrEncode (tmpstr + f, 1);
-		RETVAL_STRINGL(retstr, strlen (retstr), 1);
+		RETVAL_STRINGL(retstr, strlen (retstr));
 	}
 	safe_efree (retstr);
 	safe_efree (tmpstr);
@@ -150,174 +150,174 @@ PHP_FUNCTION(agentinfo_lib)
 
 	/* if Explorer */
 	if ( strstr (agent_o, "MSIE") ) {
-		add_assoc_string (return_value, "br", "MSIE", 1);
-		add_assoc_string (return_value, "co", "msie", 1);
+		add_assoc_string (return_value, "br", "MSIE");
+		add_assoc_string (return_value, "co", "msie");
 
 		/* get user os */
 		if ( strstr (agent_o, "NT") )
-			add_assoc_string (return_value, "os", "NT", 1);
+			add_assoc_string (return_value, "os", "NT");
 		else if ( strstr (agent_o, "Win") )
-			add_assoc_string (return_value, "os", "WIN", 1);
+			add_assoc_string (return_value, "os", "WIN");
 		else
-			add_assoc_string (return_value, "os", "OTHER", 1);
+			add_assoc_string (return_value, "os", "OTHER");
 
 		/* get version */
 		buf = (UChar *) kr_regex_replace ("/Mo.+MSIE ([^;]+);.+/i", "\\1", agent_o);
-		add_assoc_string (return_value, "vr", (UChar *) kr_regex_replace ("/[a-z]/", "", buf), 1);
+		add_assoc_string (return_value, "vr", (UChar *) kr_regex_replace ("/[a-z]/", "", buf));
 	}
 	
 	/* if Opera */
 	else if ( strstr (agent_o, "Opera") ) {
-		add_assoc_string (return_value, "br", "OPERA", 1);
-		add_assoc_string (return_value, "co", "msie", 1);
+		add_assoc_string (return_value, "br", "OPERA");
+		add_assoc_string (return_value, "co", "msie");
 
 		/* get user os */
 		if ( strstr (agent_o, "Linux") )
-			add_assoc_string (return_value, "os", "LINUX", 1);
+			add_assoc_string (return_value, "os", "LINUX");
 		else if ( strstr (agent_o, "2000" ) || strstr (agent_o, "XP") )
-			add_assoc_string (return_value, "os", "NT", 1);
+			add_assoc_string (return_value, "os", "NT");
 		else if ( strstr (agent_o, "Win") )
-			add_assoc_string(return_value, "os", "WIN", 1);
+			add_assoc_string(return_value, "os", "WIN");
 		else
-			add_assoc_string(return_value, "os", "OTHER", 1);
+			add_assoc_string(return_value, "os", "OTHER");
 
 		/* get version */
 		buf = (UChar *) kr_regex_replace ("/Opera\\/([0-9.]+).*/i","\\1", agent_o);
-		add_assoc_string (return_value, "vr", buf, 1);
+		add_assoc_string (return_value, "vr", buf);
 
 		/* get language */
 		if ( strstr (agent_o, "[ko]") )
-			add_assoc_string (return_value, "ln", "ko", 1);
+			add_assoc_string (return_value, "ln", "ko");
 		else if ( strstr (agent_o, "[en]") )
-			add_assoc_string(return_value, "ln", "en", 1);
+			add_assoc_string(return_value, "ln", "en");
 		else
-			add_assoc_string(return_value, "ln", "other", 1);
+			add_assoc_string(return_value, "ln", "other");
 	}
 
 	/* if Mozilla */
 	else if ((strstr (agent_o, "Gecko") || strstr (agent_o, "Galeon")) && ! strstr (agent_o, "Netscape") ) {
-		add_assoc_string (return_value, "br", "MOZL", 1);
-		add_assoc_string (return_value, "co", "mozilla", 1);
+		add_assoc_string (return_value, "br", "MOZL");
+		add_assoc_string (return_value, "co", "mozilla");
 
 		/* get user os */
 		if ( strstr (agent_o, "NT") )
-			add_assoc_string (return_value, "os", "NT", 1);
+			add_assoc_string (return_value, "os", "NT");
 		else if ( strstr (agent_o, "Win") )
-			add_assoc_string (return_value, "os", "WIN", 1);
+			add_assoc_string (return_value, "os", "WIN");
 		else if ( strstr (agent_o, "Linux") )
-			add_assoc_string (return_value, "os", "LINUX", 1);
+			add_assoc_string (return_value, "os", "LINUX");
 		else
-			add_assoc_string (return_value, "os", "OTHER", 1);
+			add_assoc_string (return_value, "os", "OTHER");
 
 		/* get version */
 		buf = (UChar *) kr_regex_replace("/Mozi[^(]+\\([^;]+;[^;]+;[^;]+;[^;]+;([^)]+)\\).*/i","\\1", agent_o);
-		add_assoc_string(return_value, "vr", (UChar *) kr_regex_replace("/rv:| /i", "", buf), 1);
+		add_assoc_string(return_value, "vr", (UChar *) kr_regex_replace("/rv:| /i", "", buf));
 
 		/* get language */
 		if (strstr(agent_o, "en-US"))
 		{
-			add_assoc_string(return_value, "ln", "en", 1);
+			add_assoc_string(return_value, "ln", "en");
 		}
 		else if (strstr(agent_o, "ko-KR"))
 		{
-			add_assoc_string(return_value, "ln", "ko", 1);
+			add_assoc_string(return_value, "ln", "ko");
 		}
 		else
 		{
-			add_assoc_string(return_value, "ln", "other", 1);
+			add_assoc_string(return_value, "ln", "other");
 		}
 	}
 
 	/* if Konqueror */
 	else if ( strstr (agent_o, "Konqueror") ) {
-		add_assoc_string (return_value, "br", "KONQ", 1);
-		add_assoc_string (return_value, "co", "mozilla", 1);
+		add_assoc_string (return_value, "br", "KONQ");
+		add_assoc_string (return_value, "co", "mozilla");
 
 		/* get user os */
 		if ( strstr (agent_o, "Linux") )
-			add_assoc_string (return_value, "os", "LINUX", 1);
+			add_assoc_string (return_value, "os", "LINUX");
 		else if ( strstr (agent_o, "FreeBSD") )
-			add_assoc_string (return_value, "os", "FreeBSD", 1);
+			add_assoc_string (return_value, "os", "FreeBSD");
 		else
-			add_assoc_string (return_value, "os", "OTHER", 1);
+			add_assoc_string (return_value, "os", "OTHER");
 
 		/* get version */
 		buf = (UChar *) kr_regex_replace ("/.*Konqueror\\/([0-9.]+).*/i","\\1", agent_o);
-		add_assoc_string (return_value, "vr", buf, 1);
+		add_assoc_string (return_value, "vr", buf);
 	}
 
 	/* if Lynx */
 	else if ( strstr (agent_o, "Lynx") ) {
-		add_assoc_string (return_value, "br", "LYNX", 1);
-		add_assoc_string (return_value, "co", "TextBR", 1);
+		add_assoc_string (return_value, "br", "LYNX");
+		add_assoc_string (return_value, "co", "TextBR");
 
 		/* get version */
 		buf = (UChar *) kr_regex_replace ("/Lynx\\/([^ ]+).*/i","\\1", agent_o);
-		add_assoc_string (return_value, "vr", buf, 1);
+		add_assoc_string (return_value, "vr", buf);
 	}
 
 	/* if w3M */
 	else if ( strstr (agent_o, "w3m") ) {
-		add_assoc_string (return_value, "br", "W3M", 1);
-		add_assoc_string (return_value, "co", "TextBR", 1);
+		add_assoc_string (return_value, "br", "W3M");
+		add_assoc_string (return_value, "co", "TextBR");
 
 		/* get version */
 		buf = (UChar *) kr_regex_replace ("/w3m\\/([0-9.]+).*/i","\\1", agent_o);
-		add_assoc_string (return_value, "vr", buf, 1);
+		add_assoc_string (return_value, "vr", buf);
 	}
 
 	/* if LINKS */
 	else if ( strstr(agent_o, "Links") ) {
-		add_assoc_string (return_value, "br", "LINKS", 1);
-		add_assoc_string (return_value, "co", "TextBR", 1);
+		add_assoc_string (return_value, "br", "LINKS");
+		add_assoc_string (return_value, "co", "TextBR");
 
 		/* get user os */
 		if ( strstr (agent_o, "Linux") )
-			add_assoc_string (return_value, "os", "LINUX", 1);
+			add_assoc_string (return_value, "os", "LINUX");
 		else if ( strstr (agent_o, "FreeBSD") )
-			add_assoc_string (return_value, "os", "FreeBSD", 1);
+			add_assoc_string (return_value, "os", "FreeBSD");
 		else
-			add_assoc_string (return_value, "os", "OTHER", 1);
+			add_assoc_string (return_value, "os", "OTHER");
 
 		/* get version */
 		buf = (UChar *) kr_regex_replace ("/Links \\(([^;]+);.*/i","\\1", agent_o);
-		add_assoc_string (return_value, "vr", buf, 1);
+		add_assoc_string (return_value, "vr", buf);
 	}
 
 	/* if Netscape */
 	else if ( strstr (agent_o, "Mozilla") ) {
-		add_assoc_string (return_value, "br", "NS", 1);
-		add_assoc_string (return_value, "co", "mozilla", 1);
+		add_assoc_string (return_value, "br", "NS");
+		add_assoc_string (return_value, "co", "mozilla");
 
 		/* get user os */
 		if ( strstr (agent_o, "NT") )
-			add_assoc_string (return_value, "os", "NT", 1);
+			add_assoc_string (return_value, "os", "NT");
 		else if ( strstr (agent_o, "Win") )
-			add_assoc_string (return_value, "os", "WIN", 1);
+			add_assoc_string (return_value, "os", "WIN");
 		else if ( strstr (agent_o, "Linux") )
-			add_assoc_string (return_value, "os", "LINUX", 1);
+			add_assoc_string (return_value, "os", "LINUX");
 		else
-			add_assoc_string (return_value, "os", "OTHER", 1);
+			add_assoc_string (return_value, "os", "OTHER");
 
 		/* get language */
 		if ( strstr (agent_o, "[ko]") )
-			add_assoc_string (return_value, "ln", "ko", 1);
+			add_assoc_string (return_value, "ln", "ko");
 		else if ( strstr (agent_o, "[en]") )
-			add_assoc_string (return_value, "ln", "en", 1);
+			add_assoc_string (return_value, "ln", "en");
 		else
-			add_assoc_string (return_value, "ln", "other", 1);
+			add_assoc_string (return_value, "ln", "other");
 
 		/* get version */
 		if ( strstr (agent_o, "Gecko") )
-			add_assoc_string (return_value, "vr", "6", 1);
+			add_assoc_string (return_value, "vr", "6");
 		else
-			add_assoc_string (return_value, "vr", "4", 1);
+			add_assoc_string (return_value, "vr", "4");
 	}
 
 	/* other browser */
 	else {
-		add_assoc_string (return_value, "br", "OTHER", 1);
-		add_assoc_string (return_value, "co", "OTHER", 1);
+		add_assoc_string (return_value, "br", "OTHER");
+		add_assoc_string (return_value, "co", "OTHER");
 	}
 }
 /* }}} */
@@ -399,9 +399,9 @@ PHP_FUNCTION(postposition_lib)
 
 	if ( ! utf ) {
 		XUCodeConv (post, 12, XU_CONV_CP949, utfpost, 2, XU_CONV_UTF8);
-		RETURN_STRING (post, 1);
+		RETURN_STRING (post);
 	} else
-		RETURN_STRING(utfpost, 1);
+		RETURN_STRING(utfpost);
 }
 /* }}} */
 
@@ -567,29 +567,38 @@ UChar * get_useragent ()
 /* {{{ UChar * get_serverenv (UChar *para) */
 UChar * get_serverenv (UChar * para)
 {
-	zval **data, **tmp, tmps;
-	char *string_key;
-	ulong num_key;
+	zval *data, *tmp, tmps;
+	zend_string *string_key;
+	zend_ulong num_key;
 	UChar *parameters = NULL;
+
+	zend_string * keyname;
 
 	TSRMLS_FETCH();
 
-	if ( zend_hash_find (&EG(symbol_table), "_SERVER", 8, (void **) &data) ) {
-		zend_hash_internal_pointer_reset (Z_ARRVAL_PP(data));
-		while ( zend_hash_get_current_data (Z_ARRVAL_PP (data), (void **) &tmp) == SUCCESS ) {
-			if ( zend_hash_get_current_key (Z_ARRVAL_PP (data), &string_key, &num_key, 0) == HASH_KEY_IS_STRING ) {
-				if ( !strcasecmp (string_key, para) ) {
-					tmps = **tmp;
-					zval_copy_ctor (&tmps);
-					convert_to_string (&tmps);
+	keyname = zend_string_init ("_SERVER", 7, 0);
+
+	if ( (data = zend_hash_find (&EG(symbol_table), keyname)) != NULL ) {
+		ZEND_HASH_FOREACH_KEY_VAL(Z_ARRVAL_P(data), num_key, string_key, tmp) {
+			if ( string_key ) {
+				if ( strcasecmp (ZSTR_VAL (string_key), para) == 0 ) {
+					ZVAL_COPY_VALUE (&tmps, tmp);
+					if ( Z_TYPE(tmps) != IS_STRING ) {
+						tmp = NULL;
+						zval_copy_ctor (&tmps);
+						convert_to_string (&tmps);
+					}
+
 					parameters = Z_STRVAL (tmps);
-					zval_dtor (&tmps);
+					if ( !tmp )
+						zval_dtor (&tmps);
 					break;
 				}
 			}
-			zend_hash_move_forward (Z_ARRVAL_PP (data));
-		}
+		} ZEND_HASH_FOREACH_END();
 	}
+
+	zend_string_free (keyname);
 
 	if ( parameters == NULL )
 		parameters = "";

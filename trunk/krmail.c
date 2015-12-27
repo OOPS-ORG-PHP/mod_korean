@@ -111,7 +111,7 @@ PHP_FUNCTION(mailsource_lib)
 	if ( (ret = generate_mail(c_ln, c_from, c_to, c_title, c_text, c_ptext, attachfile)) == NULL )
 		RETURN_EMPTY_STRING();
 
-	RETVAL_STRING(ret,1);
+	RETVAL_STRING(ret);
 
 	safe_efree (c_ptext);
 	safe_efree (c_attach);

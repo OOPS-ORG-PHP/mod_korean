@@ -247,23 +247,11 @@ PCRE_EXP_DECL const char *pcre_version(void);
 #include <locale.h>
 #endif
 
-PHPAPI char *php_pcre_replace(char *regex, int regex_len, char *subject, int subject_len, zval *replace_val, int is_callable_replace, int *result_len, int limit, int *replace_count TSRMLS_DC);
-PHPAPI pcre* pcre_get_compiled_regex(char *regex, pcre_extra **extra, int *options TSRMLS_DC);
+PHPAPI zend_string *php_pcre_replace(zend_string *regex, zend_string *subject_str, char *subject, int subject_len, zval *replace_val, int is_callable_replace, int limit, int *replace_count);
+PHPAPI pcre* pcre_get_compiled_regex(zend_string *regex, pcre_extra **extra, int *options);
 
 extern zend_module_entry pcre_module_entry;
 #define pcre_module_ptr &pcre_module_entry
-
-typedef struct {
-	pcre *re;
-	pcre_extra *extra;
-	int preg_options;
-#if HAVE_SETLOCALE
-	char *locale;
-	unsigned const char *tables;
-#endif
-	int compile_options;
-	int refcount;
-} pcre_cache_entry;
 
 ZEND_BEGIN_MODULE_GLOBALS(pcre)
 	HashTable pcre_cache;

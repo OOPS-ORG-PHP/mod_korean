@@ -148,7 +148,7 @@ PHP_MINFO_FUNCTION(korean)
  *  print korean extension build number */
 PHP_FUNCTION(buildno_lib)
 {
-	RETURN_STRING (BUILDNO,1);
+	RETURN_STRING (BUILDNO);
 }
 /* }}} */
 
@@ -156,7 +156,7 @@ PHP_FUNCTION(buildno_lib)
  *  print korean extension version */
 PHP_FUNCTION(version_lib)
 {
-	RETURN_STRING (BUILDVER,1);
+	RETURN_STRING (BUILDVER);
 }
 /* }}} */
 
@@ -219,7 +219,7 @@ PHP_FUNCTION(get_microtime_lib)
 
 	sprintf(ret,"%.2f", ((atoi (end_sec) + atof (end_mil)) - (atoi (start_sec) + atof (start_mil))));
 
-	RETURN_STRING(ret, 1);
+	RETURN_STRING(ret);
 }
 /* }}} */
 
