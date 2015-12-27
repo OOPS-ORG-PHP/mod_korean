@@ -60,11 +60,11 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 	zend_string * regex;
 	zend_string * subject;
 
-	unsigned int i;
+	unsigned int  i;
 #ifdef PHP_WIN32
-	zval * replaces[100];
+	zval        * replaces[100];
 #else
-	zval * replaces[regex_no];
+	zval        * replaces[regex_no];
 #endif
 
 	TSRMLS_FETCH ();
@@ -117,11 +117,11 @@ unsigned int checkReg (UChar * str, UChar * regex_o) // {{{
 
 int pcre_match (UChar * regex, UChar * str) // {{{
 {
-	pcre * re = NULL;
-	pcre_extra * extra = NULL;
-	int preg_options = 0, * offsets, val = 0;
-	unsigned int size_offsets;
-	int num_subpats;
+	pcre        * re = NULL;
+	pcre_extra  * extra = NULL;
+	int           preg_options = 0, * offsets, val = 0;
+	unsigned int  size_offsets;
+	int           num_subpats;
 	zend_string * regex_string = NULL;
 
 	regex_string = zend_string_init (regex, strlen (regex), 0);
