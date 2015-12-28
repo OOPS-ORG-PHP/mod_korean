@@ -329,7 +329,7 @@ PHP_FUNCTION(sockmail_lib)
 
 	UChar * src[4] = { "/[^<]*</", "/>.*/", "/[\\s]/", "/^.*$/" };
 	UChar * des[4] = { "", "", "", "<\\0>" };
-	UChar * t_addr;
+	UChar * t_addr = NULL;
 
 	if ( kr_parameters ("ss|ssb", &text, &telen, &from, &flen, &to, &tlen, &hhost, &hlen, &debug) == FAILURE )
 		return;
@@ -355,7 +355,7 @@ PHP_FUNCTION(sockmail_lib)
 		UChar * t_des[2] = { "!!ENTER!!", "\\1" };
 		taddr = (UChar *) kr_regex_replace_arr (t_src, t_des, text, (sizeof (t_src) / sizeof (t_src[0])));
 	} else {
-		taddr = to;
+		taddr = strdup (to);
 	}
 
 	if ( (mailaddr = strtok_r (taddr, delimiters, &btoken)) != NULL ) {
@@ -363,7 +363,6 @@ PHP_FUNCTION(sockmail_lib)
 			char *err_host;
 			int hostlen = 0;
 
-			t_addr = NULL;
 			t_addr = (UChar *) kr_regex_replace_arr(src, des, mailaddr, (sizeof (src) / sizeof (src[0])));
 			hostlen = strlen (t_addr);
 			err_host = emalloc (sizeof (char *) * hostlen + 1);
@@ -373,9 +372,12 @@ PHP_FUNCTION(sockmail_lib)
 			if ( sock_sendmail (faddr, t_addr, text, hlen ? hhost : "", debug) == 1)
 				add_next_index_string (return_value, err_host);
 
-			efree (err_host);
+			safe_efree (t_addr);
+			safe_efree (err_host);
 		} while ( (mailaddr = strtok_r (NULL, delimiters, &btoken)) != NULL );
 	}
+	safe_efree (taddr);
+	safe_efree (faddr);
 }
 /* }}} */
 
@@ -435,6 +437,7 @@ UChar * get_mx_record (UChar * str)
 	/* if don't exist mx record */
 	if ( (i = res_search (host, C_IN, T_MX, answer, sizeof (answer))) < 0 ) {
 		strcpy (mxrecord, host);
+		safe_efree (host);
 		return mxrecord;
 	}
 
@@ -448,7 +451,7 @@ UChar * get_mx_record (UChar * str)
 	for ( qdc = ntohs ((unsigned short) hp->qdcount); qdc--; cp += i + 4 ) {
 		if ( (i = dn_skipname (cp, end)) < 0 ) {
 			strcpy (mxrecord, host);
-			free (host);
+			safe_efree (host);
 			return mxrecord;
 		}
 	}
@@ -458,7 +461,7 @@ UChar * get_mx_record (UChar * str)
 	while ( --count >= 0 && cp < end ) {
 		if ( (i = dn_skipname (cp, end)) < 0 ) {
 			strcpy (mxrecord, host);
-			free (host);
+			safe_efree (host);
 			return mxrecord;
 		}
 		cp += i;
@@ -472,7 +475,7 @@ UChar * get_mx_record (UChar * str)
 		GETSHORT (tmpweight, cp);
 		if ( (i = dn_expand (answer, end, cp, tmpmx, sizeof (tmpmx)-1)) < 0 ) {
 			strcpy (mxrecord, host);
-			free (host);
+			safe_efree (host);
 			return mxrecord;
 		}
 		cp += i;
@@ -491,11 +494,11 @@ UChar * get_mx_record (UChar * str)
 		}
 	}
 
-	if ( strlen (mxrecord) < 1 ) {
+	if ( strlen (mxrecord) < 1 )
 		strcpy (mxrecord, host);
-		return mxrecord;
-	} else
-		return mxrecord;
+
+	safe_efree (host);
+	return mxrecord;
 }
 /* }}} */
 

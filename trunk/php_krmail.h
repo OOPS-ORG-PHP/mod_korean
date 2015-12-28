@@ -42,7 +42,7 @@ UChar *generate_mime (UChar *filename);
 
 UChar *kr_regex_replace(UChar *regex_o, UChar *replace_o, UChar *str_o);
 UChar *kr_regex_replace_arr(UChar *regex[], UChar *replace[], UChar *str, unsigned int regex_no);
-PHPAPI extern UChar *php_base64_encode(const UChar *, int, int *);
+PHPAPI extern zend_string * php_base64_encode(const UChar *, size_t);
 
 #endif  /* end PHP_KRMAIL_H */
 

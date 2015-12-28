@@ -125,14 +125,14 @@ PHP_MINFO_FUNCTION(korean)
 	php_info_print_table_colspan_header(2, "Korean extension support");
 	php_info_print_table_row(2, "Build No", BUILDNO);
 	php_info_print_table_row(2, "Build version", BUILDVER);
-	php_info_print_table_row(2, "URL", "http://devel.oops.org/");
+	php_info_print_table_row(2, "URL", "http://oops.org/");
 	php_info_print_table_header(2, "Function", "Support");
 	php_info_print_table_row(2, "Check function", "enabled");
 	php_info_print_table_row(2, "Charset function", "NCR code, Native Unicode 2.0, UTF-8, EUC-KR, CP949");
 	php_info_print_table_row(2, "Filesystem function", "enabled");
 	php_info_print_table_row(2, "HTML function", "enabled");
 #if KRGD_BUILTIN
-	php_info_print_table_row(2, "Image function", "enabled, buildin gd library 2.0 compatible");
+	php_info_print_table_row(2, "Image function", "enabled, builtin gd library 2.0 compatible");
 #elif HAVE_GD2
 	php_info_print_table_row(2, "Image function", "enabled, gd library 2.0 or over");
 #else
@@ -164,19 +164,18 @@ PHP_FUNCTION(version_lib)
  *  print move action to url */
 PHP_FUNCTION(movepage_lib)
 {
-	char * url    = NULL;
-	int    urllen = 0;
-    int    time   = 0;
+	zend_string * url  = NULL;
+    zend_long     time = 0;
 
-	if ( kr_parameters ("s|l", &url, &urllen, &time) == FAILURE )
+	if ( kr_parameters ("S|l", &url, &time) == FAILURE )
 		return;
 
-	if ( urllen == 0 ) {
+	if ( ZSTR_LEN (url) == 0 ) {
 		php_error (E_WARNING, "1st argument is missing.");
 		RETURN_FALSE;
 	}
 
-	php_printf ("<meta http-equiv=\"refresh\" content=\"%d; url=%s\">", time, url);
+	php_printf ("<meta http-equiv=\"refresh\" content=\"%d; url=%s\">", time, ZSTR_VAL (url));
 	RETURN_TRUE;
 	//zend_bailout();
 }
@@ -185,10 +184,8 @@ PHP_FUNCTION(movepage_lib)
 /* {{{ proto float get_microtime_lib(int old, int new) */
 PHP_FUNCTION(get_microtime_lib)
 {
-	char * old;
-	int    oldlen;
-	char * new;
-	int    newlen;
+	zend_string * old;
+	zend_string * new;
 
 	char * start_sec;
 	char * start_mil;
@@ -197,25 +194,25 @@ PHP_FUNCTION(get_microtime_lib)
 	char * buf;
 	char   ret[10] = { 0, };
 
-	if ( kr_parameters ("ss", &old, &oldlen, &new, &newlen) == FAILURE )
+	if ( kr_parameters ("SS", &old, &new) == FAILURE )
 		return;
 
-	if ( oldlen == 0 || newlen == 0 )
+	if ( ZSTR_LEN (old) == 0 || ZSTR_LEN (new) == 0 )
 		RETURN_FALSE;
 
-	if ( (buf = strchr (old, ' ')) == NULL )
+	if ( (buf = strchr (ZSTR_VAL (old), ' ')) == NULL )
 		RETURN_FALSE;
 
 	*buf = 0;
 	start_sec = buf + 1;
-	start_mil = old;
+	start_mil = ZSTR_VAL (old);
 
-	if ( (buf = strchr (new, ' ')) == NULL )
+	if ( (buf = strchr (ZSTR_VAL (new), ' ')) == NULL )
 		RETURN_FALSE;
 
 	*buf = 0;
 	end_sec = buf + 1;
-	end_mil = new;
+	end_mil = ZSTR_VAL (new);
 
 	sprintf(ret,"%.2f", ((atoi (end_sec) + atof (end_mil)) - (atoi (start_sec) + atof (start_mil))));
 

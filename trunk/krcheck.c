@@ -103,6 +103,7 @@ unsigned int check_table (UChar *str) {
 		";[\\D]+;"
 	};
 	UChar * replace[] = { "", "<\\1\\2>", "1", "2", "3", "4", "94", "93", "92", "91", "" };
+	int     result;
 
 	if ( ! checkReg (str, "</?[tT][aA][bB][lL][eE][^>]*>") )
 		return 0;
@@ -111,15 +112,29 @@ unsigned int check_table (UChar *str) {
 		regex, replace, str, (sizeof (regex) / sizeof (regex[0]))
 	);
 
-	if ( (strlen(buf) % 3) != 0 )
+
+	if ( (strlen(buf) % 3) != 0 ) {
+		safe_efree (buf);
 		return 1;
-	if ( ! checkReg (buf, "^12(3|4).+9291$") ) 
+	}
+	if ( ! checkReg (buf, "^12(3|4).+9291$") )  {
+		safe_efree (buf);
 		return 2;
+	}
 
-	while ( checkReg (buf, "([1-4])9\\1") )
-		buf = kr_regex_replace ("/([\\d])9\\1/", "", buf);
+	while ( checkReg (buf, "([1-4])9\\1") ) {
+		UChar * tbuf;
+		tbuf = estrdup (buf);
+		safe_efree (buf);
+		buf = kr_regex_replace ("/([1-4])9\\1/", "", tbuf);
 
-	return (strlen (buf) > 0) ? 3 : 0;
+		safe_efree (tbuf);
+	}
+
+	result = (strlen (buf) > 0) ? 3 : 0;
+	safe_efree (buf);
+
+	return result;
 }
 /* }}} */
 
@@ -193,17 +208,16 @@ unsigned int check_windows (unsigned int type) {
  *    check uri value that include meta charactors. if include, return 1 nor return 0 */
 PHP_FUNCTION(check_uristr_lib)
 {
-	char * input = NULL;
-	int    inlen = 0;
-	int    ret   = 0;
+	zend_string * input = NULL;
+	int           ret   = 0;
 
-	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
+	if ( kr_parameters ("S", &input) == FAILURE )
 		return;
 
-	if ( ! inlen )
+	if ( ! ZSTR_LEN (input) )
 		RETURN_LONG(0);
 
-	ret = chkMetaChar (input, 0);
+	ret = chkMetaChar (ZSTR_VAL (input), 0);
 	RETURN_LONG(ret);
 }
 /* }}} */
@@ -212,17 +226,16 @@ PHP_FUNCTION(check_uristr_lib)
  *    check mail address. if mail address is regular, return mail address or return empty string */
 PHP_FUNCTION(is_email_lib)
 {
-	char * input = NULL;
-	int    inlen = 0;
-	int    ret   = 0;
+	zend_string  * input = NULL;
+	int            ret   = 0;
 
-	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
+	if ( kr_parameters ("S", &input) == FAILURE )
 		return;
 
-	if ( ! inlen || checkAddr (input, 0) != 1 )
+	if ( ! ZSTR_LEN (input) || checkAddr (ZSTR_VAL (input), 0) != 1 )
 		RETURN_EMPTY_STRING ();
 	
-	RETURN_STRING (input);
+	RETURN_STRING (ZSTR_VAL (input));
 }
 /* }}} */
 
@@ -230,17 +243,16 @@ PHP_FUNCTION(is_email_lib)
  *    check url. if url is regular, return url address or return empty string */
 PHP_FUNCTION(is_url_lib)
 {
-	char * input = NULL;
-	int    inlen = 0;
-	int    ret   = 0;
+	zend_string * input = NULL;
+	int           ret   = 0;
 
-	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
+	if ( kr_parameters ("S", &input) == FAILURE )
 		return;
 
-	if ( ! inlen || checkAddr (input, 1) != 1 )
+	if ( ! ZSTR_LEN (input) || checkAddr (ZSTR_VAL (input), 1) != 1 )
 		RETURN_EMPTY_STRING ();
 	
-	RETURN_STRING (input);
+	RETURN_STRING (ZSTR_VAL (input));
 }
 /* }}} */
 
@@ -248,16 +260,16 @@ PHP_FUNCTION(is_url_lib)
  *    check first 1byte is hangul or not. if it is hangul, return true nor return false */
 PHP_FUNCTION(is_hangul_lib)
 {
-	char * input = NULL;
-	int    inlen = 0;
+	zend_string * input = NULL;
+	char        * buf;
 
-	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
+	if ( kr_parameters ("S", &input) == FAILURE )
 		return;
 
-	if ( ! inlen )
+	if ( ! ZSTR_LEN (input) )
 		RETURN_FALSE;
 
-	if ( input[0] >= 0xffffffa1 && input[0] <= 0xfffffffe )
+	if ( ZSTR_VAL (input)[0] >= 0xffffffa1 && ZSTR_VAL (input)[0] <= 0xfffffffe )
 		RETURN_LONG (1);
 
 	RETURN_FALSE;
@@ -268,16 +280,15 @@ PHP_FUNCTION(is_hangul_lib)
  *   check of table structure. if uncomplete structure, return 1 not return 0 */
 PHP_FUNCTION(check_htmltable_lib)
 {
-	char * input = NULL;
-	int    inlen = 0;
+	zend_string * input = NULL;
 
-	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
+	if ( kr_parameters ("S", &input) == FAILURE )
 		return;
 
-	if ( ! inlen )
+	if ( ! ZSTR_LEN (input) )
 		RETURN_LONG (1);
 
-	RETURN_LONG (check_table (input));
+	RETURN_LONG (check_table (ZSTR_VAL (input)));
 }
 /* }}} */
 

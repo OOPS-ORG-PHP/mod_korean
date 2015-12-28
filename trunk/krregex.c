@@ -29,72 +29,81 @@
 #include "krregex.h"
 #include "php_krparse.h"
 
+// need efree
 UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // {{{
 {
 	zend_string * buf;
 	zend_string * regex;
 	zend_string * subject;
-	zval        * replaces;
+	zval          replaces;
+	int           repc = 0;
 
-	TSRMLS_FETCH ();
+	UChar       * sval;
 
 	regex = zend_string_init (regex_o, strlen (regex_o), 0);
 	subject = zend_string_init (str_o, strlen (str_o), 0);
 
-	replaces = NULL;
-	ZVAL_STRING (replaces, replace_o);
+	zval_ptr_dtor (&replaces);
+	ZVAL_STRING (&replaces, replace_o);
 
 	buf = php_pcre_replace (
-			regex, subject, ZSTR_VAL (subject), (int) ZSTR_LEN (subject), replaces, 0, -1, 0
+			regex, subject, ZSTR_VAL (subject), (int) ZSTR_LEN (subject), &replaces, 0, -1, &repc
 	);
 
+	zval_ptr_dtor (&replaces);
 	zend_string_free (regex);
 	zend_string_free (subject);
 
-	return (UChar *) ZSTR_VAL (buf);
+	sval = (UChar *) estrdup (ZSTR_VAL (buf));
+	zend_string_free (buf);
+
+	return (UChar *) sval;
 } // }}}
 
+// need efree
 UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * str_o, unsigned int regex_no) // {{{
 {
-	zend_string * buf;
+	zend_string * buf = NULL;
 	zend_string * regex;
 	zend_string * subject;
 
 	unsigned int  i;
-#ifdef PHP_WIN32
-	zval        * replaces[100];
-#else
-	zval        * replaces[regex_no];
-#endif
+	zval          rep;
+	int           repc;
 
-	TSRMLS_FETCH ();
+	UChar       * sval;
 
 	subject = zend_string_init (str_o, strlen (str_o), 0);
 
 	for ( i=0; i<regex_no ; i++ ) {
 		regex = zend_string_init (regex_o[i], strlen (regex_o[i]), 0);
+
 		if ( i != 0 ) {
 			subject = zend_string_dup (buf, 0);
-			zend_string_free (buf);
+			zend_string_release(buf);
+			buf = NULL;
 		}
 
-		replaces[i] = NULL;
-		ZVAL_STRING (replaces[i], replace_o[i]);
+		ZVAL_STRING (&rep, replace_o[i]);
 
-		buf = php_pcre_replace(
+		buf = php_pcre_replace (
 				regex,
 		  		subject,
 				ZSTR_VAL (subject),
 				ZSTR_LEN (subject),
-				replaces[i],
-				0, -1, 0
+				&rep,
+				0, -1, &repc
 		);
 
-		zend_string_free (regex);
-		zend_string_free (subject);
+		zval_ptr_dtor (&rep);
+		zend_string_release (regex);
+		zend_string_release (subject);
 	}
 
-	return (UChar *) ZSTR_VAL (buf);
+	sval = (UChar *) estrdup (ZSTR_VAL (buf));
+	zend_string_free (buf);
+
+	return sval;
 } // }}}
 
 unsigned int checkReg (UChar * str, UChar * regex_o) // {{{

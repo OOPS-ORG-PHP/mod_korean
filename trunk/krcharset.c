@@ -63,39 +63,42 @@ static int  XUINITTABLE_CHECK = 0;
    Return ncr code from euc-kr */
 PHP_FUNCTION(ncrencode_lib)
 {
-	char * string = NULL;
-	char * input  = NULL;
-	int    inlen  = 0;
-	int    type   = 0;
+	zend_string   * input = NULL;
+	char          * string = NULL;
+	int             type   = 0;
+	unsigned char * buf;
 
-	if ( kr_parameters ("s|b", &input, &inlen, &type) == FAILURE )
+	if ( kr_parameters ("S|b", &input, &type) == FAILURE )
 		return;
 
-	if ( inlen == 0 )
+	if ( ZSTR_LEN (input) == 0 )
 		RETURN_EMPTY_STRING ();
 
-	string = krNcrEncode (input, type);
+	buf = estrdup (ZSTR_VAL(input));
+
+	string = krNcrEncode (buf, type);
+
 	RETVAL_STRING (string);
+	safe_efree (buf);
 	safe_efree (string);
 }
 
 /* }}} */
 
-/* {{{ proto string ncrencode_lib (string str)
+/* {{{ proto string ncrdecode_lib (string str)
    Return ncr code from euc-kr */
 PHP_FUNCTION(ncrdecode_lib)
 {
-	char * string = NULL;
-	char * input  = NULL;
-	char   inlen  = 0;
+	zend_string * input = NULL;
+	char        * string = NULL;
 
-	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
+	if ( kr_parameters ("S", &input) == FAILURE )
 		return;
 
-	if ( inlen == 0 )
+	if ( ZSTR_LEN (input) == 0 )
 		RETURN_EMPTY_STRING ();
 
-	string = krNcrDecode (input);
+	string = krNcrDecode (ZSTR_VAL (input));
 	RETVAL_STRING (string);
 	safe_efree (string);
 }
@@ -106,24 +109,35 @@ PHP_FUNCTION(ncrdecode_lib)
    Return string that convert to unicode from euc-kr or cp949 */
 PHP_FUNCTION(uniencode_lib)
 {
-	char * input;
-	int    inlen;
-	char * prefix  = "\\u";
-	int    prelen  = 2;
-	char * postfix = "";
-	int    postlen = 0;
+	zend_string   * input = NULL;
+	zend_string   * Zprefix = NULL;
+	zend_string   * Zpostfix = NULL;
+	char          * prefix = "\\u";
+	char          * postfix = "";
+	unsigned char * buf = NULL;
 	unsigned char * string  = NULL;
 
-	if ( kr_parameters ("s|ss", &input, &inlen, &prefix, &prelen, &postfix, &postlen) == FAILURE )
+	if ( kr_parameters ("S|SS", &input, &Zprefix, &Zpostfix) == FAILURE )
 		return;
 
-	if ( inlen == 0 )
+	if ( ZSTR_LEN (input) == 0 )
 		RETURN_EMPTY_STRING ();
 
-	if ( (string = uniConv (input, 0, 0, prefix, postfix)) == NULL )
+	buf = estrdup (ZSTR_VAL (input));
+
+	if ( Zprefix )
+		prefix = ZSTR_LEN (Zprefix) ? ZSTR_VAL (Zprefix) : prefix;
+
+	if ( Zpostfix )
+		postfix = ZSTR_LEN (Zpostfix) ? ZSTR_VAL (Zpostfix) : postfix;
+
+	if ( (string = uniConv (buf, 0, 0, prefix, postfix)) == NULL ) {
+		safe_efree (buf);
 		RETURN_FALSE;
+	}
 
 	RETVAL_STRING (string);
+	safe_efree (buf);
 	safe_efree (string);
 }
 
@@ -133,43 +147,46 @@ PHP_FUNCTION(uniencode_lib)
    Return string to convert to cp949 or euc-kr from unicode */
 PHP_FUNCTION(unidecode_lib)
 {
-	char * input   = NULL;
-	int    inlen   = 0;
-	char * cset    = NULL;
-	int    clen    = 0;
-	char * prefix  = "\\u";
-	int    prelen  = 2;
-	char * postfix = "";
-	int    postlen = 0;
-
-	int    type    = 0;
+	zend_string   * input   = NULL;
+	zend_string   * cset    = NULL;
+	zend_string   * Zprefix  = NULL;
+	zend_string   * Zpostfix = NULL;
+	char          * prefix = "\\u";
+	char          * postfix = "";
+	int             type    = 0;
 	unsigned char * string  = NULL;
 
-	if ( kr_parameters ("ss|ss",
-		&input, &inlen, &cset, &clen, &prefix, &prelen, &postfix, &postlen) == FAILURE )
+	if ( kr_parameters ("SS|SS",
+		&input, &cset, &Zprefix, &Zpostfix) == FAILURE )
 		return;
 
-	if ( inlen == 0 )
+	if ( ZSTR_LEN (input) == 0 )
 		RETURN_EMPTY_STRING ();
 
-	if ( clen == 0 ) {
+	if ( ZSTR_LEN (cset) == 0 ) {
 		php_error(E_ERROR, "missing 2st argument.");
 		RETURN_FALSE;
 	}
 
+	if ( Zprefix )
+		prefix = ZSTR_LEN (Zprefix) ? ZSTR_VAL (Zprefix) : prefix;
+
+	if ( Zpostfix )
+		postfix = ZSTR_LEN (Zpostfix) ? ZSTR_VAL (Zpostfix) : postfix;
+
 	if (
-			strcasecmp (cset, "euc-kr") &&
-			strcasecmp (cset, "euc_kr") && 
-			strcasecmp (cset, "cp949")
+			strcasecmp (ZSTR_VAL (cset), "euc-kr") &&
+			strcasecmp (ZSTR_VAL (cset), "euc_kr") && 
+			strcasecmp (ZSTR_VAL (cset), "cp949")
 		)
 	{
-		php_error(E_ERROR, "Unknown encoding \"%s\"", cset);
+		php_error(E_ERROR, "Unknown encoding \"%s\"", ZSTR_VAL (cset));
 		RETURN_FALSE;
 	}
 
-	type = ( ! strcasecmp (cset, "euc-kr") || ! strcasecmp (cset, "euc_kr")) ? 1 : 0;
+	type = ( ! strcasecmp (ZSTR_VAL (cset), "euc-kr") || ! strcasecmp (ZSTR_VAL (cset), "euc_kr")) ? 1 : 0;
 
-	if ( (string = uniConv(input, 1, type, prefix, postfix)) == NULL )
+	if ( (string = uniConv(ZSTR_VAL (input), 1, type, prefix, postfix)) == NULL )
 		RETURN_FALSE;
 
 	RETVAL_STRING (string);
@@ -182,22 +199,23 @@ PHP_FUNCTION(unidecode_lib)
    Return utf8 string from euc-kr or cp949 */
 PHP_FUNCTION(utf8encode_lib)
 {
-	char * input = NULL;
-	int    inlen = 0;
-	char * cset  = "EUC-KR";
-	int    clen  = 6;
+	zend_string * input = NULL;
+	zend_string * Zcset = NULL;
+	char * cset;
 	int    ccode = 0;
 	int    ulen  = 0;
 
 	char * utf8  = NULL;
 
-	if ( kr_parameters ("s|s", &input, &inlen, &cset, &clen) == FAILURE )
+	if ( kr_parameters ("S|S", &input, &Zcset) == FAILURE )
 		return;
 
-	if ( inlen == 0 )
+	if ( ZSTR_LEN (input) == 0 )
 		RETURN_EMPTY_STRING ();
 
-	utf8 = (char *) emalloc (inlen * 6);
+	cset = (Zcset && ZSTR_LEN (Zcset)) ? ZSTR_VAL (Zcset) : "EUC-KR";
+
+	utf8 = (char *) emalloc (ZSTR_LEN (input) * 6);
 
 	if ( ZEND_NUM_ARGS() == 1 )
 		ccode = XU_CONV_CP949;
@@ -211,7 +229,7 @@ PHP_FUNCTION(utf8encode_lib)
 		else                                      ccode = XU_CONV_CP949;
 	}
 
-	XUCodeConv (utf8, inlen * 6, XU_CONV_UTF8, input, inlen, ccode);
+	XUCodeConv (utf8, ZSTR_LEN (input) * 6, XU_CONV_UTF8, ZSTR_VAL (input), ZSTR_LEN(input), ccode);
 	ulen = strlen (utf8);
 
 	RETVAL_STRINGL (utf8, ulen);
@@ -223,23 +241,22 @@ PHP_FUNCTION(utf8encode_lib)
    Return euc-kr or cp949 or unicode string from utf8 */
 PHP_FUNCTION(utf8decode_lib)
 {
-	char * input = NULL;
-	int    inlen = 0;
-	char * cset  = "EUC-KR";
-	int    clen  = 6;
-
+	zend_string * input = NULL;
+	zend_string * Zcset = NULL;
+	char * cset;
 	char * str   = NULL;
 	int    slen  = 0;
 	int    ccode = 0;
 	char * ncr   = NULL;
 
-	if ( kr_parameters ("s|s", &input, &inlen, &cset, &clen) == FAILURE )
+	if ( kr_parameters ("S|S", &input, &Zcset) == FAILURE )
 		return;
 
-	if ( inlen == 0 )
+	if ( ZSTR_LEN (input) == 0 )
 		RETURN_EMPTY_STRING ();
 
-	str = (char *) emalloc (inlen * 6);
+	cset = (Zcset && ZSTR_LEN (Zcset)) ? ZSTR_VAL (Zcset) : "EUC-KR";
+	str = (char *) emalloc (ZSTR_LEN (input) * 6);
 
 	if      ( ! strcasecmp (cset, "EUC-KR") ) ccode = XU_CONV_CP949;
 	else if ( ! strcasecmp (cset, "CP949") )  ccode = XU_CONV_CP949;
@@ -249,10 +266,11 @@ PHP_FUNCTION(utf8decode_lib)
 	else if ( ! strcasecmp (cset, "SJIS") )   ccode = XU_CONV_SJIS;
 	else                                      ccode = XU_CONV_CP949;
 
-	XUCodeConv (str, inlen * 6, ccode, input, inlen, XU_CONV_UTF8);
+	XUCodeConv (str, ZSTR_LEN (input) * 6, ccode, ZSTR_VAL (input), ZSTR_LEN (input), XU_CONV_UTF8);
 	slen = strlen (str);
 
-	if ( ccode == XU_CONV_CP949 ) {
+	if ( ccode == XU_CONV_CP949 && strcasecmp (cset, "CP949") ) {
+		// if charset is euc-kr, convert ncr code about out of ranges
 		ncr = (char *) krNcrEncode (str, 1);
 		RETVAL_STRING (ncr);
 		safe_efree (ncr);
@@ -273,17 +291,18 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 	unsigned long i;
 	unsigned int ncr;
 	size_t len;
-	unsigned char rc[9];
+	unsigned char rc[9] = { 0, };
 	unsigned char *ret = NULL;
 
 	if ( str_o == NULL ) { return NULL; }
 	else { len = strlen(str_o); }
 
 	ret = (unsigned char *) emalloc(sizeof(char) * strlen(str_o) * 8);
-	memset (ret, '\0', sizeof(ret));
+	memset (ret, 0, sizeof(ret));
 
 	for(i=0;i<len;i++)
    	{
+		memset (rc, 0, 9);
 		/* if 2byte charactor */
 		if (str_o[i] & 0x80)
 	   	{
@@ -379,11 +398,11 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 unsigned char *krNcrDecode (unsigned char *str_o)
 {
 	unsigned int slen, i = 0, tmp, first, second;
-	unsigned char rc[3], tmpstr[8];
+	unsigned char rc[3] = { 0, }, tmpstr[8] = { 0, };
 	unsigned char *ret = NULL;
 
 	ret = (unsigned char *) emalloc (sizeof(char) * strlen(str_o) * 2);
-	memset (ret, '\0', sizeof(ret));
+	memset (ret, 0, sizeof(ret));
 
 	if ( str_o == NULL ) { return NULL; }
 	else { slen = strlen(str_o); }
@@ -399,6 +418,7 @@ unsigned char *krNcrDecode (unsigned char *str_o)
 			}
 
 			memmove(tmpstr, str_o + i + 2, 5);
+
 			tmp = atoi(tmpstr);
 			tmp = table_rev_ksc5601[tmp];
 
