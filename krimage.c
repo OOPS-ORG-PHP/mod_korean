@@ -83,13 +83,10 @@ PHPAPI const char php_sig_png_kr[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (c
  *  *  print move action to url */
 PHP_FUNCTION(imgresize_lib)
 {
-	char * path   = NULL,
-		 * type   = NULL,
-		 * newp   = NULL;
-	int    plen   = 0,
-		   tlen   = 0,
-		   nlen   = 0,
-		   width  = 50,
+	zend_string * Zpath   = NULL,
+	            * Ztype   = NULL,
+	            * Znewp   = NULL;
+	int    width  = 50,
 		   height = 50;
 
 	gdImagePtr im = NULL,
@@ -108,13 +105,13 @@ PHP_FUNCTION(imgresize_lib)
 	unsigned char imgfile[1024] = { 0, },
 				  newpath[1024] = { 0, };
 
-	if ( kr_parameters ("s|slls", &path, &plen, &type, &tlen, &width, &height, &newp, &nlen) == FAILURE )
+	if ( kr_parameters ("S|SllS", &Zpath, &Ztype, &width, &height, &Znewp) == FAILURE )
 		return;
 
-	if ( plen == 0 )
+	if ( ZSTR_LEN (Zpath) == 0 )
 		RETURN_FALSE;
 
-	if ( tlen == 0 ) {
+	if ( ! Ztype || ! ZSTR_LEN (Ztype) ) {
 #ifdef HAVE_GD_JPG
 		new_type = JPGNEWTYPE;
 #elif HAVE_GD_GIF_CREATE
@@ -123,9 +120,9 @@ PHP_FUNCTION(imgresize_lib)
 		new_type = PNGNEWTYPE;
 #endif
 	} else {
-		if ( ! strcasecmp (type, "gif") )
+		if ( ! strcasecmp (ZSTR_VAL(Ztype), "gif") )
 			new_type = GIFNEWTYPE;
-	   	else if ( ! strcasecmp (type, "png") )
+	   	else if ( ! strcasecmp (ZSTR_VAL(Ztype), "png") )
 			new_type = PNGNEWTYPE;
 	   	else
 			new_type = JPGNEWTYPE;
@@ -137,15 +134,17 @@ PHP_FUNCTION(imgresize_lib)
 	if ( ! height )
 		height = 50;
 
-	if ( nlen > 0 ) {
-		if ( VCWD_REALPATH (newp, newpath) == NULL )
-			strcpy (newpath, newp);
+	if ( Znewp && ZSTR_LEN (Znewp) > 0 ) {
+		if ( VCWD_REALPATH (ZSTR_VAL (Znewp), newpath) == NULL )
+			strcpy (newpath, ZSTR_VAL (Znewp));
 		newpath_len = strlen (newpath);
+
+		PHP_KR_CHECK_OPEN_BASEDIR (newpath);
 	} else
 		newpath_len = 0;
 
 	/* if image is url */
-	if ( checkReg (path, "^[hH][tT][tT][pP]://") )
+	if ( checkReg (ZSTR_VAL(Zpath), "^[hH][tT][tT][pP]://") )
 		issock = 1;
 
 	if (issock == 1) {
@@ -167,18 +166,18 @@ PHP_FUNCTION(imgresize_lib)
 		len = strlen (tmpfilename);
 		tmpfilename[len] = '\0';
 
-		sockhttp (path, retSize, 1, tmpfilename);
+		sockhttp (ZSTR_VAL (Zpath), retSize, 1, tmpfilename);
 		memset (imgfile, '\0', sizeof (imgfile));
 		memcpy (imgfile, tmpfilename, strlen (tmpfilename));
 	} else
-		if ( VCWD_REALPATH (path, imgfile) == NULL )
-			strcpy (imgfile, path);
+		if ( VCWD_REALPATH (ZSTR_VAL (Zpath), imgfile) == NULL )
+			strcpy (imgfile, ZSTR_VAL (Zpath));
 
 	/* get origianl image type */
 	PHP_KR_CHECK_OPEN_BASEDIR (imgfile);
 
 	if ( (fp = fopen (imgfile, "rb")) == NULL ) {
-		php_error (E_ERROR, "Can't open %s in read mode", path);
+		php_error (E_ERROR, "Can't open %s in read mode", ZSTR_VAL (Zpath));
 		RETURN_FALSE;
 	}
 

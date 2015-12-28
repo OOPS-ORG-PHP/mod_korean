@@ -82,43 +82,44 @@ PHP_FUNCTION(filelist_lib)
 {
 	struct dirent *d;
 
-	char * input = NULL,
-		 * mode  = "",
-		 * regex = "";
-	int    inlen = 0,
-		   mlen  = 0,
-		   rlen  = 0;
+	zend_string   * Zinput = NULL,
+	              * Zmode  = NULL,
+	              * Zregex = NULL; 
+	char          * mode;
 
 	DIR           * dp;
 	unsigned char * mode_s,
 				  * regex_s,
-				    dirpath[MAXPATHLENGTH] = { 0, };
+	                dirpath[MAXPATHLENGTH] = { 0, };
 	regex_t         preg;
 
-	if ( kr_parameters ("s|ss", &input, &inlen, &mode, &mlen, &regex, &rlen) == FAILURE )
+	if ( kr_parameters ("S|SS", &Zinput, &Zmode, &Zregex) == FAILURE )
 		return;
 
-	if ( inlen == 0 )
+	if ( ZSTR_LEN (Zinput) == 0 )
 		RETURN_FALSE;
+
+	mode = Zmode ? ZSTR_VAL (Zmode) : "";
 
 	if ( array_init (return_value) == FAILURE )
 		RETURN_FALSE;
 
-	if ( VCWD_REALPATH (input, dirpath) == NULL )
-		strcpy (dirpath, input);
+	if ( VCWD_REALPATH (ZSTR_VAL (Zinput), dirpath) == NULL )
+		strcpy (dirpath, ZSTR_VAL (Zinput));
 
 	PHP_KR_CHECK_OPEN_BASEDIR (dirpath);
 	if ( (dp = opendir (dirpath)) == NULL ) {
-		php_error (E_ERROR, "Can't open %s directory in read mode", input);
+		php_error (E_ERROR, "Can't open %s directory in read mode", ZSTR_VAL (Zinput));
 		RETURN_FALSE;
 	}
 
-	if ( rlen ) {
-		if ( regcomp (&preg, regex, REG_EXTENDED) != 0 ) {
+	if ( Zregex && ZSTR_LEN (Zregex) ) {
+		if ( regcomp (&preg, ZSTR_VAL (Zregex), REG_EXTENDED) != 0 ) {
 			php_error (E_WARNING, "Problem REGEX compile in PHP");
 			RETURN_FALSE;
 		}
 	}
+
 
 	while ( (d = readdir (dp)) ) {
 		if ( d->d_ino != 0) {
@@ -147,14 +148,14 @@ PHP_FUNCTION(filelist_lib)
 					check_filedev(dirpath, d->d_name) != RETURN_DIR_TYPE )
 					continue;
 
-			if ( rlen && regexec(&preg,d->d_name, 0, NULL, 0) != 0)
+			if ( Zregex && ZSTR_LEN (Zregex) && regexec(&preg,d->d_name, 0, NULL, 0) != 0)
 				continue;
 
 			add_next_index_string (return_value, d->d_name);
 		}
 	}
 
-	if ( rlen )
+	if ( Zregex && ZSTR_LEN (Zregex) )
 		regfree (&preg);
 
 	closedir(dp);
@@ -166,25 +167,23 @@ PHP_FUNCTION(filelist_lib)
 PHP_FUNCTION(putfile_lib)
 {
 	unsigned char filepath[MAXPATHLENGTH] = { 0, };
-	char * fname = NULL,
-		 * input = "";
-	int    flen  = 0,
-		   inlen = 0,
-		   mode  = 0;
+	zend_string * fname = NULL,
+	            * input = NULL;
+	int           mode  = 0;
 
 	php_error (E_DEPRECATED, "Use file_put_contents function instead of putfile_lib");
 
-	if ( kr_parameters ("ss|b", &fname, &flen, &input, &inlen, &mode) == FAILURE )
+	if ( kr_parameters ("SS|b", &fname, &input, &mode) == FAILURE )
 		return;
 
-	if ( flen == 0 )
+	if ( ZSTR_LEN (fname) == 0 )
 		RETURN_FALSE;
 
-	if ( VCWD_REALPATH (fname, filepath) == NULL )
-		strcpy (filepath, fname);
+	if ( VCWD_REALPATH (ZSTR_VAL (fname), filepath) == NULL )
+		strcpy (filepath, ZSTR_VAL (fname));
 
 	PHP_KR_CHECK_OPEN_BASEDIR (filepath);
-	RETURN_LONG(writefile(filepath, input, mode));
+	RETURN_LONG(writefile(filepath, ZSTR_VAL (input), mode));
 }
 /* }}} */
 
@@ -192,24 +191,25 @@ PHP_FUNCTION(putfile_lib)
  * return file context */
 PHP_FUNCTION(getfile_lib)
 {
-	unsigned char *str, getfilename[MAXPATHLENGTH] = { 0, };
-	size_t orgsize = 0, chksize = 0;
-	struct stat buf;
+	unsigned char * str, getfilename[MAXPATHLENGTH] = { 0, };
+	size_t          orgsize = 0, chksize = 0;
+	struct stat     buf;
 
-	char * input = NULL;
-	size_t inlen = 0,
-		   size  = 0;
+	zend_string   * input = NULL;
+	size_t          size  = 0;
 
 	php_error (E_DEPRECATED, "Use file_get_contents function instead of getfile_lib");
 
-	if ( kr_parameters ("s|l", &input, &inlen, &size) == FAILURE )
+	if ( kr_parameters ("S|l", &input, &size) == FAILURE )
 		return;
 
-	if ( inlen == 0 )
+	if ( ZSTR_LEN (input) == 0 )
 		RETURN_FALSE;
 
-	if ( VCWD_REALPATH (input, getfilename) == NULL )
-		strcpy (getfilename, input);
+	if ( VCWD_REALPATH (ZSTR_VAL (input), getfilename) == NULL )
+		strcpy (getfilename, ZSTR_VAL (input));
+
+	PHP_KR_CHECK_OPEN_BASEDIR (getfilename);
 
 	// get file info
 	stat (getfilename, &buf);
@@ -236,17 +236,16 @@ PHP_FUNCTION(getfile_lib)
  * return file extensions */
 PHP_FUNCTION(getfiletype_lib)
 {
-	char * input = NULL,
-		 * ext   = NULL;
-	int    inlen = 0;
+	zend_string * input = NULL;
+	char        * ext   = NULL;
 
-	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
+	if ( kr_parameters ("S", &input) == FAILURE )
 		return;
 
-	if ( inlen == 0 )
+	if ( ZSTR_LEN (input) == 0 )
 		RETURN_FALSE;
 
-	if ( (ext = strrchr (input, '.')) == NULL )
+	if ( (ext = strrchr (ZSTR_VAL (input), '.')) == NULL )
 		RETURN_EMPTY_STRING ();
 
 	RETURN_STRING (ext + 1);
@@ -258,8 +257,8 @@ PHP_FUNCTION(pcregrep_lib)
 {
 	const char delimiters[] = "\n";
 
-	char * regex = NULL,
-		 * input = NULL;
+	zend_string * regex = NULL,
+	            * input = NULL;
 	int    rlen  = 0,
 		   inlen = 0,
 		   opt   = 0;
@@ -276,17 +275,17 @@ PHP_FUNCTION(pcregrep_lib)
 		   buflen = 0,
 		   newline;
 
-	if ( kr_parameters ("ss|b", &regex, &rlen, &input, &inlen, &opt) == FAILURE )
+	if ( kr_parameters ("SS|b", &regex, &input, &opt) == FAILURE )
 		return;
 
-	if ( rlen == 0 || inlen == 0 )
+	if ( ZSTR_LEN (regex) == 0 || ZSTR_LEN (input) == 0 )
 		RETURN_EMPTY_STRING ();
 
-	newline = numberOfchar (input, '\n');
+	newline = numberOfchar (ZSTR_VAL (input), '\n');
 	sep = emalloc ( sizeof (char *) * (newline + 3) );
 	sep_t = sep;
 	str = emalloc ( sizeof (char) );
-	bufstr = estrdup (input);
+	bufstr = estrdup (ZSTR_VAL (input));
 
 	while ( (*sep = strsep (&bufstr, delimiters)) != NULL ) {
 		if ( **sep != 0 ) {
@@ -294,7 +293,7 @@ PHP_FUNCTION(pcregrep_lib)
 			memmove (buf, * sep, strlen(*sep));
 			buflen = strlen (buf);
 
-			retval = pcre_match (regex, buf);
+			retval = pcre_match (ZSTR_VAL (regex), buf);
 			if (retval < 0) {
 				safe_efree (str);
 				RETURN_FALSE;
@@ -472,9 +471,9 @@ unsigned int check_filedev (unsigned char * path_f, unsigned char * filename)
 
 	if ( S_ISDIR(s.st_mode) )
 		return RETURN_DIR_TYPE;
-	else if ( S_ISREG(s.st_mode) )
+	else if ( S_ISREG(s.st_mode) ) {
 		return RETURN_FILE_TYPE;
-	else if ( S_ISLNK(s.st_mode) )
+	} else if ( S_ISLNK(s.st_mode) )
 		return RETURN_LINK_TYPE;
 
 	return 0;

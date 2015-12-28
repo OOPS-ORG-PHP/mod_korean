@@ -54,52 +54,47 @@ struct tm *loctime;
  * make mail source */
 PHP_FUNCTION(mailsource_lib)
 {
-	UChar * c_ln, * c_from, * c_to, * c_title;
-	UChar * c_text, * c_ptext, * c_attach, * ret;
-	UChar attachfile[1024] = { 0, };
+	UChar       * c_ln, * c_from, * c_to, * c_title;
+	UChar       * c_text, * c_ptext, * c_attach, * ret;
+	UChar         attachfile[1024] = { 0, };
 
-	char * lang   = NULL,
-		 * from   = NULL,
-		 * to     = NULL,
-		 * title  = NULL,
-		 * text   = NULL,
-		 * ptext  = NULL,
-		 * attach = NULL;
-	int    llen   = 0,
-		   flen   = 0,
-		   tlen   = 0,
-		   tilen  = 0,
-		   telen  = 0,
-		   plen   = 0,
-		   alen   = 0;
+	zend_string * lang   = NULL,
+	            * from   = NULL,
+	            * to     = NULL,
+	            * title  = NULL,
+	            * text   = NULL,
+	            * ptext  = NULL,
+	            * attach = NULL;
+	int           plen   = 0,
+	              alen   = 0;
 
 	c_attach = NULL;
-	c_ptext = NULL;
+	c_ptext  = NULL;
 
 	if (
-			kr_parameters (
-				"sssss|ss",
-				&lang, &llen, &from, &flen, &to, &tlen, &title, &tilen,
-				&text, &tilen, &ptext, &plen, &attach, &alen
-			) == FAILURE
+		kr_parameters (
+			"SSSSS|SS",
+			&lang, &from, &to, &title,
+			&text, &ptext, &attach
+		) == FAILURE
 	)
 		return;
 
-	if ( llen == 0 )
+	if ( ZSTR_LEN(lang) == 0 )
 		c_ln = estrdup ("utf-8");
 	else
-		c_ln = (UChar *) strtrim (lang);
+		c_ln = (UChar *) strtrim (ZSTR_VAL (lang));
 
-	c_from  = (UChar *) strtrim (from);
-	c_to    = (UChar *) strtrim (to);
-	c_title = (UChar *) strtrim (title);
-	c_text  = (UChar *) strtrim (text);
+	c_from  = (UChar *) strtrim (ZSTR_VAL (from));
+	c_to    = (UChar *) strtrim (ZSTR_VAL (to));
+	c_title = (UChar *) strtrim (ZSTR_VAL (title));
+	c_text  = (UChar *) strtrim (ZSTR_VAL (text));
 
-	if ( plen )
-		c_ptext = (UChar *) strtrim (ptext);
+	if ( ptext && ZSTR_LEN (ptext) )
+		c_ptext = (UChar *) strtrim (ZSTR_VAL (ptext));
 
-	if ( alen )
-		c_attach = (UChar *) strtrim (attach);
+	if ( attach && ZSTR_LEN (attach) )
+		c_attach = (UChar *) strtrim (ZSTR_VAL (attach));
 
 	memset(attachfile, '\0', sizeof(attachfile));
 	if (c_attach != NULL) {
@@ -128,11 +123,16 @@ UChar * generate_mail (UChar * o_ln, UChar * o_from, UChar * o_to,
 					   UChar * o_title, UChar * o_text, UChar * o_ptext,
 					   UChar * o_attach) // {{{
 {
-	UChar * return_header, * return_body, * return_attach, * return_mail;
-	char * boundary, * charset, * attbound;
-	UChar * from, * to, * title;
+	UChar      * return_header = NULL,
+	           * return_body = NULL,
+	           * return_attach = NULL,
+	           * return_mail = NULL;
+	char       * boundary = NULL,
+	           * charset = NULL,
+	           * attbound = NULL;
+	UChar      * from, * to, * title;
 	unsigned int i = 0;
-	size_t return_mail_len = 0;
+	size_t       return_mail_len = 0;
 
 	// make charset
 	for ( i=0; i<strlen (o_ln); i++ )
@@ -270,8 +270,10 @@ UChar * generate_attach (UChar * path, UChar * bound) // {{{
 
 UChar * generate_body (UChar *bset, UChar *bboundary, UChar *btext, UChar *bptext) // {{{
 {
-	UChar *rbody;
-	UChar *plain, *base64html, *base64plain;
+	UChar      * rbody = NULL;
+	UChar      * plain = NULL,
+	           * base64html = NULL,
+	           * base64plain = NULL;
 	unsigned int plainlen = 0, htmllen = 0, nobptext = 0;
 
 	if ( strlen(btext) > 0 ) {
@@ -346,8 +348,8 @@ UChar * generate_header (UChar *from, UChar *to, UChar *subject,
 
 UChar * generate_from (UChar * email, char * set) // {{{
 {
-	UChar * rfrom;
-	UChar * name, * cname, * mail, * name_t;
+	UChar      * rfrom = NULL;
+	UChar      * name = NULL, * mail = NULL, * name_t = NULL;
 	unsigned int namelen = 0, maillen = 0, setlen = strlen (set);
 
 	name_t = NULL;
@@ -381,13 +383,17 @@ UChar * generate_from (UChar * email, char * set) // {{{
 		rfrom = emalloc (sizeof (char) * ( maillen + 3));
 		sprintf (rfrom, "<%s>", mail);
 	} else {
+		zend_string * cname = NULL;
 		int from_len;
-		cname = (UChar *) php_base64_encode (name, strlen (name), &namelen);
+
+		cname = php_base64_encode (name, strlen (name));
+		namelen = ZSTR_LEN (cname);
 
 		from_len = setlen + maillen + namelen + 11;
 
 		rfrom = emalloc (sizeof (char) * (from_len + 1));
-		sprintf (rfrom, "=?%s?B?%s?= <%s>", set, cname, mail);
+		sprintf (rfrom, "=?%s?B?%s?= <%s>", set, ZSTR_VAL (cname), mail);
+		zend_string_free (cname);
 	}
 
 	safe_efree (mail);
@@ -401,7 +407,7 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 	UChar * to = NULL;
 	UChar delimiters[] = ",";
 	char *token, *btoken;
-	UChar *t_mail, *t_name, *cname, *_t_name;
+	UChar *t_mail, *t_name, *_t_name;
 	int maillen = 0, namelen = 0, setlen = strlen(set);
 
 	if ( strlen (toaddr) < 1 ) {
@@ -410,7 +416,6 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 	}
 
 	_t_name = NULL;
-	cname   = NULL;
 
 	token = strtok_r (toaddr, delimiters, &btoken);
 	if ( token != NULL ) {
@@ -439,19 +444,21 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 				to = emalloc (sizeof (char) * (to_lenth + 3));
 				sprintf (to, "<%s>", t_to);
 			} else {
+				zend_string * cname = NULL;
+
 				to_lenth = setlen + maillen + namelen + 32;
 				to = emalloc (sizeof(char) * (to_lenth + 1));
-				cname = estrdup ((UChar *) php_base64_encode (t_name, namelen, &namelen));
-				sprintf (to, "=?%s?B?%s?= <%s>", set, cname, t_mail);
+				cname = php_base64_encode (t_name, namelen);
+				sprintf (to, "=?%s?B?%s?= <%s>", set, ZSTR_VAL (cname), t_mail);
+				zend_string_free (cname);
 			}
-			safe_efree (cname);
 			safe_efree (t_to);
 		}
 		safe_efree (t_mail);
 		safe_efree (_t_name);
 
 		while ( (token = strtok_r (NULL, delimiters, &btoken)) != NULL ) {
-			UChar * s_name, * s_mail, * sub_cname, * _s_name;
+			UChar * s_name, * s_mail, * _s_name;
 			unsigned int snlen = 0, smlen = 0;
 
 			_s_name = NULL;
@@ -478,8 +485,11 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 					memset (s_to, '\0', sizeof (s_to));
 					sprintf (s_to, "<%s>", s_mail);
 				} else {
-					sub_cname = (UChar *) php_base64_encode (s_name, snlen, &namelen);
-					sprintf (s_to, "=?%s?B?%s?= <%s>", set, sub_cname, s_mail);
+					zend_string * sub_cname = NULL;
+
+					sub_cname = php_base64_encode (s_name, snlen);
+					sprintf (s_to, "=?%s?B?%s?= <%s>", set, ZSTR_VAL (sub_cname), s_mail);
+					zend_string_free (sub_cname);
 				}
 
 				if ( to == NULL )
@@ -511,51 +521,46 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 
 UChar * generate_title (UChar * title, UChar * set) // {{{
 {
-	unsigned int len = 0, set_len = strlen (set);
-	UChar * subject;
-	UChar * base64;
+	unsigned int  len = 0, set_len = strlen (set);
+	UChar       * subject = NULL;
+	zend_string * base64 = NULL;
 
 	if ( strlen (title) < 1 ) {
 		php_error (E_WARNING, "Empty mail subject.");
 		return NULL;
 	}
 
-	base64 = (UChar *) php_base64_encode (title, strlen (title), &len);
+	base64 = php_base64_encode (title, strlen (title));
+	len = ZSTR_LEN (base64);
 
 	{
 		unsigned int subject_lenth = len + set_len + 8;
 		subject = emalloc (sizeof (char) * (subject_lenth + 1));
-		sprintf (subject, "=?%s?B?%s?=", set, base64);
+		sprintf (subject, "=?%s?B?%s?=", set, ZSTR_VAL (base64));
 	}
+
+	zend_string_free (base64);
 
 	return subject;
 } // }}}
 
 char * generate_date () { // {{{
-	time_t now = time (NULL);
-	char   buf[64] = { 0, },
-		 * rdate;
-	int    len = 0;
-	char * retbuf = NULL;
+	time_t  now = time (NULL);
+	char    buf[64] = { 0, },
+		  * rdate = NULL;
+	int     len = 0;
 
 	setlocale (LC_TIME, "C");
 	loctime = localtime (&now);
 	strftime (buf, 64, "%a, %d %b %Y %H:%M:%S %Z", loctime);
 
 #ifdef PHP_WIN32
-	rdate = (char *) kr_regex_replace ("/대한민국 표준시/","+09:00",buf);
+	rdate = (char *) kr_regex_replace ("/대한민국 표준시/", "+09:00", buf);
 #else
 	rdate = estrdup (buf);
 #endif
 
-	len = strlen (rdate);
-
-	retbuf = emalloc (sizeof (char) * (len + 1));
-	strcpy (retbuf, rdate);
-
-	safe_efree (rdate);
-
-	return retbuf;
+	return rdate;
 } // }}}
 
 char * generate_mail_id (char * id) // {{{
@@ -640,14 +645,24 @@ UChar * html_to_plain (UChar * source) // {{{
 
 UChar * body_encode (const UChar * str, int chklen) // {{{
 {
-	UChar * rencode, * enbase;
-	int len = 0, devide = 0, nlen=0, olen=0,
-		breakpoint =0, tlen = 0;
+	zend_string * Zenbase = NULL;
+	UChar       * rencode = NULL,
+	            * enbase = NULL;
+	int           len = 0,
+	              devide = 0,
+	              nlen=0,
+	              olen=0,
+	              breakpoint =0,
+	              tlen = 0;
 
 	if ( chklen < 0 )
 		chklen = strlen (str);
 
-	enbase = (UChar *) php_base64_encode (str, chklen, &len);
+	Zenbase = php_base64_encode (str, (size_t) chklen);
+	enbase = estrdup (ZSTR_VAL (Zenbase));
+	len = ZSTR_LEN (Zenbase);
+	zend_string_free (Zenbase);
+
 	devide = (int) len / 60;
 
 	if ( len < 61 )

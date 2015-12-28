@@ -35,24 +35,21 @@
  *  *  print error message */
 PHP_FUNCTION(perror_lib)
 {
-	char * input = NULL;
-	char * move  = NULL;
-	int    inlen = 0;
-	int    mlen  = 0;
-	int    java  = 0;
-	int    sec   = 5;
-	char * ret;
+	zend_string * input = NULL;
+	zend_string * move  = NULL;
+	char        * istr;
+	char        * mstr;
+	int           java  = 0;
+	int           sec   = 5;
+	char        * ret;
 
-	if ( kr_parameters ("s|bsl", &input, &inlen, &java, &move, &mlen, &sec) == FAILURE )
+	if ( kr_parameters ("S|bSl", &input, &java, &move, &sec) == FAILURE )
 		return;
 
-	if ( inlen == 0 )
-		input = "Problem in your request!";
+	istr = ! ZSTR_LEN (input) ? "Problem in your request!" : ZSTR_VAL (input);
+	mstr = ! move ? "1" : ZSTR_VAL (move);
 
-	if ( ! mlen )
-		move = "1";
-
-	ret = print_error (input, java, move, sec);
+	ret = print_error (ZSTR_VAL (input), java, mstr, sec);
 	php_printf ("%s\n", ret);
 	safe_efree (ret);
 }
@@ -62,20 +59,19 @@ PHP_FUNCTION(perror_lib)
  *  *  print notice */
 PHP_FUNCTION(pnotice_lib)
 {
-	char * input = NULL;
-	int    inlen = 0;
-	int    java  = 0;
-	char * ret;
+	zend_string * input = NULL;
+	int           java  = 0;
+	char        * ret;
 
-	if ( kr_parameters ("s|b", &input, &inlen, &java) == FAILURE )
+	if ( kr_parameters ("S|b", &input, &java) == FAILURE )
 		return;
 
-	if ( inlen == 0 ) {
+	if ( ZSTR_VAL (input) == 0 ) {
 		php_error (E_ERROR, "Can't use empty value of 1st argument");
 		RETURN_FALSE;
 	}
 
-	ret = print_error (input, java, "notice", 0);
+	ret = print_error (ZSTR_VAL (input), java, "notice", 0);
 	php_printf ("%s\n", ret);
 	safe_efree (ret);
 }
@@ -84,8 +80,8 @@ PHP_FUNCTION(pnotice_lib)
 unsigned char * print_error (unsigned char * str_o, unsigned int java_o, unsigned char * move_o, unsigned int sec_o)
 {
 	unsigned int    textBR = 0;
-	unsigned char * buf_str,
-				  * buf_move;
+	unsigned char * buf_str = NULL,
+				  * buf_move = NULL;
 	unsigned char * reg[2] = { "/\n/i", "/'|#/i" };
 	unsigned char * rep[2] = { "\\n", "\\\\\\0" };
 
@@ -113,6 +109,7 @@ unsigned char * print_error (unsigned char * str_o, unsigned int java_o, unsigne
 			mv = emalloc (sizeof (char) * (strlen (buf_move) + 60));
 			sprintf (mv, "<meta http-equiv=\"refresh\" content=\"%d; url=%s\">\n", sec_o, buf_move);
 			mv[strlen (mv)] = '\0';
+			efree (buf_move);
 
 			result = emalloc (sizeof (char) * (strlen (buf) + strlen (mv) + 3));
 			sprintf (result, "%s\n%s\n", buf, mv);
@@ -140,6 +137,7 @@ unsigned char * print_error (unsigned char * str_o, unsigned int java_o, unsigne
 				mv = emalloc (sizeof (char) * (strlen (buf_move) + 50));
 				sprintf (mv, "<meta http-equiv=\"refresh\" content=\"%d; url=%s\">\n", sec_o, buf_move);
 				mv[strlen (mv)] = '\0';
+				efree (buf_move);
 
 				result = emalloc (sizeof (char) * (strlen (buf) + strlen (mv) + 3));
 				sprintf (result,"%s\n%s\n", buf, mv);
@@ -149,6 +147,7 @@ unsigned char * print_error (unsigned char * str_o, unsigned int java_o, unsigne
 				sprintf (result, "%s\n", buf);
 			}
 		}
+		safe_efree (buf_str);
 	}
 
 	safe_efree (buf);
