@@ -116,40 +116,44 @@ struct hostent *hostinfo;
 struct stat filestat;
 
 /* {{{ proto string get_hostname_lib (int reverse [, string addr ])
- *    Return hostname or ip address */
+ *    Return hostname or ip address
+ *
+ *    sapi_getenv return value needs efree
+ */
 PHP_FUNCTION(get_hostname_lib)
 {
-	unsigned int i;
-	const char delimiters[] = ", ";
-	UChar *token;
-	char * ret = NULL;
-	char tmphost[1024], *host, *check;
-	char *proxytype[PROXYSIZE] = { "HTTP_CLIENT_IP","HTTP_X_FORWARDED_FOR","HTTP_X_COMING_FROM",
-									"HTTP_X_FORWARDED","HTTP_FORWARDED_FOR","HTTP_FORWARDED",
-									"HTTP_COMING_FROM","HTTP_PROXY","HTTP_SP_HOST" };
+	zend_string  * addr = NULL;
+	unsigned int   i;
+	const char     delimiters[] = ", ";
+	UChar        * token = NULL;
+	char         * ret = NULL;
+	char         * host = NULL, * check = NULL;
+	char         * proxytype[PROXYSIZE] = {
+	                "HTTP_CLIENT_IP","HTTP_X_FORWARDED_FOR","HTTP_X_COMING_FROM",
+                  	"HTTP_X_FORWARDED","HTTP_FORWARDED_FOR","HTTP_FORWARDED",
+                  	"HTTP_COMING_FROM","HTTP_PROXY","HTTP_SP_HOST"
+	             };
 
-	int reverse,
-		alen = 0;
-	char * addr = NULL;
+	zend_bool      reverse;
 
-	if ( kr_parameters ("l|s", &reverse, &addr, &alen) == FAILURE )
+	if ( kr_parameters ("b|S", &reverse, &addr) == FAILURE )
 		return;
 
 	if ( ZEND_NUM_ARGS() == 1 ) {
+		char * tmphost;
 		for ( i = 0; i < PROXYSIZE; i++ ) {
-			memset (tmphost, '\0', 1024);
-			sprintf (tmphost, "%s", sapi_getenv (proxytype[i], strlen (proxytype[i]) TSRMLS_CC));
+			tmphost = sapi_getenv (proxytype[i], strlen (proxytype[i]));
 
 			if ( strcasecmp (tmphost, "(null)") )
 				break;
 		}
 
 		if ( ! strcasecmp (tmphost, "(null)") ) {
-			host = sapi_getenv ("REMOTE_ADDR", 11 TSRMLS_CC);
+			host = sapi_getenv ("REMOTE_ADDR", 11);
 			if ( ! host )
-				host = getenv ("REMOTE_ADDR");
+				host = estrdup (getenv ("REMOTE_ADDR"));
 			if ( ! host )
-				host = (UChar *) get_serverenv ("REMOTE_ADDR");
+				host = estrdup (get_serverenv ("REMOTE_ADDR"));
 		} else {
 			if ( strchr (tmphost, ',') ) {
 				token = strtok (tmphost, delimiters);
@@ -157,31 +161,33 @@ PHP_FUNCTION(get_hostname_lib)
 					token = strtok (NULL, delimiters);
 					host = (token != NULL) ?
 						estrdup (token) :
-						estrdup (sapi_getenv ("REMOTE_ADDR", 11 TSRMLS_CC));
+						sapi_getenv ("REMOTE_ADDR", 11);
 				} else {
 					host = estrdup (token);
 					if ( ! host )
-						host = sapi_getenv ("REMOTE_ADDR", 11 TSRMLS_CC);
+						host = sapi_getenv ("REMOTE_ADDR", 11);
 				}
 			} else {
 				host = estrdup (tmphost);
 				if ( ! host )
-					host = estrdup (sapi_getenv ("REMOTE_ADDR", 11 TSRMLS_CC));
+					host = sapi_getenv ("REMOTE_ADDR", 11);
 			}
 			if ( ! host )
 				host = estrdup (getenv ("REMOTE_ADDR"));
 			if ( ! host )
-				host = estrdup ((UChar *) get_serverenv ("REMOTE_ADDR"));
+				host = estrdup (get_serverenv ("REMOTE_ADDR"));
 		}
+
+		safe_efree (tmphost);
 	}
 	else
 	{
-		if ( alen > 0 )
-			host = estrdup (addr);
-		else {
+		if ( ! addr || ! ZSTR_LEN (addr) ) {
 			php_error (E_WARNING,"address is null value");
 			RETURN_FALSE;
 		}
+
+		host = estrdup (ZSTR_VAL (addr));
 	}
 
 	check = reverse ? kr_gethostbyaddr (host) : "";
@@ -198,117 +204,50 @@ PHP_FUNCTION(get_hostname_lib)
 }
 /* }}} */
 
-/* {{{ proto string readfile_lib(string filename)
- *    Return a file or a URL */
-/* old function
+/* {{{ proto string readfile_lib (string path [, bool use_include_path])
+ */
 PHP_FUNCTION(readfile_lib)
 {
-	zval **arg1, **arg2;
-	static UChar *filepath, *filename, *string, getfilename[1024];
-	int use_include_path=0, issock=0;
-	size_t *retSize, retSize_t = 0;
+	zend_string * filepath;
+	char        * string;
+	UChar         buf[8192] = { 0, };
+	int           use_include_path=0;
+	size_t        buflen =0, len = 0, flen = 0;
+	php_stream  * stream;
 
-	retSize = &retSize_t;
-
-	// check args
-	switch (ZEND_NUM_ARGS())
-	{
-		case 1:
-			if (zend_get_parameters_ex(1, &arg1) == FAILURE)
-			{
-				WRONG_PARAM_COUNT;
-			}
-			break;
-		case 2:
-			if (zend_get_parameters_ex(2, &arg1, &arg2) == FAILURE)
-			{
-				WRONG_PARAM_COUNT;
-			}
-			convert_to_long_ex(arg2);
-			use_include_path = Z_LVAL_PP(arg2);
-			break;
-		default:
-			WRONG_PARAM_COUNT;
-	}
-	convert_to_string_ex(arg1);
-	filepath = (UChar *) strtrim(Z_STRVAL_PP(arg1));
-
-	if (checkReg(filepath, "^[hH][tT][tT][pP]://")) { issock = 1; }
-
-	if ( issock == 1 )
-	{
-		string = (UChar *) sockhttp (filepath, retSize, 0, "");
-		if (string != NULL)
-		{
-			RETVAL_STRINGL(string, *retSize);
-			safe_efree (filepath);
-			safe_efree (string);
-		}
-	}
-	else
-	{
-		if ( use_include_path != 0 && filepath[0] != '/' )
-		{
-			filename = (UChar *) includePath(filepath);
-		}
-		else { filename = estrdup (filepath); }
-
-		if ( VCWD_REALPATH(filename, getfilename) == NULL )
-			strcpy (getfilename, filename);
-
-		// get file info
-		if( stat (getfilename, &filestat) == 0 )
-		{
-			string = (UChar *) readfile(getfilename);
-			RETVAL_STRINGL(string, filestat.st_size);
-			safe_efree (filename);
-			safe_efree (filepath);
-			safe_efree (string);
-		}
-		else
-		{
-			php_error(E_WARNING, "File/URL %s is not found \n", filename);
-			safe_efree (filename);
-			safe_efree (filepath);
-			RETURN_EMPTY_STRING();
-		}
-
-	}
-}
-*/
-
-PHP_FUNCTION(readfile_lib)
-{
-	char *filepath, *string;
-	UChar buf[8192];
-	int use_include_path=0;
-	size_t buflen =0, len = 0, flen = 0;
-	php_stream *stream;
-
-	if ( kr_parameters ("s|b", &filepath, &flen, &use_include_path) == FAILURE )
+	if ( kr_parameters ("S|b", &filepath, &use_include_path) == FAILURE )
 		return;
 
-	stream = php_stream_open_wrapper (filepath, "rb",
-			(use_include_path ? USE_PATH : 0) | REPORT_ERRORS, NULL);
+	if ( ! ZSTR_LEN (filepath) ) {
+		php_error (E_WARNING, "path is invalid or missing");
+		RETURN_EMPTY_STRING ();
+	}
 
-	if (stream) {
+	stream = php_stream_open_wrapper (
+		ZSTR_VAL (filepath),
+		"rb",
+		(use_include_path ? USE_PATH : 0) | REPORT_ERRORS,
+		NULL
+	);
+
+	if ( stream ) {
 		string = emalloc (sizeof (char) * 8192);
 		memset (buf, '\0', sizeof(buf));
 
-		while ( (buflen = php_stream_read (stream, buf, sizeof(buf))) > 0 ) {
+		while ( (buflen = php_stream_read (stream, buf, sizeof (buf))) > 0 ) {
 			if (len > 0)
-				string = erealloc(string, sizeof(char) * (8192 + len));
+				string = erealloc (string, sizeof(char) * (8192 + len));
 
 			memmove (string + len, buf, buflen);
-			memset (buf, '\0', sizeof(buf));
+			memset (buf, '\0', sizeof (buf));
 			len += buflen;
 		}
-		php_stream_close(stream);
+		php_stream_free (stream, PHP_STREAM_FREE_CLOSE | PHP_STREAM_FREE_RSRC_DTOR);
 
-		RETVAL_STRINGL(string, len);
-		safe_efree(string);
+		RETVAL_STRINGL (string, len);
+		safe_efree (string);
 	} else {
-		RETURN_EMPTY_STRING();
+		RETURN_EMPTY_STRING ();
 	}
 }
 /* }}} */
@@ -317,21 +256,21 @@ PHP_FUNCTION(readfile_lib)
  *    Return a file or a URL */
 PHP_FUNCTION(sockmail_lib)
 {
-	char * text, * from, * to, * hhost, * debugs;
-	UChar delimiters[] = ",";
-	UChar * faddr, * taddr, * mailaddr;
-	char * btoken;
-	int debug = 0,
-		telen = 0,
-		flen  = 0,
-		tlen  = 0,
-		hlen  = 0;
+	zend_string * mailbody = NULL,
+	            * from     = NULL,
+	            * to       = NULL,
+	            * helo     = NULL;
+	zend_bool     debug = 0;
+	char        * hhost = NULL;
+	UChar         delimiters[] = ",";
+	UChar       * faddr, * taddr, * mailaddr;
+	char        * btoken;
 
-	UChar * src[4] = { "/[^<]*</", "/>.*/", "/[\\s]/", "/^.*$/" };
-	UChar * des[4] = { "", "", "", "<\\0>" };
-	UChar * t_addr = NULL;
+	UChar       * src[4] = { "/[^<]*</", "/>.*/", "/[\\s]/", "/^.*$/" };
+	UChar       * des[4] = { "", "", "", "<\\0>" };
+	UChar       * t_addr = NULL;
 
-	if ( kr_parameters ("ss|ssb", &text, &telen, &from, &flen, &to, &tlen, &hhost, &hlen, &debug) == FAILURE )
+	if ( kr_parameters ("SS|SSb", &mailbody, &from, &to, &helo, &debug) == FAILURE )
 		return;
 
 	if ( array_init (return_value) == FAILURE ) {
@@ -339,23 +278,30 @@ PHP_FUNCTION(sockmail_lib)
 		RETURN_FALSE;
 	}
 
+	if ( ZSTR_LEN (mailbody) < 1 ) {
+		php_error (E_WARNING, "missing mail body");
+		RETURN_FALSE;
+	}
+
+	hhost = (helo && ZSTR_LEN (helo)) ? ZSTR_VAL (helo) : "";
+
 	/* mail context */
-	if ( flen < 1 ) {
+	if ( ZSTR_LEN (from) < 1 ) {
 		UChar * f_src[4] = { "/\r*\n/i", "/.*From:([^!]+)!!ENTER!!.*/i", "/.*<([^>]+)>/i", "/^.*$/" };
 		UChar * f_des[4] = { "!!ENTER!!", "\\1", "\\1", "<\\0>" };
-		faddr = (UChar *) kr_regex_replace_arr (f_src, f_des, text, (sizeof (f_src) / sizeof (f_src[0])));
+		faddr = (UChar *) kr_regex_replace_arr (f_src, f_des, ZSTR_VAL (mailbody), (sizeof (f_src) / sizeof (f_src[0])));
 	} else {
 		UChar * f_src[2] = { "/.*<([^>]+)>/i", "/^.*$/" };
 		UChar * f_des[2] = { "\\1", "<\\0>" };
-		faddr = (UChar *) kr_regex_replace_arr (f_src, f_des, from, (sizeof (f_src) / sizeof (f_src[0])));
+		faddr = (UChar *) kr_regex_replace_arr (f_src, f_des, ZSTR_VAL (from), (sizeof (f_src) / sizeof (f_src[0])));
 	}
 
-	if ( tlen < 1) {
+	if ( ! to && ZSTR_LEN (to) < 1) {
 		UChar * t_src[2] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i" };
 		UChar * t_des[2] = { "!!ENTER!!", "\\1" };
-		taddr = (UChar *) kr_regex_replace_arr (t_src, t_des, text, (sizeof (t_src) / sizeof (t_src[0])));
+		taddr = (UChar *) kr_regex_replace_arr (t_src, t_des, ZSTR_VAL (mailbody), (sizeof (t_src) / sizeof (t_src[0])));
 	} else {
-		taddr = strdup (to);
+		taddr = estrdup (ZSTR_VAL (to));
 	}
 
 	if ( (mailaddr = strtok_r (taddr, delimiters, &btoken)) != NULL ) {
@@ -369,7 +315,7 @@ PHP_FUNCTION(sockmail_lib)
 			memset (err_host, 0, hostlen + 1);
 			strncpy (err_host, t_addr + 1, strlen (t_addr) - 2);
 
-			if ( sock_sendmail (faddr, t_addr, text, hlen ? hhost : "", debug) == 1)
+			if ( sock_sendmail (faddr, t_addr, ZSTR_VAL (mailbody), hhost, debug) == 1)
 				add_next_index_string (return_value, err_host);
 
 			safe_efree (t_addr);
@@ -387,7 +333,7 @@ static char * kr_gethostbyaddr (char * ip)
 #if HAVE_IPV6 && !defined(__MacOSX__)
 	/* MacOSX at this time has support for IPv6, but not inet_pton()
 	 * so disabling IPv6 until further notice.  MacOSX 10.1.2 (kalowsky) */
-	 struct in6_addr addr6;
+	struct in6_addr addr6;
 #endif
 	struct in_addr addr;
 	struct hostent *hp;
@@ -400,12 +346,12 @@ static char * kr_gethostbyaddr (char * ip)
 	else if (inet_pton(AF_INET, ip, &addr))
 		hp = gethostbyaddr((char *) &addr, sizeof(addr), AF_INET);
 	else
-		return NULL;
+		return ip;
 #else
 	addr.s_addr = inet_addr (ip);
 
 	if ( addr.s_addr == -1 ) 
-		return NULL;
+		return ip;
 
 	hp = gethostbyaddr ((char *) &addr, sizeof (addr), AF_INET);
 #endif
@@ -417,15 +363,15 @@ static char * kr_gethostbyaddr (char * ip)
 }
 /* }}} */
 
-/* {{{ UChar *get_mx_record (UChar * str) */
+/* {{{ UChar * get_mx_record (UChar * str) */
 UChar * get_mx_record (UChar * str)
 {
-	u_char answer[8192], * cp, * end;
-	u_short type, weight, tmpweight;
-	static char mxrecord[256] = { 0, };
-	UChar * host, * tmphost, tmpmx[256] = { 0, };
+	u_char       answer[8192] = { 0, }, * cp, * end;
+	u_short      type, weight, tmpweight;
+	UChar      * mxrecord = NULL;
+	UChar      * host, * tmphost, tmpmx[256] = { 0, };
 	unsigned int i, qdc, count, tmpmxlen = 0;
-	HEADER * hp;
+	HEADER     * hp;
 
 	weight = 0;
 
@@ -436,7 +382,7 @@ UChar * get_mx_record (UChar * str)
 
 	/* if don't exist mx record */
 	if ( (i = res_search (host, C_IN, T_MX, answer, sizeof (answer))) < 0 ) {
-		strcpy (mxrecord, host);
+		mxrecord = estrdup (host);
 		safe_efree (host);
 		return mxrecord;
 	}
@@ -450,7 +396,7 @@ UChar * get_mx_record (UChar * str)
 
 	for ( qdc = ntohs ((unsigned short) hp->qdcount); qdc--; cp += i + 4 ) {
 		if ( (i = dn_skipname (cp, end)) < 0 ) {
-			strcpy (mxrecord, host);
+			mxrecord = estrdup (host);
 			safe_efree (host);
 			return mxrecord;
 		}
@@ -460,7 +406,7 @@ UChar * get_mx_record (UChar * str)
 	count = ntohs ((unsigned short) hp->ancount);
 	while ( --count >= 0 && cp < end ) {
 		if ( (i = dn_skipname (cp, end)) < 0 ) {
-			strcpy (mxrecord, host);
+			mxrecord = estrdup (host);
 			safe_efree (host);
 			return mxrecord;
 		}
@@ -474,28 +420,29 @@ UChar * get_mx_record (UChar * str)
 		}
 		GETSHORT (tmpweight, cp);
 		if ( (i = dn_expand (answer, end, cp, tmpmx, sizeof (tmpmx)-1)) < 0 ) {
-			strcpy (mxrecord, host);
+			mxrecord = estrdup (host);
 			safe_efree (host);
 			return mxrecord;
 		}
 		cp += i;
 		tmpmxlen = strlen(tmpmx);
 
-		if ( strlen (mxrecord) < 1 ) {
-			sprintf (mxrecord, "%s", tmpmx);
-			mxrecord[tmpmxlen] = '\0';
+		if ( mxrecord == NULL ) {
+			mxrecord = estrdup (tmpmx);
 			weight = tmpweight;
 		} else {
 			if ( weight > tmpweight ) {
+				safe_efree (mxrecord);
 				weight = tmpweight;
-				sprintf (mxrecord, "%s", tmpmx);
-				mxrecord[tmpmxlen] = '\0';
+				mxrecord = estrdup (tmpmx);
 			}
 		}
 	}
 
-	if ( strlen (mxrecord) < 1 )
-		strcpy (mxrecord, host);
+	if ( mxrecord == NULL || strlen (mxrecord) < 1 ) {
+		safe_efree (mxrecord);
+		mxrecord = estrdup (host);
+	}
 
 	safe_efree (host);
 	return mxrecord;
@@ -549,12 +496,12 @@ int socksend (int sock, int deb, UChar * var, UChar * target)
 /* }}} */
 
 /* {{{ void debug_msg (UChar *msg, int info, int bar) */
-void debug_msg (UChar *msg, int info, int bar)
+void debug_msg (UChar * msg, int info, int bar)
 {
 	if ( info != 0 ) {
 		php_printf ("DEBUG: %s", msg);
 		if ( bar != 0 )
-			php_printf("----------------------------------------------------------------\n");
+			php_printf ("----------------------------------------------------------------\n");
 	}
 }
 /* }}} */
@@ -574,11 +521,17 @@ int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, UChar * host,
 	/* get mx record from 'to address' */
 	addr = get_mx_record (toaddr);
 
+	if ( debug == 1 ) {
+		php_printf ("DEBUG: To addr   : %s\n", toaddr);
+		php_printf ("DEBUG: MX record : %s\n", addr);
+	}
+
 	if ( !(hostinfo = gethostbyname (addr)) )
 	{
 		if ( debug == 1 ) {
 			php_error (E_WARNING, "host name \"%s\" not found\n", addr);
 		}
+		safe_efree (addr);
 		return 1;
 	}
 
@@ -594,6 +547,7 @@ int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, UChar * host,
 		if ( debug == 1 )
 			php_error (E_WARNING, "Failed to create socket\n");
 
+		safe_efree (addr);
 		return 1;
 	}
 
@@ -606,6 +560,7 @@ int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, UChar * host,
 		if ( debug == 1 )
 			php_error (E_WARNING, "Failed connect %s\n", addr);
 
+		safe_efree (addr);
 		return 1;
 	}
 	else
@@ -624,6 +579,8 @@ int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, UChar * host,
 			safe_efree (str_t);
 		}
 	}
+
+	safe_efree (addr);
 
 	failcode = socksend (sock, debug, helocmd, "helo");
 	if ( failcode == 1 ) {
@@ -682,8 +639,8 @@ UChar * sockhttp (UChar * addr, size_t * retSize, int record, UChar * recfile)
 {
 	FILE  * fp;
 	UChar   tmpfilename[512] = { 0, },
-		    cmd[1024],
-			rc[4096];
+		    cmd[1024] = { 0, },
+			rc[4096] = { 0, };
 	int     sock,
 			len = 0,
 			freechk = 0;
@@ -695,7 +652,7 @@ UChar * sockhttp (UChar * addr, size_t * retSize, int record, UChar * recfile)
 	// parse file path with url, uri
 	//UChar *uri;
 	UChar * chk, * url, * urlpoint;
-	chk = (UChar *) estrdup(addr + 7);
+	chk = (UChar *) estrdup (addr + 7);
 	fp = NULL;
 
 	urlpoint = strchr (chk, '/');

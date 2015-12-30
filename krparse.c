@@ -648,8 +648,6 @@ UChar * get_serverenv (UChar * para)
 
 	zend_string * keyname;
 
-	TSRMLS_FETCH();
-
 	keyname = zend_string_init ("_SERVER", 7, 0);
 
 	if ( (data = zend_hash_find (&EG(symbol_table), keyname)) != NULL ) {

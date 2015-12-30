@@ -59,7 +59,7 @@ $from = &quot;보내는이 &lt;sender@domain.org&gt;&quot;;
 $to = &quot;받는 이 &lt;reciever@to.org</a>&gt;, \&quot;어드민\&quot; &lt;admin@domain.org</a>&gt;, who@domain.org&quot;;
 $subject = &quot;subject 안에 \&quot;따옴표\&quot; 가 있습니다.&quot;;
 $body = &quot;&lt;html&gt;\n&quot;.
-        &quot;&lt;head&gt;&lt;title&gt;&gt;html 문서&lt;/title&gt;&lt;/head&gt;\n&quot;.
+        &quot;&lt;head&gt;&lt;title&gt;html 문서&lt;/title&gt;&lt;/head&gt;\n&quot;.
         &quot;&lt;body&gt;\n&quot;.
         &quot;html 문서를 작성합니다.\n\n&quot;.
         &quot;&lt;table border=1 width=500&gt;\n&quot;.
@@ -80,7 +80,7 @@ $ret = sockmail_lib($mailmsg, $from, $to);
 
 if ( is_array ($ret) ) {
   foreach ( $ret as $v ) {
-    echo "$v 로의 발송에 실패했습니다.<br>\n"
+    echo "$v 로의 발송에 실패했습니다.<br>\n";
   }
 }
 
