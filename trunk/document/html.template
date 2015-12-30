@@ -129,7 +129,7 @@ Last updated : <?=$updates?><br>
 <table border=0 width="100%" cellpadding=5 cellspacing=0>
 <tr bgcolor="#cccccc">
 <td align="right">
-Copyright ⓒ 1999-<?=date("Y",time())?> <a href="http://www.oops.org/">OOPS Development Organization</a><br>
+Copyright ⓒ 1999-<?=date("Y",time())?> <a href="http://oops.org/">OOPS Development Organization</a><br>
 All right reserved
 </td>
 </tr>
