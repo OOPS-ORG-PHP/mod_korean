@@ -1,5 +1,11 @@
 PHP Korean Extexsions Changelog
 
+* 1.0.1
+--------------------------------------------------------------------------------
+Mon Dec 28 2015
+by JoungKyun.Kim <http://oops.org>
+	- fixed zend_string_free to zend_string_release
+
 * 1.0.0
 --------------------------------------------------------------------------------
 Mon Dec 28 2015
