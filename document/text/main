@@ -41,7 +41,7 @@ PHP Korean Extexsions Changelog About Version REP_VERSION_REP
 * 0.1.2
 Sun Mar 19 2006
 --------------------------------------------------------------------------------
-  by JoungKyun Kim <http://www.oops.org>
+  by JoungKyun Kim <http://oops.org>
     - fixed documents with html 4 validate
     - fixed sockmail_lib function removed upper html print out
     - fixed segmentation fault in get_mx_record function
@@ -50,7 +50,7 @@ Sun Mar 19 2006
 * 0.1.1
 Thu Mar 16 2006
 --------------------------------------------------------------------------------
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed gdImageCreatePaletteFromTrueColor link bug in bundle gd library
     - fixed substr_lib ascii range parsing bug
     - fixed buffer over flow on body_encode function in krmail.c
@@ -63,7 +63,7 @@ Thu Mar 16 2006
 * 0.1.0
 Sun Feb 12 2006
 --------------------------------------------------------------------------------
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - update libgd on php 5.1.2
     - changed create location of tmpfile to PG(upload_tmp_dir)
     - added open basedir check
@@ -72,14 +72,14 @@ Sun Feb 12 2006
 * 0.0.9
 Thu Apr 21 2005
 --------------------------------------------------------------------------------
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed warning messages
 
 
 * 0.0.8
 --------------------------------------------------------------------------------
 Tue Sep 14 2004
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - rewrite strtrim internal function
     - changed efree funtion to safe_efree function
     - fixed mail sent problem
@@ -88,22 +88,22 @@ Tue Sep 14 2004
 * 0.0.7
 --------------------------------------------------------------------------------
 Mon Jul 27 2004
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed gd dependency problem
     - gd bundle libaray update
 
 Mon May 31 2004
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed bundle gd library
 
 Wed Dec 10 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - rewrite pcregrep_lib function
     - rewrite krregex.h
     - rewrite get_serverenv function
 
 Tue Dec  2 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed efree bug of pcre_match function
     - rewrite pcregrep_lib function
 
@@ -111,41 +111,41 @@ Tue Dec  2 2003
 * 0.0.6
 --------------------------------------------------------------------------------
 Mon Sep 15 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed fail mail and rcpt rutine on some smtp server in sockmail_lib fucntion
     - fixed setlocale on date of mail header in mailsource_lib function
 
 Thu Sep  4 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - changed to int type from void on putfile_lib function
 
 Sun Aug 31 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed miss free on pcre_match function
 
 Wed Jul 16 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed autolink_lib function bug
 
 Mon Jul 14 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - update human_fsize_lib
     - added gif out patch on libgd
 
 Mon Jun  2 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - update libgd
 
 Wed May 28 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed segment fault when return null byte in pcregrep_lib
 
 Mon May 26 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added unit option in human_fsize_lib function
 
 Tue May 14 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - rewrite readfile_lib fucntion with same function of readfile
     - added pcregrep_lib function and pcre_match internal function
 
@@ -153,23 +153,23 @@ Tue May 14 2003
 * 0.0.5
 --------------------------------------------------------------------------------
 Sun Mar  2 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed failure of static compile
     - registed new gd library file
     - removed gd gif read on windows
 
 Sat Mar  1 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed conftest bug of config.m4
     - fixed bug of width value have 0 on imgresize_lib function
     - fixed koren.dsp
 
 Fri Feb 21 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed segmentation fault error of VCWD_REALPATH on FreeBSD
 
 Tue Jan  7 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed gdSinT undefined error when don't include gd extension
     - modified phpinfo data
     - enabled to use on account mode
@@ -177,37 +177,37 @@ Tue Jan  7 2003
 * 0.0.4
 --------------------------------------------------------------------------------
 Mon Jan  6 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added script version of korean extension
 
 Wed Jan  1 2003
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added gd version check rutine on krimage.c
     - fixed setment fault of mailsource_lib function
     - modified html_to_plain function on krmail.c
 
 Mon Dec 30 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added small gd library
     - update krimage.c
     - modified config.m4
 
 Sat Dec 29 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added small gd library
     - modified config.m4
     - limits under 4.3.0
 
 Sat Dec 28 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added PHP_NEW_EXTENSION in config.m4 for over 4.2.x
 
 Thu Dec 26 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed typo in agentinfo_lib function
 
 Sun Dec 22 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed segment error on readfile function
 
 
@@ -215,27 +215,27 @@ Sun Dec 22 2002
 --------------------------------------------------------------------------------
 
 Thu Dec 13 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - release 0.0.3
     - fixed bad useful variables with realpath
     - fixed gabage return value
 
 Wed Dec 12 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed readfile function on krfile.c
     - fixed case of null string return on readfile_lib
     - fixed realpath under win32
     - updated doucments
 
 Mon Dec 10 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - removed unuseless variables
     - changed system function to file stream function on readfile function
 
 * 0.0.2
 --------------------------------------------------------------------------------
 Mon Dec  9 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - release 0.0.2
     - changed file stream function to row system function on readfile_lib functoin
     - fixed segment falut of mail function
@@ -245,21 +245,21 @@ Mon Dec  9 2002
     - update document
 
 Sun Dec  1 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - rewrite human_fsize_lib function
     - rewrite check_table function
     - fixed segmentation falut on krNcrEncode, krNcrDecode function
 
 Wed Nov 30 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - modified project file of MSVC
 
 Wed Nov 27 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - rewrite unicode ncrcode function
 
 Wed Nov 27 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - rewrite utf8encode_lib, utf8decode_lib function
     - fixed memory free problems
     - removed convUTF8 function in krcharset.c
@@ -269,41 +269,41 @@ Tue Nov 26 2002
     - added new utf8 function
 
 Thu Oct 24 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added memory free for estrdup variables
 
 Sun Sep 22 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added memory free some variables
 
 
 * 0.0.1
 --------------------------------------------------------------------------------
 Thu Sep 19 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - release 0.0.1
     - fixed postposition_lib functoin
     - fixed mailresource_lib function overflow error on windows envionment
 
 Wed Sep 18 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - supported windows
 
 Sun Sep  8 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed get_hostname_lib returns null value if reverse value is 0
     - fixed proxy type on get_hostname_lib
 
 Tue Sep  5 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added postposition_lib function
 
 Tue Sep  3 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - removed unuseless variables
 
 Sun Sep  1 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - modified config.m4 for phpize
       use --enable-korean-gd instead of --with-gd for image function
     - fixed segment fault error on sockhttp function
@@ -312,17 +312,17 @@ Sun Sep  1 2002
     - support apache 2
 
 Thu Aug 29 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - supported cygwin
       cygwin doesn't support gd and shared extension mode.
 
 Thu Aug 23 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - supported php 4.3
     - patched read file function that can't read binary file
 
 Thu Aug 22 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added ncrdecode_lib() function
     - removed result_except_ksx_1001 function
     - modified rutine of 2 byte NCR code except range of KSX 1001 on substr_lib() function
@@ -332,39 +332,39 @@ Thu Aug 22 2002
     - restored gd library check on config.m4
 
 Sun Aug 18 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - changed krNcrConv function to krNcrEncode
 
 Fri Aug 16 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - removed include of dns.c on krnetwork.c
     - removed include of files that includes ext/standard dir
     - added krmath.c, php_krmath.h
     - incresed run time speed on string parse function
 
 Wed Aug 14 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - remove bin2hex, hex2bin, bin2dec function on krparse.c
     - arranged string variables
     - update uniConv function on krparsc.c
 
 Tue Aug 13 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - changed duplicate name of array variables with /ext/standard/image.c
     - arranged string variables
 
 Sun Aug 11 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - changed mime type on generate_attach() function
     - added rutine of 2 byte charactor except range of KSX 1001 on substr_lib() function
     - added rutine of 2 byte NCR code except range of KSX 1001 on substr_lib() function
 
 Sat Aug 10 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - supported apache 2
 
 Fri Aug  9 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed mime type of attach file on mailsource_lib() function
     - changed us-ascii from iso-8859-1 on mailsource_lib() function
     - added sockmail_lib() function
@@ -373,67 +373,67 @@ Fri Aug  9 2002
     - changed variable type of mxrecord on sockmail_lib() function for FreeBSD
 
 Wed Aug  7 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added mailsource_lib() function
 
 Fri Jul 25 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added remove rutine of utf 8 init charactors on utf8_decode function
     - changed print value of php_info()
     - changed name of builddate_lib function to buildno_lib
     - added version_lib function ( print version of korean extension )
 
 Fri Jul 18 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed problem of null new_type parameter in imgresize_lib function
 
 Wed Jul  3 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added include_path option on readfile_lib function
 
 Sun Jun 30 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - enable to control of remote image on imgResize_lib function
 
 Wed Jun 19 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - modified information of php.ini
 
 Sat Jun 15 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added other browser in get_agent_lib function
 
 Thu Jun 14 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added gd libaray if installed gd is no regular library directory
 
 Thu Jun 13 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - modified config.m4 for supported gd
 
 Fri Jun  7 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed reallocation error in uniencode_lib function
 
 Mon Jun  3 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - added imgresize_lib function (added krimage.c, php_krimage.h)
 
 Fri May 24 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed typo in convUTF6 function
 
 Thu May 23 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed segmentation fault utf8decod function
     - added operation of utf8 in substr_lib
 
 Thu May 16 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed segmentation fault when use perror_lib or pnotice_lib in shell
 
 Tue May 14 2002
-  by JoungKyun Kim &lt;http://www.oops.org&gt;
+  by JoungKyun Kim &lt;http://oops.org&gt;
     - fixed duplicated regist krerror.c in Makefile.in
 
 

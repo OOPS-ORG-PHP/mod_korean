@@ -13,4 +13,4 @@ movepage_lib -- 페이지를 이동시키는 함수
 
 <span id="RE">예제</span>
 
-movepage_lib(&quot;http://www.oops.org&quot;,30);
+movepage_lib(&quot;http://oops.org&quot;,30);
