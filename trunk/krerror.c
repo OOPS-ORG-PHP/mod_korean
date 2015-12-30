@@ -37,10 +37,10 @@ PHP_FUNCTION(perror_lib)
 {
 	zend_string * input = NULL;
 	zend_string * move  = NULL;
+	zend_bool     java  = 0;
+	zend_long     sec   = 5;
 	char        * istr;
 	char        * mstr;
-	int           java  = 0;
-	int           sec   = 5;
 	char        * ret;
 
 	if ( kr_parameters ("S|bSl", &input, &java, &move, &sec) == FAILURE )
@@ -49,7 +49,7 @@ PHP_FUNCTION(perror_lib)
 	istr = ! ZSTR_LEN (input) ? "Problem in your request!" : ZSTR_VAL (input);
 	mstr = ! move ? "1" : ZSTR_VAL (move);
 
-	ret = print_error (ZSTR_VAL (input), java, mstr, sec);
+	ret = print_error (istr, java, mstr, sec);
 	php_printf ("%s\n", ret);
 	safe_efree (ret);
 }
@@ -88,13 +88,11 @@ unsigned char * print_error (unsigned char * str_o, unsigned int java_o, unsigne
 	unsigned char * buf = NULL,
 				  * mv = NULL;
 	unsigned char * result,
-				  * agent_o;
-
-	TSRMLS_FETCH();
+				  * agent_o = NULL;
 
 	agent_o = sapi_getenv ("HTTP_USER_AGENT", 15 TSRMLS_CC);
 	if ( agent_o == NULL )
-		agent_o = (unsigned char *) get_serverenv ("HTTP_USER_AGENT");
+		agent_o = estrdup (get_serverenv ("HTTP_USER_AGENT"));
 
 	/* text browser check */
 	if ( strlen (agent_o) > 0 )
@@ -150,6 +148,7 @@ unsigned char * print_error (unsigned char * str_o, unsigned int java_o, unsigne
 		safe_efree (buf_str);
 	}
 
+	safe_efree (agent_o);
 	safe_efree (buf);
 
 	return result;

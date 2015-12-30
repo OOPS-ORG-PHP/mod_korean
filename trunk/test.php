@@ -108,11 +108,11 @@ $buf = '<table><tr><td>asdf</td></tr></table>';
 $chk = ! check_htmltable_lib ($buf) ? 'OK' : 'Failure';
 printf (" ** %-40s .. %s\n", 'test check_htmltable_lib()', $chk);
 
-$chk = is_iis_lib () ? 'OK' : 'Failure';
+$chk = ! is_iis_lib () ? 'OK' : 'Failure';
 printf (" ** %-40s .. %s\n", 'test is_iis_lib()', $chk);
 
-$chk = is_windows_lib () ? 'OK' : 'Failure';
-printf (" ** %-40s .. %s\n", 'test is_iis_lib()', $chk);
+$chk = ! is_windows_lib () ? 'OK' : 'Failure';
+printf (" ** %-40s .. %s\n", 'test is_windows_lib()', $chk);
 
 echo <<<EOF
 *********************************************************************

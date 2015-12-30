@@ -90,6 +90,7 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 		php_printf ("subject ######### %s\n", ZSTR_VAL (subject));
 		php_printf ("subjlen ######### %d\n", ZSTR_LEN (subject));
 		php_printf ("replace ######### %s\n", ZSTR_VAL (rep.value.str));
+		php_printf ("replace ######### %s\n", Z_STRVAL (rep.value.str));
 		*/
 
 		buf = php_pcre_replace (
