@@ -636,7 +636,7 @@ UChar * html_to_plain (UChar * source) // {{{
 {
 	UChar * rptext;
 	UChar * src[3] = { ":^.*<BODY[^>]*>:si", ":<\\/BODY>.*$:si", ":</?[a-z][^>]*>:si" };
-	UChar * des[3] = { "", "", "" };
+	UChar * des[3] = { " ", " ", " " };
 			    
 	rptext = (UChar *) kr_regex_replace_arr (src, des, source, 3);
 				    

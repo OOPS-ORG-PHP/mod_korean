@@ -1,6 +1,7 @@
 <?php
 
 $mcrochk = 0;
+ini_set ('allow_url_fopen', true);
 
 if ( $mcrochk )
 	$old = microtime ();
@@ -221,6 +222,16 @@ echo <<<EOF
 *********************************************************************\n
 EOF;
 
+$old = '8.8.8.8';
+$new = get_hostname_lib (true, $old);
+printf (" ** %-40s .. %s is %s\n", 'test get_hostanme_lib ()', $old, $new);
+
+$old = readfile_lib ('https://people.kldp.org/robots.txt', false);
+$chk = preg_match ('/Disallow:/', $old) ? 'OK' : 'Failure';
+printf (" ** %-40s .. %s\n", 'test readfile_lib()', $chk);
+printf (" ** %-40s .. skip\n", 'test sockmail_lib()');
+
+
 echo <<<EOF
 *********************************************************************
                          Check  krparse.c
@@ -235,7 +246,6 @@ $old = '한글a와 똠방각하';
 $new = substr_lib ($old, 0, 10);
 $chk = ($new == '한글a와 똠') ? 'OK' : 'Failure';
 printf (" ** %-40s .. %s\n", 'test substr_lib()', $chk);
-
 
 $old = '윤아';
 $new = postposition_lib ($old, '은');

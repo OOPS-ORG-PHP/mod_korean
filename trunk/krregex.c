@@ -43,16 +43,15 @@ UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // 
 	regex = zend_string_init (regex_o, strlen (regex_o), 0);
 	subject = zend_string_init (str_o, strlen (str_o), 0);
 
-	zval_ptr_dtor (&replaces);
-	ZVAL_STRING (&replaces, replace_o);
+	ZVAL_STRINGL (&replaces, replace_o, strlen (replace_o));
 
 	buf = php_pcre_replace (
 			regex, subject, ZSTR_VAL (subject), (int) ZSTR_LEN (subject), &replaces, 0, -1, &repc
 	);
 
 	zval_ptr_dtor (&replaces);
-	zend_string_free (regex);
-	zend_string_free (subject);
+	zend_string_release (regex);
+	zend_string_release (subject);
 
 	sval = (UChar *) estrdup (ZSTR_VAL (buf));
 	zend_string_free (buf);
@@ -69,7 +68,7 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 
 	unsigned int  i;
 	zval          rep;
-	int           repc;
+	int           repc = 0;
 
 	UChar       * sval;
 
@@ -84,7 +83,14 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 			buf = NULL;
 		}
 
-		ZVAL_STRING (&rep, replace_o[i]);
+		ZVAL_STRINGL (&rep, replace_o[i], strlen (replace_o[i]));
+
+		/*
+		php_printf ("regex ########### %s\n", ZSTR_VAL (regex));
+		php_printf ("subject ######### %s\n", ZSTR_VAL (subject));
+		php_printf ("subjlen ######### %d\n", ZSTR_LEN (subject));
+		php_printf ("replace ######### %s\n", ZSTR_VAL (rep.value.str));
+		*/
 
 		buf = php_pcre_replace (
 				regex,
@@ -99,6 +105,7 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 		zend_string_release (regex);
 		zend_string_release (subject);
 	}
+
 
 	sval = (UChar *) estrdup (ZSTR_VAL (buf));
 	zend_string_free (buf);
