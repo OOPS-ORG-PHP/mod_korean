@@ -1,0 +1,9 @@
+PHP Script of PHP Korean extension 
+
+이 소스는 php korean extension (http://devel.oops.org) 의 php script 버전
+이다. 이 소스는 php korean extension 을 사용하기 힘든 유저들을 위하여 스크
+립트 버전으로 제공을 하며, php korean extension 의 최신 버전의 기능을 동일
+하게 구현을 하는 것을 목적으로 한다.
+
+또한 시스템의 PHP에 korean extenstion 이 loading 되어 있을 경우, 충돌을 방
+지하기 위하여  자동으로 include 를 하지 않는다.

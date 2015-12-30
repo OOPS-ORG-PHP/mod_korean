@@ -1,0 +1,15 @@
+<span class="title">is_windows_lib()</span>
+
+(required korean module)
+
+is_windows_lib -- 운영되는 OS 가 windows 인지 체크
+
+<span id="RE">설명</span>
+
+<b>int is_windows_lib(void)</b>
+
+운영체제가 windows machine 인지 판단을 한다. 운영체제가 windows 이면 1 을 리턴하고 아니며 0
+을 리턴한다.
+
+<span id="RE">참조</span>
+is_iis_lib()
