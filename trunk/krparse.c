@@ -670,7 +670,7 @@ UChar * get_serverenv (UChar * para)
 		} ZEND_HASH_FOREACH_END();
 	}
 
-	zend_string_free (keyname);
+	zend_string_release (keyname);
 
 	if ( parameters == NULL )
 		parameters = "";

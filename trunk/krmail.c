@@ -393,7 +393,7 @@ UChar * generate_from (UChar * email, char * set) // {{{
 
 		rfrom = emalloc (sizeof (char) * (from_len + 1));
 		sprintf (rfrom, "=?%s?B?%s?= <%s>", set, ZSTR_VAL (cname), mail);
-		zend_string_free (cname);
+		zend_string_release (cname);
 	}
 
 	safe_efree (mail);
@@ -450,7 +450,7 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 				to = emalloc (sizeof(char) * (to_lenth + 1));
 				cname = php_base64_encode (t_name, namelen);
 				sprintf (to, "=?%s?B?%s?= <%s>", set, ZSTR_VAL (cname), t_mail);
-				zend_string_free (cname);
+				zend_string_release (cname);
 			}
 			safe_efree (t_to);
 		}
@@ -489,7 +489,7 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 
 					sub_cname = php_base64_encode (s_name, snlen);
 					sprintf (s_to, "=?%s?B?%s?= <%s>", set, ZSTR_VAL (sub_cname), s_mail);
-					zend_string_free (sub_cname);
+					zend_string_release (sub_cname);
 				}
 
 				if ( to == NULL )
@@ -539,7 +539,7 @@ UChar * generate_title (UChar * title, UChar * set) // {{{
 		sprintf (subject, "=?%s?B?%s?=", set, ZSTR_VAL (base64));
 	}
 
-	zend_string_free (base64);
+	zend_string_release (base64);
 
 	return subject;
 } // }}}
@@ -661,7 +661,7 @@ UChar * body_encode (const UChar * str, int chklen) // {{{
 	Zenbase = php_base64_encode (str, (size_t) chklen);
 	enbase = estrdup (ZSTR_VAL (Zenbase));
 	len = ZSTR_LEN (Zenbase);
-	zend_string_free (Zenbase);
+	zend_string_release (Zenbase);
 
 	devide = (int) len / 60;
 

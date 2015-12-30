@@ -54,7 +54,7 @@ UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // 
 	zend_string_release (subject);
 
 	sval = (UChar *) estrdup (ZSTR_VAL (buf));
-	zend_string_free (buf);
+	zend_string_release (buf);
 
 	return (UChar *) sval;
 } // }}}
@@ -109,7 +109,7 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 
 
 	sval = (UChar *) estrdup (ZSTR_VAL (buf));
-	zend_string_free (buf);
+	zend_string_release (buf);
 
 	return sval;
 } // }}}
@@ -145,11 +145,11 @@ int pcre_match (UChar * regex, UChar * str) // {{{
 
 	/* Compile regex or get it from cache. */
 	if ( (re = pcre_get_compiled_regex (regex_string, &extra, &preg_options)) == NULL ) {
-		zend_string_free (regex_string);
+		zend_string_release (regex_string);
 		return -1;
 	}
 
-	zend_string_free (regex_string);
+	zend_string_release (regex_string);
 
 	pcre_fullinfo (re, extra, PCRE_INFO_CAPTURECOUNT, &num_subpats);
 	num_subpats++;
