@@ -40,6 +40,13 @@
 #include "php_krmail.h"
 #include "php_krcharset.h"
 
+#if PHP_API_VERSION < 20151012
+#error "************ PHP version dependency problems *******************"
+#error "This package requires over php 7.0.0 !!"
+#error "If you build with php under 7.0.0, use mod_korean 0.1.x version"
+#error "You can download mod_korean 0.1.x at http://mirror.oops.org/pub/oops/php/extensions/mod_korean"
+#endif
+
 /* If you declare any globals in php_korean.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(korean)
 */
