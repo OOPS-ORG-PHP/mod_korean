@@ -1,4 +1,4 @@
-dnl $Id$
+dnl $Id: config.m4 370 2015-12-27 20:14:59Z oops $
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.

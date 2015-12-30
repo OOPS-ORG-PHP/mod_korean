@@ -15,7 +15,7 @@
   | Author: JoungKyun Kim <http://oops.org>                              |
   +----------------------------------------------------------------------+
 
-  $Id$
+  $Id: php_korean.h 378 2015-12-30 02:17:19Z oops $
 */
 
 #ifndef PHP_KOREAN_H

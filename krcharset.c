@@ -11,7 +11,7 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   2013 OOPS.org
  * @license     GPL
- * @version     SVN: $Id$
+ * @version     SVN: $Id: krcharset.c 372 2015-12-28 20:12:18Z oops $
  * @since       File available since release 0.0.1
  */
 
