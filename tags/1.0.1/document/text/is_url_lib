@@ -1,0 +1,14 @@
+<span class="title">is_url_lib()</span>
+
+(required korean module)
+
+is_url_lib -- URL 이 제대로 된 것인지를 체크하는 함수
+
+<span id="RE">설명</span>
+
+<b>int is_url_lib (string url)</b>
+
+url 이 정확한 것인지 검사하는 함수. url 이 맞으면 url 을 리턴하고 틀리면 null 값을 리턴한다.
+
+<span id="RE">참조</span>
+is_email_lib()

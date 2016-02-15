@@ -1,0 +1,14 @@
+<span class="title">is_iis_lib()</span>
+
+(required korean module)
+
+is_iis_lib -- 웹서버가 iis 인지 아닌지를 판단
+
+<span id="RE">설명</span>
+
+<b>int is_iis_lib(void)</b>
+
+웹서버가 iis 서버인지를 체크한다. 웹서버가 iis 이면 1 을 리턴하고 아니면 0 을 리턴한다.
+
+<span id="RE">참조</span>
+is_windows_lib()

@@ -1,0 +1,16 @@
+<span class="title">movepage_lib()</span>
+
+(required korean module)
+
+movepage_lib -- 페이지를 이동시키는 함수
+
+<span id="RE">설명</span>
+
+<b>void movepage_lib(string url, int timeout)</b>
+
+
+원하는 페이지로 지정한 시간 이후에 reflesh 한 상태로 이동을 시켜준다.
+
+<span id="RE">예제</span>
+
+movepage_lib(&quot;http://oops.org&quot;,30);

@@ -1,0 +1,89 @@
+<span class="title">sockmail_lib()</span>
+
+(required korean module)
+
+sockmail_lib -- 메일 데몬에 의존하지 않고 메일을 발송하는 함수
+
+<span id="RE">설명</span>
+
+<b>int sockmail_lib(string mail [, string from [, string to [, string to helo_host [, int debug ] ] ] ])</b>
+
+sockmail_lib 함수는 서버의 smtp daemon 에 의존하지 않고 php korean extension 자체의 기능으로
+메일을 발송하는 함수이다.
+
+이 함수는 메일 발송 실패시에 실패한 메일 주소 (rcpt to) 를 배열로 반환을 한다. 모두 성공했을
+경우, 빈 배열이 반환이 된다. to 에는 메일이 1개 이상이면 모두 반영 되며, 1 개이상의 to 일 경
+우에도 실패한 메일 주소들은 배열로 반환이 된다. (하단 예제 참조)
+
+참고로 cc 역시 to 로 인식한다.
+
+
+함수에 사용이 되어지는 파라미터들은 아래를 참고한다.
+
+mail  메일 본문이 들어간다.  헤더부터 메일 본문까지 완벽하게 구성이 되어져 있어야 한다. 이는
+      mailsource_lib 함수를 이용하여 생성을 할 수 있다. 만약 임의로 구성을 할 경우에는, From
+      과 To 는 꼭 한라인씩으로 구성해야 한다.
+
+      잘못된 예)
+      To: test@test.com, sender@sender.com
+          recv@recv.com
+
+from  보내는 사람의 주소를 지정한다. 이 파라미터를 지정하지 않았을 경우에는 위의 mail 파라미
+      터의 헤더의 From: 부분에서 파싱을 하여 값을 얻는다.  from 의 값은 아래의 형태로 지정이
+      가능하다.
+
+      "보낸이" &lt;sender@sender.com&gt; 
+      보낸이 &lt;sender@sender.com&gt;
+      &lt;sender@sender.com&gt;
+      sender@sender.com
+
+to    받을 사람의 메일주소를 지정한다. 받을 사람의 메일주소는 from 의 형식을 따른다. 또한 to
+      파라미터는 쉼표(,) 를 사용하여 여러명에게 메일을 발송할 수 있다. 아래의 예를 참고한다.
+
+      "보낸이" &lt;sender@sender.com&gt;, sender@sender.com, test@test.com
+
+helo_host
+      SMTP 에 HELO 구문에 적어줄 호스트 명을 적는다. sendmail 의 -f 옵션과 동일하다고 보면된
+      다.
+      
+debug 메일 발송 처리 과정을 출력을 한다.
+
+
+<span id="RE">예제</span>
+
+예제를 볼 때 주의할 것이 있다. 아래에 나오는 이메일 표기형식 &quot;user AT domain.com&quot; 은 메일 수
+집기의 수집을 막기 위한 변환된 표시이다. 알아서 AT 을 @ 으로 생각하기 바란다.
+
+$ln = &quot;ko&quot;;
+$from = &quot;보내는이 &lt;sender@domain.org&gt;&quot;;
+$to = &quot;받는 이 &lt;reciever@to.org</a>&gt;, \&quot;어드민\&quot; &lt;admin@domain.org</a>&gt;, who@domain.org&quot;;
+$subject = &quot;subject 안에 \&quot;따옴표\&quot; 가 있습니다.&quot;;
+$body = &quot;&lt;html&gt;\n&quot;.
+        &quot;&lt;head&gt;&lt;title&gt;html 문서&lt;/title&gt;&lt;/head&gt;\n&quot;.
+        &quot;&lt;body&gt;\n&quot;.
+        &quot;html 문서를 작성합니다.\n\n&quot;.
+        &quot;&lt;table border=1 width=500&gt;\n&quot;.
+        &quot;&lt;tr&gt;\n&quot;.
+        &quot;&lt;td&gt; 1 이죠&lt;/td&gt;\n&quot;.
+        &quot;&lt;td&gt; 2 죠 &lt;/td&gt;\n&quot;.
+        &quot;&lt;/tr&gt;\n&lt;tr&gt;\n&quot;.
+        &quot;&lt;td colspan=2&gt;\n&quot;.
+        &quot;COLSPAN=2 입니다.\n&quot;.
+        &quot;&lt;/td&gt;\n&lt;/tr&gt;\n&quot;.
+        &quot;&lt;/table&gt;\n&quot;.
+        &quot;&lt;/body&gt;\n&lt;/html&gt;&quot;;
+$attach = &quot;/dev/shm/test.html&quot;;
+
+$mailmsg = mailsource_lib($ln,$from,$to,$subject,$body,&quot;&quot;,$attach);
+
+$ret = sockmail_lib($mailmsg, $from, $to);
+
+if ( is_array ($ret) ) {
+  foreach ( $ret as $v ) {
+    echo "$v 로의 발송에 실패했습니다.<br>\n";
+  }
+}
+
+<span id="RE">참고</span>
+mailsource_lib</A>()
+
