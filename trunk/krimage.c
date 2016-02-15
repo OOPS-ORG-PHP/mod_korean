@@ -270,12 +270,13 @@ PHP_FUNCTION(imgresize_lib)
 		RETURN_FALSE;
 	}
 
+	gdImageDestroy (im);
+
 	switch (new_type) {
 		case JPGNEWTYPE :
 #ifdef HAVE_GD_JPG
 			gdImageJpeg (nim, tmp, 80);
 #else /* HAVE_GD_JPG */
-			gdImageDestroy (im);
 			php_error (E_ERROR, "No JPEG support in this PHP build");
 #endif /* HAVE_GD_JPG */
 			break;
@@ -283,7 +284,6 @@ PHP_FUNCTION(imgresize_lib)
 #ifdef HAVE_GD_PNG
 			gdImagePng (nim, tmp);
 #else /* HAVE_GD_PNG */
-			gdImageDestroy (im);
 			php_error (E_ERROR, "No PNG support in this PHP build");
 #endif
 			break;
@@ -291,17 +291,13 @@ PHP_FUNCTION(imgresize_lib)
 #ifdef HAVE_GD_GIF_CREATE
 			gdImageGif (nim, tmp);
 #else // HAVE_GD_GIF_CREATE
-			gdImageDestroy (im);
 			php_error (E_ERROR, "NO support GIF format in gd library");
 #endif // HAVE_GD_GIF_CREATE
 			break;
 		default :
-			gdImageDestroy (im);
 			//php_error (E_ERROR, "Supported new image only gif, png, jpg format");
 			php_error (E_ERROR, "Supported new image only png, jpg format");
 	}
-
-	gdImageDestroy (im);
 
 	if (newpath_len == 0) {
 		struct stat sbuf;
@@ -350,6 +346,7 @@ PHP_FUNCTION(imgresize_lib)
 		fflush(tmp);
 
 	fclose (tmp);
+	gdImageDestroy (nim);
 
 	if ( issock == 1 )
 		unlink(tmpfilename);

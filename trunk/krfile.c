@@ -285,7 +285,7 @@ PHP_FUNCTION(pcregrep_lib)
 	sep = emalloc ( sizeof (char *) * (newline + 3) );
 	sep_t = sep;
 	str = emalloc ( sizeof (char) );
-	bufstr = estrdup (ZSTR_VAL (input));
+	bufstr = strdup (ZSTR_VAL (input));
 
 	while ( (*sep = strsep (&bufstr, delimiters)) != NULL ) {
 		if ( **sep != 0 ) {
@@ -296,6 +296,7 @@ PHP_FUNCTION(pcregrep_lib)
 			retval = pcre_match (ZSTR_VAL (regex), buf);
 			if (retval < 0) {
 				safe_efree (str);
+				free (bufstr);
 				RETURN_FALSE;
 			}
 
@@ -317,6 +318,7 @@ PHP_FUNCTION(pcregrep_lib)
 	}
 
 	safe_efree (sep_t);
+	free (bufstr);
 
 	if (len < 1) {
 		safe_efree (str);

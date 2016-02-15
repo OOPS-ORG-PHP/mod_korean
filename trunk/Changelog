@@ -5,6 +5,7 @@ PHP Korean Extexsions Changelog
 Mon Dec 28 2015
 by JoungKyun.Kim <http://oops.org>
 	- fixed zend_string_free to zend_string_release
+	- fixed memory leaks
 
 * 1.0.0
 --------------------------------------------------------------------------------

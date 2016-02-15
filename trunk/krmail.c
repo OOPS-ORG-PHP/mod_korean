@@ -273,7 +273,8 @@ UChar * generate_body (UChar *bset, UChar *bboundary, UChar *btext, UChar *bptex
 	UChar      * rbody = NULL;
 	UChar      * plain = NULL,
 	           * base64html = NULL,
-	           * base64plain = NULL;
+	           * base64plain = NULL,
+	           * buf = NULL; 
 	unsigned int plainlen = 0, htmllen = 0, nobptext = 0;
 
 	if ( strlen(btext) > 0 ) {
@@ -281,7 +282,13 @@ UChar * generate_body (UChar *bset, UChar *bboundary, UChar *btext, UChar *bptex
 			nobptext = 1;
 		else if
 			( strlen (bptext) < 1 ) nobptext = 1;
-		plain = nobptext ? strtrim (html_to_plain (btext)) : strtrim (bptext);
+
+		if ( nobptext ) {
+			buf = html_to_plain (btext);
+			plain = strtrim (buf);
+			safe_efree (buf);
+		} else
+			plain = strtrim (bptext);
 
 		base64plain = body_encode (plain, -1);
 		base64html  = body_encode (btext, -1);
@@ -327,7 +334,9 @@ UChar * generate_header (UChar *from, UChar *to, UChar *subject,
 	mimetype = (strlen (is_attach) > 0) ? "mixed" : "alternative";
 
 	 /* make mail id */
-	mailid = generate_mail_id ((char *) kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", from));
+	buf = kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", from);
+	mailid = generate_mail_id ((char *) buf);
+	safe_efree (buf);
 	datehead = generate_date ();
 
 	buflen = strlen (mailid) + strlen (from) + strlen (datehead) +
@@ -360,17 +369,21 @@ UChar * generate_from (UChar * email, char * set) // {{{
 	}
 
 	// get email address on NAME <email@address> form
-	if ( strchr (email, '<' ) != NULL )
-		mail = (UChar *) strtrim ((UChar *) kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", email));
-	else
+	if ( strchr (email, '<' ) != NULL ) {
+		UChar * buf = kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", email);
+		mail = (UChar *) strtrim (buf);
+		safe_efree (buf);
+	} else
 		mail = strtrim (email);
 
 	maillen = strlen (mail);
 
 	// get name on NAME <email@address> form
 	if ( strchr (email, '<') != NULL ) {
-		name_t = (UChar *) strtrim ((UChar *) kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", email));
+		UChar * buf = kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", email);
+		name_t = (UChar *) strtrim (buf);
 		name = name_t;
+		safe_efree (buf);
 	} else
 		name = "";
 	
@@ -421,8 +434,16 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 	if ( token != NULL ) {
 		// get email address on NAME <email@address> form
 		if ( strchr (token, '<') != NULL ) {
-			t_mail = strtrim ((UChar *) kr_regex_replace ("/[^<]*<([^>]+)>.*/i", "\\1", token));
-			_t_name = strtrim ((UChar *) kr_regex_replace ("/([^<]*)<[^>]+>.*/i", "\\1", token));
+			UChar * buf;
+
+			buf = kr_regex_replace ("/[^<]*<([^>]+)>.*/i", "\\1", token);
+			t_mail = strtrim (buf);
+			safe_efree (buf);
+
+			buf = kr_regex_replace ("/([^<]*)<[^>]+>.*/i", "\\1", token);
+			_t_name = strtrim (buf);
+			safe_efree (buf);
+
 			t_name = _t_name;
 			maillen = strlen (t_mail);
 			namelen = strlen (t_name);
@@ -465,8 +486,16 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 
 			// get email address on NAME <email@address> form
 			if ( strchr (token, '<') != NULL ) {
-				s_mail = strtrim ((UChar *) kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", token));
-				_s_name = strtrim ((UChar *) kr_regex_replace ("/([^<]*)<[^>]+>.*/i","\\1", token));
+				UChar * buf;
+
+				buf = kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", token);
+				s_mail = strtrim (buf);
+				safe_efree (buf);
+
+				buf = kr_regex_replace ("/([^<]*)<[^>]+>.*/i","\\1", token);
+				_s_name = strtrim (buf);
+				safe_efree (buf);
+
 				s_name = _s_name;
 				smlen = strlen (s_mail);
 				snlen = strlen (s_name);
@@ -659,14 +688,16 @@ UChar * body_encode (const UChar * str, int chklen) // {{{
 		chklen = strlen (str);
 
 	Zenbase = php_base64_encode (str, (size_t) chklen);
-	enbase = estrdup (ZSTR_VAL (Zenbase));
+	enbase = ZSTR_VAL (Zenbase);
 	len = ZSTR_LEN (Zenbase);
-	zend_string_release (Zenbase);
+	//zend_string_release (Zenbase);
 
 	devide = (int) len / 60;
 
-	if ( len < 61 )
+	if ( len < 61 ) {
+		zend_string_release (Zenbase);
 		return enbase;
+	}
 
 	rencode = emalloc (sizeof (char) * (len + 16 + devide * 2));
 	memset (rencode, '\0', len + 16 + devide * 2);
@@ -688,6 +719,7 @@ UChar * body_encode (const UChar * str, int chklen) // {{{
 			break;
 	}
 
+	zend_string_release (Zenbase);
 	return rencode;
 } // }}}
 
