@@ -242,11 +242,13 @@ PHP_FUNCTION(readfile_lib)
 			memset (buf, '\0', sizeof (buf));
 			len += buflen;
 		}
-		php_stream_free (stream, PHP_STREAM_FREE_CLOSE | PHP_STREAM_FREE_RSRC_DTOR);
+		//php_stream_free (stream, PHP_STREAM_FREE_CLOSE | PHP_STREAM_FREE_RSRC_DTOR);
+		php_stream_close (stream);
 
 		RETVAL_STRINGL (string, len);
 		safe_efree (string);
 	} else {
+		php_stream_close (stream);
 		RETURN_EMPTY_STRING ();
 	}
 }
