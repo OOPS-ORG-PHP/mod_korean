@@ -4,3 +4,4 @@ fi
 rm -rf autom4te.cache/ build/ include/ modules/ .deps
 rm -f Makefile.global ac*.m4 config.guess config.h* config.nice config.sub configure*
 rm -f install-sh ltmain.sh missing mkinstalldirs scan_makefile_in.awk run-tests.php tags
+rm -f tests/*.{diff,exp,log,out,php,sh,mem}
