@@ -15,7 +15,8 @@ PHP 7 발표 이후, PHP extension 의 구조 변경 때문에, PHP 버전에 �
 
 ```bash
 [root@host mod_korean-1.0.1]$ phpize
-[root@host mod_korean-1.0.1]$ ./configure
+[root@host mod_korean-1.0.1]$ # --with-libdir 옵션은 64bit 환경에서만 지정합니다.
+[root@host mod_korean-1.0.1]$ ./configure --with-libdir=lib64 --enable-korean --enable-korean-gd=builtin
 [root@host mod_korean-1.0.1]$ make && make install
 ```
 
