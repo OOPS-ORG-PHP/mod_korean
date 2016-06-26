@@ -30,6 +30,6 @@ extension = korean.so
 
 ## Contributors
  * JoungKyun.Kim
- * HyunSoo Choi <http://baby.web119.com> - Donate UTF8 internal API code
- * ChangHyun Bang <winchild at kldp.org>
- * Junho Choi <cjh at kr.freebsd.org>
+ * HyunSoo Choi &lt;http://baby.web119.com&gt; - Donate UTF8 internal API code
+ * ChangHyun Bang &lt;winchild at kldp.org&gt;
+ * Junho Choi &lt;cjh at kr.freebsd.org&gt;
