@@ -28,6 +28,10 @@ php.ini 에 다음의 설정을 추가해 줍니다.
 extension = korean.so
 ```
 
+## Reference
+
+https://www.gitbook.com/book/joungkyun/php-mod_korean-extension-reference/details
+
 ## Contributors
  * JoungKyun.Kim
  * HyunSoo Choi &lt;http://baby.web119.com&gt; - Donate UTF8 internal API code
