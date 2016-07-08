@@ -9,7 +9,7 @@ mod_korean 확장은 한국어 환경에서 PHP 개발을 위한 여러가지 PH
 PHP 7 발표 이후, PHP extension 의 구조 변경 때문에, PHP 버전에 따른 mod_korean의 최신 버전은 다음과 같습니다.
 
  * PHP 7 - [mod_korean 1.0.1](https://github.com/OOPS-ORG-PHP/mod_korean/releases/tag/1.0.1)
- * PHP 4 or PHP5 - [mod_korean 1.0.5](https://github.com/OOPS-ORG-PHP/mod_korean/releases/tag/0.1.5)
+ * PHP 4 or PHP5 - [mod_korean 0.0.5](https://github.com/OOPS-ORG-PHP/mod_korean/releases/tag/0.1.5)
 
 ## Installation
 
