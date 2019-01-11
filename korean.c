@@ -2,7 +2,7 @@
  * Project: mod_korean::
  * File:    korean.c
  *
- * Copyright (c) 2013 JoungKyun.Kim
+ * Copyright (c) 2019 JoungKyun.Kim
  *
  * LICENSE: GPL
  *
@@ -11,7 +11,6 @@
  * @author      JoungKyun.Kim <http://oops.org>
  * @copyright   2013 OOPS.org
  * @license     GPL
- * @version     SVN: $Id$
  * @since       File available since release 0.0.1
  */
 

@@ -12,10 +12,8 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: JoungKyun Kim <http://oops.org>                          |
+  | Author: JoungKyun Kim <hostmaster@oops.org>                          |
   +----------------------------------------------------------------------+
-  
-  $Id$
 */
 
 #ifdef HAVE_CONFIG_H

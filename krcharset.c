@@ -2,16 +2,15 @@
  * Project: mod_korean ::
  * File:    krcharset.c
  *
- * Copyright (c) 2013 JoungKyun.Kim
+ * Copyright (c) 2019 JoungKyun.Kim
  *
  * LICENSE: GPL
  *
  * @category    Text
  * @package     mod_korean
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   2013 OOPS.org
+ * @copyright   2019 OOPS.org
  * @license     GPL
- * @version     SVN: $Id$
  * @since       File available since release 0.0.1
  */
 

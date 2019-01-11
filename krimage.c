@@ -12,11 +12,9 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: JoungKyun Kim <http://oops.org>                          |
+  | Author: JoungKyun Kim <hostmaster@oops.org>                          |
   +----------------------------------------------------------------------+
  
-  $Id$ 
-
   gd 1.2 is copyright 1994, 1995, Quest Protein Database Center,
   Cold Spring Harbor Labs.
 
