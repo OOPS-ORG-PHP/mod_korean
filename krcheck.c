@@ -45,8 +45,8 @@ int numberOfchar (char *str, char chk) {
 /* {{{ unsigned int checkAddr (UChar * addr, int type) */
 unsigned int checkAddr (UChar * addr, int type) {
 	UChar * regex;
-	UChar regex_e[] = "!^[[:alnum:]\xA1-\xFE._-]+@[[:alnum:]\xA1-\xFE-]+\\.[[:alnum:].-]+$!i";
-	UChar regex_u[] = "!^(http|https|ftp|telnet|news)://[[:alnum:]\xA1-\xFE-]+\\.[[:alnum:]\xA1-\xFE:&#@=_~%?/.+-]+$!i";
+	UChar regex_e[] = "!^[[:alnum:]\\xA1-\\xFE._-]+@[[:alnum:]\\xA1-\\xFE-]+\\.[[:alnum:].-]+$!i";
+	UChar regex_u[] = "!^(http|https|ftp|telnet|news)://[[:alnum:]\\xA1-\\xFE-]+\\.[[:alnum:]\\xA1-\\xFE:&#@=_~%?/.+-]+$!i";
 	UChar u_regex_e[] = "!^[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}._-]+@[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}-]+\\.[[:alnum:].-]+$!ui";
 	UChar u_regex_u[] = "!^(http|https|ftp|telnet|news)://[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}-]+\\.[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}:&#@=_~%?/.+-]+$!ui";
 	int ret = 0;
@@ -67,8 +67,8 @@ unsigned int checkAddr (UChar * addr, int type) {
 unsigned int chkMetaChar (UChar * str, int type) {
 	int ret;
 	UChar * regex;
-	UChar regex_ur[] = "![^[:alnum:]\xA1-\xFE_-]!i";
-	UChar regex_up[] = "![^[:alnum:]\xA1-\xFE \\._%-]|\\.\\.!i";
+	UChar regex_ur[] = "![^[:alnum:]\\xA1-\\xFE_-]!i";
+	UChar regex_up[] = "![^[:alnum:]\\xA1-\\xFE \\._%-]|\\.\\.!i";
 	UChar u_regex_ur[] = "![^[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}_-]!ui";
 	UChar u_regex_up[] = "![^[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF} \\._%-]|\\.\\.!ui";
 

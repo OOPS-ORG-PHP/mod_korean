@@ -38,7 +38,11 @@ UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // 
 #else
 	zend_string * replaces;
 #endif
+#if PHP_VERSION_ID < 70300
 	int           repc = 0;
+#else
+	size_t        repc = 0;
+#endif
 
 	UChar       * sval;
 
@@ -54,7 +58,7 @@ UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // 
 #if PHP_VERSION_ID < 70200
 			regex, subject, ZSTR_VAL (subject), (int) ZSTR_LEN (subject), &replaces, 0, -1, &repc
 #else
-			regex, subject, ZSTR_VAL (subject), (int) ZSTR_LEN (subject), replaces, -1, &repc
+			regex, subject, ZSTR_VAL (subject), ZSTR_LEN (subject), replaces, -1, &repc
 #endif
 	);
 
@@ -85,7 +89,11 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 #else
 	zend_string * rep;
 #endif
+#if PHP_VERSION_ID < 70300
 	int           repc = 0;
+#else
+	size_t        repc = 0;
+#endif
 
 	UChar       * sval;
 
@@ -160,37 +168,51 @@ unsigned int checkReg (UChar * str, UChar * regex_o) // {{{
 	}
 } // }}}
 
-int pcre_match (UChar * regex, UChar * str) // {{{
+/*
+ * get php_do_pcre_match
+ */
+int pcre_match (UChar * regex, UChar * subject) // {{{
 {
-	pcre        * re = NULL;
-	pcre_extra  * extra = NULL;
-	int           preg_options = 0, * offsets, val = 0;
-	unsigned int  size_offsets;
-	int           num_subpats;
-	zend_string * regex_string = NULL;
+	/* parameters */
+	pcre_cache_entry * pce;              /* Compiled regular expression */
+	zend_string      * regex_string;     /* Regular expression */
+	zval             * subpats = NULL;   /* Array for subpatterns */
+	zval             * matches;         /* match counter */
+	zend_long          start_offset = 0; /* Where the new search starts */
+	int                return_val = -1;
 
 	regex_string = zend_string_init (regex, strlen (regex), 0);
 
+#if PHP_VERSION_ID < 70300
+	if ( ZEND_SIZE_T_INT_OVFL (strlen (subject))) {
+		php_error_docref (NULL, E_WARNING, "Subject is too long");
+		return -1;
+	}
+#endif
+
 	/* Compile regex or get it from cache. */
-	if ( (re = pcre_get_compiled_regex (regex_string, &extra, &preg_options)) == NULL ) {
-		zend_string_release (regex_string);
+	if ( (pce = pcre_get_compiled_regex_cache (regex_string) ) == NULL) {
 		return -1;
 	}
 
 	zend_string_release (regex_string);
+	matches = safe_emalloc (pce->capture_count + 1, sizeof (zval), 0);
 
-	pcre_fullinfo (re, extra, PCRE_INFO_CAPTURECOUNT, &num_subpats);
-	num_subpats++;
-	size_offsets = num_subpats * 3;
-	offsets = (int *) safe_emalloc (size_offsets, sizeof (int), 0);
+	pce->refcount++;
+	php_pcre_match_impl (
+		pce, subject, strlen (subject), matches, subpats, 0, 0, 0, start_offset
+	);
+	pce->refcount--;
 
-	/* Execute the regular expression. */
-	if ( (pcre_exec (re, extra, str, strlen (str), 0, 0, offsets, size_offsets)) > 0 )
-		val = 1;
+	if ( Z_TYPE_P (matches) != IS_LONG ) {
+		safe_efree (matches);
+		return -1;
+	}
 
-	safe_efree (offsets);
+	return_val = (int) Z_LVAL_P (matches);
+	safe_efree (matches);
 
-	return val;
+	return return_val;
 } // }}}
 
 /*
