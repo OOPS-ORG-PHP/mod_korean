@@ -23,6 +23,7 @@ PHP 7 발표 이후, PHP extension 의 구조 변경 때문에, PHP 버전에 �
 ## Test
 
 PHP 는 빌드된 모듈이 잘 작동하는지 test 를 할 수 있습니다.
+참고로, ___mod_korean___ extension 의 정상적인 테스트를 위해서는 php cli 환경에서 ___allow_url_fopen___ 이 enable 되어 있어야 합니다.
 
 
 ```bash

@@ -4,6 +4,7 @@ PHP Korean Extexsions Changelog
 --------------------------------------------------------------------------------
 Sat Jan 12 2019
 by JoungKyun.Kim <hostmaster@oops.org>
+	- fixed #2 failed test 007.phpt
 	- fixed #1 failed test 004.phpt
 
 * 1.0.1

@@ -5,6 +5,12 @@ Test network API
 if ( ! extension_loaded ('korean') ) {
     print 'skip';
 }
+
+$iniget = 'ini_get';
+if ( function_exists ('___ini_get') ) $iniget = '___ini_get';
+if ( ! $iniget ('allow_url_fopen') ) {
+    print 'skip';
+}
 ?>
 --POST--
 --GET--
