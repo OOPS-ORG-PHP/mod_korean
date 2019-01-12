@@ -26,6 +26,7 @@ echo human_fsize_lib ($old, true, true, 1000). "\n";
 
 $old = "./";
 $new = filelist_lib ($old, 'f', '^php_[^.]+\.h');
+sort ($new);
 print_r ($new);
 
 $old = <<<EOF
@@ -43,17 +44,17 @@ echo pcregrep_lib ('/i\'m/i', $old) . "\n";
 1.24 Mb (1,239,476 Bits)
 Array
 (
-    [0] => php_krnetwork.h
-    [1] => php_korean.h
-    [2] => php_krcheck.h
-    [3] => php_krparse.h
-    [4] => php_krcharset.h
+    [0] => php_korean.h
+    [1] => php_kr.h
+    [2] => php_krcharset.h
+    [3] => php_krcheck.h
+    [4] => php_krerror.h
     [5] => php_krfile.h
     [6] => php_krimage.h
-    [7] => php_krmath.h
-    [8] => php_krerror.h
-    [9] => php_krmail.h
-    [10] => php_kr.h
+    [7] => php_krmail.h
+    [8] => php_krmath.h
+    [9] => php_krnetwork.h
+    [10] => php_krparse.h
 )
 I'm a boy
 Oh no, I'm crasy
