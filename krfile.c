@@ -99,8 +99,12 @@ PHP_FUNCTION(filelist_lib)
 
 	mode = Zmode ? ZSTR_VAL (Zmode) : "";
 
+#if PHP_VERSION_ID < 70300
 	if ( array_init (return_value) == FAILURE )
 		RETURN_FALSE;
+#else
+	array_init (return_value);
+#endif
 
 	if ( VCWD_REALPATH (ZSTR_VAL (Zinput), dirpath) == NULL )
 		strcpy (dirpath, ZSTR_VAL (Zinput));

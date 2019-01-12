@@ -151,10 +151,14 @@ PHP_FUNCTION(agentinfo_lib)
 	if ( ! agent_o ) 
 		RETURN_FALSE;
 
+#if PHP_VERSION_ID < 70300
 	if ( array_init (return_value) == FAILURE ) {
 		php_error (E_WARNING, "Failed init array");
 		RETURN_FALSE;
 	}
+#else
+	array_init (return_value);
+#endif
 
 	/* if Explorer */
 	if ( strstr (agent_o, "MSIE") ) {

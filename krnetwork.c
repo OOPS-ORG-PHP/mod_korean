@@ -273,10 +273,14 @@ PHP_FUNCTION(sockmail_lib)
 	if ( kr_parameters ("SS|SSb", &mailbody, &from, &to, &helo, &debug) == FAILURE )
 		return;
 
+#if PHP_VERSION_ID < 70300
 	if ( array_init (return_value) == FAILURE ) {
 		php_error (E_WARNING, "Failed init array");
 		RETURN_FALSE;
 	}
+#else
+	array_init (return_value);
+#endif
 
 	if ( ZSTR_LEN (mailbody) < 1 ) {
 		php_error (E_WARNING, "missing mail body");
