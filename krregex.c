@@ -33,21 +33,36 @@ UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // 
 	zend_string * buf;
 	zend_string * regex;
 	zend_string * subject;
+#if PHP_VERSION_ID < 70200
 	zval          replaces;
+#else
+	zend_string * replaces;
+#endif
 	int           repc = 0;
 
 	UChar       * sval;
 
 	regex = zend_string_init (regex_o, strlen (regex_o), 0);
 	subject = zend_string_init (str_o, strlen (str_o), 0);
-
+#if PHP_VERSION_ID < 70200
 	ZVAL_STRINGL (&replaces, replace_o, strlen (replace_o));
+#else
+	replaces = zend_string_init (replace_o, strlen (replace_o), 0);
+#endif
 
 	buf = php_pcre_replace (
+#if PHP_VERSION_ID < 70200
 			regex, subject, ZSTR_VAL (subject), (int) ZSTR_LEN (subject), &replaces, 0, -1, &repc
+#else
+			regex, subject, ZSTR_VAL (subject), (int) ZSTR_LEN (subject), replaces, -1, &repc
+#endif
 	);
 
+#if PHP_VERSION_ID < 70200
 	zval_ptr_dtor (&replaces);
+#else
+	zend_string_release (replaces);
+#endif
 	zend_string_release (regex);
 	zend_string_release (subject);
 
@@ -65,7 +80,11 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 	zend_string * subject;
 
 	unsigned int  i;
+#if PHP_VERSION_ID < 70200
 	zval          rep;
+#else
+	zend_string * rep;
+#endif
 	int           repc = 0;
 
 	UChar       * sval;
@@ -74,14 +93,17 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 
 	for ( i=0; i<regex_no ; i++ ) {
 		regex = zend_string_init (regex_o[i], strlen (regex_o[i]), 0);
+#if PHP_VERSION_ID < 70200
+		ZVAL_STRINGL (&rep, replace_o[i], strlen (replace_o[i]));
+#else
+		rep = zend_string_init (replace_o[i], strlen (replace_o[i]), 0);
+#endif
 
 		if ( i != 0 ) {
 			subject = zend_string_dup (buf, 0);
 			zend_string_release(buf);
 			buf = NULL;
 		}
-
-		ZVAL_STRINGL (&rep, replace_o[i], strlen (replace_o[i]));
 
 		/*
 		php_printf ("regex ########### %s\n", ZSTR_VAL (regex));
@@ -96,11 +118,19 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 		  		subject,
 				ZSTR_VAL (subject),
 				ZSTR_LEN (subject),
-				&rep,
-				0, -1, &repc
+#if PHP_VERSION_ID < 70200
+				&rep, 0,
+#else
+				rep,
+#endif
+				-1, &repc
 		);
 
+#if PHP_VERSION_ID < 70200
 		zval_ptr_dtor (&rep);
+#else
+		zend_string_release (rep);
+#endif
 		zend_string_release (regex);
 		zend_string_release (subject);
 	}
