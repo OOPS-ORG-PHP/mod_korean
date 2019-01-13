@@ -2,10 +2,15 @@ PHP Korean Extexsions Changelog
 
 * 1.0.2
 --------------------------------------------------------------------------------
-Sat Jan 12 2019
+Sat Jan 13 2019
 by JoungKyun.Kim <hostmaster@oops.org>
 	- fixed #6 libgd security issues and official bug
 	  . updated libgd is based on 7.2.14 (same as 7.3.1)
+	- fixed #5 wrong operation krregex api on 7.3
+
+Sat Jan 12 2019
+	- fixed #4 build error on PHP 7.3
+	- fixed #3 wrong operation krregex api on 7.2
 	- fixed #2 failed test 007.phpt
 	- fixed #1 failed test 004.phpt
 
@@ -360,7 +365,7 @@ by JoungKyun Kim <hostmaster@oops.org>
 Sun Sep  1 2002
 by JoungKyun Kim <hostmaster@oops.org>
 	- modified config.m4 for phpize
-      use --enable-korean-gd instead of --with-gd for image function
+	  use --enable-korean-gd instead of --with-gd for image function
 	- fixed segment fault error on sockhttp function
 	- changed start charctor and end charactor of unicode transfer function
 	- removed include pcre.h header
@@ -369,7 +374,7 @@ by JoungKyun Kim <hostmaster@oops.org>
 Thu Aug 29 2002
 by JoungKyun Kim <hostmaster@oops.org>
 	- supported cygwin
-      cygwin doesn't support gd and shared extension mode.
+	  cygwin doesn't support gd and shared extension mode.
 
 Thu Aug 23 2002
 by JoungKyun Kim <hostmaster@oops.org>
