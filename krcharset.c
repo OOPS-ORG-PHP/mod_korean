@@ -691,6 +691,7 @@ unsigned int hex2dec (unsigned char *str_o, unsigned int type) {
 int is_utf8 (char * s)
 {
 	int len, i, check, j;
+	int ascii_status = 0;
 
 	// utf-8 bomb character
 	if ( s[0] == 0xef && s[1] == 0xbb && s[2] == 0xbf )
@@ -704,6 +705,8 @@ int is_utf8 (char * s)
 		// ASCII 영역은 건너띈다.
 		if ( ! (s[i] & 0x80) )
 			continue;
+
+		ascii_status = 1;
 
 		// utf8 is must 110xxxxxxx
 		// 0x40 -> 01000000
@@ -727,8 +730,13 @@ int is_utf8 (char * s)
 			if ( ((UChar) s[j] >> 6) != 0x02 )
 				return 1;
 		}
-		return 0;
+		break;
 	}
+
+	if ( ascii_status == 0 )
+		return 1;
+
+	return 0;
 }
 /* }}} */
 
