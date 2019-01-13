@@ -4,6 +4,8 @@ PHP Korean Extexsions Changelog
 --------------------------------------------------------------------------------
 Sat Jan 12 2019
 by JoungKyun.Kim <hostmaster@oops.org>
+	- fixed #6 libgd security issues and official bug
+	  . updated libgd is based on 7.2.14 (same as 7.3.1)
 	- fixed #2 failed test 007.phpt
 	- fixed #1 failed test 004.phpt
 

@@ -1,4 +1,3 @@
-dnl $Id$
 dnl config.m4 for extension korean
 
 dnl Comments in this file start with the string 'dnl'.
@@ -89,10 +88,10 @@ if test "$PHP_KOREAN" != "no"; then
     PHP_ADD_INCLUDE($KOREAN_INCLUDE)
   else
 
-  dnl
-  dnl In this case, don't be given --enable-korean-gd option.
-  dnl This case use built in gd library.
-  dnl
+    dnl
+    dnl In this case, don't be given --enable-korean-gd option.
+    dnl This case use built in gd library.
+    dnl
 
     dnl case of static build
     if test "$ext_shared" = "no"; then
@@ -119,6 +118,7 @@ if test "$PHP_KOREAN" != "no"; then
         popd > /dev/null 2>&1
       else
         AC_MSG_RESULT(needless)
+        AC_DEFINE(HAVE_GD_BUNDLED,1,[ ])
       fi
       include_gdlib="yes"
     fi
@@ -213,7 +213,7 @@ if test "$PHP_KOREAN" != "no"; then
       krextra_sources="libgd/gd.c libgd/gd_png.c libgd/gd_jpeg.c libgd/gd_gif_in.c libgd/gd_io.c \
                        libgd/gd_gif_out.c libgd/gd_io_file.c libgd/gd_ss.c libgd/gd_io_ss.c \
                        libgd/gdtables.c libgd/gdhelpers.c libgd/gd_io_dp.c libgd/gd_topal.c \
-                       libgd/gd_security.c libgd/gd_arc.c"
+                       libgd/gd_security.c"
     fi
 
     dnl These are always available with bundled library
