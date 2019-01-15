@@ -23,7 +23,7 @@ $ver = (object) array (
 $chk = ($ver->date == '201901120244') ? 'OK' : 'Failed';
 printf (" ** %-40s .. %s\n", 'test buildno_lib()', $chk);
 
-$chk = ($ver->no == '1.0.2') ? 'OK' : 'Failed';
+$chk = ($ver->no == '1.0.3') ? 'OK' : 'Failed';
 printf (" ** %-40s .. %s\n", 'test version_lib()', $chk);
 
 printf (" ** %-40s .. ", 'test movepage_lib() 3sec');

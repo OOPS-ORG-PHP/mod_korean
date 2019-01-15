@@ -1,5 +1,14 @@
 PHP Korean Extexsions Changelog
 
+* 1.0.3
+--------------------------------------------------------------------------------
+Wed Jan 16 2019
+by JoungKyun.Kim <hostmaster@oops.org>
+	- fixed #7 is_utf8 control reaches end of non-void function
+	- fixed #8 Open base dir setting does not work
+	- cleaning compile warning messages and changes string data type to char *
+	  from unsigned char *
+
 * 1.0.2
 --------------------------------------------------------------------------------
 Sat Jan 13 2019
