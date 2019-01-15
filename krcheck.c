@@ -156,7 +156,7 @@ int multibyte_check (char * str_o, int p) {
 		(str_o[p-1] >= 0xa1 && str_o[p-1] <= 0xc6 && str_o[p] >= 0x41 && str_o[p] <=0xa0) )
    	{
 		/* if don't exist ' ' charactor */
-		if ( (start_p = strchr ((CChar *) &str_o[p], ' ')) == NULL )
+		if ( (start_p = strchr ((const char *) &str_o[p], ' ')) == NULL )
 			l = strlen (str_o);
 		else
 			l = start_p - str_o;

@@ -398,8 +398,8 @@ PHP_FUNCTION(agentinfo_lib)
  *   make a decision about kreaon postposition */
 PHP_FUNCTION(postposition_lib)
 {
-	char        * str, * chkjosa[2];
-	char        * chkstr, utfpost[4] = { 0, }, post[3] = { 0, };
+	char        * str, * chkjosa[2] = { 0, };
+	char        * chkstr = NULL, utfpost[4] = { 0, }, post[3] = { 0, };
 	UChar         josa[8] = { 0, };
 	int           position;
 
@@ -457,14 +457,14 @@ PHP_FUNCTION(postposition_lib)
 
 	if ( STRLEN (str) > 1) {
 		int chkstrlen = STRLEN (str) - 2;
-		chkstr = estrdup ((char *) str + chkstrlen);
+		chkstr = estrdup (str + chkstrlen);
 	}
 	else if ( STRLEN (str) > 0 )
-		chkstr = estrdup ((char *) str);
+		chkstr = estrdup (str);
 	else
 		php_error (E_ERROR, "String is too short.");
 
-	position = (int) get_postposition ((char *) chkstr);
+	position = get_postposition (chkstr);
 	if ( position == 1 )
 		memmove (utfpost, chkjosa[1], 3);
 	else

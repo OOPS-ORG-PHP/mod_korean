@@ -651,7 +651,7 @@ int hex2dec (const char * str_o, int type) {
 /* {{{ int is_utf8 (char * s) */
 int is_utf8 (char * s)
 {
-	int len, i, check, j;
+	int len, i, check = 0, j;
 	int ascii_status = 0;
 
 	// utf-8 bomb character

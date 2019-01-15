@@ -154,12 +154,12 @@ int checkReg (char * str, char * regex_o) // {{{
 {
 	regex_t preg;
 
-	if ( regcomp (&preg, (CChar *) regex_o, REG_EXTENDED) != 0 ) {
+	if ( regcomp (&preg, (const char *) regex_o, REG_EXTENDED) != 0 ) {
 		php_error (E_WARNING," Problem REGEX compile in PHP");
 		return 0;
 	}
 
-	if ( regexec (&preg, (CChar *) str, 0, NULL, 0) == 0 ) {
+	if ( regexec (&preg, (const char *) str, 0, NULL, 0) == 0 ) {
 		regfree (&preg);
 		return 1;
 	} else {
