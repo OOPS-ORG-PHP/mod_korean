@@ -56,6 +56,7 @@
 
 #if HAVE_KRLIBGD
 
+#include "php_krparse.h"
 #include "php_krimage.h"
 #ifdef HAVE_GD_BUNDLED
 #include "libgd/gd.h"
@@ -85,23 +86,23 @@ PHP_FUNCTION(imgresize_lib)
 	            * Ztype   = NULL,
 	            * Znewp   = NULL;
 	int    width  = 50,
-		   height = 50;
+	       height = 50;
 
 	gdImagePtr im = NULL,
-			   nim = NULL;
+	           nim = NULL;
 
 	FILE * fp = NULL,
-		 * tmp = NULL;
+	     * tmp = NULL;
 	int    new_type = 0,
-		   old_width = 0,
-		   old_height = 0,
-		   issock = 0,
-		   itype = 0,
-		   newpath_len = 0;
+	       old_width = 0,
+	       old_height = 0,
+	       issock = 0,
+	       itype = 0,
+	       newpath_len = 0;
 	char   filetype[8] = { 0, },
-		   tmpfilename[64] = { 0, };
-	unsigned char imgfile[1024] = { 0, },
-				  newpath[1024] = { 0, };
+	       tmpfilename[64] = { 0, };
+	char   imgfile[1024] = { 0, },
+	       newpath[1024] = { 0, };
 
 	if ( kr_parameters ("S|SllS", &Zpath, &Ztype, &width, &height, &Znewp) == FAILURE )
 		return;
@@ -120,9 +121,9 @@ PHP_FUNCTION(imgresize_lib)
 	} else {
 		if ( ! strcasecmp (ZSTR_VAL(Ztype), "gif") )
 			new_type = GIFNEWTYPE;
-	   	else if ( ! strcasecmp (ZSTR_VAL(Ztype), "png") )
+		else if ( ! strcasecmp (ZSTR_VAL(Ztype), "png") )
 			new_type = PNGNEWTYPE;
-	   	else
+		else
 			new_type = JPGNEWTYPE;
 	}
 

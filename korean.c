@@ -51,7 +51,8 @@ ZEND_DECLARE_MODULE_GLOBALS(korean)
 */
 
 /* True global resources - no need for thread safety here */
-static int le_korean;
+// don't use
+//static int le_korean;
 
 /* {{{ korean_functions[]
  *
@@ -150,7 +151,7 @@ PHP_MINFO_FUNCTION(korean)
 }
 /* }}} */
 
-/* {{{ proto unsigned char buildno_lib(void)
+/* {{{ proto char buildno_lib(void)
  *  print korean extension build number */
 PHP_FUNCTION(buildno_lib)
 {
@@ -158,7 +159,7 @@ PHP_FUNCTION(buildno_lib)
 }
 /* }}} */
 
-/* {{{ proto unsigned char version_lib(void)
+/* {{{ proto char version_lib(void)
  *  print korean extension version */
 PHP_FUNCTION(version_lib)
 {
@@ -181,7 +182,7 @@ PHP_FUNCTION(movepage_lib)
 		RETURN_FALSE;
 	}
 
-	php_printf ("<meta http-equiv=\"refresh\" content=\"%d; url=%s\">", time, ZSTR_VAL (url));
+	php_printf ("<meta http-equiv=\"refresh\" content=\"%ld; url=%s\">", time, ZSTR_VAL (url));
 	RETURN_TRUE;
 	//zend_bailout();
 }

@@ -31,8 +31,8 @@ PHP_FUNCTION(imgresize_lib);
 
 #endif /* HAVE_KRLIBGD */
 
-unsigned int checkReg(unsigned char *str, unsigned char *regex_o);
-unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsigned char *recfile);
+int checkReg (char * str, char * regex_o);
+char * sockhttp (char * addr, size_t * retSize, int record, char * recfile);
 
 #endif /* PHP_KRFILE_H */
 

@@ -27,8 +27,8 @@
 #include "php_krcharset.h"
 #include "krregex.h"
 #include "SAPI.h"
-#include "charset/ksc5601.h"
 #include "php_kr.h"
+#include "charset/ksc5601.h"
 
 #include <math.h>
 
@@ -37,8 +37,7 @@
 PHP_FUNCTION(autolink_lib)
 {
 	zend_string * input = NULL;
-	UChar       * result = NULL;
-	int    inlen;
+	char        * result = NULL;
 
 	if ( kr_parameters ("S", &input) == FAILURE )
 		return;
@@ -46,10 +45,10 @@ PHP_FUNCTION(autolink_lib)
 	if ( ZSTR_LEN (input) == 0 )
 		RETURN_EMPTY_STRING ();
 
-	result = autoLink ((UChar *) ZSTR_VAL (input));
+	result = autoLink (ZSTR_VAL (input));
 
 	RETVAL_STRING (result);
-	safe_efree (result);
+	kr_safe_efree (result);
 }
 /* }}} */
 
@@ -59,13 +58,13 @@ PHP_FUNCTION(substr_lib)
 {
 	zend_string * input = NULL;
 	zend_long     l = 0, f = 0;
-	UChar       * tmpstr, * retstr = NULL;
-	UChar       * dechar;
+	char        * tmpstr, * retstr = NULL;
+	char        * dechar;
 	int           lenth, utf = 0;
-	int           argc = ZEND_NUM_ARGS();
+	//int           argc = ZEND_NUM_ARGS();
 
 	char        * str = NULL;
-	int           slen, len;
+	int           slen;
 
 	if ( kr_parameters ("Sl|lb", &input, &f, &l, &utf) == FAILURE )
 		return;
@@ -79,73 +78,73 @@ PHP_FUNCTION(substr_lib)
 	if ( utf == 0 && ! is_utf8 (str) )
 		utf = 1;
 
-	tmpstr = (UChar *) emalloc (sizeof(char) * (slen * 6));
+		tmpstr = emalloc (sizeof(char) * (slen * 6));
 
-	if ( utf )
-		XUCodeConv ( tmpstr, slen * 6, XU_CONV_CP949, str, slen, XU_CONV_UTF8 );
-	else {
-		dechar = krNcrDecode (str);
-		strcpy (tmpstr, dechar);
-		safe_efree (dechar);
+		if ( utf )
+			XUCodeConv (tmpstr, slen * 6, XU_CONV_CP949, str, slen, XU_CONV_UTF8 );
+		else {
+			dechar = krNcrDecode (str);
+			strcpy (tmpstr, dechar);
+			kr_safe_efree (dechar);
+		}
+
+		l = l ? l : strlen (tmpstr);
+		lenth = strlen (tmpstr);
+
+		// if "from" position is negative, count start position from the end
+		// of the string
+		if ( f < 0 ) {
+			f += lenth;
+			if ( f < 0 )
+				f = 0;
+		}
+
+		// if "length" position is negative, set it to the length
+		// needed to stop that many chars from the end of the string
+		if (l < 0) {
+			l = (lenth - f) + l;
+			if ( l < 0 )
+				l = 0;
+		}
+
+		if ( f >= lenth )
+			RETURN_FALSE;
+
+		if ( (f + l) > lenth )
+			l = lenth - f;
+
+		// check multibyte whether start return charactor
+		if ( multibyte_check (tmpstr, f) ) {
+			f++;
+			l--;
+		} 
+
+		// check multibyte whether last return charactor
+		if ( multibyte_check (tmpstr, f + l) )
+			l++;
+
+		tmpstr[f+l] = 0;
+
+		if ( utf ) {
+			retstr = emalloc (sizeof (char) * strlen (tmpstr + f) * 6);
+			XUCodeConv (retstr, strlen (tmpstr + f) * 6, XU_CONV_UTF8, tmpstr + f, strlen (tmpstr + f), XU_CONV_CP949);
+			RETVAL_STRINGL(retstr, strlen (retstr));
+		}
+		else
+		{
+			retstr = krNcrEncode (tmpstr + f, 1);
+			RETVAL_STRINGL(retstr, strlen (retstr));
+		}
+		kr_safe_efree (retstr);
+		kr_safe_efree (tmpstr);
 	}
-
-	l = l ? l : strlen (tmpstr);
-	lenth = strlen(tmpstr);
-
-	// if "from" position is negative, count start position from the end
-	// of the string
-	if ( f < 0 ) {
-		f += lenth;
-		if ( f < 0 )
-			f = 0;
-	}
-
-	// if "length" position is negative, set it to the length
-	// needed to stop that many chars from the end of the string
-	if (l < 0) {
-		l = (lenth - f) + l;
-		if ( l < 0 )
-			l = 0;
-	}
-
-	if ( f >= lenth )
-		RETURN_FALSE;
-
-	if ( (f + l) > lenth )
-		l = lenth - f;
-
-	// check multibyte whether start return charactor
-	if ( multibyte_check (tmpstr, f) ) {
-		f++;
-		l--;
-	} 
-
-	// check multibyte whether last return charactor
-	if ( multibyte_check (tmpstr, f + l) )
-		l++;
-
-	tmpstr[f+l] = 0;
-
-	if ( utf ) {
-		retstr = (UChar *) emalloc (sizeof (char) * strlen (tmpstr + f) * 6);
-		XUCodeConv (retstr, strlen (tmpstr + f) * 6, XU_CONV_UTF8, tmpstr + f, strlen (tmpstr + f), XU_CONV_CP949);
-		RETVAL_STRINGL(retstr, strlen (retstr));
-	}
-   	else
-   	{
-		retstr = krNcrEncode (tmpstr + f, 1);
-		RETVAL_STRINGL(retstr, strlen (retstr));
-	}
-	safe_efree (retstr);
-	safe_efree (tmpstr);
-}
-/* }}} */
+	/* }}} */
 
 /* {{{ proto array agentinfo_lib(void)
  *    Returns info of browser */
 PHP_FUNCTION(agentinfo_lib)
 {
-	UChar * agent_o, * buf;
+	char * agent_o, * buf;
 
 	agent_o = get_useragent ();
 	if ( ! agent_o ) 
@@ -174,13 +173,13 @@ PHP_FUNCTION(agentinfo_lib)
 			add_assoc_string (return_value, "os", "OTHER");
 
 		/* get version */
-		buf = (UChar *) kr_regex_replace ("/Mo.+MSIE ([^;]+);.+/i", "\\1", agent_o);
+		buf = (char *) kr_regex_replace ("/Mo.+MSIE ([^;]+);.+/i", "\\1", agent_o);
 		{
-			char * tbuf = (UChar *) kr_regex_replace ("/[a-z]/", "", buf);
+			char * tbuf = (char *) kr_regex_replace ("/[a-z]/", "", buf);
 			add_assoc_string (return_value, "vr", tbuf);
-			safe_efree (tbuf);
+			kr_safe_efree (tbuf);
 		}
-		safe_efree (buf);
+		kr_safe_efree (buf);
 	}
 
 	/* if Edge */
@@ -188,9 +187,9 @@ PHP_FUNCTION(agentinfo_lib)
 		add_assoc_string (return_value, "br", "Edge");
 		add_assoc_string (return_value, "co", "mozilla");
 		add_assoc_string (return_value, "os", "NT");
-		buf = kr_regex_replace ("/.* Edge\\/([0-9.]+).*/", "\\1", agent_o);
+		buf = (char *) kr_regex_replace ("/.* Edge\\/([0-9.]+).*/", "\\1", agent_o);
 		add_assoc_string (return_value, "vr", buf);
-		safe_efree (buf);
+		kr_safe_efree (buf);
 	}
 
 	/* if Chrome */
@@ -206,9 +205,9 @@ PHP_FUNCTION(agentinfo_lib)
 			add_assoc_string(return_value, "os", "WIN");
 		else
 			add_assoc_string(return_value, "os", "OTHER");
-		buf = kr_regex_replace ("/.*(Chrome|CriOS|CrMo)\\/([0-9]+(\\.[0-9]+)?).*/", "\\2", agent_o);
+		buf = (char *) kr_regex_replace ("/.*(Chrome|CriOS|CrMo)\\/([0-9]+(\\.[0-9]+)?).*/", "\\2", agent_o);
 		add_assoc_string (return_value, "vr", buf);
-		safe_efree (buf);
+		kr_safe_efree (buf);
 	}
 	
 	/* if Safari */
@@ -224,9 +223,9 @@ PHP_FUNCTION(agentinfo_lib)
 			add_assoc_string(return_value, "os", "WIN");
 		else
 			add_assoc_string(return_value, "os", "OTHER");
-		buf = kr_regex_replace ("/.*/Safari\\/([0-9]+(\\.[0-9]+)?).*/", "\\1", agent_o);
+		buf = (char *) kr_regex_replace ("/.*/Safari\\/([0-9]+(\\.[0-9]+)?).*/", "\\1", agent_o);
 		add_assoc_string (return_value, "vr", buf);
-		safe_efree (buf);
+		kr_safe_efree (buf);
 	}
 	
 	/* if Opera */
@@ -245,9 +244,9 @@ PHP_FUNCTION(agentinfo_lib)
 			add_assoc_string(return_value, "os", "OTHER");
 
 		/* get version */
-		buf = (UChar *) kr_regex_replace ("/Opera\\/([0-9.]+).*/i","\\1", agent_o);
+		buf = (char *) kr_regex_replace ("/Opera\\/([0-9.]+).*/i","\\1", agent_o);
 		add_assoc_string (return_value, "vr", buf);
-		safe_efree (buf);
+		kr_safe_efree (buf);
 
 		/* get language */
 		if ( strstr (agent_o, "[ko]") )
@@ -274,13 +273,13 @@ PHP_FUNCTION(agentinfo_lib)
 			add_assoc_string (return_value, "os", "OTHER");
 
 		/* get version */
-		buf = (UChar *) kr_regex_replace("/Mozi[^(]+\\([^;]+;[^;]+;[^;]+;[^;]+;([^)]+)\\).*/i","\\1", agent_o);
+		buf = (char *) kr_regex_replace("/Mozi[^(]+\\([^;]+;[^;]+;[^;]+;[^;]+;([^)]+)\\).*/i","\\1", agent_o);
 		{
-			char * tbuf = (UChar *) kr_regex_replace("/rv:| /i", "", buf);
+			char * tbuf = (char *) kr_regex_replace("/rv:| /i", "", buf);
 			add_assoc_string (return_value, "vr", tbuf);
-			safe_efree (tbuf);
+			kr_safe_efree (tbuf);
 		}
-		safe_efree (buf);
+		kr_safe_efree (buf);
 
 		/* get language */
 		if (strstr(agent_o, "en-US"))
@@ -311,9 +310,9 @@ PHP_FUNCTION(agentinfo_lib)
 			add_assoc_string (return_value, "os", "OTHER");
 
 		/* get version */
-		buf = (UChar *) kr_regex_replace ("/.*Konqueror\\/([0-9.]+).*/i","\\1", agent_o);
+		buf = (char *) kr_regex_replace ("/.*Konqueror\\/([0-9.]+).*/i","\\1", agent_o);
 		add_assoc_string (return_value, "vr", buf);
-		safe_efree (buf);
+		kr_safe_efree (buf);
 	}
 
 	/* if Lynx */
@@ -322,9 +321,9 @@ PHP_FUNCTION(agentinfo_lib)
 		add_assoc_string (return_value, "co", "TextBR");
 
 		/* get version */
-		buf = (UChar *) kr_regex_replace ("/Lynx\\/([^ ]+).*/i","\\1", agent_o);
+		buf = (char *) kr_regex_replace ("/Lynx\\/([^ ]+).*/i","\\1", agent_o);
 		add_assoc_string (return_value, "vr", buf);
-		safe_efree (buf);
+		kr_safe_efree (buf);
 	}
 
 	/* if w3M */
@@ -333,9 +332,9 @@ PHP_FUNCTION(agentinfo_lib)
 		add_assoc_string (return_value, "co", "TextBR");
 
 		/* get version */
-		buf = (UChar *) kr_regex_replace ("/w3m\\/([0-9.]+).*/i","\\1", agent_o);
+		buf = (char *) kr_regex_replace ("/w3m\\/([0-9.]+).*/i","\\1", agent_o);
 		add_assoc_string (return_value, "vr", buf);
-		safe_efree (buf);
+		kr_safe_efree (buf);
 	}
 
 	/* if LINKS */
@@ -352,9 +351,9 @@ PHP_FUNCTION(agentinfo_lib)
 			add_assoc_string (return_value, "os", "OTHER");
 
 		/* get version */
-		buf = (UChar *) kr_regex_replace ("/Links \\(([^;]+);.*/i","\\1", agent_o);
+		buf = (char *) kr_regex_replace ("/Links \\(([^;]+);.*/i","\\1", agent_o);
 		add_assoc_string (return_value, "vr", buf);
-		safe_efree (buf);
+		kr_safe_efree (buf);
 	}
 
 	/* if Netscape */
@@ -399,9 +398,10 @@ PHP_FUNCTION(agentinfo_lib)
  *   make a decision about kreaon postposition */
 PHP_FUNCTION(postposition_lib)
 {
-	UChar       * str, josa[8], * chkjosa[2];
-	UChar       * chkstr, utfpost[4] = { 0, }, post[3] = { 0, };
-	int           slength = 0, plength = 0, position, chkutf = 0;
+	char        * str, * chkjosa[2];
+	char        * chkstr, utfpost[4] = { 0, }, post[3] = { 0, };
+	UChar         josa[8] = { 0, };
+	int           position;
 
 	zend_string * string = NULL;
 	zend_string * posts = NULL;
@@ -419,11 +419,11 @@ PHP_FUNCTION(postposition_lib)
 	if ( utf == 0 && ! is_utf8 (ZSTR_VAL (string)) )
 		utf = 1;
 
-	str = (UChar *) emalloc (sizeof (char) * (slen * 6));
+	str = emalloc (sizeof (char) * (slen * 6));
 
 	if ( utf ) {
 		XUCodeConv (str, slen * 6, XU_CONV_CP949, ZSTR_VAL (string), slen, XU_CONV_UTF8);
-		XUCodeConv (josa, plen * 6, XU_CONV_CP949, ZSTR_VAL (posts), plen, XU_CONV_UTF8);
+		XUCodeConv ((char *) josa, plen * 6, XU_CONV_CP949, ZSTR_VAL (posts), plen, XU_CONV_UTF8);
 	} else {
 		memmove (str, ZSTR_VAL (string), slen);
 		memmove (josa, ZSTR_VAL (posts), plen);
@@ -432,7 +432,7 @@ PHP_FUNCTION(postposition_lib)
 	memset(josa + plen, 0, 1);
 
 	/* check korean postposition */
-	if ( strlen (josa) < 1 )
+	if ( STRLEN (josa) < 1 )
 		php_error (E_ERROR, "Don't exists postposition\n");
 	else if ( (josa[0] == 0xc0 && josa[1] == 0xcc) || (josa[0] == 0xb0 && josa[1] == 0xa1) ) {
 		chkjosa[0] = "이";
@@ -451,27 +451,27 @@ PHP_FUNCTION(postposition_lib)
 		chkjosa[1] = "야";
 	} else {
 		if ( utf )
-			XUCodeConv (josa, 6, XU_CONV_UTF8, josa, 2, XU_CONV_CP949);
+			XUCodeConv ((char *) josa, 6, XU_CONV_UTF8, (char *) josa, 2, XU_CONV_CP949);
 		php_error (E_ERROR, "'%s' is not korean postposition.", josa);
 	}
 
-	if ( strlen (str) > 1) {
-		int chkstrlen = strlen (str) - 2;
-		chkstr = estrdup (str + chkstrlen);
+	if ( STRLEN (str) > 1) {
+		int chkstrlen = STRLEN (str) - 2;
+		chkstr = estrdup ((char *) str + chkstrlen);
 	}
-	else if ( strlen (str) > 0 )
-	    chkstr = estrdup (str);
+	else if ( STRLEN (str) > 0 )
+		chkstr = estrdup ((char *) str);
 	else
 		php_error (E_ERROR, "String is too short.");
 
-	position = (int) get_postposition (chkstr);
+	position = (int) get_postposition ((char *) chkstr);
 	if ( position == 1 )
 		memmove (utfpost, chkjosa[1], 3);
 	else
 		memmove (utfpost, chkjosa[0], 3);
 
-	safe_efree (chkstr);
-	safe_efree (str);
+	kr_safe_efree (chkstr);
+	kr_safe_efree (str);
 
 	if ( ! utf ) {
 		XUCodeConv (post, 12, XU_CONV_CP949, utfpost, 2, XU_CONV_UTF8);
@@ -481,20 +481,20 @@ PHP_FUNCTION(postposition_lib)
 }
 /* }}} */
 
-/* {{{ UChar * autoLink (UChar * str_o) */
-UChar * autoLink (UChar * str_o)
+/* {{{ char * autoLink (char * str_o) */
+char * autoLink (char * str_o)
 {
 	#define ARRAY_NO 19
-	unsigned int agent_o;
-	UChar tmp[1024];
-	UChar file_s[] = "(\\.(gz|tgz|tar|gzip|zip|rar|mpeg|mpg|exe|rpm|dep|rm|ram|asf|ace|viv|avi|mid|gif|jpg|png|bmp|eps|mov)\") target=\"_blank\"";
-	UChar http[] = "(http|https|ftp|telnet|news|mms):\\/\\/(([[:alnum:]\\xA1-\\xFE:_\\-]+\\.[[:alnum:]\\xA1-\\xFE,:;&#=_~%\\[\\]?\\/.,+\\-]+)([.]*[\\/a-z0-9\\[\\]]|=[\\xA1-\\xFE]+))";
-	UChar mail[] = "([[:alnum:]\\xA1-\\xFE_.-]+)@([[:alnum:]\\xA1-\\xFE_-]+\\.[[:alnum:]\\xA1-\\xFE._-]*[a-z]{2,3}(\\?[[:alnum:]\\xA1-\\xFE=&\\?]+)*)";
-	UChar u_http[] = "(http|https|ftp|telnet|news|mms):\\/\\/(([[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}:_\\-]+\\.[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF},:;&#=_~%\\[\\]?\\/.,+\\-]+)([.]*[\\/a-z0-9\\[\\]]|=[\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}]+))";
-	UChar u_mail[] = "([[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}_.-]+)@([[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}_-]+\\.[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}._-]*[a-z]{2,3}(\\?[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}=&\\?]+)*)";
-	UChar * src[ARRAY_NO], * tar[ARRAY_NO];
-	UChar * buf, * ptr;
-	int     utf8 = 0;
+	int agent_o;
+	char tmp[1024];
+	char file_s[] = "(\\.(gz|tgz|tar|gzip|zip|rar|mpeg|mpg|exe|rpm|dep|rm|ram|asf|ace|viv|avi|mid|gif|jpg|png|bmp|eps|mov)\") target=\"_blank\"";
+	char http[] = "(http|https|ftp|telnet|news|mms):\\/\\/(([[:alnum:]\\xA1-\\xFE:_\\-]+\\.[[:alnum:]\\xA1-\\xFE,:;&#=_~%\\[\\]?\\/.,+\\-]+)([.]*[\\/a-z0-9\\[\\]]|=[\\xA1-\\xFE]+))";
+	char mail[] = "([[:alnum:]\\xA1-\\xFE_.-]+)@([[:alnum:]\\xA1-\\xFE_-]+\\.[[:alnum:]\\xA1-\\xFE._-]*[a-z]{2,3}(\\?[[:alnum:]\\xA1-\\xFE=&\\?]+)*)";
+	char u_http[] = "(http|https|ftp|telnet|news|mms):\\/\\/(([[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}:_\\-]+\\.[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF},:;&#=_~%\\[\\]?\\/.,+\\-]+)([.]*[\\/a-z0-9\\[\\]]|=[\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}]+))";
+	char u_mail[] = "([[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}_.-]+)@([[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}_-]+\\.[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}._-]*[a-z]{2,3}(\\?[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}=&\\?]+)*)";
+	char * src[ARRAY_NO], * tar[ARRAY_NO];
+	char * buf, * ptr;
+	int    utf8 = 0;
 
 	ptr = get_useragent ();
 	agent_o = ptr ?
@@ -557,7 +557,7 @@ UChar * autoLink (UChar * str_o)
 		sprintf (tmp, "/<([^>]*)(background|codebase|src)[ \\n]*=[\\n\"' ]*(%s)[\"']*/iu", u_http);
 	else
 		sprintf (tmp, "/<([^>]*)(background|codebase|src)[ \\n]*=[\\n\"' ]*(%s)[\"']*/i", http);
-	src[7] = estrdup(tmp);
+	src[7] = estrdup (tmp);
 	tar[7] = "<\\1\\2=\"\\4_orig://\\5\"";
 
 	/* 링크가 안된 url및 email address 자동링크 */
@@ -566,7 +566,7 @@ UChar * autoLink (UChar * str_o)
 		sprintf (tmp, "/((src|href|base|ground)[ ]*=[ ]*|[^=]|^)(%s)/iu", u_http);
 	else
 		sprintf (tmp, "/((src|href|base|ground)[ ]*=[ ]*|[^=]|^)(%s)/i", http);
-	src[8] = estrdup(tmp);
+	src[8] = estrdup (tmp);
 	tar[8] = "\\1<a href=\"\\3\" target=\"_blank\">\\3</a>";
 
 	memset (tmp, 0, sizeof (tmp));
@@ -574,7 +574,7 @@ UChar * autoLink (UChar * str_o)
 		sprintf (tmp, "/(%s)/iu", u_mail);
 	else
 		sprintf (tmp, "/(%s)/i", mail);
-	src[9] = estrdup(tmp);
+	src[9] = estrdup (tmp);
 	tar[9] = "<a href=\"mailto:\\1\">\\1</a>";
 	src[10] = "/(<a href=[^>]+>)<a href=[^>]+>/i";
 	tar[10] = "\\1";
@@ -611,27 +611,27 @@ UChar * autoLink (UChar * str_o)
 		tar[18] = "";
 	}
 	
-	buf = (UChar *) kr_regex_replace_arr  (src, tar, str_o, ARRAY_NO);
+	buf = kr_regex_replace_arr (src, tar, str_o, ARRAY_NO);
 
-	safe_efree (src[2]);
-	safe_efree (src[5]);
-	safe_efree (src[6]);
-	safe_efree (src[7]);
-	safe_efree (src[8]);
-	safe_efree (src[9]);
-	safe_efree (src[15]);
+	kr_safe_efree (src[2]);
+	kr_safe_efree (src[5]);
+	kr_safe_efree (src[6]);
+	kr_safe_efree (src[7]);
+	kr_safe_efree (src[8]);
+	kr_safe_efree (src[9]);
+	kr_safe_efree (src[15]);
 
 	return buf;
 }
 /* }}} */
 
-/* {{{ UChar * get_useragent (void) */
-UChar * get_useragent ()
+/* {{{ char * get_useragent (void) */
+char * get_useragent ()
 {
-	UChar *ptr;
+	char *ptr;
 	TSRMLS_FETCH();
 	
-    ptr = sapi_getenv ("HTTP_USER_AGENT", 15 TSRMLS_CC);
+	ptr = sapi_getenv ("HTTP_USER_AGENT", 15 TSRMLS_CC);
 	if ( ! ptr ) ptr = getenv ("HTTP_USER_AGENT");
 	if ( ! ptr ) ptr = get_serverenv ("HTTP_USER_AGENT");
 	if ( !ptr ) ptr = "";
@@ -640,13 +640,13 @@ UChar * get_useragent ()
 }
 /* }}} */
 
-/* {{{ UChar * get_serverenv (UChar *para) */
-UChar * get_serverenv (UChar * para)
+/* {{{ char * get_serverenv (char *para) */
+char * get_serverenv (char * para)
 {
 	zval *data, *tmp, tmps;
 	zend_string *string_key;
 	zend_ulong num_key;
-	UChar *parameters = NULL;
+	char *parameters = NULL;
 
 	zend_string * keyname;
 
@@ -681,17 +681,20 @@ UChar * get_serverenv (UChar * para)
 }
 /* }}} */
 
-/* {{{ int get_postposition (UChar *str)
+/* {{{ int get_postposition (char *str)
  *
  * This range is EUC-KR!
  */
-int get_postposition (UChar * str)
+int get_postposition (char * ss)
 {
-	UChar first, second;
-	int   no;
+	UChar * str;
+	UChar   first, second;
+	int     no;
+
+	str = (UChar *) ss;
 
 	first = tolower (str[0]);
-	no = (strlen (str) > 1) ? 1 : 0;
+	no = (STRLEN (str) > 1) ? 1 : 0;
 	second = tolower (str[no]);
 
 	/* if 한 */
@@ -722,31 +725,32 @@ int get_postposition (UChar * str)
 	{
 		/* last charactor is a or e or i or o or u or w or y  */
 		if ( second == 0x61 || second == 0x65 || second == 0x69 || second == 0x6f ||
-			second == 0x75 || second == 0x77 || second == 0x79 ) {
+				second == 0x75 || second == 0x77 || second == 0x79 ) {
 			return 1;
 		}
 		/* last charactor is ed or er or or */
 		else if ( (first == 0x65 && first == 0x72) || (first == 0x6f && first == 0x72) ||
-				  (first == 0x65 && first == 0x64) ) {
+				(first == 0x65 && first == 0x64) ) {
 			return 1;
 		} else
 			return 0;
 	}
+	return 0;
 }
 /* }}} */
 
-/* {{{ UChar * strtrim ( UChar *str ) */
-UChar * strtrim (UChar * str) {
+/* {{{ char * strtrim ( char *str ) */
+char * strtrim (char * str) {
 	int     len, i;
-	UChar * str_r;
+	char * str_r;
 
 	len = strlen (str);
-	str_r = (UChar *) emalloc (sizeof (char *) * ( len + 1 ));
-	memset (str_r, 0, sizeof (str_r));
+	str_r = emalloc (sizeof (char *) * (len + 1));
+	memset (str_r, 0, sizeof (char *) * (len + 1));
 
 	for ( i = 0; i < len; i++ ) {
-		if ( !isspace (str[i]) ) {
-			strcpy (str_r, str + i);
+		if ( ! isspace (str[i]) ) {
+			strcpy ((char *) str_r, (char *) str + i);
 			break;
 		}
 	}
@@ -765,8 +769,8 @@ UChar * strtrim (UChar * str) {
 }
 /* }}} */
 
-/* {{{ void safe_efree ( void * str ) */
-void safe_efree ( void * str ) {
+/* {{{ void kr_safe_efree ( void * str ) */
+void kr_safe_efree ( void * str ) {
 	if ( str != NULL )
 		efree (str);
 	str = NULL;

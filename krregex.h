@@ -51,24 +51,6 @@
 #include <locale.h>
 #endif
 
-
-#if PHP_VERSION_ID < 70300
-
-#if PHP_VERSION_ID < 70200
-PHPAPI zend_string *php_pcre_replace(zend_string *regex, zend_string *subject_str, char *subject, int subject_len, zval *replace_val, int is_callable_replace, int limit, int *replace_count);
-#else
-PHPAPI zend_string *php_pcre_replace(zend_string *regex, zend_string *subject_str, char *subject, int subject_len, zend_string *replace_str, int limit, int *replace_count);
-#endif
-
-#else
-
-PHPAPI zend_string *php_pcre_replace(zend_string *regex, zend_string *subject_str, char *subject, size_t subject_len, zend_string *replace_str, size_t limit, size_t *replace_count);
-
-#endif
-
-extern zend_module_entry pcre_module_entry;
-#define pcre_module_ptr &pcre_module_entry
-
 #if PHP_VERSION_ID < 70300
 typedef struct {
 	pcre *re;
@@ -95,6 +77,27 @@ struct _pcre_cache_entry {
 typedef struct _pcre_cache_entry pcre_cache_entry;
 #endif
 
+#if PHP_VERSION_ID < 70300
+
+#if PHP_VERSION_ID < 70200
+PHPAPI zend_string *php_pcre_replace(zend_string *regex, zend_string *subject_str, char *subject, int subject_len, zval *replace_val, int is_callable_replace, int limit, int *replace_count);
+#else
+PHPAPI zend_string *php_pcre_replace(zend_string *regex, zend_string *subject_str, char *subject, int subject_len, zend_string *replace_str, int limit, int *replace_count);
+#endif
+PHPAPI void  php_pcre_match_impl(  pcre_cache_entry *pce, char *subject, int subject_len, zval *return_value,
+		    zval *subpats, int global, int use_flags, zend_long flags, zend_long start_offset);
+
+#else
+
+PHPAPI zend_string *php_pcre_replace(zend_string *regex, zend_string *subject_str, char *subject, size_t subject_len, zend_string *replace_str, size_t limit, size_t *replace_count);
+PHPAPI void  php_pcre_match_impl(  pcre_cache_entry *pce, char *subject, size_t subject_len, zval *return_value,
+		    zval *subpats, int global, int use_flags, zend_long flags, zend_off_t start_offset);
+
+#endif
+
+extern zend_module_entry pcre_module_entry;
+#define pcre_module_ptr &pcre_module_entry
+
 PHPAPI pcre_cache_entry* pcre_get_compiled_regex_cache(zend_string *regex);
 
 ZEND_BEGIN_MODULE_GLOBALS(pcre)
@@ -117,9 +120,9 @@ ZEND_END_MODULE_GLOBALS(pcre)
  * Defines for mod_korean
  */
 
-unsigned char *kr_regex_replace(unsigned char *regex_o, unsigned char *replace_o, unsigned char *str_o);
-unsigned char *kr_regex_replace_arr(unsigned char *regex[], unsigned char *replace[], unsigned char *str, unsigned int regex_no);
-unsigned int checkReg(unsigned char *str, unsigned char *regex_o);
-int pcre_match (unsigned char *regex, unsigned char *str);
+char *kr_regex_replace(char *regex_o, char *replace_o, char *str_o);
+char *kr_regex_replace_arr(char *regex[], char *replace[], char *str, int regex_no);
+int checkReg(char *str, char *regex_o);
+int pcre_match (char *regex, char *str);
 
 #endif /* KRREGEX_H */

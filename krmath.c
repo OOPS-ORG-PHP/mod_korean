@@ -47,7 +47,7 @@ char * kr_math_number_format (double d, int dec, char dec_point, char thousand_s
 		s--;
 	}
 									        
-	while( s >= tmpbuf ) {
+	while ( s >= tmpbuf ) {
 		*t-- = *s--;
 		if ( thousand_sep && (++count%3) == 0 && s >= tmpbuf ) {
 			*t-- = thousand_sep;
@@ -56,7 +56,7 @@ char * kr_math_number_format (double d, int dec, char dec_point, char thousand_s
 	if ( is_negative )
 		*t-- = '-';
 
-	safe_efree (tmpbuf);
+	kr_safe_efree (tmpbuf);
 	return resbuf;
 }
 

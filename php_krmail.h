@@ -23,25 +23,26 @@
 
 PHP_FUNCTION(mailsource_lib);
 
-UChar * generate_mail (UChar *o_ln, UChar *o_form, UChar *o_to,
-			       UChar *o_title, UChar *o_text, UChar *o_ptext,
-			       UChar *o_attach);
-UChar * generate_from (UChar *email, char *set);
-UChar * generate_to (UChar *toaddr, char *set);
-UChar * generate_title (UChar *title, UChar *set);
-UChar * generate_header (UChar *from, UChar *to, UChar *subject, char *boundary, UChar *is_attach);
-UChar * generate_body (UChar *bset, UChar *bboundary, UChar *btext, UChar *bptext);
-UChar * generate_attach (UChar *path, UChar *bound);
+char  * generate_mail (
+	char * o_ln, char * o_form, char * o_to, char * o_title, char * o_text,
+	char * o_ptext, char * o_attach
+);
+char * generate_from (char * email, char * set);
+char * generate_to (char * toaddr, char * set);
+char * generate_title (char * title, char * set);
+char * generate_header (char * from, char * to, char * subject, char * boundary, char * is_attach);
+char * generate_body (char * bset, char * bboundary, char * btext, char * bptext);
+char * generate_attach (char * path, char * bound);
 char * make_boundary ();
 char * generate_mail_id (char * id);
 char * generate_date ();
-UChar * html_to_plain (UChar * text);
-UChar * body_encode (const UChar *str, int chklen);
-UChar *generate_mime (UChar *filename);
+char * html_to_plain (char * text);
+char * body_encode (const char * str, int chklen);
+char * generate_mime (char * filename);
 
-UChar *kr_regex_replace(UChar *regex_o, UChar *replace_o, UChar *str_o);
-UChar *kr_regex_replace_arr(UChar *regex[], UChar *replace[], UChar *str, unsigned int regex_no);
-PHPAPI extern zend_string * php_base64_encode(const UChar *, size_t);
+char * kr_regex_replace(char * regex_o, char * replace_o, char * str_o);
+char * kr_regex_replace_arr(char * regex[], char * replace[], char * str, int regex_no);
+PHPAPI extern zend_string * php_base64_encode (const UChar *, size_t);
 
 #endif  /* end PHP_KRMAIL_H */
 

@@ -26,6 +26,9 @@
 #include "php_krcheck.h"
 #include "krregex.h"
 
+int is_utf8 (char *);
+void kr_safe_efree (void *);
+
 /* {{{ Static functions
  */
 /* {{{ int numberOfchar(char *str) */
@@ -42,13 +45,13 @@ int numberOfchar (char *str, char chk) {
 }
 /* }}} */
 
-/* {{{ unsigned int checkAddr (UChar * addr, int type) */
-unsigned int checkAddr (UChar * addr, int type) {
-	UChar * regex;
-	UChar regex_e[] = "!^[[:alnum:]\\xA1-\\xFE._-]+@[[:alnum:]\\xA1-\\xFE-]+\\.[[:alnum:].-]+$!i";
-	UChar regex_u[] = "!^(http|https|ftp|telnet|news)://[[:alnum:]\\xA1-\\xFE-]+\\.[[:alnum:]\\xA1-\\xFE:&#@=_~%?/.+-]+$!i";
-	UChar u_regex_e[] = "!^[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}._-]+@[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}-]+\\.[[:alnum:].-]+$!ui";
-	UChar u_regex_u[] = "!^(http|https|ftp|telnet|news)://[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}-]+\\.[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}:&#@=_~%?/.+-]+$!ui";
+/* {{{ int checkAddr (char * addr, int type) */
+int checkAddr (char * addr, int type) {
+	char * regex;
+	char regex_e[] = "!^[[:alnum:]\\xA1-\\xFE._-]+@[[:alnum:]\\xA1-\\xFE-]+\\.[[:alnum:].-]+$!i";
+	char regex_u[] = "!^(http|https|ftp|telnet|news)://[[:alnum:]\\xA1-\\xFE-]+\\.[[:alnum:]\\xA1-\\xFE:&#@=_~%?/.+-]+$!i";
+	char u_regex_e[] = "!^[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}._-]+@[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}-]+\\.[[:alnum:].-]+$!ui";
+	char u_regex_u[] = "!^(http|https|ftp|telnet|news)://[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}-]+\\.[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}:&#@=_~%?/.+-]+$!ui";
 	int ret = 0;
 
 	if ( is_utf8 (addr) )
@@ -63,14 +66,14 @@ unsigned int checkAddr (UChar * addr, int type) {
 }
 /* }}} */
 
-/* {{{ unsigned int chkMetaChar (UChar * str, int type) */
-unsigned int chkMetaChar (UChar * str, int type) {
+/* {{{ int chkMetaChar (char * str, int type) */
+int chkMetaChar (char * str, int type) {
 	int ret;
-	UChar * regex;
-	UChar regex_ur[] = "![^[:alnum:]\\xA1-\\xFE_-]!i";
-	UChar regex_up[] = "![^[:alnum:]\\xA1-\\xFE \\._%-]|\\.\\.!i";
-	UChar u_regex_ur[] = "![^[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}_-]!ui";
-	UChar u_regex_up[] = "![^[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF} \\._%-]|\\.\\.!ui";
+	char * regex;
+	char regex_ur[] = "![^[:alnum:]\\xA1-\\xFE_-]!i";
+	char regex_up[] = "![^[:alnum:]\\xA1-\\xFE \\._%-]|\\.\\.!i";
+	char u_regex_ur[] = "![^[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}_-]!ui";
+	char u_regex_up[] = "![^[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF} \\._%-]|\\.\\.!ui";
 
 	if ( is_utf8 (str) )
 		regex = estrdup (type ? regex_up : regex_ur);
@@ -84,10 +87,10 @@ unsigned int chkMetaChar (UChar * str, int type) {
 }
 /* }}} */
 
-/* {{{ unsigned int check_table (UChar *str) */
-unsigned int check_table (UChar *str) {
-	UChar * buf;
-	UChar * regex[] =
+/* {{{ int check_table (char * str) */
+int check_table (char * str) {
+	char * buf;
+	char * regex[] =
 	{
 		";[\\d]+;",
 		";<(/?)(TABLE|TH|TR|TD)[^>]*>;i",
@@ -101,48 +104,47 @@ unsigned int check_table (UChar *str) {
 		";</TABLE>;i",
 		";[\\D]+;"
 	};
-	UChar * replace[] = { "", "<\\1\\2>", "1", "2", "3", "4", "94", "93", "92", "91", "" };
-	int     result;
+	char * replace[] = { "", "<\\1\\2>", "1", "2", "3", "4", "94", "93", "92", "91", "" };
+	int    result;
 
 	if ( ! checkReg (str, "</?[tT][aA][bB][lL][eE][^>]*>") )
 		return 0;
 
-	buf = (UChar *) kr_regex_replace_arr (
+	buf = kr_regex_replace_arr (
 		regex, replace, str, (sizeof (regex) / sizeof (regex[0]))
 	);
 
-
-	if ( (strlen(buf) % 3) != 0 ) {
-		safe_efree (buf);
+	if ( (strlen (buf) % 3) != 0 ) {
+		kr_safe_efree (buf);
 		return 1;
 	}
 	if ( ! checkReg (buf, "^12(3|4).+9291$") )  {
-		safe_efree (buf);
+		kr_safe_efree (buf);
 		return 2;
 	}
 
 	while ( checkReg (buf, "([1-4])9\\1") ) {
-		UChar * tbuf;
+		char * tbuf;
 		tbuf = estrdup (buf);
-		safe_efree (buf);
+		kr_safe_efree (buf);
 		buf = kr_regex_replace ("/([1-4])9\\1/", "", tbuf);
 
-		safe_efree (tbuf);
+		kr_safe_efree (tbuf);
 	}
 
 	result = (strlen (buf) > 0) ? 3 : 0;
-	safe_efree (buf);
+	kr_safe_efree (buf);
 
 	return result;
 }
 /* }}} */
 
-/* {{{ unsigned int multibyte_check(UChar *str_o, unsigned int p) */
-unsigned int multibyte_check (UChar *str_o, unsigned int p) {
-	UChar * start_p;
-	unsigned int    i,
-					l,
-					twobyte = 0;
+/* {{{ int multibyte_check(char *str_o, unsigned int p) */
+int multibyte_check (char * str_o, int p) {
+	char * start_p;
+	int    i,
+	       l,
+	       twobyte = 0;
 
 	/* return 0 if point is 1st byte in string */
 	if ( p == 0 )
@@ -154,7 +156,7 @@ unsigned int multibyte_check (UChar *str_o, unsigned int p) {
 		(str_o[p-1] >= 0xa1 && str_o[p-1] <= 0xc6 && str_o[p] >= 0x41 && str_o[p] <=0xa0) )
    	{
 		/* if don't exist ' ' charactor */
-		if ( (start_p = strchr (&str_o[p], ' ')) == NULL )
+		if ( (start_p = strchr ((CChar *) &str_o[p], ' ')) == NULL )
 			l = strlen (str_o);
 		else
 			l = start_p - str_o;
@@ -179,11 +181,11 @@ unsigned int multibyte_check (UChar *str_o, unsigned int p) {
 }
 /* }}} */
 
-/* {{{ unsigned int check_windows(unsigned int type)
+/* {{{ int check_windows(int type)
  * type 1 => check of webserver. if iis, return 1. if not return 0
  * type 0 => check of os. if windows, return 1. if not return 0
  */
-unsigned int check_windows (unsigned int type) {
+int check_windows (int type) {
 	switch (type) {
 		case 1:
 			if ( sapi_module.name && ! strcasecmp (sapi_module.name, "isapi") )
@@ -226,7 +228,6 @@ PHP_FUNCTION(check_uristr_lib)
 PHP_FUNCTION(is_email_lib)
 {
 	zend_string  * input = NULL;
-	int            ret   = 0;
 
 	if ( kr_parameters ("S", &input) == FAILURE )
 		return;
@@ -243,7 +244,6 @@ PHP_FUNCTION(is_email_lib)
 PHP_FUNCTION(is_url_lib)
 {
 	zend_string * input = NULL;
-	int           ret   = 0;
 
 	if ( kr_parameters ("S", &input) == FAILURE )
 		return;
@@ -260,7 +260,6 @@ PHP_FUNCTION(is_url_lib)
 PHP_FUNCTION(is_hangul_lib)
 {
 	zend_string * input = NULL;
-	char        * buf;
 
 	if ( kr_parameters ("S", &input) == FAILURE )
 		return;

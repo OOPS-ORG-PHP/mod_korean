@@ -28,7 +28,7 @@
 #include "php_krparse.h"
 
 // need efree
-UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // {{{
+char * kr_regex_replace (char * regex_o, char * replace_o, char * str_o) // {{{
 {
 	zend_string * buf;
 	zend_string * regex;
@@ -44,14 +44,14 @@ UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // 
 	size_t        repc = 0;
 #endif
 
-	UChar       * sval;
+	char        * sval;
 
-	regex = zend_string_init (regex_o, strlen (regex_o), 0);
-	subject = zend_string_init (str_o, strlen (str_o), 0);
+	regex = ze_string_init (regex_o, STRLEN (regex_o), 0);
+	subject = ze_string_init (str_o, STRLEN (str_o), 0);
 #if PHP_VERSION_ID < 70200
-	ZVAL_STRINGL (&replaces, replace_o, strlen (replace_o));
+	ZVAL_STRINGL (&replaces, replace_o, STRLEN (replace_o));
 #else
-	replaces = zend_string_init (replace_o, strlen (replace_o), 0);
+	replaces = ze_string_init (replace_o, STRLEN (replace_o), 0);
 #endif
 
 	buf = php_pcre_replace (
@@ -70,20 +70,20 @@ UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // 
 	zend_string_release (regex);
 	zend_string_release (subject);
 
-	sval = (UChar *) estrdup (ZSTR_VAL (buf));
+	sval = estrdup (ZSTR_VAL (buf));
 	zend_string_release (buf);
 
-	return (UChar *) sval;
+	return sval;
 } // }}}
 
 // need efree
-UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * str_o, unsigned int regex_no) // {{{
+char * kr_regex_replace_arr (char * regex_o[], char * replace_o[], char * str_o, int regex_no) // {{{
 {
 	zend_string * buf = NULL;
 	zend_string * regex;
 	zend_string * subject;
 
-	unsigned int  i;
+	int           i;
 #if PHP_VERSION_ID < 70200
 	zval          rep;
 #else
@@ -95,16 +95,16 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 	size_t        repc = 0;
 #endif
 
-	UChar       * sval;
+	char        * sval;
 
-	subject = zend_string_init (str_o, strlen (str_o), 0);
+	subject = ze_string_init (str_o, STRLEN (str_o), 0);
 
 	for ( i=0; i<regex_no ; i++ ) {
-		regex = zend_string_init (regex_o[i], strlen (regex_o[i]), 0);
+		regex = ze_string_init (regex_o[i], STRLEN (regex_o[i]), 0);
 #if PHP_VERSION_ID < 70200
-		ZVAL_STRINGL (&rep, replace_o[i], strlen (replace_o[i]));
+		ZVAL_STRINGL (&rep, replace_o[i], STRLEN (replace_o[i]));
 #else
-		rep = zend_string_init (replace_o[i], strlen (replace_o[i]), 0);
+		rep = ze_string_init (replace_o[i], STRLEN (replace_o[i]), 0);
 #endif
 
 		if ( i != 0 ) {
@@ -144,22 +144,22 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 	}
 
 
-	sval = (UChar *) estrdup (ZSTR_VAL (buf));
+	sval = estrdup (ZSTR_VAL (buf));
 	zend_string_release (buf);
 
 	return sval;
 } // }}}
 
-unsigned int checkReg (UChar * str, UChar * regex_o) // {{{
+int checkReg (char * str, char * regex_o) // {{{
 {
 	regex_t preg;
 
-	if ( regcomp (&preg, regex_o, REG_EXTENDED) != 0 ) {
+	if ( regcomp (&preg, (CChar *) regex_o, REG_EXTENDED) != 0 ) {
 		php_error (E_WARNING," Problem REGEX compile in PHP");
 		return 0;
 	}
 
-	if ( regexec (&preg, str, 0, NULL, 0) == 0 ) {
+	if ( regexec (&preg, (CChar *) str, 0, NULL, 0) == 0 ) {
 		regfree (&preg);
 		return 1;
 	} else {
@@ -171,7 +171,7 @@ unsigned int checkReg (UChar * str, UChar * regex_o) // {{{
 /*
  * get php_do_pcre_match
  */
-int pcre_match (UChar * regex, UChar * subject) // {{{
+int pcre_match (char * regex, char * subject) // {{{
 {
 	/* parameters */
 	pcre_cache_entry * pce;              /* Compiled regular expression */
@@ -181,10 +181,10 @@ int pcre_match (UChar * regex, UChar * subject) // {{{
 	zend_long          start_offset = 0; /* Where the new search starts */
 	int                return_val = -1;
 
-	regex_string = zend_string_init (regex, strlen (regex), 0);
+	regex_string = ze_string_init (regex, STRLEN (regex), 0);
 
 #if PHP_VERSION_ID < 70300
-	if ( ZEND_SIZE_T_INT_OVFL (strlen (subject))) {
+	if ( ZEND_SIZE_T_INT_OVFL (STRLEN (subject))) {
 		php_error_docref (NULL, E_WARNING, "Subject is too long");
 		return -1;
 	}
@@ -200,17 +200,17 @@ int pcre_match (UChar * regex, UChar * subject) // {{{
 
 	pce->refcount++;
 	php_pcre_match_impl (
-		pce, subject, strlen (subject), matches, subpats, 0, 0, 0, start_offset
+		pce, subject, STRLEN (subject), matches, subpats, 0, 0, 0, start_offset
 	);
 	pce->refcount--;
 
 	if ( Z_TYPE_P (matches) != IS_LONG ) {
-		safe_efree (matches);
+		kr_safe_efree (matches);
 		return -1;
 	}
 
 	return_val = (int) Z_LVAL_P (matches);
-	safe_efree (matches);
+	kr_safe_efree (matches);
 
 	return return_val;
 } // }}}

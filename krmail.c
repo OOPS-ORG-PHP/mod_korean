@@ -46,15 +46,16 @@
 
 struct tm *loctime;
 
-/* {{{ proto int mailsource_lib(UChar *ln, UChar *ctype, UChar *from
- *								UChar *to, UChar *title, UChar *text
- *								UChar *ptext, UChar *attach)
+/* {{{ proto int mailsource_lib(char * ln, char *ctype, char *from
+ *								char * to, Char *title, char *text
+ *								char * ptext, char *attach)
  * make mail source */
 PHP_FUNCTION(mailsource_lib)
 {
-	UChar       * c_ln, * c_from, * c_to, * c_title;
-	UChar       * c_text, * c_ptext, * c_attach, * ret;
-	UChar         attachfile[1024] = { 0, };
+	char        * c_ln, * c_from, * c_to, * c_title;
+	char        * c_text, * c_ptext, * c_attach;
+	char          attachfile[1024] = { 0, };
+	char        * ret;
 
 	zend_string * lang   = NULL,
 	            * from   = NULL,
@@ -63,8 +64,6 @@ PHP_FUNCTION(mailsource_lib)
 	            * text   = NULL,
 	            * ptext  = NULL,
 	            * attach = NULL;
-	int           plen   = 0,
-	              alen   = 0;
 
 	c_attach = NULL;
 	c_ptext  = NULL;
@@ -75,65 +74,66 @@ PHP_FUNCTION(mailsource_lib)
 			&lang, &from, &to, &title,
 			&text, &ptext, &attach
 		) == FAILURE
-	)
+	) {
 		return;
+	}
 
 	if ( ZSTR_LEN(lang) == 0 )
 		c_ln = estrdup ("utf-8");
 	else
-		c_ln = (UChar *) strtrim (ZSTR_VAL (lang));
+		c_ln = strtrim (ZSTR_VAL (lang));
 
-	c_from  = (UChar *) strtrim (ZSTR_VAL (from));
-	c_to    = (UChar *) strtrim (ZSTR_VAL (to));
-	c_title = (UChar *) strtrim (ZSTR_VAL (title));
-	c_text  = (UChar *) strtrim (ZSTR_VAL (text));
+	c_from  = strtrim (ZSTR_VAL (from));
+	c_to    = strtrim (ZSTR_VAL (to));
+	c_title = strtrim (ZSTR_VAL (title));
+	c_text  = strtrim (ZSTR_VAL (text));
 
 	if ( ptext && ZSTR_LEN (ptext) )
-		c_ptext = (UChar *) strtrim (ZSTR_VAL (ptext));
+		c_ptext = strtrim (ZSTR_VAL (ptext));
 
 	if ( attach && ZSTR_LEN (attach) )
-		c_attach = (UChar *) strtrim (ZSTR_VAL (attach));
+		c_attach = strtrim (ZSTR_VAL (attach));
 
 	memset(attachfile, '\0', sizeof(attachfile));
 	if (c_attach != NULL) {
-		if ( VCWD_REALPATH(c_attach, attachfile) == NULL )
-			strcpy (attachfile, c_attach);
+		if ( VCWD_REALPATH((char *) c_attach, (char *) attachfile) == NULL )
+			strcpy ((char *) attachfile, (char *) c_attach);
 		PHP_KR_CHECK_OPEN_BASEDIR (attachfile);
 	}
 
-	if ( (ret = generate_mail(c_ln, c_from, c_to, c_title, c_text, c_ptext, attachfile)) == NULL )
+	if ( (ret = (char *) generate_mail(c_ln, c_from, c_to, c_title, c_text, c_ptext, attachfile)) == NULL )
 		RETURN_EMPTY_STRING();
 
 	RETVAL_STRING(ret);
 
-	safe_efree (c_ptext);
-	safe_efree (c_attach);
-	safe_efree (c_ln);
-	safe_efree (c_from);
-	safe_efree (c_to);
-	safe_efree (c_title);
-	safe_efree (c_text);
-	safe_efree (ret);
+	kr_safe_efree (c_ptext);
+	kr_safe_efree (c_attach);
+	kr_safe_efree (c_ln);
+	kr_safe_efree (c_from);
+	kr_safe_efree (c_to);
+	kr_safe_efree (c_title);
+	kr_safe_efree (c_text);
+	kr_safe_efree (ret);
 }
 /* }}} */
 
-UChar * generate_mail (UChar * o_ln, UChar * o_from, UChar * o_to,
-					   UChar * o_title, UChar * o_text, UChar * o_ptext,
-					   UChar * o_attach) // {{{
+char * generate_mail (char * o_ln, char * o_from, char * o_to,
+					  char * o_title, char * o_text, char * o_ptext,
+					  char * o_attach) // {{{
 {
-	UChar      * return_header = NULL,
+	char       * return_header = NULL,
 	           * return_body = NULL,
 	           * return_attach = NULL,
 	           * return_mail = NULL;
 	char       * boundary = NULL,
 	           * charset = NULL,
 	           * attbound = NULL;
-	UChar      * from, * to, * title;
+	char       * from, * to, * title;
 	unsigned int i = 0;
 	size_t       return_mail_len = 0;
 
 	// make charset
-	for ( i=0; i<strlen (o_ln); i++ )
+	for ( i=0; i<STRLEN (o_ln); i++ )
 		o_ln[i] = tolower(o_ln[i]);
 
 	if ( ! strcmp (o_ln, "ko" ) )
@@ -156,7 +156,7 @@ UChar * generate_mail (UChar * o_ln, UChar * o_from, UChar * o_to,
 	// make boundary
 	boundary = make_boundary ();
 
-	if ( strlen (o_attach) > 0 ) {
+	if ( STRLEN (o_attach) > 0 ) {
 		// attach boundary
 		attbound = make_boundary ();
 
@@ -166,58 +166,69 @@ UChar * generate_mail (UChar * o_ln, UChar * o_from, UChar * o_to,
 		return_header = generate_header (from, to, title, boundary, o_attach);
 
 	if ( (return_body = generate_body (charset, boundary, o_text, o_ptext)) == NULL ) {
-		safe_efree (boundary);
-		safe_efree (attbound);
+		kr_safe_efree (boundary);
+		kr_safe_efree (attbound);
 		return NULL;
 	}
 
-	if ( strlen(o_attach) > 0 && return_attach > 0 ) {
-		unsigned int athead_len = strlen (boundary) + strlen (attbound) + 128;
-		UChar * tmp_attach_header;
+	if ( STRLEN (o_attach) > 0 && return_attach > 0 ) {
+		int athead_len = strlen (boundary) + strlen (attbound) + 128;
+		char * tmp_attach_header;
 
-		return_mail_len = strlen(return_header) + strlen(return_body) + strlen(return_attach) +
-							strlen(attbound) + athead_len + 128;
+		return_mail_len = strlen (return_header) + strlen (return_body) + strlen (return_attach) +
+							strlen (attbound) + athead_len + 128;
 
 		tmp_attach_header = emalloc (sizeof (char) * (athead_len));
 		return_mail = emalloc (sizeof (char) * (return_mail_len));
 
-		sprintf (tmp_attach_header, "\r\n--%s\r\nContent-Type: multipart/alternative;\r\n" \
-								   "              boundary=\"%s\"\r\n\r\n", attbound, boundary);
+		sprintf (
+			tmp_attach_header,
+			"\r\n--%s\r\n" \
+			"Content-Type: multipart/alternative;\r\n" \
+			"              boundary=\"%s\"\r\n\r\n",
+			attbound, boundary
+		);
 
-		sprintf (return_mail, "%s\r\nThis is a multi-part message in MIME format.\r\n" \
-				                 "%s%s\r\n%s\r\n--%s--\r\n",
-			   	return_header, tmp_attach_header, return_body, return_attach, attbound);
+		sprintf (
+			return_mail,
+			"%s\r\nThis is a multi-part message in MIME format.\r\n" \
+			"%s%s\r\n%s\r\n--%s--\r\n",
+		   	return_header, tmp_attach_header, return_body, return_attach, attbound
+		);
 
-		safe_efree (return_attach);
-		safe_efree (tmp_attach_header);
+		kr_safe_efree (return_attach);
+		kr_safe_efree (tmp_attach_header);
 	} else {
-		return_mail_len = strlen (return_header) + strlen (return_body) + 128;
+		return_mail_len = STRLEN (return_header) + STRLEN (return_body) + 128;
 		return_mail = emalloc(sizeof (char) * (return_mail_len + 1));
 
-		sprintf(return_mail, "%s\r\nThis is a multi-part message in MIME format." \
-								 "\r\n%s\r\n", return_header, return_body);
+		sprintf((char *) return_mail,
+			"%s\r\nThis is a multi-part message in MIME format." \
+			"\r\n%s\r\n",
+			return_header, return_body
+		);
 	}
 
-	safe_efree (boundary);
-	safe_efree (attbound);
+	kr_safe_efree (boundary);
+	kr_safe_efree (attbound);
 
-	safe_efree (to);
-	safe_efree (from);
-	safe_efree (title);
-	safe_efree (return_body);
-	safe_efree (return_header);
+	kr_safe_efree (to);
+	kr_safe_efree (from);
+	kr_safe_efree (title);
+	kr_safe_efree (return_body);
+	kr_safe_efree (return_header);
 
 	return return_mail;
 } // }}}
 
-UChar * generate_attach (UChar * path, UChar * bound) // {{{
+char * generate_attach (char * path, char * bound) // {{{
 {
 	struct stat filebuf;
 	FILE * fp;
 	size_t fsize, filelen = 0, sumlen = 0, fencodelen = 0;
-	UChar * fencode;
-	UChar * mimetype, * tmpname, * filename,
-		  * contents, * base64text, getattach[FILEBUFS] = { 0, };
+	char * fencode;
+	char * mimetype, * tmpname, * filename,
+		 * contents, * base64text, getattach[FILEBUFS] = { 0, };
 
 	if ( (fp = fopen(path, "rb")) == NULL ) {
 		php_error(E_WARNING, "Can't open attach file '%s' in read mode", path);
@@ -238,10 +249,10 @@ UChar * generate_attach (UChar * path, UChar * bound) // {{{
 	   	filename = estrdup (path);
 
 	// get mime type
-	mimetype = generate_mime (filename);
+	mimetype = generate_mime ((char *) filename);
 
 	contents = emalloc (sizeof (char) * (fsize + 32));
-	memset (contents, '\n', sizeof (contents));
+	memset (contents, '\n', sizeof (char) * (fsize + 32));
 
 	while ( (filelen = fread (getattach, sizeof (char), FILEBUFS, fp)) > 0 ) {
 		memmove (contents + sumlen, getattach, filelen);	
@@ -252,66 +263,69 @@ UChar * generate_attach (UChar * path, UChar * bound) // {{{
 	
 	base64text = body_encode (contents, sumlen);
 
-	fencodelen = strlen (bound) + strlen (mimetype) + (strlen (filename) * 2) + strlen (base64text) + 256;
+	fencodelen = STRLEN (bound) + STRLEN (mimetype) + (STRLEN (filename) * 2) + STRLEN (base64text) + 256;
 	fencode = emalloc(sizeof (char) * (fencodelen));
 
 	sprintf (fencode, "--%s\r\nContent-Type: %s; name=\"%s\"\r\nContent-Transfer-Encoding: " \
 			          "base64\r\nContent-Disposition: inline; filename=\"%s\"\r\n\r\n%s\r\n",
 			bound, mimetype, filename, filename, base64text);
 
-	safe_efree (base64text);
-	safe_efree (filename);
-	safe_efree (contents);
+	kr_safe_efree (base64text);
+	kr_safe_efree (filename);
+	kr_safe_efree (contents);
 
 	return fencode;
 } // }}}
 
-UChar * generate_body (UChar *bset, UChar *bboundary, UChar *btext, UChar *bptext) // {{{
+char * generate_body (char * bset, char * bboundary, char * btext, char * bptext) // {{{
 {
-	UChar      * rbody = NULL;
-	UChar      * plain = NULL,
-	           * base64html = NULL,
-	           * base64plain = NULL,
-	           * buf = NULL; 
-	unsigned int plainlen = 0, htmllen = 0, nobptext = 0;
+	char * rbody = NULL;
+	char * plain = NULL,
+	     * base64html = NULL,
+	     * base64plain = NULL,
+	     * buf = NULL; 
+	int    plainlen = 0, htmllen = 0, nobptext = 0;
 
-	if ( strlen(btext) > 0 ) {
+	if ( STRLEN (btext) > 0 ) {
 		if ( bptext == NULL )
 			nobptext = 1;
 		else if
-			( strlen (bptext) < 1 ) nobptext = 1;
+			( STRLEN (bptext) < 1 ) nobptext = 1;
 
 		if ( nobptext ) {
 			buf = html_to_plain (btext);
 			plain = strtrim (buf);
-			safe_efree (buf);
+			kr_safe_efree (buf);
 		} else
 			plain = strtrim (bptext);
 
 		base64plain = body_encode (plain, -1);
 		base64html  = body_encode (btext, -1);
 
-		plainlen = strlen (base64plain);
-		htmllen  = strlen (base64html);
+		plainlen = STRLEN (base64plain);
+		htmllen  = STRLEN (base64html);
 
 		{
-			unsigned int tmp_body_len = plainlen + htmllen + (strlen (bset) * 2) + (strlen (bboundary) * 3) +182;
-			UChar * tmp_body;
+			int    tmp_body_len = plainlen + htmllen + (STRLEN (bset) * 2) + (STRLEN (bboundary) * 3) +182;
+			char * tmp_body;
 			tmp_body = emalloc (sizeof (char) * (tmp_body_len + 1));
 
-			sprintf (tmp_body, "\r\n--%s\r\nContent-Type: text/plain; charset=%s\r\n" \
-							  "Content-Transfer-Encoding: base64\r\n\r\n%s\r\n\r\n--%s\r\n" \
-							  "Content-Type: text/html; charset=%s\r\nContent-Transfer-Encoding: " \
-							  "base64\r\n\r\n%s\r\n\r\n--%s--\r\n",
-					bboundary, bset, base64plain, bboundary, bset, base64html, bboundary);
+			sprintf (
+				tmp_body,
+				"\r\n--%s\r\nContent-Type: text/plain; charset=%s\r\n" \
+				"Content-Transfer-Encoding: base64\r\n\r\n%s\r\n\r\n--%s\r\n" \
+				"Content-Type: text/html; charset=%s\r\nContent-Transfer-Encoding: " \
+				"base64\r\n\r\n%s\r\n\r\n--%s--\r\n",
+				bboundary, bset, base64plain, bboundary, bset, base64html, bboundary
+			);
 
 			rbody = estrdup (tmp_body);
-			safe_efree (tmp_body);
+			kr_safe_efree (tmp_body);
 		}
 
-		safe_efree (plain);
-		safe_efree (base64plain);
-		safe_efree (base64html);
+		kr_safe_efree (plain);
+		kr_safe_efree (base64plain);
+		kr_safe_efree (base64html);
 	}
 	else
 	{
@@ -322,42 +336,45 @@ UChar * generate_body (UChar *bset, UChar *bboundary, UChar *btext, UChar *bptex
 	return rbody;
 } // }}}
 
-UChar * generate_header (UChar *from, UChar *to, UChar *subject,
-						 char *boundary, UChar *is_attach) // {{{
+char * generate_header (char *from, char *to, char *subject,
+						 char *boundary, char *is_attach) // {{{
 {
 	char * mailid, * datehead, * mimetype;
-	unsigned int buflen;
-	UChar * buf;
+	int    buflen;
+	char * buf;
 
 	mimetype = (strlen (is_attach) > 0) ? "mixed" : "alternative";
 
 	 /* make mail id */
-	buf = kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", from);
+	buf = kr_regex_replace ((char *) "/[^<]*<([^>]+)>.*/i", "\\1", from);
 	mailid = generate_mail_id ((char *) buf);
-	safe_efree (buf);
+	kr_safe_efree (buf);
 	datehead = generate_date ();
 
-	buflen = strlen (mailid) + strlen (from) + strlen (datehead) +
-			strlen (to) + strlen (subject) + strlen (boundary) +
-			strlen (mimetype) + 256;
+	buflen = STRLEN (mailid) + STRLEN (from) + STRLEN (datehead) +
+			STRLEN (to) + STRLEN (subject) + STRLEN (boundary) +
+			STRLEN (mimetype) + 256;
 	buf = emalloc ( sizeof (char) * buflen );
 
-	sprintf (buf, "Message-ID: <%s>\r\nFrom: %s\r\nMIME-Version: 1.0\r\nDate: %s\r\n" \
-				 "To: %s\r\nSubject: %s\r\nContent-Type: multipart/%s;\r\n              " \
-				 "boundary=\"%s\"\r\n\r\n",
-			mailid, from, datehead, to, subject, mimetype, boundary);
+	sprintf (
+		buf,
+		"Message-ID: <%s>\r\nFrom: %s\r\nMIME-Version: 1.0\r\nDate: %s\r\n" \
+		"To: %s\r\nSubject: %s\r\nContent-Type: multipart/%s;\r\n              " \
+		"boundary=\"%s\"\r\n\r\n",
+		mailid, from, datehead, to, subject, mimetype, boundary
+	);
 
-	safe_efree (datehead);
-	safe_efree (mailid);
+	kr_safe_efree (datehead);
+	kr_safe_efree (mailid);
 
 	return buf;
 } // }}}
 
-UChar * generate_from (UChar * email, char * set) // {{{
+char * generate_from (char * email, char * set) // {{{
 {
-	UChar      * rfrom = NULL;
-	UChar      * name = NULL, * mail = NULL, * name_t = NULL;
-	unsigned int namelen = 0, maillen = 0, setlen = strlen (set);
+	char * rfrom = NULL;
+	char * name = NULL, * mail = NULL, * name_t = NULL;
+	int   namelen = 0, maillen = 0, setlen = STRLEN (set);
 
 	name_t = NULL;
 
@@ -368,9 +385,9 @@ UChar * generate_from (UChar * email, char * set) // {{{
 
 	// get email address on NAME <email@address> form
 	if ( strchr (email, '<' ) != NULL ) {
-		UChar * buf = kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", email);
-		mail = (UChar *) strtrim (buf);
-		safe_efree (buf);
+		char * buf = kr_regex_replace ("/[^<]*<([^>]+)>.*/i", "\\1", email);
+		mail = strtrim (buf);
+		kr_safe_efree (buf);
 	} else
 		mail = strtrim (email);
 
@@ -378,10 +395,10 @@ UChar * generate_from (UChar * email, char * set) // {{{
 
 	// get name on NAME <email@address> form
 	if ( strchr (email, '<') != NULL ) {
-		UChar * buf = kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", email);
-		name_t = (UChar *) strtrim (buf);
+		char * buf = kr_regex_replace ("/([^<]*)<[^>]+>.*/i", "\\1", email);
+		name_t = strtrim (buf);
 		name = name_t;
-		safe_efree (buf);
+		kr_safe_efree (buf);
 	} else
 		name = "";
 	
@@ -397,7 +414,7 @@ UChar * generate_from (UChar * email, char * set) // {{{
 		zend_string * cname = NULL;
 		int from_len;
 
-		cname = php_base64_encode (name, strlen (name));
+		cname = php_base64_encode ((unsigned char *) name, strlen (name));
 		namelen = ZSTR_LEN (cname);
 
 		from_len = setlen + maillen + namelen + 11;
@@ -407,21 +424,21 @@ UChar * generate_from (UChar * email, char * set) // {{{
 		zend_string_release (cname);
 	}
 
-	safe_efree (mail);
-	safe_efree (name_t);
+	kr_safe_efree (mail);
+	kr_safe_efree (name_t);
 
 	return rfrom;
 } // }}}
 
-UChar * generate_to (UChar *toaddr, char *set) // {{{
+char * generate_to (char * toaddr, char * set) // {{{
 {
-	UChar * to = NULL;
-	UChar delimiters[] = ",";
-	char *token, *btoken;
-	UChar *t_mail, *t_name, *_t_name;
-	int maillen = 0, namelen = 0, setlen = strlen(set);
+	char  * to = NULL;
+	const char delimiters[] = ",";
+	char  * token, * btoken;
+	char  * t_mail, * _t_name, * t_name;
+	int maillen = 0, namelen = 0, setlen = STRLEN (set);
 
-	if ( strlen (toaddr) < 1 ) {
+	if ( STRLEN (toaddr) < 1 ) {
 		php_error(E_WARNING, "Empty TO address.");
 		return NULL;
 	}
@@ -432,28 +449,28 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 	if ( token != NULL ) {
 		// get email address on NAME <email@address> form
 		if ( strchr (token, '<') != NULL ) {
-			UChar * buf;
+			char * buf;
 
 			buf = kr_regex_replace ("/[^<]*<([^>]+)>.*/i", "\\1", token);
 			t_mail = strtrim (buf);
-			safe_efree (buf);
+			kr_safe_efree (buf);
 
 			buf = kr_regex_replace ("/([^<]*)<[^>]+>.*/i", "\\1", token);
 			_t_name = strtrim (buf);
-			safe_efree (buf);
+			kr_safe_efree (buf);
 
 			t_name = _t_name;
 			maillen = strlen (t_mail);
 			namelen = strlen (t_name);
 		} else {
-			t_mail = (UChar *) strtrim (token);
+			t_mail = strtrim (token);
 			t_name = "";
 		}
 
 		// whether vaild or invalid email form
 		if ( checkAddr (t_mail, 0) ) {
-			UChar * t_to;
-			int to_lenth;
+			char * t_to;
+			int    to_lenth;
 
 			t_to = NULL;
 
@@ -467,44 +484,43 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 
 				to_lenth = setlen + maillen + namelen + 32;
 				to = emalloc (sizeof(char) * (to_lenth + 1));
-				cname = php_base64_encode (t_name, namelen);
+				cname = php_base64_encode ((unsigned char *) t_name, namelen);
 				sprintf (to, "=?%s?B?%s?= <%s>", set, ZSTR_VAL (cname), t_mail);
 				zend_string_release (cname);
 			}
-			safe_efree (t_to);
+			kr_safe_efree (t_to);
 		}
-		safe_efree (t_mail);
-		safe_efree (_t_name);
+		kr_safe_efree (t_mail);
+		kr_safe_efree (_t_name);
 
 		while ( (token = strtok_r (NULL, delimiters, &btoken)) != NULL ) {
-			UChar * s_name, * s_mail, * _s_name;
-			unsigned int snlen = 0, smlen = 0;
+			char * s_mail, * s_name, * _s_name;
+			int    snlen = 0;
 
 			_s_name = NULL;
 
 			// get email address on NAME <email@address> form
 			if ( strchr (token, '<') != NULL ) {
-				UChar * buf;
+				char * buf;
 
-				buf = kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", token);
+				buf = kr_regex_replace ("/[^<]*<([^>]+)>.*/i", "\\1", token);
 				s_mail = strtrim (buf);
-				safe_efree (buf);
+				kr_safe_efree (buf);
 
-				buf = kr_regex_replace ("/([^<]*)<[^>]+>.*/i","\\1", token);
+				buf = kr_regex_replace ("/([^<]*)<[^>]+>.*/i", "\\1", token);
 				_s_name = strtrim (buf);
-				safe_efree (buf);
+				kr_safe_efree (buf);
 
 				s_name = _s_name;
-				smlen = strlen (s_mail);
 				snlen = strlen (s_name);
 			} else {
-				s_mail = strtrim ((UChar *) token);
+				s_mail = strtrim (token);
 				s_name = "";
 			}
 
 			// whether vaild or invalid email form
 			if ( checkAddr (s_mail, 0) ) {
-				UChar s_to[1024];
+				char s_to[1024];
 
 				memset (s_to, 0, sizeof (s_to));
 
@@ -514,27 +530,27 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 				} else {
 					zend_string * sub_cname = NULL;
 
-					sub_cname = php_base64_encode (s_name, snlen);
+					sub_cname = php_base64_encode ((unsigned char *) s_name, snlen);
 					sprintf (s_to, "=?%s?B?%s?= <%s>", set, ZSTR_VAL (sub_cname), s_mail);
 					zend_string_release (sub_cname);
 				}
 
 				if ( to == NULL )
-					to = estrdup (s_to);
+					to = estrdup ((char *) s_to);
 				else {
-					unsigned int add_to_len;
-					UChar add_to[1024] = { 0, };
+					int add_to_len;
+					char add_to[1024] = { 0, };
 
-					sprintf(add_to, ", %s", s_to);
+					sprintf ((char *) add_to, ", %s", s_to);
 					add_to_len = strlen (add_to);
-					to = (UChar *) erealloc (to, sizeof (char) * (strlen (to) + add_to_len + 1));
+					to = erealloc (to, sizeof (char) * (strlen (to) + add_to_len + 1));
 					strcat (to, add_to);
 				}
 			}
 
-			safe_efree (s_mail);
+			kr_safe_efree (s_mail);
 			if ( _s_name != NULL )
-				safe_efree (_s_name);
+				kr_safe_efree (_s_name);
 		}
 	}
 
@@ -546,10 +562,10 @@ UChar * generate_to (UChar *toaddr, char *set) // {{{
 	return to;
 } // }}}
 
-UChar * generate_title (UChar * title, UChar * set) // {{{
+char * generate_title (char * title, char * set) // {{{
 {
-	unsigned int  len = 0, set_len = strlen (set);
-	UChar       * subject = NULL;
+	int           len = 0, set_len = STRLEN (set);
+	char        * subject = NULL;
 	zend_string * base64 = NULL;
 
 	if ( strlen (title) < 1 ) {
@@ -557,13 +573,13 @@ UChar * generate_title (UChar * title, UChar * set) // {{{
 		return NULL;
 	}
 
-	base64 = php_base64_encode (title, strlen (title));
+	base64 = php_base64_encode ((unsigned char *) title, STRLEN (title));
 	len = ZSTR_LEN (base64);
 
 	{
-		unsigned int subject_lenth = len + set_len + 8;
+		int subject_lenth = len + set_len + 8;
 		subject = emalloc (sizeof (char) * (subject_lenth + 1));
-		sprintf (subject, "=?%s?B?%s?=", set, ZSTR_VAL (base64));
+		sprintf ( subject, "=?%s?B?%s?=", set, ZSTR_VAL (base64));
 	}
 
 	zend_string_release (base64);
@@ -575,7 +591,6 @@ char * generate_date () { // {{{
 	time_t  now = time (NULL);
 	char    buf[64] = { 0, },
 		  * rdate = NULL;
-	int     len = 0;
 
 	setlocale (LC_TIME, "C");
 	loctime = localtime (&now);
@@ -602,7 +617,7 @@ char * generate_mail_id (char * id) // {{{
 	strftime (idtime, 15, "%Y%m%d%H%M%S", loctime);
 
 	/* mail id check */
-	if ( strlen(id) == 0 )
+	if ( STRLEN (id) == 0 )
 		id = "OOPS_PHP_LIB";
 	else {
 		mark = strchr ( id, '@' );
@@ -642,7 +657,7 @@ char * make_boundary () // {{{
 	sprintf (bid, "%05x%07x", usec,sec);
 
 	/* get lenth of uniq id */
-	len = strlen (bid);
+	len = STRLEN (bid);
 
 	sprintf (first,"%c%c%c%c%c%c%c%c",
 			toupper(bid[1]),toupper(bid[2]),toupper(bid[3]),toupper(bid[4]),
@@ -659,21 +674,21 @@ char * make_boundary () // {{{
 	return ret;
 } // }}}
 
-UChar * html_to_plain (UChar * source) // {{{
+char * html_to_plain (char * source) // {{{
 {
-	UChar * rptext;
-	UChar * src[3] = { ":^.*<BODY[^>]*>:si", ":<\\/BODY>.*$:si", ":</?[a-z][^>]*>:si" };
-	UChar * des[3] = { " ", " ", " " };
+	char * rptext;
+	char * src[3] = { ":^.*<BODY[^>]*>:si", ":<\\/BODY>.*$:si", ":</?[a-z][^>]*>:si" };
+	char * des[3] = { " ", " ", " " };
 			    
-	rptext = (UChar *) kr_regex_replace_arr (src, des, source, 3);
+	rptext = kr_regex_replace_arr (src, des, source, 3);
 				    
 	return rptext;
 } // }}}
 
-UChar * body_encode (const UChar * str, int chklen) // {{{
+char * body_encode (const char * str, int chklen) // {{{
 {
 	zend_string * Zenbase = NULL;
-	UChar       * rencode = NULL,
+	char        * rencode = NULL,
 	            * enbase = NULL;
 	int           len = 0,
 	              devide = 0,
@@ -685,12 +700,12 @@ UChar * body_encode (const UChar * str, int chklen) // {{{
 	if ( chklen < 0 )
 		chklen = strlen (str);
 
-	Zenbase = php_base64_encode (str, (size_t) chklen);
+	Zenbase = php_base64_encode ((unsigned char *) str, (size_t) chklen);
 	enbase = ZSTR_VAL (Zenbase);
 	len = ZSTR_LEN (Zenbase);
 	//zend_string_release (Zenbase);
 
-	devide = (int) len / 60;
+	devide = (int) (len / 60);
 
 	if ( len < 61 ) {
 		zend_string_release (Zenbase);
@@ -721,9 +736,9 @@ UChar * body_encode (const UChar * str, int chklen) // {{{
 	return rencode;
 } // }}}
 
-UChar *generate_mime (UChar *filename) // {{{
+char *generate_mime (char *filename) // {{{
 {
-	UChar * tmpext, *ext;
+	char * tmpext, *ext;
 	if ( (tmpext = strrchr (filename, '.')) == NULL )
 		ext = "";
 	ext = &filename[tmpext - filename + 1];

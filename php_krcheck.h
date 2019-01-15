@@ -28,11 +28,11 @@ PHP_FUNCTION(is_email_lib);
 PHP_FUNCTION(is_url_lib);
 PHP_FUNCTION(is_hangul_lib);
 
-unsigned int checkAddr(unsigned char *addr, int type);
-unsigned int chkMetaChar (unsigned char *str, int type);
-unsigned int check_table (unsigned char *str);
-unsigned int multibyte_check(unsigned char *str_o, unsigned int point);
-unsigned int check_windows(unsigned int type);
+int checkAddr (char * addr, int type);
+int chkMetaChar (char * str, int type);
+int check_table (char * str);
+int multibyte_check (char * str_o, int point);
+int check_windows (int type);
 
 #endif  /* end PHP_KRCHECK_H */
 

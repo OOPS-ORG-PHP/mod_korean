@@ -24,26 +24,26 @@
 #define PHP_KR_CHECK_OPEN_BASEDIR(x)                                               \
 	do {                                                                           \
 		char *p = NULL;                                                            \
-		if ( strlen((char *)x) > 0 ) { p = estrdup(x); }                           \
+		if ( strlen((char *)x) > 0 ) { p = estrdup((char *) x); }                  \
 		if (!p || php_check_open_basedir(p TSRMLS_CC) ||                           \
 			(PG(safe_mode) && !php_checkuid(p, NULL, CHECKUID_CHECK_FILE_AND_DIR)) \
 		) {                                                                        \
 			php_error (E_ERROR, "restriction OPEN_BASE_DIR(%s)", p);               \
-			safe_efree(p); RETURN_FALSE;                                           \
+			kr_safe_efree(p); RETURN_FALSE;                                        \
 		}                                                                          \
-		safe_efree(p);                                                             \
+		kr_safe_efree(p);                                                          \
 	} while (0)
 #else
 #define PHP_KR_CHECK_OPEN_BASEDIR(x)                                               \
 	do {                                                                           \
 		char *p = NULL;                                                            \
-		if ( strlen((char *)x) > 0 ) { p = estrdup(x); }                           \
+		if ( strlen((char *)x) > 0 ) { p = estrdup((char *) x); }                  \
 		if (!p || php_check_open_basedir(p TSRMLS_CC))                             \
 		{                                                                          \
 			php_error (E_ERROR, "restriction OPEN_BASE_DIR(%s)", p);               \
-			safe_efree(p); RETURN_FALSE;                                           \
+			kr_safe_efree(p); RETURN_FALSE;                                        \
 		}                                                                          \
-		safe_efree(p);                                                             \
+		kr_safe_efree(p);                                                          \
 	} while (0)
 #endif
 
@@ -53,6 +53,9 @@
 #ifndef UChar
 #define UChar unsigned char
 #endif
+
+#define STRLEN(x) strlen((char *) x)
+#define ze_string_init(x,y,z) zend_string_init((char *)x, (size_t)y, z);
 
 #endif	/* PHP_KR_H */
 

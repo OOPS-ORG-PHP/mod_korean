@@ -105,6 +105,7 @@
 #include "krregex.h"
 #include "php_krfile.h"
 #include "php_krparse.h"
+#define HAVE_KR_GETHOSTBYADDR
 #include "php_krnetwork.h"
 
 #define PROXYSIZE 9
@@ -123,7 +124,7 @@ PHP_FUNCTION(get_hostname_lib)
 	zend_string  * addr = NULL;
 	unsigned int   i;
 	const char     delimiters[] = ", ";
-	UChar        * token = NULL;
+	char         * token = NULL;
 	char         * ret = NULL;
 	char         * host = NULL, * check = NULL;
 	char         * proxytype[PROXYSIZE] = {
@@ -140,7 +141,7 @@ PHP_FUNCTION(get_hostname_lib)
 	if ( ZEND_NUM_ARGS() == 1 ) {
 		char * tmphost;
 		for ( i = 0; i < PROXYSIZE; i++ ) {
-			tmphost = sapi_getenv (proxytype[i], strlen (proxytype[i]));
+			tmphost = sapi_getenv (proxytype[i], STRLEN (proxytype[i]));
 
 			if ( strcasecmp (tmphost, "(null)") )
 				break;
@@ -176,7 +177,7 @@ PHP_FUNCTION(get_hostname_lib)
 				host = estrdup (get_serverenv ("REMOTE_ADDR"));
 		}
 
-		safe_efree (tmphost);
+		kr_safe_efree (tmphost);
 	}
 	else
 	{
@@ -190,15 +191,15 @@ PHP_FUNCTION(get_hostname_lib)
 
 	check = reverse ? kr_gethostbyaddr (host) : "";
 
-	if ( strlen (check) > 0 )
+	if ( STRLEN (check) > 0 )
 		ret = estrdup (check);
 	else
 		ret = estrdup (host);
 
-	safe_efree(host);
+	kr_safe_efree(host);
 
 	RETVAL_STRING(ret);
-	safe_efree (ret);
+	kr_safe_efree (ret);
 }
 /* }}} */
 
@@ -208,9 +209,9 @@ PHP_FUNCTION(readfile_lib)
 {
 	zend_string * filepath;
 	char        * string;
-	UChar         buf[8192] = { 0, };
+	char          buf[8192] = { 0, };
 	int           use_include_path=0;
-	size_t        buflen =0, len = 0, flen = 0;
+	size_t        buflen =0, len = 0;
 	php_stream  * stream;
 
 	if ( kr_parameters ("S|b", &filepath, &use_include_path) == FAILURE )
@@ -234,7 +235,7 @@ PHP_FUNCTION(readfile_lib)
 
 		while ( (buflen = php_stream_read (stream, buf, sizeof (buf))) > 0 ) {
 			if (len > 0)
-				string = erealloc (string, sizeof(char) * (8192 + len));
+				string = erealloc (string, sizeof (char) * (8192 + len));
 
 			memmove (string + len, buf, buflen);
 			memset (buf, '\0', sizeof (buf));
@@ -244,7 +245,7 @@ PHP_FUNCTION(readfile_lib)
 		php_stream_close (stream);
 
 		RETVAL_STRINGL (string, len);
-		safe_efree (string);
+		kr_safe_efree (string);
 	} else {
 		php_stream_close (stream);
 		RETURN_EMPTY_STRING ();
@@ -262,13 +263,13 @@ PHP_FUNCTION(sockmail_lib)
 	            * helo     = NULL;
 	zend_bool     debug = 0;
 	char        * hhost = NULL;
-	UChar         delimiters[] = ",";
-	UChar       * faddr, * taddr, * mailaddr;
+	const char    delimiters[] = ",";
+	char        * faddr, * taddr, * mailaddr;
 	char        * btoken;
 
-	UChar       * src[4] = { "/[^<]*</", "/>.*/", "/[\\s]/", "/^.*$/" };
-	UChar       * des[4] = { "", "", "", "<\\0>" };
-	UChar       * t_addr = NULL;
+	char        * src[4] = { "/[^<]*</", "/>.*/", "/[\\s]/", "/^.*$/" };
+	char        * des[4] = { "", "", "", "<\\0>" };
+	char        * t_addr = NULL;
 
 	if ( kr_parameters ("SS|SSb", &mailbody, &from, &to, &helo, &debug) == FAILURE )
 		return;
@@ -291,43 +292,43 @@ PHP_FUNCTION(sockmail_lib)
 
 	/* mail context */
 	if ( ZSTR_LEN (from) < 1 ) {
-		UChar * f_src[4] = { "/\r*\n/i", "/.*From:([^!]+)!!ENTER!!.*/i", "/.*<([^>]+)>/i", "/^.*$/" };
-		UChar * f_des[4] = { "!!ENTER!!", "\\1", "\\1", "<\\0>" };
-		faddr = (UChar *) kr_regex_replace_arr (f_src, f_des, ZSTR_VAL (mailbody), (sizeof (f_src) / sizeof (f_src[0])));
+		char * f_src[4] = { "/\r*\n/i", "/.*From:([^!]+)!!ENTER!!.*/i", "/.*<([^>]+)>/i", "/^.*$/" };
+		char * f_des[4] = { "!!ENTER!!", "\\1", "\\1", "<\\0>" };
+		faddr = kr_regex_replace_arr (f_src, f_des, ZSTR_VAL (mailbody), (sizeof (f_src) / sizeof (f_src[0])));
 	} else {
-		UChar * f_src[2] = { "/.*<([^>]+)>/i", "/^.*$/" };
-		UChar * f_des[2] = { "\\1", "<\\0>" };
-		faddr = (UChar *) kr_regex_replace_arr (f_src, f_des, ZSTR_VAL (from), (sizeof (f_src) / sizeof (f_src[0])));
+		char * f_src[2] = { "/.*<([^>]+)>/i", "/^.*$/" };
+		char * f_des[2] = { "\\1", "<\\0>" };
+		faddr = kr_regex_replace_arr (f_src, f_des, ZSTR_VAL (from), (sizeof (f_src) / sizeof (f_src[0])));
 	}
 
 	if ( ! to && ZSTR_LEN (to) < 1) {
-		UChar * t_src[2] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i" };
-		UChar * t_des[2] = { "!!ENTER!!", "\\1" };
-		taddr = (UChar *) kr_regex_replace_arr (t_src, t_des, ZSTR_VAL (mailbody), (sizeof (t_src) / sizeof (t_src[0])));
+		char * t_src[2] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i" };
+		char * t_des[2] = { "!!ENTER!!", "\\1" };
+		taddr = kr_regex_replace_arr (t_src, t_des, ZSTR_VAL (mailbody), (sizeof (t_src) / sizeof (t_src[0])));
 	} else {
 		taddr = estrdup (ZSTR_VAL (to));
 	}
 
 	if ( (mailaddr = strtok_r (taddr, delimiters, &btoken)) != NULL ) {
 		do {
-			char *err_host;
-			int hostlen = 0;
+			char * err_host;
+			int    hostlen = 0;
 
-			t_addr = (UChar *) kr_regex_replace_arr(src, des, mailaddr, (sizeof (src) / sizeof (src[0])));
-			hostlen = strlen (t_addr);
+			t_addr = kr_regex_replace_arr(src, des, mailaddr, (sizeof (src) / sizeof (src[0])));
+			hostlen = STRLEN (t_addr);
 			err_host = emalloc (sizeof (char *) * hostlen + 1);
 			memset (err_host, 0, hostlen + 1);
-			strncpy (err_host, t_addr + 1, strlen (t_addr) - 2);
+			strncpy (err_host, t_addr + 1, STRLEN (t_addr) - 2);
 
 			if ( sock_sendmail (faddr, t_addr, ZSTR_VAL (mailbody), hhost, debug) == 1)
 				add_next_index_string (return_value, err_host);
 
-			safe_efree (t_addr);
-			safe_efree (err_host);
+			kr_safe_efree (t_addr);
+			kr_safe_efree (err_host);
 		} while ( (mailaddr = strtok_r (NULL, delimiters, &btoken)) != NULL );
 	}
-	safe_efree (taddr);
-	safe_efree (faddr);
+	kr_safe_efree (taddr);
+	kr_safe_efree (faddr);
 }
 /* }}} */
 
@@ -367,27 +368,27 @@ static char * kr_gethostbyaddr (char * ip)
 }
 /* }}} */
 
-/* {{{ UChar * get_mx_record (UChar * str) */
-UChar * get_mx_record (UChar * str)
+/* {{{ char * get_mx_record (char * str) */
+char * get_mx_record (char * str)
 {
-	u_char       answer[8192] = { 0, }, * cp, * end;
-	u_short      type, weight, tmpweight;
-	UChar      * mxrecord = NULL;
-	UChar      * host, * tmphost, tmpmx[256] = { 0, };
-	unsigned int i, qdc, count, tmpmxlen = 0;
-	HEADER     * hp;
+	u_char    answer[8192] = { 0, }, * cp, * end;
+	u_short   type, weight, tmpweight;
+	char    * mxrecord = NULL;
+	char    * host, * tmphost, tmpmx[256] = { 0, };
+	int       i, qdc, count;
+	HEADER  * hp;
 
 	weight = 0;
 
 	if ( (tmphost = strrchr (str, '@')) != NULL )
-		host = (UChar *) kr_regex_replace ("/[^<]*<|>.*/", "", tmphost + 1);
+		host = kr_regex_replace ("/[^<]*<|>.*/", "", tmphost + 1);
 	else
-		host = (UChar *) kr_regex_replace ("/[^<]*<|>.*/", "", str);
+		host = kr_regex_replace ("/[^<]*<|>.*/", "", str);
 
 	/* if don't exist mx record */
 	if ( (i = res_search (host, C_IN, T_MX, answer, sizeof (answer))) < 0 ) {
 		mxrecord = estrdup (host);
-		safe_efree (host);
+		kr_safe_efree (host);
 		return mxrecord;
 	}
 
@@ -401,7 +402,7 @@ UChar * get_mx_record (UChar * str)
 	for ( qdc = ntohs ((unsigned short) hp->qdcount); qdc--; cp += i + 4 ) {
 		if ( (i = dn_skipname (cp, end)) < 0 ) {
 			mxrecord = estrdup (host);
-			safe_efree (host);
+			kr_safe_efree (host);
 			return mxrecord;
 		}
 	}
@@ -411,7 +412,7 @@ UChar * get_mx_record (UChar * str)
 	while ( --count >= 0 && cp < end ) {
 		if ( (i = dn_skipname (cp, end)) < 0 ) {
 			mxrecord = estrdup (host);
-			safe_efree (host);
+			kr_safe_efree (host);
 			return mxrecord;
 		}
 		cp += i;
@@ -425,41 +426,40 @@ UChar * get_mx_record (UChar * str)
 		GETSHORT (tmpweight, cp);
 		if ( (i = dn_expand (answer, end, cp, tmpmx, sizeof (tmpmx)-1)) < 0 ) {
 			mxrecord = estrdup (host);
-			safe_efree (host);
+			kr_safe_efree (host);
 			return mxrecord;
 		}
 		cp += i;
-		tmpmxlen = strlen(tmpmx);
 
 		if ( mxrecord == NULL ) {
 			mxrecord = estrdup (tmpmx);
 			weight = tmpweight;
 		} else {
 			if ( weight > tmpweight ) {
-				safe_efree (mxrecord);
+				kr_safe_efree (mxrecord);
 				weight = tmpweight;
 				mxrecord = estrdup (tmpmx);
 			}
 		}
 	}
 
-	if ( mxrecord == NULL || strlen (mxrecord) < 1 ) {
-		safe_efree (mxrecord);
+	if ( mxrecord == NULL || STRLEN (mxrecord) < 1 ) {
+		kr_safe_efree (mxrecord);
 		mxrecord = estrdup (host);
 	}
 
-	safe_efree (host);
+	kr_safe_efree (host);
 	return mxrecord;
 }
 /* }}} */
 
-/* {{{ int socksend (int sock, int deb, UChar * var, UChar * target) */
-int socksend (int sock, int deb, UChar * var, UChar * target)
+/* {{{ int socksend (int sock, int deb, char * var, char * target) */
+int socksend (int sock, int deb, char * var, char * target)
 {
-	UChar * cmd, msg[1024];
-	int rlen = 0, failed = 1, bar = 0, add = 0, tmplen;
+	char * cmd, msg[1024];
+	int    rlen = 0, failed = 1, add = 0, tmplen;
 
-	tmplen = strlen (var);
+	tmplen = STRLEN (var);
 
 	if ( ! strcasecmp(target, "body") ) add = 6;
 	else if ( ! strcasecmp(target, "mail")) add = 14;
@@ -467,7 +467,7 @@ int socksend (int sock, int deb, UChar * var, UChar * target)
 	else add = 3;
 
 	{
-		UChar * tmpcmd;
+		char * tmpcmd;
 		tmpcmd = emalloc (sizeof (char) * (tmplen + add + 1));
 
 		if ( ! strcasecmp (target, "mail") ) sprintf (tmpcmd, "MAIL From: %s\r\n", var);
@@ -476,31 +476,32 @@ int socksend (int sock, int deb, UChar * var, UChar * target)
 		else sprintf (tmpcmd, "%s\r\n", var);
 
 		tmpcmd[tmplen + add] = '\0';
-		cmd = (UChar *) estrdup (tmpcmd);
-		safe_efree (tmpcmd);
+		cmd = estrdup (tmpcmd);
+		kr_safe_efree (tmpcmd);
 	}
 
 	/* print debug information */
 	debug_msg (cmd, deb, 0);
 
-	send (sock, cmd, strlen (cmd), 0);
+	send (sock, cmd, STRLEN (cmd), 0);
 	rlen = recv (sock, msg, 1024, 0);
-	if ( ! strncmp (msg, "220", 3) || ! strncmp (msg, "221", 3) || ! strncmp (msg, "250", 3)
-		 || ! strncmp (msg, "251", 3) || ! strncmp (msg, "354", 3) )
+	if ( ! strncmp (msg, "220", 3) || ! strncmp (msg, "221", 3)
+		 || ! strncmp (msg, "250", 3) || ! strncmp (msg, "251", 3)
+		 || ! strncmp (msg, "354", 3) )
 		failed = 0;
 
 	msg[rlen] = '\0';
 	debug_msg (msg, deb, 0);
 	if ( deb != 0 && ! strcasecmp (target, "quit") )
 		php_printf("\r\n");
-	safe_efree (cmd);
+	kr_safe_efree (cmd);
 
 	return failed;
 }
 /* }}} */
 
-/* {{{ void debug_msg (UChar *msg, int info, int bar) */
-void debug_msg (UChar * msg, int info, int bar)
+/* {{{ void debug_msg (char *msg, int info, int bar) */
+void debug_msg (char * msg, int info, int bar)
 {
 	if ( info != 0 ) {
 		php_printf ("DEBUG: %s", msg);
@@ -510,14 +511,14 @@ void debug_msg (UChar * msg, int info, int bar)
 }
 /* }}} */
 
-/* {{{ int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, int debug) */
-int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, UChar * host, int debug)
+/* {{{ int sock_sendmail (char * fromaddr, char * toaddr, char * text, int debug) */
+int sock_sendmail (char * fromaddr, char * toaddr, char * text, char * host, int debug)
 {
-	int     len, sock, failcode;
-	UChar * addr;
-	UChar   helocmd[1024] = { 0, };
+	int    len, sock, failcode;
+	char * addr;
+	char   helocmd[1024] = { 0, };
 
-	if ( strlen (host) < 1 )
+	if ( STRLEN (host) < 1 )
 		strcpy (helocmd, "HELO localhost");
 	else
 		sprintf (helocmd, "HELO %s", host);
@@ -535,7 +536,7 @@ int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, UChar * host,
 		if ( debug == 1 ) {
 			php_error (E_WARNING, "host name \"%s\" not found\n", addr);
 		}
-		safe_efree (addr);
+		kr_safe_efree (addr);
 		return 1;
 	}
 
@@ -546,45 +547,41 @@ int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, UChar * host,
 	len = sizeof (sinfo);
 
 	/* create socket */
-	if ( (sock = socket (AF_INET, SOCK_STREAM, 0)) == -1 )
-	{
+	if ( (sock = socket (AF_INET, SOCK_STREAM, 0)) == -1 ) {
 		if ( debug == 1 )
 			php_error (E_WARNING, "Failed to create socket\n");
 
-		safe_efree (addr);
+		kr_safe_efree (addr);
 		return 1;
 	}
 
 	/* connect to server in 25 port */
-	if ( connect (sock, (struct sockaddr *) &sinfo, len) == -1 )
-	{
+	if ( connect (sock, (struct sockaddr *) &sinfo, len) == -1 ) {
 		if ( sock )
 			close (sock);
 
 		if ( debug == 1 )
 			php_error (E_WARNING, "Failed connect %s\n", addr);
 
-		safe_efree (addr);
+		kr_safe_efree (addr);
 		return 1;
-	}
-	else
-	{
-		unsigned int recvlen = 0;
-		UChar recvmsg[1024];
-		UChar * str_t = NULL;
+	} else {
+		int recvlen = 0;
+		char recvmsg[1024];
+		char * str_t = NULL;
 
 		recvlen = recv (sock, recvmsg, 1024, 0);
 		recvmsg[recvlen] = '\0';
 		if (debug == 1) {
-			str_t = (UChar *) strtrim (recvmsg);
+			str_t = strtrim (recvmsg);
 			php_printf ("\r\nConnect %s Start\r\n", addr);
 			php_printf ("----------------------------------------------------------------\r\n\r\n");
 			php_printf ("DEBUG: %s\r\n", str_t);
-			safe_efree (str_t);
+			kr_safe_efree (str_t);
 		}
 	}
 
-	safe_efree (addr);
+	kr_safe_efree (addr);
 
 	failcode = socksend (sock, debug, helocmd, "helo");
 	if ( failcode == 1 ) {
@@ -634,49 +631,49 @@ int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, UChar * host,
 }
 /* }}} */
 
-/* {{{ UChar *sockhttp (UChar *addr, size_t *retSize, int record, UChar *recfile)
+/* {{{ char *sockhttp (char *addr, size_t *retSize, int record, char *recfile)
  * addr : url path of read file
  * record : whether write of don't write read file with randsom name
  * recfile : if record is 1, write recfile name with read file
  */
-UChar * sockhttp (UChar * addr, size_t * retSize, int record, UChar * recfile)
+char * sockhttp (char * addr, size_t * retSize, int record, char * recfile)
 {
 	FILE  * fp;
-	UChar   tmpfilename[512] = { 0, },
+	char    tmpfilename[512] = { 0, },
 		    cmd[1024] = { 0, },
 			rc[4096] = { 0, };
 	int     sock,
 			len = 0,
 			freechk = 0;
-	UChar * nullstr = "",
+	char  * nullstr = "",
 		  * string,
 		  * tmpstr = NULL;
 	size_t  tmplen = 0;
 
 	// parse file path with url, uri
-	//UChar *uri;
-	UChar * chk, * url, * urlpoint;
-	chk = (UChar *) estrdup (addr + 7);
+	// char *uri;
+	char * chk, * url, * urlpoint;
+	chk = estrdup (addr + 7);
 	fp = NULL;
 
 	urlpoint = strchr (chk, '/');
 
 	if ( urlpoint != NULL )
-		url = (UChar *) estrndup (chk, urlpoint - chk);
+		url = estrndup (chk, urlpoint - chk);
 	else
-		url = (UChar *) estrdup (chk);
+		url = estrdup (chk);
 
-	safe_efree (chk);
+	kr_safe_efree (chk);
 
 	// check existed url
 	if ( ! (hostinfo = gethostbyname (url)) )
 	{
 		php_error (E_WARNING, "host name \"%s\" not found\n", url);
-		safe_efree (url);
+		kr_safe_efree (url);
 		return NULL;
 	}
 
-	safe_efree (url);
+	kr_safe_efree (url);
 
 	// specify connect server information
 	sinfo.sin_family = AF_INET;
@@ -698,12 +695,12 @@ UChar * sockhttp (UChar * addr, size_t * retSize, int record, UChar * recfile)
 		return NULL;
 	}
 
-	send (sock, cmd, strlen (cmd), 0);
+	send (sock, cmd, STRLEN (cmd), 0);
 
 	if ( record == 1 ) {
-		if ( strlen (recfile) > 0 ) {
-			memmove (tmpfilename, recfile, strlen (recfile));
-			tmpfilename[strlen (recfile)] = '\0';
+		if ( STRLEN (recfile) > 0 ) {
+			memmove (tmpfilename, recfile, STRLEN (recfile));
+			tmpfilename[STRLEN (recfile)] = '\0';
 		} else {
 			time_t now = time (0);
 			size_t tmpflen = 0;
@@ -713,10 +710,12 @@ UChar * sockhttp (UChar * addr, size_t * retSize, int record, UChar * recfile)
 #ifdef PHP_WIN32
 			sprintf (tmpfilename, "c:\\tmpResize-%d", rand ());
 #else
-			sprintf (tmpfilename, "%s/tmpResize-%d",
-								 PG(upload_tmp_dir) ? PG(upload_tmp_dir) : "/tmp", rand());
+			sprintf (
+				tmpfilename, "%s/tmpResize-%d",
+				PG(upload_tmp_dir) ? PG(upload_tmp_dir) : "/tmp", rand()
+			);
 #endif
-			tmpflen = strlen (tmpfilename);
+			tmpflen = STRLEN (tmpfilename);
 			tmpfilename[tmpflen] = '\0';
 		}
 
@@ -756,9 +755,9 @@ UChar * sockhttp (UChar * addr, size_t * retSize, int record, UChar * recfile)
 		// return string length with pointer
 		*retSize = tmplen;
 
-		string = (UChar *) estrndup (tmpstr, tmplen);
+		string = estrndup (tmpstr, tmplen);
 		if (freechk == 1)
-			safe_efree (tmpstr);
+			kr_safe_efree (tmpstr);
 
 		return string;
 	}

@@ -70,7 +70,7 @@ PHP_FUNCTION(human_fsize_lib)
 
 	ret = human_file_size (fsize, sub, unit, cunit);
 	RETVAL_STRING (ret);
-	safe_efree (ret);
+	kr_safe_efree (ret);
 }
 /* }}} */
 
@@ -80,16 +80,14 @@ PHP_FUNCTION(filelist_lib)
 {
 	struct dirent *d;
 
-	zend_string   * Zinput = NULL,
-	              * Zmode  = NULL,
-	              * Zregex = NULL; 
-	char          * mode;
+	zend_string * Zinput = NULL,
+	            * Zmode  = NULL,
+	            * Zregex = NULL; 
+	char        * mode;
 
-	DIR           * dp;
-	unsigned char * mode_s,
-				  * regex_s,
-	                dirpath[MAXPATHLENGTH] = { 0, };
-	regex_t         preg;
+	DIR         * dp;
+	char          dirpath[MAXPATHLENGTH] = { 0, };
+	regex_t       preg;
 
 	if ( kr_parameters ("S|SS", &Zinput, &Zmode, &Zregex) == FAILURE )
 		return;
@@ -122,33 +120,33 @@ PHP_FUNCTION(filelist_lib)
 		}
 	}
 
-
 	while ( (d = readdir (dp)) ) {
 		if ( d->d_ino != 0) {
 			if ( ! strcmp (d->d_name, ".") || ! strcmp (d->d_name, "..") )
 				continue;
 
-			if ( ! strcmp (mode, "f") )
+			if ( ! strcmp (mode, "f") ) {
 				if ( check_filedev (dirpath, d->d_name) != RETURN_FILE_TYPE )
 					continue;
-			else if (! strcmp (mode, "d") )
+			} else if (! strcmp (mode, "d") ) {
 				if ( check_filedev(dirpath, d->d_name) != RETURN_DIR_TYPE )
 					continue;
-			else if ( ! strcmp (mode, "l") )
+			} else if ( ! strcmp (mode, "l") ) {
 				if ( check_filedev(dirpath, d->d_name) != RETURN_LINK_TYPE )
 					continue;
-		   	else if ( ! strcmp (mode, "fd") )
+			} else if ( ! strcmp (mode, "fd") ) {
 				if ( check_filedev(dirpath, d->d_name) != RETURN_FILE_TYPE &&
 					check_filedev(dirpath, d->d_name) != RETURN_DIR_TYPE )
 					continue;
-		   	else if ( ! strcmp (mode, "fl") )
+			} else if ( ! strcmp (mode, "fl") ) {
 				if ( check_filedev(dirpath, d->d_name) != RETURN_FILE_TYPE &&
 					check_filedev(dirpath, d->d_name) != RETURN_LINK_TYPE )
 					continue;
-		   	else if ( ! strcmp (mode, "dl") )
+			} else if ( ! strcmp (mode, "dl") ) {
 				if ( check_filedev(dirpath, d->d_name) != RETURN_LINK_TYPE &&
 					check_filedev(dirpath, d->d_name) != RETURN_DIR_TYPE )
 					continue;
+			}
 
 			if ( Zregex && ZSTR_LEN (Zregex) && regexec(&preg,d->d_name, 0, NULL, 0) != 0)
 				continue;
@@ -168,7 +166,7 @@ PHP_FUNCTION(filelist_lib)
  * write file */
 PHP_FUNCTION(putfile_lib)
 {
-	unsigned char filepath[MAXPATHLENGTH] = { 0, };
+	char          filepath[MAXPATHLENGTH] = { 0, };
 	zend_string * fname = NULL,
 	            * input = NULL;
 	int           mode  = 0;
@@ -193,12 +191,12 @@ PHP_FUNCTION(putfile_lib)
  * return file context */
 PHP_FUNCTION(getfile_lib)
 {
-	unsigned char * str, getfilename[MAXPATHLENGTH] = { 0, };
-	size_t          orgsize = 0, chksize = 0;
-	struct stat     buf;
+	char        * str, getfilename[MAXPATHLENGTH] = { 0, };
+	size_t        orgsize = 0, chksize = 0;
+	struct stat   buf;
 
-	zend_string   * input = NULL;
-	size_t          size  = 0;
+	zend_string * input = NULL;
+	size_t        size  = 0;
 
 	php_error (E_DEPRECATED, "Use file_get_contents function instead of getfile_lib");
 
@@ -230,7 +228,7 @@ PHP_FUNCTION(getfile_lib)
 	str = readfile (getfilename);
 
 	RETVAL_STRINGL (str, chksize);
-	safe_efree (str);
+	kr_safe_efree (str);
 }
 /* }}} */
 
@@ -261,9 +259,7 @@ PHP_FUNCTION(pcregrep_lib)
 
 	zend_string * regex = NULL,
 	            * input = NULL;
-	int    rlen  = 0,
-		   inlen = 0,
-		   opt   = 0;
+	int    opt   = 0;
 
 	char * str   = NULL,
 		 * bufstr = NULL,
@@ -292,12 +288,12 @@ PHP_FUNCTION(pcregrep_lib)
 	while ( (*sep = strsep (&bufstr, delimiters)) != NULL ) {
 		if ( **sep != 0 ) {
 			memset (buf, 0, 4096);
-			memmove (buf, * sep, strlen(*sep));
+			memmove (buf, * sep, strlen (*sep));
 			buflen = strlen (buf);
 
 			retval = pcre_match (ZSTR_VAL (regex), buf);
 			if (retval < 0) {
-				safe_efree (str);
+				kr_safe_efree (str);
 				free (bufstr);
 				RETURN_FALSE;
 			}
@@ -319,28 +315,28 @@ PHP_FUNCTION(pcregrep_lib)
 		}
 	}
 
-	safe_efree (sep_t);
+	kr_safe_efree (sep_t);
 	free (bufstr);
 
 	if (len < 1) {
-		safe_efree (str);
+		kr_safe_efree (str);
 		RETURN_EMPTY_STRING();
 	}
 
 	RETVAL_STRINGL(str, len - 1);
-	safe_efree (str);
+	kr_safe_efree (str);
 }
 /* }}} */
 
-/* {{{ PHPAPI void writefile (unsigned char * filename, unsigned char * str, unsigned int mode) */
-int writefile (unsigned char * filename, unsigned char * str, unsigned int mode)
+/* {{{ PHPAPI int writefile (char * filename, char * str, int mode) */
+int writefile (char * filename, char * str, int mode)
 {
 	struct stat s;
 
-	FILE          * fp;
-	unsigned char * act,
-				  * string;
-	int             ret;
+	FILE * fp;
+	char * act;
+	char * string;
+	int    ret;
 
 	if ( mode == 1 ) {
 		ret = stat (filename, &s);
@@ -352,18 +348,18 @@ int writefile (unsigned char * filename, unsigned char * str, unsigned int mode)
 
 	if ( (fp = fopen (filename, act)) == NULL ) {
 		php_error (E_WARNING, "Can't open %s in write mode", filename);
-		safe_efree (string);
+		kr_safe_efree (string);
 		return -1;
 	}
 
 	if ( fwrite (string, sizeof (char), strlen (string), fp) != strlen (string) ) {
 		fclose (fp);
 		php_error (E_WARNING, "Error writing to file %s", filename);
-		safe_efree (string);
+		kr_safe_efree (string);
 		return -1;
 	}
 
-	safe_efree (string);
+	kr_safe_efree (string);
 
 	fclose (fp);
 
@@ -371,17 +367,17 @@ int writefile (unsigned char * filename, unsigned char * str, unsigned int mode)
 }
 /* }}} */
 
-/* {{{ PHPAPI unsigned char * readfile (unsigned char * filename) */
-unsigned char * readfile (unsigned char * filename)
+/* {{{ PHPAPI char * readfile (char * filename) */
+char * readfile (char * filename)
 {
 	struct stat filebuf;
 
-	FILE          * fp;
-	size_t          filesize = 0,
-					len = 0,
-					strlength = 0;
-	unsigned char * text = NULL,
-				    tmptext[FILEBUFS];
+	FILE   * fp;
+	size_t   filesize = 0,
+	         len = 0,
+	         strlength = 0;
+	char    * text = NULL,
+	          tmptext[FILEBUFS];
 
 	/* get file info */
 	stat (filename, &filebuf);
@@ -413,7 +409,7 @@ unsigned char * readfile (unsigned char * filename)
 }
 /* }}} */
 
-/* {{{ unsigned char *human_file_size (double size_o, int sub_o, int unit, int cunit) */
+/* {{{ char *human_file_size (double size_o, int sub_o, int unit, int cunit) */
 char * human_file_size (double size_o, int sub_o, int unit, int cunit)
 {
 	float res;
@@ -453,25 +449,27 @@ char * human_file_size (double size_o, int sub_o, int unit, int cunit)
 			sprintf(buf, "%.2f %s", res, danwe);
 	}
 
-	safe_efree(BYTES_C);
+	kr_safe_efree(BYTES_C);
 	ret = estrdup (buf);
 
 	return ret;
 }
 /* }}} */
 
-/* {{{ unsigned int check_filedev (unsigned char *path_f, unsigned char *filename) */
-unsigned int check_filedev (unsigned char * path_f, unsigned char * filename)
+/* {{{ int check_filedev (char *path_f, char *filename) */
+int check_filedev (char * path_f, char * filename)
 {
 	struct stat s;
-	unsigned char * fullpath;
-	int ret;
+	char * fullpath;
 
 	fullpath = emalloc (sizeof (char) * (strlen (path_f) + strlen (filename) + 2));
 	sprintf (fullpath, "%s/%s", path_f, filename);
 
-	ret = lstat (fullpath, &s);
-	safe_efree (fullpath);
+	if ( lstat (fullpath, &s) != 0 ) {
+		kr_safe_efree (fullpath);
+		return 0;
+	}
+	kr_safe_efree (fullpath);
 
 	if ( S_ISDIR(s.st_mode) )
 		return RETURN_DIR_TYPE;
@@ -484,13 +482,13 @@ unsigned int check_filedev (unsigned char * path_f, unsigned char * filename)
 }
 /* }}} */
 
-/* {{{ unsigned char * includePath (unsigned char * filepath) */
-unsigned char * includePath (unsigned char * filepath) {
+/* {{{ char * includePath (char * filepath) */
+char * includePath (char * filepath) {
 	const char      delimiters[] = ":";
-	unsigned char * filename = NULL;
-	unsigned char * token,
+	char          * filename = NULL;
+	char          * token,
 				    chkfile[512];
-	unsigned char * includetmp,
+	char          * includetmp,
 				  * includepath;
 	int             exists = 1;
 	//static void ***tsrm_ls;
@@ -513,7 +511,7 @@ unsigned char * includePath (unsigned char * filepath) {
 			token = strtok (NULL, delimiters);
 		}
 	} else {
-		unsigned char tmpfilename[512] = { 0, };
+		char tmpfilename[512] = { 0, };
 
 		if ( strlen (includepath) > 0 )
 			sprintf (tmpfilename, "%s/%s", includepath, filepath);
@@ -530,7 +528,7 @@ unsigned char * includePath (unsigned char * filepath) {
 	}
 
 	if ( strlen (includepath) > 0 )
-		safe_efree (includepath);
+		kr_safe_efree (includepath);
 
 	return filename;
 }

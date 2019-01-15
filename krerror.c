@@ -49,7 +49,7 @@ PHP_FUNCTION(perror_lib)
 
 	ret = print_error (istr, java, mstr, sec);
 	php_printf ("%s\n", ret);
-	safe_efree (ret);
+	kr_safe_efree (ret);
 }
 /* }}} */
 
@@ -71,83 +71,83 @@ PHP_FUNCTION(pnotice_lib)
 
 	ret = print_error (ZSTR_VAL (input), java, "notice", 0);
 	php_printf ("%s\n", ret);
-	safe_efree (ret);
+	kr_safe_efree (ret);
 }
 /* }}} */
 
-unsigned char * print_error (unsigned char * str_o, unsigned int java_o, unsigned char * move_o, unsigned int sec_o)
+char * print_error (char * str_o, int java_o, char * move_o, int sec_o)
 {
-	unsigned int    textBR = 0;
-	unsigned char * buf_str = NULL,
-				  * buf_move = NULL;
-	unsigned char * reg[2] = { "/\n/i", "/'|#/i" };
-	unsigned char * rep[2] = { "\\n", "\\\\\\0" };
+	int    textBR = 0;
+	char * buf_str = NULL,
+		 * buf_move = NULL;
+	char * reg[2] = { "/\n/i", "/'|#/i" };
+	char * rep[2] = { "\\n", "\\\\\\0" };
 
-	unsigned char * buf = NULL,
-				  * mv = NULL;
-	unsigned char * result,
-				  * agent_o = NULL;
+	char * buf = NULL,
+		 * mv = NULL;
+	char * result,
+		 * agent_o = NULL;
 
 	agent_o = sapi_getenv ("HTTP_USER_AGENT", 15 TSRMLS_CC);
 	if ( agent_o == NULL )
 		agent_o = estrdup (get_serverenv ("HTTP_USER_AGENT"));
 
 	/* text browser check */
-	if ( strlen (agent_o) > 0 )
+	if ( STRLEN (agent_o) > 0 )
 		if ( strstr (agent_o, "Lynx") || strstr (agent_o, "Links") || strstr (agent_o, "w3m"))
 			textBR = 1;
 
-	if ( java_o == 0 || textBR == 1 || strlen (agent_o) == 0 ) {
-		buf = emalloc (sizeof (char) * (strlen (str_o) + 2));
+	if ( java_o == 0 || textBR == 1 || STRLEN (agent_o) == 0 ) {
+		buf = emalloc (sizeof (char) * (STRLEN (str_o) + 2));
 		sprintf (buf, "%s\n", str_o);
 		if ( strcmp (move_o, "notice") && strcmp (move_o, "1")) {
-			buf_move = (unsigned char *) kr_regex_replace ("/ /i", "%20", move_o);
-			mv = emalloc (sizeof (char) * (strlen (buf_move) + 60));
+			buf_move = kr_regex_replace ("/ /i", "%20", move_o);
+			mv = emalloc (sizeof (char) * (STRLEN (buf_move) + 60));
 			sprintf (mv, "<meta http-equiv=\"refresh\" content=\"%d; url=%s\">\n", sec_o, buf_move);
-			mv[strlen (mv)] = '\0';
+			mv[STRLEN (mv)] = '\0';
 			efree (buf_move);
 
-			result = emalloc (sizeof (char) * (strlen (buf) + strlen (mv) + 3));
+			result = emalloc (sizeof (char) * (STRLEN (buf) + STRLEN (mv) + 3));
 			sprintf (result, "%s\n%s\n", buf, mv);
-			safe_efree (mv);
+			kr_safe_efree (mv);
 		} else {
-			result = emalloc (sizeof (char) * (strlen (buf) + 2));
+			result = emalloc (sizeof (char) * (STRLEN (buf) + 2));
 			sprintf (result, "%s\n", buf);
 		}
 	} else {
-		buf_str = (unsigned char *) kr_regex_replace_arr (reg, rep, str_o, 2);
+		buf_str = kr_regex_replace_arr ( reg,  rep, str_o, 2);
 		
-		buf = emalloc (sizeof (char) * (strlen (buf_str) + 60));
+		buf = emalloc (sizeof (char) * (STRLEN (buf_str) + 60));
 		if ( ! strcmp (move_o, "1") )
 		{
 			sprintf (buf, "<script type=\"javascript\">\n\talert('%s');\nhistory.back();\n</script>\n", buf_str);
 
-			result = emalloc (sizeof (char) * (strlen (buf) + 2));
+			result = emalloc (sizeof (char) * (STRLEN (buf) + 2));
 			sprintf (result, "%s\n", buf);
 		}
 	   	else
 	   	{
 			sprintf (buf, "<script type=\"javascript\">\n\talert('%s')\n</script>\n", buf_str);
 			if ( strcmp (move_o, "notice") ) {
-				buf_move = (unsigned char *) kr_regex_replace ("/ /i","%20", move_o);
-				mv = emalloc (sizeof (char) * (strlen (buf_move) + 50));
+				buf_move = kr_regex_replace ("/ /i", "%20", move_o);
+				mv = emalloc (sizeof (char) * (STRLEN (buf_move) + 50));
 				sprintf (mv, "<meta http-equiv=\"refresh\" content=\"%d; url=%s\">\n", sec_o, buf_move);
-				mv[strlen (mv)] = '\0';
+				mv[STRLEN (mv)] = '\0';
 				efree (buf_move);
 
-				result = emalloc (sizeof (char) * (strlen (buf) + strlen (mv) + 3));
+				result = emalloc (sizeof (char) * (STRLEN (buf) + STRLEN (mv) + 3));
 				sprintf (result,"%s\n%s\n", buf, mv);
-				safe_efree (mv);
+				kr_safe_efree (mv);
 			} else {
-				result = emalloc (sizeof (char) * (strlen (buf) + 2));
+				result = emalloc (sizeof (char) * (STRLEN (buf) + 2));
 				sprintf (result, "%s\n", buf);
 			}
 		}
-		safe_efree (buf_str);
+		kr_safe_efree (buf_str);
 	}
 
-	safe_efree (agent_o);
-	safe_efree (buf);
+	kr_safe_efree (agent_o);
+	kr_safe_efree (buf);
 
 	return result;
 }

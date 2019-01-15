@@ -29,11 +29,11 @@ PHP_FUNCTION(getutf8);
 PHP_FUNCTION(getcharacterset);
 PHP_FUNCTION(getunicode);
 
-unsigned char *krNcrEncode (unsigned char *str_o, int type);
-unsigned char *krNcrDecode (unsigned char *str_o);
-unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end);
-unsigned int hex2dec (unsigned char *str_o, unsigned int type);
-int is_utf8 (char * str);
+char * krNcrEncode (char * str_o, int type);
+char * krNcrDecode (char * str_o);
+char * uniConv (char * str_o, int type, int subtype, char * start, char * end);
+int hex2dec (const char * str_o, int type);
+int is_utf8 (char *  str);
 
 #define LKMS_VECTOR_SIZE	16
 #define MEMORY_SHORTAGE		-1000
@@ -66,26 +66,28 @@ int is_utf8 (char * str);
 #define HANKAKU_LENGTH				1
 #define ZENKAKU_LENGTH				2
 
-/* ±¸Á¶Ã¼¼±¾ð */
+/* êµ¬ì¡°ì²´ì„ ì–¸ */
 typedef unsigned short XUChar;
 
-/* UTF8º¯È­ */
-static void XUInitTable();
-extern int XUCodeConv(char* dest, int max, int codeTo, const char* text, int length, int codeFrom);
-extern XUChar XUCharEncode(const char* text, int max, int code);
-extern int XUCharDecode(char* dest, int max, XUChar ch, int code);
-extern int XUCharLen(const char* text, int max, int code);
-extern XUChar XUutf8CharEncode(const char* text, int max);
-extern int XUutf8CharDecode(char* dest, int max, XUChar ch);
-extern int XUutf8CharLen(const char* text, int max);
-extern int XUutf8CharRLen(const char* text, int max);
-extern int XUStrLen(const XUChar* text);
-extern int XUEncode(XUChar* dest, int max, const char* text, int length, int code);
-extern int XUDecode(char* dest, int max, const XUChar* text, int length, int code);
-extern int XULen(const char* text, int max, int code);
-extern int XUutf8Encode(XUChar* dest, int max, const char* text, int length);
-extern int XUutf8Decode(char* dest, int max, const XUChar* text, int length);
-extern int XUutf8Len(const char* text, int max);
+/* UTF8 ë³€í™” */
+#ifdef HAVE_XUINITTABLE
+static void XUInitTable ();
+#endif
+extern int XUCodeConv (char * dest, int max, int codeTo, const char * text, int length, int codeFrom);
+extern XUChar XUCharEncode (const char * text, int max, int code);
+extern int XUCharDecode (char * dest, int max, XUChar ch, int code);
+extern int XUCharLen (const char * text, int max, int code);
+extern XUChar XUutf8CharEncode (const char * text, int max);
+extern int XUutf8CharDecode (char * dest, int max, XUChar ch);
+extern int XUutf8CharLen (const char * text, int max);
+extern int XUutf8CharRLen (const char * text, int max);
+extern int XUStrLen (const XUChar * text);
+extern int XUEncode (XUChar * dest, int max, const char * text, int length, int code);
+extern int XUDecode (char * dest, int max, const XUChar * text, int length, int code);
+extern int XULen (const char * text, int max, int code);
+extern int XUutf8Encode (XUChar * dest, int max, const char * text, int length);
+extern int XUutf8Decode (char * dest, int max, const XUChar * text, int length);
+extern int XUutf8Len (const char * text, int max);
 
 #endif /* PHP_KRCHARSET_H */
 

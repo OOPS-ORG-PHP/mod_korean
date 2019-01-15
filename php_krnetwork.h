@@ -23,12 +23,14 @@ PHP_FUNCTION(get_hostname_lib);
 PHP_FUNCTION(readfile_lib);
 PHP_FUNCTION(sockmail_lib);
 
-static char *kr_gethostbyaddr(char *ip);
-int socksend (int sock, int deb, unsigned char *var, unsigned char *target);
-unsigned char *get_mx_record (unsigned char *str);
-void debug_msg (unsigned char *msg, int info, int bar);
-int sock_sendmail (unsigned char *fromaddr, unsigned char *toaddr, unsigned char *text, unsigned char *host, int debug);
-unsigned char *sockhttp (unsigned char *addr, size_t *retSize, int record, unsigned char *recfile);
+#ifdef HAVE_KR_GETHOSTBYADDR
+static char * kr_gethostbyaddr (char * ip);
+#endif
+int socksend (int sock, int deb, char * var, char * target);
+char * get_mx_record (char * str);
+void debug_msg (char * msg, int info, int bar);
+int sock_sendmail (char * fromaddr, char * toaddr, char * text, char * host, int debug);
+char * sockhttp (char * addr, size_t * retSize, int record, char * recfile);
 
 #endif
 /*

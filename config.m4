@@ -12,7 +12,7 @@ PHP_ARG_ENABLE(korean, whether to enable korean support,
 if test "$PHP_KOREAN" != "no"; then
   AC_DEFINE(HAVE_KOREAN,1,[ ])
 
-  OOPS_PARAMETER="$CFLAGS -Iext"
+  OOPS_PARAMETER="$CFLAGS -Wall -Iext"
   PHP_SUBST(CPPFLAGS)
 
   AC_MSG_CHECKING(whether to enable gd functoin)
