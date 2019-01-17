@@ -31,10 +31,10 @@ PHP_FUNCTION(getutf8);
 PHP_FUNCTION(getcharacterset);
 PHP_FUNCTION(getunicode);
 
-unsigned char *krNcrEncode (unsigned char *str_o, int type);
-unsigned char *krNcrDecode (unsigned char *str_o);
-unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end);
-unsigned int hex2dec (unsigned char *str_o, unsigned int type);
+char *krNcrEncode (char *str_o, int type);
+char *krNcrDecode (char *str_o);
+char *uniConv (char *str_o, int type, int subtype, char *start, char *end);
+int hex2dec (const char *str_o, int type);
 int is_utf8 (char * str);
 
 #define LKMS_VECTOR_SIZE	16

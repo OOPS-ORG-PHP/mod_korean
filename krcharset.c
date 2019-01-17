@@ -2,16 +2,15 @@
  * Project: mod_korean ::
  * File:    krcharset.c
  *
- * Copyright (c) 2013 JoungKyun.Kim
+ * Copyright (c) 2019 JoungKyun.Kim
  *
  * LICENSE: GPL
  *
  * @category    Text
  * @package     mod_korean
  * @author      JoungKyun.Kim <http://oops.org>
- * @copyright   2013 OOPS.org
+ * @copyright   2019 OOPS.org
  * @license     GPL
- * @version     SVN: $Id$
  * @since       File available since release 0.0.1
  */
 
@@ -112,7 +111,7 @@ PHP_FUNCTION(uniencode_lib)
 	int    prelen  = 2;
 	char * postfix = "";
 	int    postlen = 0;
-	unsigned char * string  = NULL;
+	char * string  = NULL;
 
 	if ( kr_parameters ("s|ss", &input, &inlen, &prefix, &prelen, &postfix, &postlen) == FAILURE )
 		return;
@@ -143,7 +142,7 @@ PHP_FUNCTION(unidecode_lib)
 	int    postlen = 0;
 
 	int    type    = 0;
-	unsigned char * string  = NULL;
+	char * string  = NULL;
 
 	if ( kr_parameters ("ss|ss",
 		&input, &inlen, &cset, &clen, &prefix, &prelen, &postfix, &postlen) == FAILURE )
@@ -252,7 +251,7 @@ PHP_FUNCTION(utf8decode_lib)
 	XUCodeConv (str, inlen * 6, ccode, input, inlen, XU_CONV_UTF8);
 	slen = strlen (str);
 
-	if ( ccode == XU_CONV_CP949 ) {
+	if ( ccode == XU_CONV_CP949 && strcasecmp (cset, "CP949") ) {
 		ncr = (char *) krNcrEncode (str, 1);
 		RETVAL_STRING (ncr, 1);
 		safe_efree (ncr);
@@ -263,85 +262,75 @@ PHP_FUNCTION(utf8decode_lib)
 }
 /* }}} */
 
-/* {{{ unsigned char *krNcrEncode (unsigned char *str_o, int type)
+/* {{{ char * krNcrEncode (char * str_o, int type)
  * convert euc-kr to ncr code, or convert outside EUC-KR range to ncr code
- * unsigned chart *str_o => EUC-KR/CP949 string
- * int type              => convert whole string(0) or outside EUC-KR range(1)
+ * chart * str_o => EUC-KR/CP949 string
+ * int   type   => convert whole string(0) or outside EUC-KR range(1)
  */
-unsigned char *krNcrEncode (unsigned char *str_o, int type)
+char * krNcrEncode (char * str_o, int type)
 {
-	unsigned long i;
-	unsigned int ncr;
+	long i;
+	int ncr;
 	size_t len;
-	unsigned char rc[9];
-	unsigned char *ret = NULL;
+	char rc[9] = { 0, };
+	char * ret = NULL;
 
 	if ( str_o == NULL ) { return NULL; }
-	else { len = strlen(str_o); }
+	else { len = strlen (str_o); }
 
-	ret = (unsigned char *) emalloc(sizeof(char) * strlen(str_o) * 8);
-	memset (ret, '\0', sizeof(ret));
+	ret = emalloc (sizeof(char) * strlen (str_o) * 8);
+	memset (ret, 0, sizeof (char) * strlen (str_o) * 8);
 
-	for(i=0;i<len;i++)
-   	{
+	for ( i=0; i<len; i++ ) {
+		memset (rc, 0, 9);
+
 		/* if 2byte charactor */
-		if (str_o[i] & 0x80)
-	   	{
-			switch(type)
-		   	{
+		if ( str_o[i] & 0x80 ) {
+			switch (type) {
 				/* if type 1, check range of KSX 1001 */
 				case 1:
-					if((str_o[i] >= 0x81 && str_o[i] <= 0xa0 && str_o[i+1] >= 0x41 && str_o[i+1] <=0xfe) ||
-					   (str_o[i] >= 0xa1 && str_o[i] <= 0xc6 && str_o[i+1] >= 0x41 && str_o[i+1] <=0xa0))
+					if ( (str_o[i] >= 0x81 && str_o[i] <= 0xa0 && str_o[i+1] >= 0x41 && str_o[i+1] <=0xfe) ||
+					   (str_o[i] >= 0xa1 && str_o[i] <= 0xc6 && str_o[i+1] >= 0x41 && str_o[i+1] <=0xa0) )
 				   	{
-						if(str_o[i+1] < 0x41 || str_o[i+1] > 0xfe) { memmove(rc, "?", 1); }
-						else if(0x5a < str_o[i+1] && str_o[i+1] < 0x61) { memmove(rc, "?", 1); }
-						else if(0x7a < str_o[i+1] && str_o[i+1] < 0x81) { memmove(rc, "?", 1); }
+						if ( str_o[i+1] < 0x41 || str_o[i+1] > 0xfe ) { memmove (rc, "?", 1); }
+						else if ( 0x5a < str_o[i+1] && str_o[i+1] < 0x61 ) { memmove (rc, "?", 1); }
+						else if ( 0x7a < str_o[i+1] && str_o[i+1] < 0x81 ) { memmove (rc, "?", 1); }
 						else
 						{
-							if(str_o[i+1] > 0x7a) str_o[i+1] -= 6;
-							if(str_o[i+1] > 0x5a) str_o[i+1] -= 6;
+							if ( str_o[i+1] > 0x7a ) str_o[i+1] -= 6;
+							if ( str_o[i+1] > 0x5a ) str_o[i+1] -= 6;
 							ncr = (str_o[i] - 0x81) * 178 + (str_o[i+1] - 0x41);
-							sprintf(rc, "&#%d;", table_ksc5601[ncr]);
+							sprintf (rc, "&#%d;", table_ksc5601[ncr]);
 						}
 						i++;
-					}
-				   	else
-				   	{
-						memcpy(rc, str_o + i, 2);
-						memset(rc + 2, '\0', 1);
+					} else {
+						memcpy (rc, str_o + i, 2);
+						memset (rc + 2, '\0', 1);
 						i++;
 					}
 
 					break;
 				/* range of whole string */
 				default:
-					if ( 0x81 <= str_o[i] && str_o[i] <= 0xc8 )
-					{
-						if(str_o[i+1] < 0x41 || str_o[i+1] > 0xfe) { memmove(rc, "?", 1); }
-						else if(0x5a < str_o[i+1] && str_o[i+1] < 0x61) { memmove(rc, "?", 1); }
-						else if(0x7a < str_o[i+1] && str_o[i+1] < 0x81) { memmove(rc, "?", 1); }
-						else
-						{
-							if(str_o[i+1] > 0x7a) str_o[i+1] -= 6;
-							if(str_o[i+1] > 0x5a) str_o[i+1] -= 6;
+					if ( 0x81 <= str_o[i] && str_o[i] <= 0xc8 ) {
+						if ( str_o[i+1] < 0x41 || str_o[i+1] > 0xfe ) { memmove (rc, "?", 1); }
+						else if ( 0x5a < str_o[i+1] && str_o[i+1] < 0x61 ) { memmove (rc, "?", 1); }
+						else if ( 0x7a < str_o[i+1] && str_o[i+1] < 0x81 ) { memmove (rc, "?", 1); }
+						else {
+							if ( str_o[i+1] > 0x7a ) str_o[i+1] -= 6;
+							if ( str_o[i+1] > 0x5a ) str_o[i+1] -= 6;
 							ncr = (str_o[i] - 0x81) * 178 + (str_o[i+1] - 0x41);
-							sprintf(rc, "&#%d;", table_ksc5601[ncr]);
+							sprintf (rc, "&#%d;", table_ksc5601[ncr]);
 						}
-					}
-					else if(0xca <= str_o[i] && str_o[i] <= 0xfd)
-					{
-						if(str_o[i+1] < 0xa1 || str_o[i+1] > 0xfe) { memmove(rc, "?", 1); }
-						else
-						{
+					} else if ( 0xca <= str_o[i] && str_o[i] <= 0xfd ) {
+						if ( str_o[i+1] < 0xa1 || str_o[i+1] > 0xfe ) { memmove (rc, "?", 1); }
+						else {
 							ncr = (str_o[i] - 0xca) * 94 + (str_o[i+1] - 0xa1);
-							sprintf(rc, "&#%d;", table_ksc5601_hanja[ncr]);
+							sprintf (rc, "&#%d;", table_ksc5601_hanja[ncr]);
 						}
-					}
-					else
-					{
-						memset(rc, str_o[i], 1);
-						memset(rc + 1, '\0', 1);
+					} else {
+						memset (rc, str_o[i], 1);
+						memset (rc + 1, '\0', 1);
 					}
 
 					i++;
@@ -350,23 +339,19 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 		/* 1 byte charactor */
 		else
 	   	{
-			memset(rc, str_o[i], 1);
-			memset(rc + 1, '\0', 1);
+			memset (rc, str_o[i], 1);
+			memset (rc + 1, '\0', 1);
 	   	}
 
-		if (strlen(rc) != 0)
-	   	{
-			unsigned int rc_len = strlen(rc);
-			if (ret != NULL)
-		   	{
-				unsigned ret_len = strlen(ret);
-				memmove(ret + ret_len, rc, rc_len);
-				memset(ret + ret_len + rc_len, '\0', 1);
-			}
-		   	else
-		   	{
-				memmove(ret, rc, rc_len);
-				memset(ret + rc_len, '\0', 1);
+		if ( strlen (rc) != 0 ) {
+			int rc_len = strlen (rc);
+			if ( ret != NULL ) {
+				int ret_len = strlen (ret);
+				memmove (ret + ret_len, rc, rc_len);
+				memset (ret + ret_len + rc_len, '\0', 1);
+			} else {
+				memmove (ret, rc, rc_len);
+				memset (ret + rc_len, '\0', 1);
 			}
 		}
 	}
@@ -375,69 +360,61 @@ unsigned char *krNcrEncode (unsigned char *str_o, int type)
 }
 /* }}} */
 
-/* {{{ unsigned char *krNcrDecode (unsigned char *str_o) */
-unsigned char *krNcrDecode (unsigned char *str_o)
+/* {{{ char * krNcrDecode (char * str_o) */
+char * krNcrDecode (char * str_o)
 {
-	unsigned int slen, i = 0, tmp, first, second;
-	unsigned char rc[3], tmpstr[8];
-	unsigned char *ret = NULL;
+	unsigned int first, second, tmp;
+	int slen, i = 0;
+	char rc[3] = { 0, }, tmpstr[8] = { 0, };
+	char * ret = NULL;
 
-	ret = (unsigned char *) emalloc (sizeof(char) * strlen(str_o) * 2);
-	memset (ret, '\0', sizeof(ret));
+	ret = emalloc (sizeof (char) * strlen (str_o) * 2);
+	memset (ret, 0, sizeof (char) * strlen (str_o) * 2);
 
 	if ( str_o == NULL ) { return NULL; }
-	else { slen = strlen(str_o); }
+	else { slen = strlen (str_o); }
 
-	for (i=0; i<slen; i++)
-	{
-		if (str_o[i] == '&' && str_o[i+1] == '#' && str_o[i+7] == ';')
+	for ( i=0; i<slen; i++ ) {
+		if ( str_o[i] == '&' && str_o[i+1] == '#' && str_o[i+7] == ';' )
 		{
-			if( XUINITTABLE_CHECK == 0 )
+			if ( XUINITTABLE_CHECK == 0 )
 			{
 				XUInitTable();
 				XUINITTABLE_CHECK = 1;
 			}
 
-			memmove(tmpstr, str_o + i + 2, 5);
-			tmp = atoi(tmpstr);
+			memmove (tmpstr, str_o + i + 2, 5);
+
+			tmp = atoi (tmpstr);
 			tmp = table_rev_ksc5601[tmp];
 
 			first = tmp >> 8;
 			second = tmp & 0x00FF;
 
 			/* if converted charactor is first byte of 2byte charactor */
-			if ( first & 0x80 )
-			{
-				memset(rc, first, 1);
-				memset(rc + 1, second, 1);
-				memset(rc + 2, '\0', 1);
+			if ( first & 0x80 ) {
+				memset (rc, first, 1);
+				memset (rc + 1, second, 1);
+				memset (rc + 2, '\0', 1);
 				i += 7;
+			} else {
+				memset (rc, str_o[i], 1);
+				memset (rc + 1, '\0', 1);
 			}
-			else
-			{
-				memset(rc, str_o[i], 1);
-				memset(rc + 1, '\0', 1);
-			}
-		}
-		else
-		{
-			memset(rc, str_o[i], 1);
-			memset(rc + 1, '\0', 1);
+		} else {
+			memset (rc, str_o[i], 1);
+			memset (rc + 1, '\0', 1);
 		}
 
-		if (strlen(rc) != 0)
-		{
-			unsigned int rc_len = strlen(rc);
-			if (ret != NULL)
-			{
-				unsigned ret_len = strlen(ret);
-				memmove(ret + ret_len, rc, rc_len);
-				memset(ret + ret_len + rc_len, '\0', 1);
-			}
-			else
-			{
-				memmove(ret, rc, rc_len);
-				memset(ret + rc_len, '\0', 1);
+		if ( strlen (rc) != 0 ) {
+			int rc_len = strlen (rc);
+			if ( ret != NULL ) {
+				int ret_len = strlen (ret);
+				memmove (ret + ret_len, rc, rc_len);
+				memset (ret + ret_len + rc_len, '\0', 1);
+			} else {
+				memmove (ret, rc, rc_len);
+				memset (ret + rc_len, '\0', 1);
 			}
 		}
 	}
@@ -446,90 +423,86 @@ unsigned char *krNcrDecode (unsigned char *str_o)
 }
 /* }}} */
 
-/* {{{ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end)
+/* {{{ char * uniConv (char * str_o, int type, int subtype, char * start, char * end)
  * Convert EUC-KR/CP940 to unicode
- * unsigned char *str_o   => convert string (euc-kr, cp949, unicode)
- * int type               => 0: convert euc-kr,cp949 -> unicode
- *                         1: convert unicode -> ecu-kr,cp949
- * int subtype          => if value of type set 1, 1 is euc-kr and 0 is cp949
- * unsigned char *start => front string of hex value of unicode (ex U+AC60; => U+)
- * unsigned char *end   => after string of hex value of unicode (ex U+AC60; => ; )
+ * char * str_o => convert string (euc-kr, cp949, unicode)
+ * int type    => 0: convert euc-kr,cp949 -> unicode
+ *                1: convert unicode -> ecu-kr,cp949
+ * int subtype => if value of type set 1, 1 is euc-kr and 0 is cp949
+ * char * start => front string of hex value of unicode (ex U+AC60; => U+)
+ * char * end   => after string of hex value of unicode (ex U+AC60; => ; )
  */
-unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned char *start, unsigned char *end)
+char * uniConv (char * str_o, int type, int subtype, char * start, char * end)
 {
 	unsigned long i;
 	unsigned int aryno;
 	size_t len;
-	unsigned char rc[256];
-	unsigned char *ret = NULL;
+	char rc[256] = { 0, };
+	char * ret = NULL;
 
 	int regno,hexv,firsti,secondi;
-	long slen = strlen(start);
-	long elen = strlen(end);
+	long slen = strlen (start);
+	long elen = strlen (end);
 	regex_t preg;
-	unsigned char regex[12] = "[0-9a-f]{4}";
-	unsigned char chkReg[5], conv[5], first[3], second[3];
+	char regex[12] = "[0-9a-f]{4}";
+	char chkReg[5], conv[5], first[3], second[3];
 
 	if ( str_o == NULL ) { return NULL; }
-	else { len = strlen(str_o); }
+	else { len = strlen (str_o); }
 
-	if (slen > 10 || elen > 10)
-	{
+	if ( slen > 10 || elen > 10 ) {
 		php_error(E_ERROR,"Can't use string over 10 charactors <br />\n" \
 				          "on unicode start string or end string");
 	}
 
-	if (type == 1)
-   	{
+	if ( type == 1 ) {
 		regno = regcomp(&preg, regex, REG_EXTENDED|REG_ICASE);
 
-		if (regno != 0)
-	   	{
+		if ( regno != 0 ) {
 			php_error(E_WARNING, "Problem in Unicode start charactors or end charactocs");
 			return str_o;
 		}
 	}
 
-	ret = (unsigned char *) emalloc(sizeof(char) * strlen(str_o) * (5 + strlen(start) + strlen(end)));
-	memset (ret, '\0', sizeof(ret));
+	i = sizeof(char) * strlen (str_o) * (5 + strlen (start) + strlen (end));
+	ret = emalloc (i);
+	memset (ret, '\0', i);
 
-	for (i=0; i<len; i++)
-   	{
-		switch(type)
-	   	{
+	for ( i=0; i<len; i++ ) {
+		switch (type) {
 			/* convert to euc-kr/cp949 from unicode */
 			/* unicode is constructed start charactors and hex code and end charactors */
 			case 1:
 				/* make regex check value */
-				memset(chkReg, str_o[i+slen], 1);
-				memset(chkReg+1, str_o[i+slen+1], 1);
-				memset(chkReg+2, str_o[i+slen+2], 1);
-				memset(chkReg+3, str_o[i+slen+3], 1);
-				memset(chkReg+4, '\0', 1);
+				memset (chkReg, str_o[i+slen], 1);
+				memset (chkReg+1, str_o[i+slen+1], 1);
+				memset (chkReg+2, str_o[i+slen+2], 1);
+				memset (chkReg+3, str_o[i+slen+3], 1);
+				memset (chkReg+4, '\0', 1);
 
-				if( XUINITTABLE_CHECK == 0 )
-				{
+				if ( XUINITTABLE_CHECK == 0 ) {
 					XUInitTable();
 					XUINITTABLE_CHECK = 1;
 				}
 
-				if(!strncmp(&str_o[i], start, slen) && regexec(&preg,chkReg, 0, NULL, 0) == 0 &&
-				   !strncmp(&str_o[i+slen+4], end, elen))
+				if ( ! strncmp (&str_o[i], start, slen) &&
+				     regexec (&preg, chkReg, 0, NULL, 0) == 0 &&
+				     !strncmp (&str_o[i+slen+4], end, elen))
 			   	{
-					hexv = hex2dec(chkReg, 0);
-					sprintf(conv, "%x", table_rev_ksc5601[hexv]);
+					hexv = hex2dec (chkReg, 0);
+					sprintf (conv, "%x", table_rev_ksc5601[hexv]);
 
 					/* make first byte */
 					memset (first, conv[0], 1);
 					memset (first + 1, conv[1], 1);
 					memset (first + 2, '\0', 1);
-					firsti = hex2dec(first, 1);
+					firsti = hex2dec (first, 1);
 
 					/* make second byte */
 					memset (second, conv[2], 1);
 					memset (second + 1, conv[3], 1);
 					memset (second + 2, '\0', 1);
-					secondi = hex2dec(second, 1);
+					secondi = hex2dec (second, 1);
 
 					/* make complete 2byte charactor */
 					memset (rc, firsti, 1);
@@ -537,19 +510,17 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 					memset (rc + 2, '\0', 1);
 
 					/* convert ncr code with outsize of EUC-KR range */
-					if (subtype == 1)
-				   	{
-						if((rc[0] >= 0x81 && rc[0] <= 0xa0 && rc[1] >= 0x41 && rc[1] <=0xfe) ||
-						   (rc[0] >= 0xa1 && rc[0] <= 0xc6 && rc[1] >= 0x41 && rc[1] <=0xa0))
-					   	{
-							sprintf(rc, "&#%d;", hexv);
+					if ( subtype == 1 ) {
+						if (
+							(rc[0] >= 0x81 && rc[0] <= 0xa0 && rc[1] >= 0x41 && rc[1] <=0xfe) ||
+							(rc[0] >= 0xa1 && rc[0] <= 0xc6 && rc[1] >= 0x41 && rc[1] <=0xa0)
+						) {
+							sprintf (rc, "&#%d;", hexv);
 						}
 					}
 
 					i = i + 3 + slen+elen;
-				}
-			   	else
-			   	{
+				} else {
 					memset (rc, str_o[i], 1);
 					memset (rc + 1, '\0', 1);
 				}
@@ -560,25 +531,23 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 				/* if 2byte charactor */
 				if ( 0x81 <= str_o[i] && str_o[i] <= 0xc8 )
 				{
-					if(str_o[i+1] < 0x41 || str_o[i+1] > 0xfe) { memmove(rc, "?", 1); }
-					else if(0x5a < str_o[i+1] && str_o[i+1] < 0x61) { memmove(rc, "?", 1); }
-					else if(0x7a < str_o[i+1] && str_o[i+1] < 0x81) { memmove(rc, "?", 1); }
+					if ( str_o[i+1] < 0x41 || str_o[i+1] > 0xfe ) { memmove (rc, "?", 1); }
+					else if ( 0x5a < str_o[i+1] && str_o[i+1] < 0x61 ) { memmove (rc, "?", 1); }
+					else if ( 0x7a < str_o[i+1] && str_o[i+1] < 0x81 ) { memmove (rc, "?", 1); }
 					else
 					{
-						if(str_o[i+1] > 0x7a) str_o[i+1] -= 6;
-						if(str_o[i+1] > 0x5a) str_o[i+1] -= 6;
+						if ( str_o[i+1] > 0x7a ) str_o[i+1] -= 6;
+						if ( str_o[i+1] > 0x5a ) str_o[i+1] -= 6;
 						aryno = (str_o[i] - 0x81) * 178 + (str_o[i+1] - 0x41);
-						sprintf(rc, "%s%X%s", start, table_ksc5601[aryno], end);
+						sprintf (rc, "%s%X%s", start, table_ksc5601[aryno], end);
 						i++;
 					}
 				}
-				else if(0xca <= str_o[i] && str_o[i] <= 0xfd)
-				{
-					if(str_o[i+1] < 0xa1 || str_o[i+1] > 0xfe) { memmove(rc, "?", 1); }
-					else
-					{
+				else if ( 0xca <= str_o[i] && str_o[i] <= 0xfd ) {
+					if ( str_o[i+1] < 0xa1 || str_o[i+1] > 0xfe ) { memmove (rc, "?", 1); }
+					else {
 						aryno = (str_o[i] - 0xca) * 94 + (str_o[i+1] - 0xa1);
-						sprintf(rc, "%s%X%s", start, table_ksc5601_hanja[aryno], end);
+						sprintf (rc, "%s%X%s", start, table_ksc5601_hanja[aryno], end);
 						i++;
 					}
 				}
@@ -590,39 +559,32 @@ unsigned char *uniConv (unsigned char *str_o, int type, int subtype, unsigned ch
 				}
 		}
 
-		if (strlen(rc) != 0)
-	   	{
-			unsigned int rclen = strlen(rc);
-			if(ret != NULL)
-		   	{
-				unsigned int retlen = strlen(ret);
-				memmove(ret + retlen, rc, rclen);
-				memset(ret + retlen + rclen, '\0', 1);
-			}
-		   	else
-		   	{
-				memmove(ret, rc, rclen);
-				memset(ret + rclen, '\0', 1);
+		if ( strlen (rc) != 0 ) {
+			int rclen = strlen (rc);
+			if ( ret != NULL ) {
+				int retlen = strlen (ret);
+				memmove (ret + retlen, rc, rclen);
+				memset (ret + retlen + rclen, '\0', 1);
+			} else {
+				memmove (ret, rc, rclen);
+				memset (ret + rclen, '\0', 1);
 			}
 		}
 	}
 
-	if (type == 1) { regfree(&preg); }
+	if ( type == 1 ) { regfree(&preg); }
 	return ret;
 }
 /* }}} */
 
-/* {{{ unsigned int hex2dec (unsigned char *str_o,unsigned int type) */
-unsigned int hex2dec (unsigned char *str_o, unsigned int type) {
-	int i,buf[4],len = strlen(str_o);
+/* {{{ int hex2dec (const char * str_o, int type) */
+int hex2dec (const char * str_o, int type) {
+	int i,buf[4],len = strlen (str_o);
 
-	for(i=0;i<len;i++)
-   	{
+	for ( i=0; i<len; i++ ) {
 		/* range of alphabat a -> f */
-		if((str_o[i] >= 0x61 && str_o[i] <= 0x66) || (str_o[i] >= 0x41 && str_o[i] <= 0x46))
-	   	{
-			switch(str_o[i])
-		   	{
+		if ( (str_o[i] >= 0x61 && str_o[i] <= 0x66) || (str_o[i] >= 0x41 && str_o[i] <= 0x46) ) {
+			switch (str_o[i]) {
 				case 'a' : buf[i] = 10; break;
 				case 'b' : buf[i] = 11; break;
 				case 'c' : buf[i] = 12; break;
@@ -636,11 +598,8 @@ unsigned int hex2dec (unsigned char *str_o, unsigned int type) {
 				case 'E' : buf[i] = 14; break;
 				case 'F' : buf[i] = 15; break;
 			}
-		}
-		else
-		{
-			switch(str_o[i])
-		   	{
+		} else {
+			switch (str_o[i]) {
 				case '0' : buf[i] = 0; break;
 				case '1' : buf[i] = 1; break;
 				case '2' : buf[i] = 2; break;
@@ -656,8 +615,7 @@ unsigned int hex2dec (unsigned char *str_o, unsigned int type) {
 		}
 	}
 
-	switch(type)
-   	{
+	switch (type) {
 		case 1 :
 			return ((buf[0] * 16) + buf[1]);
 			break;
@@ -671,7 +629,7 @@ unsigned int hex2dec (unsigned char *str_o, unsigned int type) {
 /* {{{ int is_utf8 (char * s) */
 int is_utf8 (char * s)
 {
-	int len, i, check, j;
+	int len, i, check = 0, j;
 
 	// utf-8 bomb character
 	if ( s[0] == 0xef && s[1] == 0xbb && s[2] == 0xbf )
@@ -692,7 +650,7 @@ int is_utf8 (char * s)
 			return 1;
 
 		{
-			UChar p = (UChar) s[i];
+			unsigned char p = (unsigned char) s[i];
 
 			if ( (p >> 5) == 0x06 )      // 1st of 2byte utf8
 				check = 1;
@@ -705,7 +663,7 @@ int is_utf8 (char * s)
 
 		i++;
 		for ( j=i; j<(i + check); j++ ) {
-			if ( ((UChar) s[j] >> 6) != 0x02 )
+			if ( ((unsigned char) s[j] >> 6) != 0x02 )
 				return 1;
 		}
 		return 0;
@@ -726,14 +684,14 @@ int XUCodeConv(char* dest, int max, int codeTo, const char* text, int length, in
 	int len1;
 	int len2;
 
-	if( XUINITTABLE_CHECK == 0 )
+	if ( XUINITTABLE_CHECK == 0 )
 	{
 		XUInitTable();
 		XUINITTABLE_CHECK = 1;
 	}
 
-	if(length < 0) length = strlen(text);
-	buf = (XUChar*) emalloc(sizeof(XUChar) * length);
+	if (length < 0) length = strlen (text);
+	buf = (XUChar*) emalloc (sizeof(XUChar) * length);
 	len1 = XUEncode(buf, length, text, length, codeFrom);	 // other -> unicode
 	len2 = XUDecode(dest, max, buf, len1, codeTo);			// unicode -> other
 
@@ -762,15 +720,15 @@ static void XUInitTable()
 	for(i = 0; i < 128; i++) 
 	{
 	   c = table_iso8859[1].data[i];
-	   if(c) table_rev_latin2[c] = i + 0x0080;
+	   if (c) table_rev_latin2[c] = i + 0x0080;
 	} 
 	
 	for(i = 0; i < 128; i++) 
 	{
 		c = table_koi8r[i];
-		if(0x0080 <= c && c < 0x0480) 
+		if (0x0080 <= c && c < 0x0480) 
 			table_rev_koi8r_1[c - 0x0080] = i + 0x0080;
-		else if(0x2200 <= c && c < 0x2600) 
+		else if (0x2200 <= c && c < 0x2600) 
 			table_rev_koi8r_2[c - 0x2200] = i + 0x0080;
 	} 
 
@@ -794,9 +752,9 @@ static void XUInitTable()
 	for(i = 0; i < 7896; i++) 
 	{
 		c = table_jis0208[i];
-		if(c) table_rev_jis0208[c] = (c1 << 8) + c2;
+		if (c) table_rev_jis0208[c] = (c1 << 8) + c2;
 		c2++;
-		if(c2 == 0x7f) 
+		if (c2 == 0x7f) 
 		{
 		   c2 = 0x21;
 		   c1++;
@@ -808,9 +766,9 @@ static void XUInitTable()
 	for(i = 0; i < 8178; i++) 
 	{
 	   c = table_gb2312[i];
-	   if(c) table_rev_gb2312[c] = (c1 << 8) + c2;
+	   if (c) table_rev_gb2312[c] = (c1 << 8) + c2;
 	   c2++;
-	   if(c2 == 0x7f) 
+	   if (c2 == 0x7f) 
 	   {
 		   c2 = 0x21;
 		   c1++;
@@ -822,11 +780,11 @@ static void XUInitTable()
 	for(i = 0; i < 13973; i++) 
 	{
 	   c = table_big5[i];
-	   if(c) table_rev_big5[c] = (c1 << 8) + c2;
+	   if (c) table_rev_big5[c] = (c1 << 8) + c2;
 	   c2++;
-	   if(c2 == 0x7f) 
+	   if (c2 == 0x7f) 
 		   c2 = 0xa1;
-	   else if(c2 == 0xff) 
+	   else if (c2 == 0xff) 
 	   {
 		   c2 = 0x40;
 		   c1++;
@@ -838,13 +796,13 @@ static void XUInitTable()
 	for(i = 0; i < 12816; i++) 
 	{
 	   c = table_ksc5601[i];
-	   if(c) table_rev_ksc5601[c] = (c1 << 8) + c2;
+	   if (c) table_rev_ksc5601[c] = (c1 << 8) + c2;
 	   c2++;
-	   if(c2 == 0x5b) 
+	   if (c2 == 0x5b) 
 		  c2 = 0x61;
-	   else if(c2 == 0x7b) 
+	   else if (c2 == 0x7b) 
 		  c2 = 0x81;
-	   else if(c2 == 0xff) 
+	   else if (c2 == 0xff) 
 	   {
 		   c2 = 0x41;
 		   c1++;
@@ -856,9 +814,9 @@ static void XUInitTable()
 	for(i = 0; i < 4888; i++) 
 	{
 	   c = table_ksc5601_hanja[i];
-	   if(c) table_rev_ksc5601[c] = (c1 << 8) + c2;
+	   if (c) table_rev_ksc5601[c] = (c1 << 8) + c2;
 	   c2++;
-	   if(c2 == 0xff) 
+	   if (c2 == 0xff) 
 	   {
 		   c2 = 0xa1;
 		   c1++;
@@ -874,16 +832,16 @@ int XUEncode(XUChar* dest, int max, const char* text, int length, int code)
 	int ret = 0;
 	int chlen; 
 	
-	if(length == 0) 
+	if (length == 0) 
 	{
-		if(max > 0) *dest = 0;
+		if (max > 0) *dest = 0;
 		return 0;
 	}
 
 	for(;;) 
 	{
-		if(length < 0 && !*text) break;
-		if(ret < max) 
+		if (length < 0 && !*text) break;
+		if (ret < max) 
 		{
 		   *dest = XUCharEncode(text, length, code);
 		   dest++;
@@ -891,14 +849,14 @@ int XUEncode(XUChar* dest, int max, const char* text, int length, int code)
 		ret++;
 		chlen = XUCharLen(text, length, code);
 		text += chlen;
-		if(length > 0) 
+		if (length > 0) 
 		{
 			length -= chlen;
-			if(length < 1) break;
+			if (length < 1) break;
 		}
 	} 
 
-	if(ret < max) *dest = 0;
+	if (ret < max) *dest = 0;
 	return ret;
 }
 /* }}} */
@@ -912,86 +870,86 @@ XUChar XUCharEncode(const char* text, int max, int code)
 	XUChar c2;
 	XUChar num; 
 
-	if(max == 0 || !*text) return 0; 
+	if (max == 0 || !*text) return 0; 
 
-	if(code == XU_CONV_LOCALE) code = xu_locale_encoding;
+	if (code == XU_CONV_LOCALE) code = xu_locale_encoding;
 
-	if(code <= XU_CONV_NONE) return '?';
-		   if(code == XU_CONV_UTF8) return XUutf8CharEncode(text, max); 
+	if (code <= XU_CONV_NONE) return '?';
+		   if (code == XU_CONV_UTF8) return XUutf8CharEncode(text, max); 
 
 	c1 = (XUChar)(unsigned char)*text;
-		   if(c1 < 0x80) return c1;
+		   if (c1 < 0x80) return c1;
 
-	if(code <= XU_CONV_ISO8859(15)) 
+	if (code <= XU_CONV_ISO8859(15)) 
 	{
 		ret = table_iso8859[code - XU_CONV_ISO8859(1)].data[c1 - 0x80];
-		if(ret) return ret;
+		if (ret) return ret;
 		return '?';
 	} 
-	else if(code == XU_CONV_KOI8R) 
+	else if (code == XU_CONV_KOI8R) 
 	{
 		ret = table_koi8r[c1 - 0x80];
-		if(ret) return ret;
+		if (ret) return ret;
 		return '?';
 	}
 
-	if(code == XU_CONV_SJIS) 
+	if (code == XU_CONV_SJIS) 
 	{
-		if(0xa1 <= c1 && c1 <= 0xdf) return c1 + 0xfec0;
+		if (0xa1 <= c1 && c1 <= 0xdf) return c1 + 0xfec0;
 	}
-	if(max == 1) return '?';
+	if (max == 1) return '?';
 	text++; 
 
 	c2 = (XUChar)(unsigned char)*text;
-	if(!c2) return '?';
-	if(code == XU_CONV_EUCJP) 
+	if (!c2) return '?';
+	if (code == XU_CONV_EUCJP) 
 	{
-		if(c1 == 0x8e) return c2 + 0xfec0;
-		if(c1 < 0xa1 || c1 > 0xf4) return '?';
-		if(c2 < 0xa1 || c2 > 0xfe) return '?';
+		if (c1 == 0x8e) return c2 + 0xfec0;
+		if (c1 < 0xa1 || c1 > 0xf4) return '?';
+		if (c2 < 0xa1 || c2 > 0xfe) return '?';
 		ret = table_jis0208[(c1 - 0xa1) * 94 + (c2 - 0xa1)];
 	} 
-	else if(code == XU_CONV_SJIS) 
+	else if (code == XU_CONV_SJIS) 
 	{
-		if(c1 == 0x80 || c1 == 0xa0 || c1 > 0xfc) return '?';
-		if(c2  < 0x40 || c2 == 0x7f || c2 > 0xfc) return '?';
-		if(c1 >= 0xe0) c1 -= 0x40;
-		if(c2 > 0x7e) c2--;
+		if (c1 == 0x80 || c1 == 0xa0 || c1 > 0xfc) return '?';
+		if (c2  < 0x40 || c2 == 0x7f || c2 > 0xfc) return '?';
+		if (c1 >= 0xe0) c1 -= 0x40;
+		if (c2 > 0x7e) c2--;
 		num = (c1 - 0x81) * 188 + (c2 - 0x40);
-		if(num < 7896) ret = table_jis0208[num];
+		if (num < 7896) ret = table_jis0208[num];
 	} 
-	else if(code == XU_CONV_CP949) 
+	else if (code == XU_CONV_CP949) 
 	{
-		if(0x81 <= c1 && c1 <= 0xc8) 
+		if (0x81 <= c1 && c1 <= 0xc8) 
 		{
-			if(c2 < 0x41 || c2 > 0xfe) return '?';
-			if(0x5a < c2 && c2 < 0x61) return '?';
-			if(0x7a < c2 && c2 < 0x81) return '?';
-			if(c2 > 0x7a) c2 -= 6;
-			if(c2 > 0x5a) c2 -= 6;
+			if (c2 < 0x41 || c2 > 0xfe) return '?';
+			if (0x5a < c2 && c2 < 0x61) return '?';
+			if (0x7a < c2 && c2 < 0x81) return '?';
+			if (c2 > 0x7a) c2 -= 6;
+			if (c2 > 0x5a) c2 -= 6;
 			ret = table_ksc5601[(c1 - 0x81) * 178 + (c2 - 0x41)];
 		} 
-		else if(0xca <= c1 && c1 <= 0xfd) 
+		else if (0xca <= c1 && c1 <= 0xfd) 
 		{
-			if(c2 < 0xa1 || c2 > 0xfe) return '?';
+			if (c2 < 0xa1 || c2 > 0xfe) return '?';
 			ret = table_ksc5601_hanja[(c1 - 0xca) * 94 + (c2 - 0xa1)];
 		}
 	} 
-	else if(code == XU_CONV_EUCCN) 
+	else if (code == XU_CONV_EUCCN) 
 	{
-		if(c1 < 0xa1 || c1 > 0xf7) return '?';
-		if(c2 < 0xa1 || c2 > 0xfe) return '?';
+		if (c1 < 0xa1 || c1 > 0xf7) return '?';
+		if (c2 < 0xa1 || c2 > 0xfe) return '?';
 		ret = table_gb2312[(c1 - 0xa1) * 94 + (c2 - 0xa1)];
 	} 
-	else if(code == XU_CONV_BIG5) 
+	else if (code == XU_CONV_BIG5) 
 	{
-		if(c1 < 0xa1 || c1 > 0xf9) return '?';
-		if(c2 < 0x40 || c2 > 0xfe) return '?';
-		if(0x7e < c2 && c2 < 0xa1) return '?';
-		if(c2 > 0x7e) c2 -= 0x22;
+		if (c1 < 0xa1 || c1 > 0xf9) return '?';
+		if (c2 < 0x40 || c2 > 0xfe) return '?';
+		if (0x7e < c2 && c2 < 0xa1) return '?';
+		if (c2 > 0x7e) c2 -= 0x22;
 		ret = table_big5[(c1 - 0xa1) * 157 + (c2 - 0x40)];
 	}
-	if(ret) return ret; 
+	if (ret) return ret; 
 
 	return '?';
 }
@@ -1003,61 +961,61 @@ int XUCharLen(const char* text, int max, int code)
 	XUChar c1;
 	XUChar c2; 
 
-	if(max == 0 || !*text) return 1; 
+	if (max == 0 || !*text) return 1; 
 
-	if(code == XU_CONV_LOCALE) code = xu_locale_encoding;
-	if(code == XU_CONV_UTF8  ) return XUutf8CharLen(text, max);
-	if(code <= XU_CONV_KOI8R ) return 1; 
+	if (code == XU_CONV_LOCALE) code = xu_locale_encoding;
+	if (code == XU_CONV_UTF8  ) return XUutf8CharLen(text, max);
+	if (code <= XU_CONV_KOI8R ) return 1; 
 
 	c1 = (XUChar)(unsigned char)*text;
-	if(code == XU_CONV_SJIS) 
+	if (code == XU_CONV_SJIS) 
 	{
-		if(c1 < 0x80 || (0xa1 <= c1 && c1 <= 0xdf)) return 1;
+		if (c1 < 0x80 || (0xa1 <= c1 && c1 <= 0xdf)) return 1;
 	}
-	if(max == 1) return 1;
+	if (max == 1) return 1;
 	text++; 
 
 	c2 = (XUChar)(unsigned char)*text;
-	if(!c2) return 1;
-	if(code == XU_CONV_EUCJP) 
+	if (!c2) return 1;
+	if (code == XU_CONV_EUCJP) 
 	{
-		if(c1 == 0x8e) return 2;
-		if(c1 < 0xa1 || c1 > 0xf4) return 1;
-		if(c2 < 0xa1 || c2 > 0xfe) return 1;
+		if (c1 == 0x8e) return 2;
+		if (c1 < 0xa1 || c1 > 0xf4) return 1;
+		if (c2 < 0xa1 || c2 > 0xfe) return 1;
 		return 2;
 	} 
-	else if(code == XU_CONV_SJIS) 
+	else if (code == XU_CONV_SJIS) 
 	{
-		if(c1 == 0x80 || c1 == 0xa0 || c1 > 0xfc) return 1;
-		if(c2  < 0x40 || c2 == 0x7f || c2 > 0xfc) return 1;
+		if (c1 == 0x80 || c1 == 0xa0 || c1 > 0xfc) return 1;
+		if (c2  < 0x40 || c2 == 0x7f || c2 > 0xfc) return 1;
 		return 2;
 	} 
-	else if(code == XU_CONV_CP949) 
+	else if (code == XU_CONV_CP949) 
 	{
-		if(0x81 <= c1 && c1 <= 0xc8) 
+		if (0x81 <= c1 && c1 <= 0xc8) 
 		{
-			if(c2 < 0x41 || c2 > 0xfe) return 1;
-			if(0x5a < c2 && c2 < 0x61) return 1;
-			if(0x7a < c2 && c2 < 0x81) return 1;
+			if (c2 < 0x41 || c2 > 0xfe) return 1;
+			if (0x5a < c2 && c2 < 0x61) return 1;
+			if (0x7a < c2 && c2 < 0x81) return 1;
 			return 2;
 		} 
-		else if(0xca <= c1 && c1 <= 0xfd) 
+		else if (0xca <= c1 && c1 <= 0xfd) 
 		{
-			if(c2 < 0xa1 || c2 > 0xfe) return 1;
+			if (c2 < 0xa1 || c2 > 0xfe) return 1;
 			return 2;
 		}
 	} 
-	else if(code == XU_CONV_EUCCN) 
+	else if (code == XU_CONV_EUCCN) 
 	{
-		if(c1 < 0xa1 || c1 > 0xf7) return 1;
-		if(c2 < 0xa1 || c2 > 0xfe) return 1;
+		if (c1 < 0xa1 || c1 > 0xf7) return 1;
+		if (c2 < 0xa1 || c2 > 0xfe) return 1;
 		return 2;
 	} 
-	else if(code == XU_CONV_BIG5) 
+	else if (code == XU_CONV_BIG5) 
 	{
-		if(c1 < 0xa1 || c1 > 0xf9) return 1;
-		if(c2 < 0x40 || c2 > 0xfe) return 1;
-		if(0x7e < c2 && c2 < 0xa1) return 1;
+		if (c1 < 0xa1 || c1 > 0xf9) return 1;
+		if (c2 < 0x40 || c2 > 0xfe) return 1;
+		if (0x7e < c2 && c2 < 0xa1) return 1;
 		return 2;
 	} 
 
@@ -1072,31 +1030,31 @@ int XUDecode(char* dest, int max, const XUChar* text, int length, int code)
 	int ret = 0;
 	int chlen; 
 
-	if(length == 0) 
+	if (length == 0) 
 	{
-		if(max > 0) *dest = 0;
+		if (max > 0) *dest = 0;
 		return 0;
 	}
 
 	for(;;) 
 	{
-		if(length < 0 && !*text) break;
+		if (length < 0 && !*text) break;
 		chlen = XUCharDecode(dest, max, *text, code);
 		ret += chlen;
-		if(max > 0) 
+		if (max > 0) 
 		{
 			dest += chlen;
 			max -= chlen;
 		}
 		text++;
-		if(length > 0) 
+		if (length > 0) 
 		{
 			length--;
-			if(length < 1) break;
+			if (length < 1) break;
 		}
 	} 
 
-	if(max > 0) *dest = 0;
+	if (max > 0) *dest = 0;
 	return ret;
 }
 /* }}} */
@@ -1111,27 +1069,27 @@ int XUCharDecode(char* dest, int max, XUChar ch, int code)
 	XUChar i;
 	XUChar* table; 
 
-	if(code == XU_CONV_LOCALE) 
+	if (code == XU_CONV_LOCALE) 
 	{
 		code = xu_locale_encoding;
 	} 
-	else if(code == XU_CONV_NONE) 
+	else if (code == XU_CONV_NONE) 
 	{
-		if(max >= 1) dest[0] = '?';
+		if (max >= 1) dest[0] = '?';
 		return 1;
 	} 
-	else if(code == XU_CONV_UTF8) 
+	else if (code == XU_CONV_UTF8) 
 	{
 		return XUutf8CharDecode(dest, max, ch);
 	}	 
-	if(ch < 0x0080) 
+	if (ch < 0x0080) 
 	{
-		if(max >= 1) dest[0] = (char)ch;
+		if (max >= 1) dest[0] = (char)ch;
 		return 1;
 	}
-	if(code <= XU_CONV_ISO8859(15)) 
+	if (code <= XU_CONV_ISO8859(15)) 
 	{
-		if(ch < 0x00a1) 
+		if (ch < 0x00a1) 
 		{
 			ret = ch;
 		} 
@@ -1140,49 +1098,49 @@ int XUCharDecode(char* dest, int max, XUChar ch, int code)
 			table = table_iso8859[code - XU_CONV_ISO8859(1)].data;
 			for(i = 0x21; i < 0x80; i++) 
 			{
-				if(ch == table[i]) 
+				if (ch == table[i]) 
 				{
 					ret = i + 0x80;
 					break;
 				}
 			}
 		}
-		if(!ret) ret = '?';
-		if(max >= 1) dest[0] = (char)ret;
+		if (!ret) ret = '?';
+		if (max >= 1) dest[0] = (char)ret;
 		return 1;
 	} 
-	else if(code == XU_CONV_KOI8R) 
+	else if (code == XU_CONV_KOI8R) 
 	{
-		if(0x0080 <= ch && ch < 0x0480) 
+		if (0x0080 <= ch && ch < 0x0480) 
 		{
 			 ret = table_rev_koi8r_1[ch - 0x0080];
 		} 
-		else if(0x2200 <= ch && ch < 0x2600) 
+		else if (0x2200 <= ch && ch < 0x2600) 
 		{
 			 ret = table_rev_koi8r_2[ch - 0x2200];
 		}
-		if(!ret) ret = '?';
-		if(max >= 1) dest[0] = (char)ret;
+		if (!ret) ret = '?';
+		if (max >= 1) dest[0] = (char)ret;
 		return 1;
 	} 
 
-	if(code == XU_CONV_EUCJP) 
+	if (code == XU_CONV_EUCJP) 
 	{
-		if(0xff61 <= ch && ch <= 0xff9f) 
+		if (0xff61 <= ch && ch <= 0xff9f) 
 		{
 			ret = (ch - 0xfec0) + 0x8e00;
 		} 
 		else 
 		{
 			ret = table_rev_jis0208[ch];
-			if(ret) ret += 0x8080;
+			if (ret) ret += 0x8080;
 		}
 	} 
-	else if(code == XU_CONV_SJIS) 
+	else if (code == XU_CONV_SJIS) 
 	{
-		if(0xff61 <= ch && ch <= 0xff9f) 
+		if (0xff61 <= ch && ch <= 0xff9f) 
 		{
-			if(max >= 1) dest[0] = (char)(ch - 0xfec0);
+			if (max >= 1) dest[0] = (char)(ch - 0xfec0);
 			return 1;
 		} 
 		else 
@@ -1190,34 +1148,34 @@ int XUCharDecode(char* dest, int max, XUChar ch, int code)
 			 ret = table_rev_jis0208[ch];
 			 r1 = (ret >> 8  ) - 0x21;
 			 r2 = (ret & 0xff) - 0x21;
-			 if(r1 & 1) r2 += 94;
+			 if (r1 & 1) r2 += 94;
 			 r1 = (r1 >> 1) + 0x81;
-			 if(r1 > 0x9f) r1 += 0x40;
+			 if (r1 > 0x9f) r1 += 0x40;
 			 r2 += 0x40;
-			 if(r2 > 0x7e) r2++;
+			 if (r2 > 0x7e) r2++;
 			 ret = (r1 << 8) + r2;
 		 }
 	} 
-	else if(code == XU_CONV_CP949) 
+	else if (code == XU_CONV_CP949) 
 	{
 		 ret = table_rev_ksc5601[ch];
 	} 
-	else if(code == XU_CONV_EUCCN) 
+	else if (code == XU_CONV_EUCCN) 
 	{
 		 ret = table_rev_gb2312[ch];
-		 if(ret) ret += 0x8080;
+		 if (ret) ret += 0x8080;
 	} 
-	else if(code == XU_CONV_BIG5) 
+	else if (code == XU_CONV_BIG5) 
 	{
 		 ret = table_rev_big5[ch];
 	}
-	if(!ret) 
+	if (!ret) 
 	{
-		 if(max >= 1) dest[0] = '?';
+		 if (max >= 1) dest[0] = '?';
 		 return 1;
 	} 
 	
-	if(max >= 2) 
+	if (max >= 2) 
 	{
 		dest[0] = (char)(ret >> 8);
 		dest[1] = (char)(ret & 0xff);
@@ -1242,16 +1200,16 @@ int XUutf8Encode(XUChar* dest, int max, const char* text, int length)
 	int ret = 0;
 	int chlen; 
 
-	if(length == 0) 
+	if (length == 0) 
 	{
-		if(max > 0) *dest = 0;
+		if (max > 0) *dest = 0;
 		return 0;
 	} 
 
 	for(;;) 
 	{
-		if(length < 0 && !*text) break;
-		if(ret < max) 
+		if (length < 0 && !*text) break;
+		if (ret < max) 
 		{
 			 *dest = XUutf8CharEncode(text, length);
 			  dest++;
@@ -1259,14 +1217,14 @@ int XUutf8Encode(XUChar* dest, int max, const char* text, int length)
 		ret++;
 		chlen = XUutf8CharLen(text, length);
 		text += chlen;
-		if(length > 0) 
+		if (length > 0) 
 		{
 			length -= chlen;
-			if(length < 1) break;
+			if (length < 1) break;
 		}
 	} 
 
-	if(ret < max) *dest = 0;
+	if (ret < max) *dest = 0;
 	return ret;
 }
 /* }}} */
@@ -1278,56 +1236,56 @@ int XUutf8CharLen(const char* text, int max)
 	XUChar c2;
 	XUChar ch;
 
-	if(max == 0 || !*text) return 1;
+	if (max == 0 || !*text) return 1;
 
 	c1 = (XUChar)(unsigned char)*text;
-	if(max == 1 || c1 < 0xc0 || c1 > 0xfd) return 1;
+	if (max == 1 || c1 < 0xc0 || c1 > 0xfd) return 1;
 	text++; 
 
 	c2 = (XUChar)(unsigned char)*text;
-	if((c2 & 0xc0) != 0x80) return 1;
+	if ((c2 & 0xc0) != 0x80) return 1;
 	c2 = c2 & 0x3f;
-	if((c1 & 0xe0) == 0xc0) 
+	if ((c1 & 0xe0) == 0xc0) 
 	{
-		if(c1 < 0xc2) return 1;
+		if (c1 < 0xc2) return 1;
 		return 2;
 	}
-	if(max == 2) return 1;
+	if (max == 2) return 1;
 	text++; 
 
 	ch = (XUChar)(unsigned char)*text;
-	if((ch & 0xc0) != 0x80) return 1;
-	if((c1 & 0xf0) == 0xe0) 
+	if ((ch & 0xc0) != 0x80) return 1;
+	if ((c1 & 0xf0) == 0xe0) 
 	{
-		 if(c2 < 0x20 && c1 < 0xe1) return 1;
+		 if (c2 < 0x20 && c1 < 0xe1) return 1;
 		 return 3;
 	}
-	if(max == 3) return 1;
+	if (max == 3) return 1;
 	text++; 
 
 	ch = (XUChar)(unsigned char)*text;
-	if((ch & 0xc0) != 0x80) return 1;
-	if((c1 & 0xf8) == 0xf0) 
+	if ((ch & 0xc0) != 0x80) return 1;
+	if ((c1 & 0xf8) == 0xf0) 
 	{
-		 if(c2 < 0x10 && c1 < 0xf1) return 1;
+		 if (c2 < 0x10 && c1 < 0xf1) return 1;
 		 return 4;
 	}
-	if(max == 4) return 1;
+	if (max == 4) return 1;
 	text++; 
 
 	ch = (XUChar)(unsigned char)*text;
-	if((ch & 0xc0) != 0x80) return 1;
-	if((c1 & 0xfc) == 0xf8) 
+	if ((ch & 0xc0) != 0x80) return 1;
+	if ((c1 & 0xfc) == 0xf8) 
 	{
-		if(c2 < 0x08 && c1 < 0xf9) return 1;
+		if (c2 < 0x08 && c1 < 0xf9) return 1;
 		return 5;
 	}
-	if(max == 5) return 1;
+	if (max == 5) return 1;
 	text++; 
 
 	ch = (XUChar)(unsigned char)*text;
-	if((ch & 0xc0) != 0x80) return 1;
-	if(c2 < 0x04 && c1 < 0xfd) return 1;
+	if ((ch & 0xc0) != 0x80) return 1;
+	if (c2 < 0x04 && c1 < 0xfd) return 1;
 	return 6;
 }
 /* }}} */
@@ -1337,60 +1295,60 @@ XUChar XUutf8CharEncode(const char* text, int max)
 {
 	XUChar c[6];
 
-	if(max == 0 || !*text) return 0;
+	if (max == 0 || !*text) return 0;
 
 	c[0] = (XUChar)(unsigned char)*text;
-	if(max == 1 || c[0] < 0xc0 || c[0] > 0xfd) return c[0];
+	if (max == 1 || c[0] < 0xc0 || c[0] > 0xfd) return c[0];
 	text++; 
 
 	c[1] = (XUChar)(unsigned char)*text;
-	if((c[1] & 0xc0) != 0x80) return c[0];
+	if ((c[1] & 0xc0) != 0x80) return c[0];
 	c[1] = c[1] & 0x3f;
-	if((c[0] & 0xe0) == 0xc0) 
+	if ((c[0] & 0xe0) == 0xc0) 
 	{
-		if(c[0] < 0xc2) return c[0];
+		if (c[0] < 0xc2) return c[0];
 		return ((c[0] & 0x1f) << 6) + c[1];
 	}
-	if(max == 2) return c[0];
+	if (max == 2) return c[0];
 	text++; 
 
 	c[2] = (XUChar)(unsigned char)*text;
-	if((c[2] & 0xc0) != 0x80) return c[0];
+	if ((c[2] & 0xc0) != 0x80) return c[0];
 	c[2] = c[2] & 0x3f;
-	if((c[0] & 0xf0) == 0xe0) 
+	if ((c[0] & 0xf0) == 0xe0) 
 	{
-		if(c[1] < 0x20 && c[0] < 0xe1) return c[0];
+		if (c[1] < 0x20 && c[0] < 0xe1) return c[0];
 		return ((c[0] & 0x0f) << 12) + (c[1] << 6) + c[2];
 	}
-	if(max == 3) return c[0];
+	if (max == 3) return c[0];
 	text++; 
 
 	c[3] = (XUChar)(unsigned char)*text;
-	if((c[3] & 0xc0) != 0x80) return c[0];
+	if ((c[3] & 0xc0) != 0x80) return c[0];
 	c[3] = c[3] & 0x3f;
-	if((c[0] & 0xf8) == 0xf0) 
+	if ((c[0] & 0xf8) == 0xf0) 
 	{
-		if(c[1] < 0x10 && c[0] < 0xf1) return c[0];
+		if (c[1] < 0x10 && c[0] < 0xf1) return c[0];
 		return ((c[1] & 0x0f) << 12) + (c[2] << 6) + c[3];
 	}
-	if(max == 4) return c[0];
+	if (max == 4) return c[0];
 	text++; 
 
 	c[4] = (XUChar)(unsigned char)*text;
-	if((c[4] & 0xc0) != 0x80) return c[0];
+	if ((c[4] & 0xc0) != 0x80) return c[0];
 	c[4] = c[4] & 0x3f;
-	if((c[0] & 0xfc) == 0xf8) 
+	if ((c[0] & 0xfc) == 0xf8) 
 	{
-		if(c[1] < 0x08 && c[0] < 0xf9) return c[0];
+		if (c[1] < 0x08 && c[0] < 0xf9) return c[0];
 		return ((c[2] & 0x0f) << 12) + (c[3] << 6) + c[4];
 	}
-	if(max == 5) return c[0];
+	if (max == 5) return c[0];
 	text++; 
 
 	c[5] = (XUChar)(unsigned char)*text;
-	if((c[5] & 0xc0) != 0x80) return c[0];
+	if ((c[5] & 0xc0) != 0x80) return c[0];
 	c[5] = c[5] & 0x3f;
-	if(c[1] < 0x04 && c[0] < 0xfd) return c[0];
+	if (c[1] < 0x04 && c[0] < 0xfd) return c[0];
 	return ((c[3] & 0x0f) << 12) + (c[4] << 6) + c[5];
 }
 /* }}} */
@@ -1411,31 +1369,31 @@ int XUutf8Decode(char* dest, int max, const XUChar* text, int length)
 	int ret = 0;
 	int chlen; 
 
-	if(length == 0) 
+	if (length == 0) 
 	{
-	   if(max > 0) *dest = 0;
+	   if (max > 0) *dest = 0;
 	   return 0;
 	} 
 
 	for(;;) 
 	{
-	   if(length < 0 && !*text) break;
+	   if (length < 0 && !*text) break;
 	   chlen = XUutf8CharDecode(dest, max, *text);
 	   ret += chlen;
-	   if(max > 0) 
+	   if (max > 0) 
 	   {
 		   dest += chlen;
 		   max -= chlen;
 	   }
 	   text++;
-	   if(length > 0) 
+	   if (length > 0) 
 	   {
 		   length--;
-		   if(length < 1) break;
+		   if (length < 1) break;
 	   }
 	} 
 
-	if(max > 0) *dest = 0;
+	if (max > 0) *dest = 0;
 	return ret;
 }
 /* }}} */
@@ -1443,25 +1401,25 @@ int XUutf8Decode(char* dest, int max, const XUChar* text, int length)
 /* {{{ int XUutf8CharDecode(char* dest, int max, XUChar ch) */
 int XUutf8CharDecode(char* dest, int max, XUChar ch)
 {
-	if(ch < 0x0080) 
+	if (ch < 0x0080) 
 	{
-	   if(max >= 1) dest[0] = (char)ch;
-	   if(max >= 2) dest[1] = '\0';
+	   if (max >= 1) dest[0] = (char)ch;
+	   if (max >= 2) dest[1] = '\0';
 	   return 1;
 	} 
 
-	if(ch < 0x0800) 
+	if (ch < 0x0800) 
 	{
-	   if(max >= 1) dest[0] = (char)(0xc0 + ((ch >> 6) & 0x001f));
-	   if(max >= 2) dest[1] = (char)(0x80 + (ch & 0x003f));
-	   if(max >= 3) dest[2] = '\0';
+	   if (max >= 1) dest[0] = (char)(0xc0 + ((ch >> 6) & 0x001f));
+	   if (max >= 2) dest[1] = (char)(0x80 + (ch & 0x003f));
+	   if (max >= 3) dest[2] = '\0';
 	   return 2;
 	} 
 
-	if(max >= 1) dest[0] = (char)(0xe0 + ((ch >> 12) & 0x000f));
-	if(max >= 2) dest[1] = (char)(0x80 + ((ch >>  6) & 0x003f));
-	if(max >= 3) dest[2] = (char)(0x80 + (ch & 0x003f));
-	if(max >= 4) dest[3] = '\0';
+	if (max >= 1) dest[0] = (char)(0xe0 + ((ch >> 12) & 0x000f));
+	if (max >= 2) dest[1] = (char)(0x80 + ((ch >>  6) & 0x003f));
+	if (max >= 3) dest[2] = (char)(0x80 + (ch & 0x003f));
+	if (max >= 4) dest[3] = '\0';
 	return 3;
 }
 /* }}} */
