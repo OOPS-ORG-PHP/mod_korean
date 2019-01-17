@@ -4,6 +4,7 @@ PHP Korean Extexsions Changelog
 --------------------------------------------------------------------------------
 Fri Jan 18 2019
 by JoungKyun.Kim <hostmaster@oops.org>
+	- fixed #10 is_utf8 control reaches end of non-void function on PHP 5
 	- fixed #9 wrong operation krcharset api on PHP 5
 
 Mon Jan 26 2014
