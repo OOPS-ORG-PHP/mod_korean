@@ -82,18 +82,16 @@ PHP_FUNCTION(filelist_lib)
 {
 	struct dirent *d;
 
-	char * input = NULL,
-		 * mode  = "",
-		 * regex = "";
-	int    inlen = 0,
-		   mlen  = 0,
-		   rlen  = 0;
+	char  * input = NULL,
+		  * mode  = "",
+		  * regex = "";
+	int     inlen = 0,
+		    mlen  = 0,
+		    rlen  = 0;
 
-	DIR           * dp;
-	unsigned char * mode_s,
-				  * regex_s,
-				    dirpath[MAXPATHLENGTH] = { 0, };
-	regex_t         preg;
+	DIR   * dp;
+	char    dirpath[MAXPATHLENGTH] = { 0, };
+	regex_t preg;
 
 	if ( kr_parameters ("s|ss", &input, &inlen, &mode, &mlen, &regex, &rlen) == FAILURE )
 		return;
@@ -125,27 +123,28 @@ PHP_FUNCTION(filelist_lib)
 			if ( ! strcmp (d->d_name, ".") || ! strcmp (d->d_name, "..") )
 				continue;
 
-			if ( ! strcmp (mode, "f") )
+			if ( ! strcmp (mode, "f") ) {
 				if ( check_filedev (dirpath, d->d_name) != RETURN_FILE_TYPE )
 					continue;
-			else if (! strcmp (mode, "d") )
+			} else if (! strcmp (mode, "d") ) {
 				if ( check_filedev(dirpath, d->d_name) != RETURN_DIR_TYPE )
 					continue;
-			else if ( ! strcmp (mode, "l") )
+			} else if ( ! strcmp (mode, "l") ) {
 				if ( check_filedev(dirpath, d->d_name) != RETURN_LINK_TYPE )
 					continue;
-		   	else if ( ! strcmp (mode, "fd") )
+			} else if ( ! strcmp (mode, "fd") ) {
 				if ( check_filedev(dirpath, d->d_name) != RETURN_FILE_TYPE &&
 					check_filedev(dirpath, d->d_name) != RETURN_DIR_TYPE )
 					continue;
-		   	else if ( ! strcmp (mode, "fl") )
+			} else if ( ! strcmp (mode, "fl") ) {
 				if ( check_filedev(dirpath, d->d_name) != RETURN_FILE_TYPE &&
 					check_filedev(dirpath, d->d_name) != RETURN_LINK_TYPE )
 					continue;
-		   	else if ( ! strcmp (mode, "dl") )
+			} else if ( ! strcmp (mode, "dl") ) {
 				if ( check_filedev(dirpath, d->d_name) != RETURN_LINK_TYPE &&
 					check_filedev(dirpath, d->d_name) != RETURN_DIR_TYPE )
 					continue;
+			}
 
 			if ( rlen && regexec(&preg,d->d_name, 0, NULL, 0) != 0)
 				continue;
@@ -165,7 +164,7 @@ PHP_FUNCTION(filelist_lib)
  * write file */
 PHP_FUNCTION(putfile_lib)
 {
-	unsigned char filepath[MAXPATHLENGTH] = { 0, };
+	char   filepath[MAXPATHLENGTH] = { 0, };
 	char * fname = NULL,
 		 * input = "";
 	int    flen  = 0,
@@ -192,7 +191,7 @@ PHP_FUNCTION(putfile_lib)
  * return file context */
 PHP_FUNCTION(getfile_lib)
 {
-	unsigned char *str, getfilename[MAXPATHLENGTH] = { 0, };
+	char *str, getfilename[MAXPATHLENGTH] = { 0, };
 	size_t orgsize = 0, chksize = 0;
 	struct stat buf;
 
@@ -329,15 +328,15 @@ PHP_FUNCTION(pcregrep_lib)
 }
 /* }}} */
 
-/* {{{ PHPAPI void writefile (unsigned char * filename, unsigned char * str, unsigned int mode) */
-int writefile (unsigned char * filename, unsigned char * str, unsigned int mode)
+/* {{{ PHPAPI void writefile (char * filename, char * str, int mode) */
+int writefile (char * filename, char * str, int mode)
 {
 	struct stat s;
 
-	FILE          * fp;
-	unsigned char * act,
-				  * string;
-	int             ret;
+	FILE * fp;
+	char * act,
+	     * string;
+	int    ret;
 
 	if ( mode == 1 ) {
 		ret = stat (filename, &s);
@@ -368,17 +367,17 @@ int writefile (unsigned char * filename, unsigned char * str, unsigned int mode)
 }
 /* }}} */
 
-/* {{{ PHPAPI unsigned char * readfile (unsigned char * filename) */
-unsigned char * readfile (unsigned char * filename)
+/* {{{ PHPAPI char * readfile (char * filename) */
+char * readfile (char * filename)
 {
 	struct stat filebuf;
 
-	FILE          * fp;
-	size_t          filesize = 0,
-					len = 0,
-					strlength = 0;
-	unsigned char * text = NULL,
-				    tmptext[FILEBUFS];
+	FILE * fp;
+	size_t filesize = 0,
+	       len = 0,
+	       strlength = 0;
+	char * text = NULL,
+	       tmptext[FILEBUFS];
 
 	/* get file info */
 	stat (filename, &filebuf);
@@ -410,7 +409,7 @@ unsigned char * readfile (unsigned char * filename)
 }
 /* }}} */
 
-/* {{{ unsigned char *human_file_size (double size_o, int sub_o, int unit, int cunit) */
+/* {{{ char *human_file_size (double size_o, int sub_o, int unit, int cunit) */
 char * human_file_size (double size_o, int sub_o, int unit, int cunit)
 {
 	float res;
@@ -457,11 +456,11 @@ char * human_file_size (double size_o, int sub_o, int unit, int cunit)
 }
 /* }}} */
 
-/* {{{ unsigned int check_filedev (unsigned char *path_f, unsigned char *filename) */
-unsigned int check_filedev (unsigned char * path_f, unsigned char * filename)
+/* {{{ int check_filedev (char *path_f, char *filename) */
+int check_filedev (char * path_f, char * filename)
 {
 	struct stat s;
-	unsigned char * fullpath;
+	char * fullpath;
 	int ret;
 
 	fullpath = emalloc (sizeof (char) * (strlen (path_f) + strlen (filename) + 2));
@@ -481,15 +480,15 @@ unsigned int check_filedev (unsigned char * path_f, unsigned char * filename)
 }
 /* }}} */
 
-/* {{{ unsigned char * includePath (unsigned char * filepath) */
-unsigned char * includePath (unsigned char * filepath) {
-	const char      delimiters[] = ":";
-	unsigned char * filename = NULL;
-	unsigned char * token,
-				    chkfile[512];
-	unsigned char * includetmp,
-				  * includepath;
-	int             exists = 1;
+/* {{{ char * includePath (char * filepath) */
+char * includePath (char * filepath) {
+	const char delimiters[] = ":";
+	char * filename = NULL;
+	char * token,
+	       chkfile[512] = { 0, };
+	char * includetmp,
+	     * includepath;
+	int    exists = 1;
 	//static void ***tsrm_ls;
 
 	includetmp = PG(include_path);
@@ -510,7 +509,7 @@ unsigned char * includePath (unsigned char * filepath) {
 			token = strtok (NULL, delimiters);
 		}
 	} else {
-		unsigned char tmpfilename[512] = { 0, };
+		char tmpfilename[512] = { 0, };
 
 		if ( strlen (includepath) > 0 )
 			sprintf (tmpfilename, "%s/%s", includepath, filepath);

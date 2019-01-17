@@ -79,6 +79,8 @@ PHPAPI const char php_sig_png_kr[8] = {(char) 0x89, (char) 0x50, (char) 0x4e, (c
 	    (char) 0x0d, (char) 0x0a, (char) 0x1a, (char) 0x0a};
 #endif
 
+extern void safe_efree (void * str);
+
 /* {{{ proto int imgresize(string filepath [, string new_type [, int width [, int height [, string newpath ] ] ] ])
  *  *  print move action to url */
 PHP_FUNCTION(imgresize_lib)
@@ -105,8 +107,8 @@ PHP_FUNCTION(imgresize_lib)
 		   newpath_len = 0;
 	char   filetype[8] = { 0, },
 		   tmpfilename[64] = { 0, };
-	unsigned char imgfile[1024] = { 0, },
-				  newpath[1024] = { 0, };
+	char   imgfile[1024] = { 0, },
+	       newpath[1024] = { 0, };
 
 	if ( kr_parameters ("s|slls", &path, &plen, &type, &tlen, &width, &height, &newp, &nlen) == FAILURE )
 		return;

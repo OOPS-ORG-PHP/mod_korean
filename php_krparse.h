@@ -25,11 +25,11 @@ PHP_FUNCTION(autolink_lib);
 PHP_FUNCTION(substr_lib);
 PHP_FUNCTION(postposition_lib);
 
-unsigned char *autoLink (unsigned char *str_o);
-unsigned char *get_useragent (void);
-unsigned char *get_serverenv (unsigned char *para);
-int get_postposition (unsigned char *str);
-unsigned char * strtrim (unsigned char *str);
+char *autoLink (char *str_o);
+char *get_useragent (void);
+char *get_serverenv (char *para);
+int get_postposition (char *str);
+char * strtrim (char *str);
 void safe_efree (void * str);
 
 #define b_NAME br

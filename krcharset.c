@@ -19,6 +19,8 @@
 #include "config.h"
 #endif
 
+#define HAVE_XUINITTABLE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>

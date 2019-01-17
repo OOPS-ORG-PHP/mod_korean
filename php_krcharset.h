@@ -72,7 +72,9 @@ int is_utf8 (char * str);
 typedef unsigned short XUChar;
 
 /* UTF8º¯È­ */
+#ifdef HAVE_XUINITTABLE
 static void XUInitTable();
+#endif
 extern int XUCodeConv(char* dest, int max, int codeTo, const char* text, int length, int codeFrom);
 extern XUChar XUCharEncode(const char* text, int max, int code);
 extern int XUCharDecode(char* dest, int max, XUChar ch, int code);

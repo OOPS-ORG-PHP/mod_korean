@@ -22,7 +22,7 @@ $Id$
 
 PHP_FUNCTION(perror_lib);
 PHP_FUNCTION(pnotice_lib);
-unsigned char *print_error (unsigned char *str_o, unsigned int java_o, unsigned char *move_o, unsigned int sec_o);
+char *print_error (char *str_o, int java_o, char *move_o, int sec_o);
 
 #endif /* PHP_KRERROR_H */
 

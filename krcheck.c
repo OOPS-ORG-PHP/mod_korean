@@ -27,6 +27,8 @@
 #include "php_krcheck.h"
 #include "krregex.h"
 
+int is_utf8 (char *);
+
 /* {{{ Static functions
  */
 /* {{{ int numberOfchar(char *str) */
@@ -43,14 +45,14 @@ int numberOfchar (char *str, char chk) {
 }
 /* }}} */
 
-/* {{{ unsigned int checkAddr (UChar * addr, int type) */
-unsigned int checkAddr (UChar * addr, int type) {
-	UChar * regex;
-	UChar regex_e[] = "!^[[:alnum:]\xA1-\xFE._-]+@[[:alnum:]\xA1-\xFE-]+\\.[[:alnum:].-]+$!i";
-	UChar regex_u[] = "!^(http|https|ftp|telnet|news)://[[:alnum:]\xA1-\xFE-]+\\.[[:alnum:]\xA1-\xFE:&#@=_~%?/.+-]+$!i";
-	UChar u_regex_e[] = "!^[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}._-]+@[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}-]+\\.[[:alnum:].-]+$!ui";
-	UChar u_regex_u[] = "!^(http|https|ftp|telnet|news)://[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}-]+\\.[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}:&#@=_~%?/.+-]+$!ui";
-	int ret = 0;
+/* {{{ int checkAddr (char * addr, int type) */
+int checkAddr (char * addr, int type) {
+	char * regex;
+	char   regex_e[] = "!^[[:alnum:]\xA1-\xFE._-]+@[[:alnum:]\xA1-\xFE-]+\\.[[:alnum:].-]+$!i";
+	char   regex_u[] = "!^(http|https|ftp|telnet|news)://[[:alnum:]\xA1-\xFE-]+\\.[[:alnum:]\xA1-\xFE:&#@=_~%?/.+-]+$!i";
+	char   u_regex_e[] = "!^[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}._-]+@[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}-]+\\.[[:alnum:].-]+$!ui";
+	char   u_regex_u[] = "!^(http|https|ftp|telnet|news)://[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}-]+\\.[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}:&#@=_~%?/.+-]+$!ui";
+	int   ret = 0;
 
 	if ( is_utf8 (addr) )
 		regex = estrdup (type ? regex_u : regex_e);
@@ -64,14 +66,14 @@ unsigned int checkAddr (UChar * addr, int type) {
 }
 /* }}} */
 
-/* {{{ unsigned int chkMetaChar (UChar * str, int type) */
-unsigned int chkMetaChar (UChar * str, int type) {
-	int ret;
-	UChar * regex;
-	UChar regex_ur[] = "![^[:alnum:]\xA1-\xFE_-]!i";
-	UChar regex_up[] = "![^[:alnum:]\xA1-\xFE \\._%-]|\\.\\.!i";
-	UChar u_regex_ur[] = "![^[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}_-]!ui";
-	UChar u_regex_up[] = "![^[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF} \\._%-]|\\.\\.!ui";
+/* {{{ int chkMetaChar (char * str, int type) */
+int chkMetaChar (char * str, int type) {
+	int    ret;
+	char * regex;
+	char   regex_ur[] = "![^[:alnum:]\xA1-\xFE_-]!i";
+	char   regex_up[] = "![^[:alnum:]\xA1-\xFE \\._%-]|\\.\\.!i";
+	char   u_regex_ur[] = "![^[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}_-]!ui";
+	char   u_regex_up[] = "![^[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF} \\._%-]|\\.\\.!ui";
 
 	if ( is_utf8 (str) )
 		regex = estrdup (type ? regex_up : regex_ur);
@@ -85,10 +87,10 @@ unsigned int chkMetaChar (UChar * str, int type) {
 }
 /* }}} */
 
-/* {{{ unsigned int check_table (UChar *str) */
-unsigned int check_table (UChar *str) {
-	UChar * buf;
-	UChar * regex[] =
+/* {{{ int check_table (char *str) */
+int check_table (char *str) {
+	char * buf;
+	char * regex[] =
 	{
 		";[\\d]+;",
 		";<(/?)(TABLE|TH|TR|TD)[^>]*>;i",
@@ -102,12 +104,12 @@ unsigned int check_table (UChar *str) {
 		";</TABLE>;i",
 		";[\\D]+;"
 	};
-	UChar * replace[] = { "", "<\\1\\2>", "1", "2", "3", "4", "94", "93", "92", "91", "" };
+	char * replace[] = { "", "<\\1\\2>", "1", "2", "3", "4", "94", "93", "92", "91", "" };
 
 	if ( ! checkReg (str, "</?[tT][aA][bB][lL][eE][^>]*>") )
 		return 0;
 
-	buf = (UChar *) kr_regex_replace_arr (
+	buf = kr_regex_replace_arr (
 		regex, replace, str, (sizeof (regex) / sizeof (regex[0]))
 	);
 
@@ -123,12 +125,12 @@ unsigned int check_table (UChar *str) {
 }
 /* }}} */
 
-/* {{{ unsigned int multibyte_check(UChar *str_o, unsigned int p) */
-unsigned int multibyte_check (UChar *str_o, unsigned int p) {
-	UChar * start_p;
-	unsigned int    i,
-					l,
-					twobyte = 0;
+/* {{{ int multibyte_check(char *str_o, int p) */
+int multibyte_check (char *str_o, int p) {
+	char * start_p;
+	int    i,
+	       l,
+	       twobyte = 0;
 
 	/* return 0 if point is 1st byte in string */
 	if ( p == 0 )
@@ -165,11 +167,11 @@ unsigned int multibyte_check (UChar *str_o, unsigned int p) {
 }
 /* }}} */
 
-/* {{{ unsigned int check_windows(unsigned int type)
+/* {{{ int check_windows(int type)
  * type 1 => check of webserver. if iis, return 1. if not return 0
  * type 0 => check of os. if windows, return 1. if not return 0
  */
-unsigned int check_windows (unsigned int type) {
+int check_windows (int type) {
 	switch (type) {
 		case 1:
 			if ( sapi_module.name && ! strcasecmp (sapi_module.name, "isapi") )
@@ -214,7 +216,6 @@ PHP_FUNCTION(is_email_lib)
 {
 	char * input = NULL;
 	int    inlen = 0;
-	int    ret   = 0;
 
 	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
 		return;
@@ -232,7 +233,6 @@ PHP_FUNCTION(is_url_lib)
 {
 	char * input = NULL;
 	int    inlen = 0;
-	int    ret   = 0;
 
 	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
 		return;

@@ -279,9 +279,9 @@ ZEND_END_MODULE_GLOBALS(pcre)
 
 #endif /* PHP_PCRE_H */
 
-unsigned char *kr_regex_replace(unsigned char *regex_o, unsigned char *replace_o, unsigned char *str_o);
-unsigned char *kr_regex_replace_arr(unsigned char *regex[], unsigned char *replace[], unsigned char *str, unsigned int regex_no);
-unsigned int checkReg(unsigned char *str, unsigned char *regex_o);
-int pcre_match (unsigned char *regex, unsigned char *str);
+char *kr_regex_replace(char *regex_o, char *replace_o, char *str_o);
+char *kr_regex_replace_arr(char *regex[], char *replace[], char *str, int regex_no);
+int checkReg(char *str, char *regex_o);
+int pcre_match (char *regex, char *str);
 
 #endif /* KRREGEX_H */

@@ -45,7 +45,8 @@ ZEND_DECLARE_MODULE_GLOBALS(korean)
 */
 
 /* True global resources - no need for thread safety here */
-static int le_korean;
+// don't use
+//static int le_korean;
 
 /* {{{ korean_functions[]
  *

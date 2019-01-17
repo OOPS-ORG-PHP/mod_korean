@@ -121,7 +121,7 @@ PHP_FUNCTION(get_hostname_lib)
 {
 	unsigned int i;
 	const char delimiters[] = ", ";
-	UChar *token;
+	char * token;
 	char * ret = NULL;
 	char tmphost[1024], *host, *check;
 	char *proxytype[PROXYSIZE] = { "HTTP_CLIENT_IP","HTTP_X_FORWARDED_FOR","HTTP_X_COMING_FROM",
@@ -149,7 +149,7 @@ PHP_FUNCTION(get_hostname_lib)
 			if ( ! host )
 				host = getenv ("REMOTE_ADDR");
 			if ( ! host )
-				host = (UChar *) get_serverenv ("REMOTE_ADDR");
+				host = get_serverenv ("REMOTE_ADDR");
 		} else {
 			if ( strchr (tmphost, ',') ) {
 				token = strtok (tmphost, delimiters);
@@ -171,7 +171,7 @@ PHP_FUNCTION(get_hostname_lib)
 			if ( ! host )
 				host = estrdup (getenv ("REMOTE_ADDR"));
 			if ( ! host )
-				host = estrdup ((UChar *) get_serverenv ("REMOTE_ADDR"));
+				host = estrdup (get_serverenv ("REMOTE_ADDR"));
 		}
 	}
 	else
@@ -204,7 +204,7 @@ PHP_FUNCTION(get_hostname_lib)
 PHP_FUNCTION(readfile_lib)
 {
 	zval **arg1, **arg2;
-	static UChar *filepath, *filename, *string, getfilename[1024];
+	static char *filepath, *filename, *string, getfilename[1024];
 	int use_include_path=0, issock=0;
 	size_t *retSize, retSize_t = 0;
 
@@ -231,13 +231,13 @@ PHP_FUNCTION(readfile_lib)
 			WRONG_PARAM_COUNT;
 	}
 	convert_to_string_ex(arg1);
-	filepath = (UChar *) strtrim(Z_STRVAL_PP(arg1));
+	filepath = strtrim(Z_STRVAL_PP(arg1));
 
 	if (checkReg(filepath, "^[hH][tT][tT][pP]://")) { issock = 1; }
 
 	if ( issock == 1 )
 	{
-		string = (UChar *) sockhttp (filepath, retSize, 0, "");
+		string = sockhttp (filepath, retSize, 0, "");
 		if (string != NULL)
 		{
 			RETVAL_STRINGL(string, *retSize, 1);
@@ -249,7 +249,7 @@ PHP_FUNCTION(readfile_lib)
 	{
 		if ( use_include_path != 0 && filepath[0] != '/' )
 		{
-			filename = (UChar *) includePath(filepath);
+			filename = includePath(filepath);
 		}
 		else { filename = estrdup (filepath); }
 
@@ -259,7 +259,7 @@ PHP_FUNCTION(readfile_lib)
 		// get file info
 		if( stat (getfilename, &filestat) == 0 )
 		{
-			string = (UChar *) readfile(getfilename);
+			string = readfile(getfilename);
 			RETVAL_STRINGL(string, filestat.st_size, 1);
 			safe_efree (filename);
 			safe_efree (filepath);
@@ -280,7 +280,7 @@ PHP_FUNCTION(readfile_lib)
 PHP_FUNCTION(readfile_lib)
 {
 	char *filepath, *string;
-	UChar buf[8192];
+	char  buf[8192];
 	int use_include_path=0;
 	size_t buflen =0, len = 0, flen = 0;
 	php_stream *stream;
@@ -317,9 +317,9 @@ PHP_FUNCTION(readfile_lib)
  *    Return a file or a URL */
 PHP_FUNCTION(sockmail_lib)
 {
-	char * text, * from, * to, * hhost, * debugs;
-	UChar delimiters[] = ",";
-	UChar * faddr, * taddr, * mailaddr;
+	char * text, * from, * to, * hhost;
+	char   delimiters[] = ",";
+	char * faddr, * taddr, * mailaddr;
 	char * btoken;
 	int debug = 0,
 		telen = 0,
@@ -327,9 +327,9 @@ PHP_FUNCTION(sockmail_lib)
 		tlen  = 0,
 		hlen  = 0;
 
-	UChar * src[4] = { "/[^<]*</", "/>.*/", "/[\\s]/", "/^.*$/" };
-	UChar * des[4] = { "", "", "", "<\\0>" };
-	UChar * t_addr;
+	char * src[4] = { "/[^<]*</", "/>.*/", "/[\\s]/", "/^.*$/" };
+	char * des[4] = { "", "", "", "<\\0>" };
+	char * t_addr;
 
 	if ( kr_parameters ("ss|ssb", &text, &telen, &from, &flen, &to, &tlen, &hhost, &hlen, &debug) == FAILURE )
 		return;
@@ -341,19 +341,19 @@ PHP_FUNCTION(sockmail_lib)
 
 	/* mail context */
 	if ( flen < 1 ) {
-		UChar * f_src[4] = { "/\r*\n/i", "/.*From:([^!]+)!!ENTER!!.*/i", "/.*<([^>]+)>/i", "/^.*$/" };
-		UChar * f_des[4] = { "!!ENTER!!", "\\1", "\\1", "<\\0>" };
-		faddr = (UChar *) kr_regex_replace_arr (f_src, f_des, text, (sizeof (f_src) / sizeof (f_src[0])));
+		char * f_src[4] = { "/\r*\n/i", "/.*From:([^!]+)!!ENTER!!.*/i", "/.*<([^>]+)>/i", "/^.*$/" };
+		char * f_des[4] = { "!!ENTER!!", "\\1", "\\1", "<\\0>" };
+		faddr = kr_regex_replace_arr (f_src, f_des, text, (sizeof (f_src) / sizeof (f_src[0])));
 	} else {
-		UChar * f_src[2] = { "/.*<([^>]+)>/i", "/^.*$/" };
-		UChar * f_des[2] = { "\\1", "<\\0>" };
-		faddr = (UChar *) kr_regex_replace_arr (f_src, f_des, from, (sizeof (f_src) / sizeof (f_src[0])));
+		char * f_src[2] = { "/.*<([^>]+)>/i", "/^.*$/" };
+		char * f_des[2] = { "\\1", "<\\0>" };
+		faddr = kr_regex_replace_arr (f_src, f_des, from, (sizeof (f_src) / sizeof (f_src[0])));
 	}
 
 	if ( tlen < 1) {
-		UChar * t_src[2] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i" };
-		UChar * t_des[2] = { "!!ENTER!!", "\\1" };
-		taddr = (UChar *) kr_regex_replace_arr (t_src, t_des, text, (sizeof (t_src) / sizeof (t_src[0])));
+		char * t_src[2] = { "/\r*\n/i", "/.*To:([^!]+)!!ENTER!!.*/i" };
+		char * t_des[2] = { "!!ENTER!!", "\\1" };
+		taddr = kr_regex_replace_arr (t_src, t_des, text, (sizeof (t_src) / sizeof (t_src[0])));
 	} else {
 		taddr = to;
 	}
@@ -364,7 +364,7 @@ PHP_FUNCTION(sockmail_lib)
 			int hostlen = 0;
 
 			t_addr = NULL;
-			t_addr = (UChar *) kr_regex_replace_arr(src, des, mailaddr, (sizeof (src) / sizeof (src[0])));
+			t_addr = kr_regex_replace_arr(src, des, mailaddr, (sizeof (src) / sizeof (src[0])));
 			hostlen = strlen (t_addr);
 			err_host = emalloc (sizeof (char *) * hostlen + 1);
 			memset (err_host, 0, hostlen + 1);
@@ -415,22 +415,22 @@ static char * kr_gethostbyaddr (char * ip)
 }
 /* }}} */
 
-/* {{{ UChar *get_mx_record (UChar * str) */
-UChar * get_mx_record (UChar * str)
+/* {{{ char *get_mx_record (char * str) */
+char * get_mx_record (char * str)
 {
 	u_char answer[8192], * cp, * end;
 	u_short type, weight, tmpweight;
 	static char mxrecord[256] = { 0, };
-	UChar * host, * tmphost, tmpmx[256] = { 0, };
-	unsigned int i, qdc, count, tmpmxlen = 0;
+	char * host, * tmphost, tmpmx[256] = { 0, };
+	int i, qdc, count, tmpmxlen = 0;
 	HEADER * hp;
 
 	weight = 0;
 
 	if ( (tmphost = strrchr (str, '@')) != NULL )
-		host = (UChar *) kr_regex_replace ("/[^<]*<|>.*/", "", tmphost + 1);
+		host = kr_regex_replace ("/[^<]*<|>.*/", "", tmphost + 1);
 	else
-		host = (UChar *) kr_regex_replace ("/[^<]*<|>.*/", "", str);
+		host = kr_regex_replace ("/[^<]*<|>.*/", "", str);
 
 	/* if don't exist mx record */
 	if ( (i = res_search (host, C_IN, T_MX, answer, sizeof (answer))) < 0 ) {
@@ -499,11 +499,11 @@ UChar * get_mx_record (UChar * str)
 }
 /* }}} */
 
-/* {{{ int socksend (int sock, int deb, UChar * var, UChar * target) */
-int socksend (int sock, int deb, UChar * var, UChar * target)
+/* {{{ int socksend (int sock, int deb, char * var, char * target) */
+int socksend (int sock, int deb, char * var, char * target)
 {
-	UChar * cmd, msg[1024];
-	int rlen = 0, failed = 1, bar = 0, add = 0, tmplen;
+	char * cmd, msg[1024];
+	int    rlen = 0, failed = 1, add = 0, tmplen;
 
 	tmplen = strlen (var);
 
@@ -513,7 +513,7 @@ int socksend (int sock, int deb, UChar * var, UChar * target)
 	else add = 3;
 
 	{
-		UChar * tmpcmd;
+		char * tmpcmd;
 		tmpcmd = emalloc (sizeof (char) * (tmplen + add + 1));
 
 		if ( ! strcasecmp (target, "mail") ) sprintf (tmpcmd, "MAIL From: %s\r\n", var);
@@ -522,7 +522,7 @@ int socksend (int sock, int deb, UChar * var, UChar * target)
 		else sprintf (tmpcmd, "%s\r\n", var);
 
 		tmpcmd[tmplen + add] = '\0';
-		cmd = (UChar *) estrdup (tmpcmd);
+		cmd = estrdup (tmpcmd);
 		safe_efree (tmpcmd);
 	}
 
@@ -545,8 +545,8 @@ int socksend (int sock, int deb, UChar * var, UChar * target)
 }
 /* }}} */
 
-/* {{{ void debug_msg (UChar *msg, int info, int bar) */
-void debug_msg (UChar *msg, int info, int bar)
+/* {{{ void debug_msg (char *msg, int info, int bar) */
+void debug_msg (char *msg, int info, int bar)
 {
 	if ( info != 0 ) {
 		php_printf ("DEBUG: %s", msg);
@@ -556,12 +556,12 @@ void debug_msg (UChar *msg, int info, int bar)
 }
 /* }}} */
 
-/* {{{ int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, int debug) */
-int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, UChar * host, int debug)
+/* {{{ int sock_sendmail (char * fromaddr, char * toaddr, char * text, int debug) */
+int sock_sendmail (char * fromaddr, char * toaddr, char * text, char * host, int debug)
 {
-	int     len, sock, failcode;
-	UChar * addr;
-	UChar   helocmd[1024] = { 0, };
+	int    len, sock, failcode;
+	char * addr;
+	char   helocmd[1024] = { 0, };
 
 	if ( strlen (host) < 1 )
 		strcpy (helocmd, "HELO localhost");
@@ -607,14 +607,14 @@ int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, UChar * host,
 	}
 	else
 	{
-		unsigned int recvlen = 0;
-		UChar recvmsg[1024];
-		UChar * str_t = NULL;
+		int    recvlen = 0;
+		char   recvmsg[1024];
+		char * str_t = NULL;
 
 		recvlen = recv (sock, recvmsg, 1024, 0);
 		recvmsg[recvlen] = '\0';
 		if (debug == 1) {
-			str_t = (UChar *) strtrim (recvmsg);
+			str_t = strtrim (recvmsg);
 			php_printf ("\r\nConnect %s Start\r\n", addr);
 			php_printf ("----------------------------------------------------------------\r\n\r\n");
 			php_printf ("DEBUG: %s\r\n", str_t);
@@ -670,37 +670,37 @@ int sock_sendmail (UChar * fromaddr, UChar * toaddr, UChar * text, UChar * host,
 }
 /* }}} */
 
-/* {{{ UChar *sockhttp (UChar *addr, size_t *retSize, int record, UChar *recfile)
+/* {{{ char *sockhttp (char *addr, size_t *retSize, int record, char *recfile)
  * addr : url path of read file
  * record : whether write of don't write read file with randsom name
  * recfile : if record is 1, write recfile name with read file
  */
-UChar * sockhttp (UChar * addr, size_t * retSize, int record, UChar * recfile)
+char * sockhttp (char * addr, size_t * retSize, int record, char * recfile)
 {
 	FILE  * fp;
-	UChar   tmpfilename[512] = { 0, },
+	char    tmpfilename[512] = { 0, },
 		    cmd[1024],
 			rc[4096];
 	int     sock,
 			len = 0,
 			freechk = 0;
-	UChar * nullstr = "",
+	char  * nullstr = "",
 		  * string,
 		  * tmpstr = NULL;
 	size_t  tmplen = 0;
 
 	// parse file path with url, uri
-	//UChar *uri;
-	UChar * chk, * url, * urlpoint;
-	chk = (UChar *) estrdup(addr + 7);
+	//char *uri;
+	char * chk, * url, * urlpoint;
+	chk = estrdup(addr + 7);
 	fp = NULL;
 
 	urlpoint = strchr (chk, '/');
 
 	if ( urlpoint != NULL )
-		url = (UChar *) estrndup (chk, urlpoint - chk);
+		url = estrndup (chk, urlpoint - chk);
 	else
-		url = (UChar *) estrdup (chk);
+		url = estrdup (chk);
 
 	safe_efree (chk);
 
@@ -792,7 +792,7 @@ UChar * sockhttp (UChar * addr, size_t * retSize, int record, UChar * recfile)
 		// return string length with pointer
 		*retSize = tmplen;
 
-		string = (UChar *) estrndup (tmpstr, tmplen);
+		string = estrndup (tmpstr, tmplen);
 		if (freechk == 1)
 			safe_efree (tmpstr);
 

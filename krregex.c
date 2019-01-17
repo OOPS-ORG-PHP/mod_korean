@@ -29,11 +29,11 @@
 #include "krregex.h"
 #include "php_krparse.h"
 
-UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // {{{
+char * kr_regex_replace (char * regex_o, char * replace_o, char * str_o) // {{{
 {
 	size_t   str_len = 0;
 	zval   * replaces;
-	UChar  * buf_o;
+	char  * buf_o;
 
 	TSRMLS_FETCH ();
 
@@ -43,24 +43,24 @@ UChar * kr_regex_replace (UChar * regex_o, UChar * replace_o, UChar * str_o) // 
 	MAKE_STD_ZVAL (replaces);
 	ZVAL_STRING (replaces, replace_o, 1);
 		
-	buf_o = (UChar *) php_pcre_replace (
-			regex_o, strlen(regex_o), str_o, str_len, replaces,0, &str_len, -1, 0 TSRMLS_CC
+	buf_o = php_pcre_replace (
+			regex_o, strlen(regex_o), str_o, str_len, replaces, 0, (int *) &str_len, -1, 0 TSRMLS_CC
 	);
 
 	return buf_o;
 } // }}}
 
-UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * str_o, unsigned int regex_no) // {{{
+char * kr_regex_replace_arr (char * regex_o[], char * replace_o[], char * str_o, int regex_no) // {{{
 {
-	unsigned int i;
+	int i;
 	size_t str_len = 0;
 #ifdef PHP_WIN32
 	zval * replaces[100];
 #else
 	zval * replaces[regex_no];
 #endif
-	UChar * o_str = NULL;
-	UChar * c_str = NULL;
+	char * o_str = NULL;
+	char * c_str = NULL;
 
 	TSRMLS_FETCH ();
 
@@ -72,32 +72,32 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 		ZVAL_STRING (replaces[i], replace_o[i], 1);
 
 		if( i == 0 ) {
-			o_str = (UChar *) php_pcre_replace (
+			o_str = php_pcre_replace (
 						regex_o[i],
 				   		strlen(regex_o[i]),
 						str_o,
 						str_len,
 						replaces[i],
 						0,
-						&str_len,
+						(int *) &str_len,
 						-1, 0 TSRMLS_CC
 					);
-			c_str = emalloc (sizeof (UChar *) * (str_len + 1));
+			c_str = emalloc (sizeof (char *) * (str_len + 1));
 			strcpy (c_str, o_str);
 		} else {
 			o_str = NULL;
-			o_str = (UChar *) php_pcre_replace(
+			o_str = php_pcre_replace(
 						regex_o[i],
 				  		strlen(regex_o[i]),
 						c_str,
 						str_len,
 						replaces[i],
 						0,
-						&str_len,
+						(int *) &str_len,
 						-1, 0 TSRMLS_CC
 					);
 			efree (c_str);
-			c_str = emalloc (sizeof (UChar *) * (str_len + 1));
+			c_str = emalloc (sizeof (char *) * (str_len + 1));
 			strcpy (c_str, o_str);
 		}
 
@@ -110,7 +110,7 @@ UChar * kr_regex_replace_arr (UChar * regex_o[], UChar * replace_o[], UChar * st
 	return o_str;
 } // }}}
 
-unsigned int checkReg (UChar * str, UChar * regex_o) // {{{
+int checkReg (char * str, char * regex_o) // {{{
 {
 	regex_t preg;
 
@@ -128,12 +128,12 @@ unsigned int checkReg (UChar * str, UChar * regex_o) // {{{
 	}
 } // }}}
 
-int pcre_match (UChar * regex, UChar * str) // {{{
+int pcre_match (char * regex, char * str) // {{{
 {
 	pcre * re = NULL;
 	pcre_extra * extra = NULL;
 	int preg_options = 0, * offsets, val = 0;
-	unsigned int size_offsets;
+	int size_offsets;
 	int num_subpats;
 
 	/* Compile regex or get it from cache. */
