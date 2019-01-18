@@ -47,7 +47,7 @@ PHP_FUNCTION(autolink_lib)
 	if ( inlen == 0 )
 		RETURN_EMPTY_STRING ();
 
-	RETURN_STRING (autoLink (input), 1);
+	RETVAL_STRING (autoLink (input), 1);
 }
 /* }}} */
 
@@ -137,7 +137,7 @@ PHP_FUNCTION(substr_lib)
  *    Returns info of browser */
 PHP_FUNCTION(agentinfo_lib)
 {
-	char * agent_o, * buf;
+	char * agent_o, * buf, * buf1;
 
 	agent_o = get_useragent ();
 	if ( ! agent_o ) 
@@ -163,7 +163,10 @@ PHP_FUNCTION(agentinfo_lib)
 
 		/* get version */
 		buf = kr_regex_replace ("/Mo.+MSIE ([^;]+);.+/i", "\\1", agent_o);
-		add_assoc_string (return_value, "vr", kr_regex_replace ("/[a-z]/", "", buf), 1);
+		buf1 = kr_regex_replace ("/[a-z]/", "", buf);
+		add_assoc_string (return_value, "vr", buf1, 1);
+		safe_efree (buf);
+		safe_efree (buf1);
 	}
 	
 	/* if Opera */
@@ -184,6 +187,7 @@ PHP_FUNCTION(agentinfo_lib)
 		/* get version */
 		buf = kr_regex_replace ("/Opera\\/([0-9.]+).*/i","\\1", agent_o);
 		add_assoc_string (return_value, "vr", buf, 1);
+		safe_efree (buf);
 
 		/* get language */
 		if ( strstr (agent_o, "[ko]") )
@@ -211,7 +215,10 @@ PHP_FUNCTION(agentinfo_lib)
 
 		/* get version */
 		buf = kr_regex_replace("/Mozi[^(]+\\([^;]+;[^;]+;[^;]+;[^;]+;([^)]+)\\).*/i","\\1", agent_o);
-		add_assoc_string(return_value, "vr", kr_regex_replace("/rv:| /i", "", buf), 1);
+		buf1 = kr_regex_replace("/rv:| /i", "", buf);
+		add_assoc_string(return_value, "vr", buf1, 1);
+		safe_efree (buf);
+		safe_efree (buf1);
 
 		/* get language */
 		if (strstr(agent_o, "en-US"))
@@ -244,6 +251,7 @@ PHP_FUNCTION(agentinfo_lib)
 		/* get version */
 		buf = kr_regex_replace ("/.*Konqueror\\/([0-9.]+).*/i","\\1", agent_o);
 		add_assoc_string (return_value, "vr", buf, 1);
+		safe_efree (buf);
 	}
 
 	/* if Lynx */
@@ -254,6 +262,7 @@ PHP_FUNCTION(agentinfo_lib)
 		/* get version */
 		buf = kr_regex_replace ("/Lynx\\/([^ ]+).*/i","\\1", agent_o);
 		add_assoc_string (return_value, "vr", buf, 1);
+		safe_efree (buf);
 	}
 
 	/* if w3M */
@@ -264,6 +273,7 @@ PHP_FUNCTION(agentinfo_lib)
 		/* get version */
 		buf = kr_regex_replace ("/w3m\\/([0-9.]+).*/i","\\1", agent_o);
 		add_assoc_string (return_value, "vr", buf, 1);
+		safe_efree (buf);
 	}
 
 	/* if LINKS */
@@ -282,6 +292,7 @@ PHP_FUNCTION(agentinfo_lib)
 		/* get version */
 		buf = kr_regex_replace ("/Links \\(([^;]+);.*/i","\\1", agent_o);
 		add_assoc_string (return_value, "vr", buf, 1);
+		safe_efree (buf);
 	}
 
 	/* if Netscape */
@@ -357,7 +368,7 @@ PHP_FUNCTION(postposition_lib)
 	memset(josa + plen, 0, 1);
 
 	/* check korean postposition */
-	if ( strlen (josa) < 1 )
+	if ( strlen ((char *) josa) < 1 )
 		php_error (E_ERROR, "Don't exists postposition\n");
 	else if ( (josa[0] == 0xc0 && josa[1] == 0xcc) || (josa[0] == 0xb0 && josa[1] == 0xa1) ) {
 		chkjosa[0] = "이";
@@ -413,13 +424,13 @@ char * autoLink (char * str_o)
 	int agent_o;
 	char tmp[1024];
 	char file_s[] = "(\\.(gz|tgz|tar|gzip|zip|rar|mpeg|mpg|exe|rpm|dep|rm|ram|asf|ace|viv|avi|mid|gif|jpg|png|bmp|eps|mov)\") target=\"_blank\"";
-	char http[] = "(http|https|ftp|telnet|news|mms):\\/\\/(([[:alnum:]\xA1-\xFE:_\\-]+\\.[[:alnum:]\xA1-\xFE,:;&#=_~%\\[\\]?\\/.,+\\-]+)([.]*[\\/a-z0-9\\[\\]]|=[\xA1-\xFE]+))";
-	char mail[] = "([[:alnum:]\xA1-\xFE_.-]+)@([[:alnum:]\xA1-\xFE_-]+\\.[[:alnum:]\xA1-\xFE._-]*[a-z]{2,3}(\\?[[:alnum:]\xA1-\xFE=&\\?]+)*)";
+	char http[] = "(http|https|ftp|telnet|news|mms):\\/\\/(([[:alnum:]\\xA1-\\xFE:_\\-]+\\.[[:alnum:]\\xA1-\\xFE,:;&#=_~%\\[\\]?\\/.,+\\-]+)([.]*[\\/a-z0-9\\[\\]]|=[\\xA1-\\xFE]+))";
+	char mail[] = "([[:alnum:]\\xA1-\\xFE_.-]+)@([[:alnum:]\\xA1-\\xFE_-]+\\.[[:alnum:]\\xA1-\\xFE._-]*[a-z]{2,3}(\\?[[:alnum:]\\xA1-\\xFE=&\\?]+)*)";
 	char u_http[] = "(http|https|ftp|telnet|news|mms):\\/\\/(([[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}:_\\-]+\\.[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF},:;&#=_~%\\[\\]?\\/.,+\\-]+)([.]*[\\/a-z0-9\\[\\]]|=[\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}]+))";
 	char u_mail[] = "([[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}_.-]+)@([[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}_-]+\\.[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}._-]*[a-z]{2,3}(\\?[[:alnum:]\\x{1100}-\\x{11FF}\\x{3130}-\\x{318F}\\x{AC00}-\\x{D7AF}=&\\?]+)*)";
 	char * src[ARRAY_NO], * tar[ARRAY_NO];
 	char * buf, * ptr;
-	int     utf8 = 0;
+	int    utf8 = 0;
 
 	ptr = get_useragent ();
 	agent_o = ptr ?
@@ -431,22 +442,22 @@ char * autoLink (char * str_o)
 	/* &lt; 로 시작해서 3줄뒤에 &gt; 가 나올 경우와
 	 * IMG tag 와 A tag 의 경우 링크가 여러줄에 걸쳐 이루어져 있을 경우
 	 * 이를 한줄로 합침 (합치면서 부가 옵션들은 모두 삭제함) */
-	src[0] = "/<([^<>\n]*)\n([^<>\n]\\+)\n([^<>\n]*)>/i";
+	src[0] = "/<([^<>\\n]*)\\n([^<>\\n]\\+)\\n([^<>\\n]*)>/i";
 	tar[0] = "<\\1\\2\\3>";
-	src[1] = "/<([^<>\n]*)\n([^\n<>]*)>/i";
+	src[1] = "/<([^<>\\n]*)\\n([^\\n<>]*)>/i";
 	tar[1] = "<\\1\\2>";
 
 	memset (tmp, 0, sizeof (tmp));
 	if ( utf8 ) {
 		sprintf (
 			tmp,
-			"/<(a|img)[^>=]*(href|src)[^=]*=[ '\"\n]*(%s|mailto:%s)[^>]*>/iu",
+			"/<(a|img)[^>=]*(href|src)[^=]*=[ '\"\\n]*(%s|mailto:%s)[^>]*>/iu",
 			u_http, u_mail
 		);
 	} else {
 		sprintf (
 			tmp,
-			"/<(a|img)[^>=]*(href|src)[^=]*=[ '\"\n]*(%s|mailto:%s)[^>]*>/i",
+			"/<(a|img)[^>=]*(href|src)[^=]*=[ '\"\\n]*(%s|mailto:%s)[^>]*>/i",
 			http, mail
 		);
 	}
@@ -454,7 +465,7 @@ char * autoLink (char * str_o)
 	tar[2] = "<\\1 \\2=\"\\3\">";
 
 	/* email 형식이나 URL 에 포함될 경우 URL 보호를 위해 @ 을 치환 */
-	src[3] = "/(http|https|ftp|telnet|news|mms):\\/\\/([^ \n@]+)@/i";
+	src[3] = "/(http|https|ftp|telnet|news|mms):\\/\\/([^ \\n@]+)@/i";
 	tar[3] = "\\1://\\2_HTTPAT_\\3";
 
 	/* 특수 문자를 치환 및 html사용시 link 보호 */
@@ -479,10 +490,10 @@ char * autoLink (char * str_o)
 
 	memset (tmp, 0, sizeof (tmp));
 	if ( utf8 )
-		sprintf (tmp, "/<([^>]*)(background|codebase|src)[ \n]*=[\n\"' ]*(%s)[\"']*/iu", u_http);
+		sprintf (tmp, "/<([^>]*)(background|codebase|src)[ \\n]*=[\\n\"' ]*(%s)[\"']*/iu", u_http);
 	else
-		sprintf (tmp, "/<([^>]*)(background|codebase|src)[ \n]*=[\n\"' ]*(%s)[\"']*/i", http);
-	src[7] = estrdup(tmp);
+		sprintf (tmp, "/<([^>]*)(background|codebase|src)[ \\n]*=[\\n\"' ]*(%s)[\"']*/i", http);
+	src[7] = estrdup (tmp);
 	tar[7] = "<\\1\\2=\"\\4_orig://\\5\"";
 
 	/* 링크가 안된 url및 email address 자동링크 */
@@ -491,7 +502,7 @@ char * autoLink (char * str_o)
 		sprintf (tmp, "/((src|href|base|ground)[ ]*=[ ]*|[^=]|^)(%s)/iu", u_http);
 	else
 		sprintf (tmp, "/((src|href|base|ground)[ ]*=[ ]*|[^=]|^)(%s)/i", http);
-	src[8] = estrdup(tmp);
+	src[8] = estrdup (tmp);
 	tar[8] = "\\1<a href=\"\\3\" target=\"_blank\">\\3</a>";
 
 	memset (tmp, 0, sizeof (tmp));
@@ -499,12 +510,12 @@ char * autoLink (char * str_o)
 		sprintf (tmp, "/(%s)/iu", u_mail);
 	else
 		sprintf (tmp, "/(%s)/i", mail);
-	src[9] = estrdup(tmp);
+	src[9] = estrdup (tmp);
 	tar[9] = "<a href=\"mailto:\\1\">\\1</a>";
-	src[10] = "/<a href=[^>]+>(<A href=[^>]+>)/i";
+	src[10] = "/(<a href=[^>]+>)<a href=[^>]+>/i";
 	tar[10] = "\\1";
 	src[11] = "/<\\/A><\\/A>/i";
-	tar[11] = "</A>";
+	tar[11] = "</a>";
 
 	/* 보호를 위해 치환한 것들을 복구 */
 	src[12] = "/!(quot|gt|lt)/i";
@@ -536,7 +547,7 @@ char * autoLink (char * str_o)
 		tar[18] = "";
 	}
 	
-	buf = kr_regex_replace_arr  (src, tar, str_o, ARRAY_NO);
+	buf = kr_regex_replace_arr (src, tar, str_o, ARRAY_NO);
 
 	safe_efree (src[2]);
 	safe_efree (src[5]);
@@ -603,13 +614,16 @@ char * get_serverenv (char * para)
  *
  * This range is EUC-KR!
  */
-int get_postposition (char * str)
+int get_postposition (char * tbyte)
 {
-	char first, second;
-	int   no;
+	unsigned char   first, second;
+	unsigned char * str;
+	int             no;
+
+	str = (unsigned char *) tbyte;
 
 	first = tolower (str[0]);
-	no = (strlen (str) > 1) ? 1 : 0;
+	no = (strlen ((char *) str) > 1) ? 1 : 0;
 	second = tolower (str[no]);
 
 	/* if 한 */
@@ -640,12 +654,12 @@ int get_postposition (char * str)
 	{
 		/* last charactor is a or e or i or o or u or w or y  */
 		if ( second == 0x61 || second == 0x65 || second == 0x69 || second == 0x6f ||
-			second == 0x75 || second == 0x77 || second == 0x79 ) {
+		     second == 0x75 || second == 0x77 || second == 0x79 ) {
 			return 1;
 		}
 		/* last charactor is ed or er or or */
 		else if ( (first == 0x65 && first == 0x72) || (first == 0x6f && first == 0x72) ||
-				  (first == 0x65 && first == 0x64) ) {
+		          (first == 0x65 && first == 0x64) ) {
 			return 1;
 		} else
 			return 0;
@@ -659,8 +673,8 @@ char * strtrim (char * str) {
 	char * str_r;
 
 	len = strlen (str);
-	str_r = emalloc (sizeof (char *) * ( len + 1 ));
-	memset (str_r, 0, sizeof (str_r));
+	str_r = emalloc (sizeof (char) * (len + 1));
+	memset (str_r, 0, sizeof (char) * (len + 1));
 
 	for ( i = 0; i < len; i++ ) {
 		if ( !isspace (str[i]) ) {
@@ -687,6 +701,7 @@ char * strtrim (char * str) {
 void safe_efree ( void * str ) {
 	if ( str != NULL )
 		efree (str);
+	str = NULL;
 }
 /* }}} */
 /*

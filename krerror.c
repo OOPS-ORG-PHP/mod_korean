@@ -116,6 +116,7 @@ char * print_error (char * str_o, int java_o, char * move_o, int sec_o)
 
 			result = emalloc (sizeof (char) * (strlen (buf) + strlen (mv) + 3));
 			sprintf (result, "%s\n%s\n", buf, mv);
+			safe_efree (buf_move);
 			safe_efree (mv);
 		} else {
 			result = emalloc (sizeof (char) * (strlen (buf) + 2));
@@ -149,6 +150,7 @@ char * print_error (char * str_o, int java_o, char * move_o, int sec_o)
 				sprintf (result, "%s\n", buf);
 			}
 		}
+		safe_efree (buf_str);
 	}
 
 	safe_efree (buf);

@@ -278,7 +278,14 @@ char * generate_body (char *bset, char *bboundary, char *btext, char *bptext) //
 			nobptext = 1;
 		else if
 			( strlen (bptext) < 1 ) nobptext = 1;
-		plain = nobptext ? strtrim (html_to_plain (btext)) : strtrim (bptext);
+
+		if ( nobptext ) {
+			char * buf = html_to_plain (btext);
+			plain = strtrim (buf);
+			safe_efree (buf);
+		} else {
+			plain = strtrim (bptext);
+		}
 
 		base64plain = body_encode (plain, -1);
 		base64html  = body_encode (btext, -1);
@@ -319,12 +326,14 @@ char * generate_header (char *from, char *to, char *subject,
 {
 	char * mailid, * datehead, * mimetype;
 	int    buflen;
-	char * buf;
+	char * buf, * tmp;
 
 	mimetype = (strlen (is_attach) > 0) ? "mixed" : "alternative";
 
 	 /* make mail id */
-	mailid = generate_mail_id ((char *) kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", from));
+	tmp = kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", from);
+	mailid = generate_mail_id (tmp);
+	safe_efree (tmp);
 	datehead = generate_date ();
 
 	buflen = strlen (mailid) + strlen (from) + strlen (datehead) +
@@ -345,7 +354,7 @@ char * generate_header (char *from, char *to, char *subject,
 
 char * generate_from (char * email, char * set) // {{{
 {
-	char * rfrom;
+	char * rfrom, * tmp;
 	char * name, * cname, * mail, * name_t;
 	int namelen = 0, maillen = 0, setlen = strlen (set);
 
@@ -357,17 +366,21 @@ char * generate_from (char * email, char * set) // {{{
 	}
 
 	// get email address on NAME <email@address> form
-	if ( strchr (email, '<' ) != NULL )
-		mail = strtrim (kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", email));
-	else
+	if ( strchr (email, '<' ) != NULL ) {
+		tmp = kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", email);
+		mail = strtrim (tmp);
+		safe_efree (tmp);
+	} else
 		mail = strtrim (email);
 
 	maillen = strlen (mail);
 
 	// get name on NAME <email@address> form
 	if ( strchr (email, '<') != NULL ) {
-		name_t = strtrim (kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", email));
+		tmp = kr_regex_replace("/([^<]*)<[^>]+>.*/i","\\1", email);
+		name_t = strtrim (tmp);
 		name = name_t;
+		safe_efree (tmp);
 	} else
 		name = "";
 	
@@ -397,7 +410,7 @@ char * generate_from (char * email, char * set) // {{{
 
 char * generate_to (char *toaddr, char *set) // {{{
 {
-	char * to = NULL;
+	char * to = NULL, * tmp;
 	char delimiters[] = ",";
 	char *token, *btoken;
 	char *t_mail, *t_name, *cname, *_t_name;
@@ -415,9 +428,15 @@ char * generate_to (char *toaddr, char *set) // {{{
 	if ( token != NULL ) {
 		// get email address on NAME <email@address> form
 		if ( strchr (token, '<') != NULL ) {
-			t_mail = strtrim (kr_regex_replace ("/[^<]*<([^>]+)>.*/i", "\\1", token));
-			_t_name = strtrim (kr_regex_replace ("/([^<]*)<[^>]+>.*/i", "\\1", token));
+			tmp = kr_regex_replace ("/[^<]*<([^>]+)>.*/i", "\\1", token);
+			t_mail = strtrim (tmp);
+			safe_efree (tmp);
+
+			tmp = kr_regex_replace ("/([^<]*)<[^>]+>.*/i", "\\1", token);
+			_t_name = strtrim (tmp);
 			t_name = _t_name;
+			safe_efree (tmp);
+
 			maillen = strlen (t_mail);
 			namelen = strlen (t_name);
 		} else {
@@ -457,9 +476,15 @@ char * generate_to (char *toaddr, char *set) // {{{
 
 			// get email address on NAME <email@address> form
 			if ( strchr (token, '<') != NULL ) {
-				s_mail = strtrim (kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", token));
-				_s_name = strtrim (kr_regex_replace ("/([^<]*)<[^>]+>.*/i","\\1", token));
+				tmp = kr_regex_replace ("/[^<]*<([^>]+)>.*/i","\\1", token);
+				s_mail = strtrim (tmp);
+				safe_efree (tmp);
+
+				tmp = kr_regex_replace ("/([^<]*)<[^>]+>.*/i","\\1", token);
+				_s_name = strtrim (tmp);
 				s_name = _s_name;
+				safe_efree (tmp);
+
 				smlen = strlen (s_mail);
 				snlen = strlen (s_name);
 			} else {
@@ -629,10 +654,10 @@ char * make_boundary () // {{{
 char * html_to_plain (char * source) // {{{
 {
 	char * rptext;
-	char * src[3] = { ":^.*<BODY[^>]*>:si", ":<\\/BODY>.*$:si", ":</?[a-z][^>]*>:si" };
-	char * des[3] = { "", "", "" };
+	char * src[4] = { ":^.*<BODY[^>]*>:si", ":<\\/BODY>.*$:si", ":</?[a-z][^>]*>:si", ":^\\s+:m" };
+	char * des[4] = { "", "", "", "" };
 			    
-	rptext = kr_regex_replace_arr (src, des, source, 3);
+	rptext = kr_regex_replace_arr (src, des, source, 4);
 				    
 	return rptext;
 } // }}}

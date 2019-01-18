@@ -27,7 +27,8 @@
 #include "php_krcheck.h"
 #include "krregex.h"
 
-int is_utf8 (char *);
+extern void safe_efree (void *str);
+extern int is_utf8 (char *);
 
 /* {{{ Static functions
  */
@@ -89,6 +90,7 @@ int chkMetaChar (char * str, int type) {
 
 /* {{{ int check_table (char *str) */
 int check_table (char *str) {
+	int    ret;
 	char * buf;
 	char * regex[] =
 	{
@@ -113,15 +115,30 @@ int check_table (char *str) {
 		regex, replace, str, (sizeof (regex) / sizeof (regex[0]))
 	);
 
-	if ( (strlen(buf) % 3) != 0 )
+	if ( (strlen(buf) % 3) != 0 ) {
+		safe_efree (buf);
 		return 1;
-	if ( ! checkReg (buf, "^12(3|4).+9291$") ) 
+	} if ( ! checkReg (buf, "^12(3|4).+9291$") ) {
+		safe_efree (buf);
 		return 2;
+	}
 
-	while ( checkReg (buf, "([1-4])9\\1") )
-		buf = kr_regex_replace ("/([\\d])9\\1/", "", buf);
+	while ( checkReg (buf, "([1-4])9\\1") ) {
+		char * tbuf;
 
-	return (strlen (buf) > 0) ? 3 : 0;
+		if ( (tbuf = kr_regex_replace ("/([\\d])9\\1/", "", buf)) == NULL ) {
+			safe_efree (buf);
+			return 0;
+		}
+		safe_efree (buf);
+		buf = estrdup (tbuf);
+		safe_efree (tbuf);
+	}
+
+	ret = (strlen (buf) > 0) ? 3 : 0;
+	safe_efree (buf);
+
+	return ret;
 }
 /* }}} */
 
