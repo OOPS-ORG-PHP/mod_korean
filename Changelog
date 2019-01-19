@@ -2,10 +2,21 @@ PHP Korean Extexsions Changelog
 
 * 0.1.6
 --------------------------------------------------------------------------------
+Sat Jan 19 2019
+by JoungKyun.Kim <hostmaster@oops.org>
+	- fixed #17 [v0] The ncrdecode_lib api is declaring an invalid variable.
+	- fixed #16 Incorrect memory changes in Uniconv api and krNcrEncode api
+	- fixed #15 [v0] postposition_lib api has a garbage character at the end
+	  of the return value.
+
 Fri Jan 18 2019
 by JoungKyun.Kim <hostmaster@oops.org>
-	- fixed #10 is_utf8 control reaches end of non-void function on PHP 5
-	- fixed #9 wrong operation krcharset api on PHP 5
+	- fixed #14 [v0] unicode api is something wrong
+	- fixed #13 [v0] mailsource_lib wrong convertings
+	- fixed #12 [v0] autolink_lib error case
+	- fixed #11 [v0] Open base dir setting does not work
+	- fixed #10 [v0] is_utf8 control reaches end of non-void function
+	- fixed #9  [v0] wrong operation krcharset api on PHP 5
 
 Mon Jan 26 2014
 by JoungKyun.Kim <hostmaster@oops.org>
