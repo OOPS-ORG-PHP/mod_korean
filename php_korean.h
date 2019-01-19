@@ -69,8 +69,8 @@ ZEND_END_MODULE_GLOBALS(korean)
 #define KOREAN_G(v) (korean_globals.v)
 #endif
 
-#define BUILDNO "201901160409"
-#define BUILDVER "1.0.3"
+#define BUILDNO "201901191955"
+#define BUILDVER "1.0.4"
 
 #define phpext_korean_ptr korean_module_ptr
 
