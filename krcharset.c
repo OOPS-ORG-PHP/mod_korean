@@ -88,7 +88,7 @@ PHP_FUNCTION(ncrdecode_lib)
 {
 	char * string = NULL;
 	char * input  = NULL;
-	char   inlen  = 0;
+	int    inlen  = 0;
 
 	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
 		return;
