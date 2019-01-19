@@ -214,7 +214,11 @@ PHP_FUNCTION(imgresize_lib)
 			break;
 		case 2: /* if jpeg */
 #ifdef HAVE_GD_JPG
+#ifdef HAVE_GD_BUNDLED
+			im = gdImageCreateFromJpegEx (fp, INI_INT("gd.jpeg_ignore_warning"));
+#else
 			im = gdImageCreateFromJpeg (fp);
+#endif
 #else /* HAVE_GD_JPG */
 			fclose (fp);
 			php_error (E_ERROR, "No JPEG support in this PHP build");

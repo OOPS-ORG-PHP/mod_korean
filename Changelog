@@ -4,6 +4,7 @@ PHP Korean Extexsions Changelog
 --------------------------------------------------------------------------------
 Sat Jan 19 2019
 by JoungKyun.Kim <hostmaster@oops.org>
+	- fixed #20 support gd.jpeg_ignore_warning ini option on imgresize_lib api
 	- fixed #19 enhanced code that may cause bugs in data type comparisons
 	- fixed #16 Incorrect memory changes in Uniconv api and krNcrEncode api
 
