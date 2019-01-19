@@ -5,6 +5,7 @@ PHP Korean Extexsions Changelog
 Sat Jan 19 2019
 by JoungKyun.Kim <hostmaster@oops.org>
 	- fixed #19 enhanced code that may cause bugs in data type comparisons
+	- fixed #18 [v0] libgd security update
 	- fixed #17 [v0] The ncrdecode_lib api is declaring an invalid variable.
 	- fixed #16 Incorrect memory changes in Uniconv api and krNcrEncode api
 	- fixed #15 [v0] postposition_lib api has a garbage character at the end

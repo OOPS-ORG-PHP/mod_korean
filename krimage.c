@@ -219,7 +219,7 @@ PHP_FUNCTION(imgresize_lib)
 		case 2: /* if jpeg */
 #ifdef HAVE_GD_JPG
 #ifdef HAVE_GD_BUNDLED
-			im = gdImageCreateFromJpeg (fp, INI_INT("gd.jpeg_ignore_warning"));
+			im = gdImageCreateFromJpegEx (fp, INI_INT("gd.jpeg_ignore_warning"));
 #else
 			im = gdImageCreateFromJpeg (fp);
 #endif
