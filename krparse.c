@@ -40,6 +40,7 @@ PHP_FUNCTION(autolink_lib)
 {
 	char * input;
 	int    inlen;
+	char * result;
 
 	if ( kr_parameters ("s", &input, &inlen) == FAILURE )
 		return;
@@ -47,7 +48,9 @@ PHP_FUNCTION(autolink_lib)
 	if ( inlen == 0 )
 		RETURN_EMPTY_STRING ();
 
-	RETVAL_STRING (autoLink (input), 1);
+	result = autoLink (input);
+	RETVAL_STRING (result, 1);
+	safe_efree (result);
 }
 /* }}} */
 
