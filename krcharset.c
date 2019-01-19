@@ -294,6 +294,7 @@ char * krNcrEncode (char * str_o, int type)
 	size_t len;
 	char rc[9] = { 0, };
 	char * ret = NULL;
+	UChar c1, c2;
 
 	if ( str_o == NULL ) { return NULL; }
 	else { len = strlen (str_o); }
@@ -303,22 +304,26 @@ char * krNcrEncode (char * str_o, int type)
 
 	for( i=0; i<len; i++ ) {
 		memset (rc, 0, 9);
+
+		c1 = (UChar) str_o[i];
+		c2 = (UChar) str_o[i + 1];
+
 		/* if 2byte charactor */
-		if ( str_o[i] & 0x80 ) {
+		if ( c1 & 0x80 ) {
 			switch (type) {
 				/* if type 1, check range of KSX 1001 */
 				case 1:
-					if ( (str_o[i] >= 0x81 && str_o[i] <= 0xa0 && str_o[i+1] >= 0x41 && str_o[i+1] <=0xfe) ||
-					   (str_o[i] >= 0xa1 && str_o[i] <= 0xc6 && str_o[i+1] >= 0x41 && str_o[i+1] <=0xa0) )
+					if ( (c1 >= 0x81 && c1 <= 0xa0 && c2 >= 0x41 && c2 <=0xfe) ||
+					   (c1 >= 0xa1 && c1 <= 0xc6 && c2 >= 0x41 && c2 <=0xa0) )
 				   	{
-						if ( str_o[i+1] < 0x41 || str_o[i+1] > 0xfe ) { memmove (rc, "?", 1); }
-						else if ( 0x5a < str_o[i+1] && str_o[i+1] < 0x61 ) { memmove (rc, "?", 1); }
-						else if ( 0x7a < str_o[i+1] && str_o[i+1] < 0x81 ) { memmove (rc, "?", 1); }
+						if ( c2 < 0x41 || c2 > 0xfe ) { memmove (rc, "?", 1); }
+						else if ( 0x5a < c2 && c2 < 0x61 ) { memmove (rc, "?", 1); }
+						else if ( 0x7a < c2 && c2 < 0x81 ) { memmove (rc, "?", 1); }
 						else
 						{
-							if ( str_o[i+1] > 0x7a ) str_o[i+1] -= 6;
-							if ( str_o[i+1] > 0x5a ) str_o[i+1] -= 6;
-							ncr = (str_o[i] - 0x81) * 178 + (str_o[i+1] - 0x41);
+							if ( c2 > 0x7a ) c2 -= 6;
+							if ( c2 > 0x5a ) c2 -= 6;
+							ncr = (c1 - 0x81) * 178 + (c2 - 0x41);
 							sprintf(rc, "&#%d;", table_ksc5601[ncr]);
 						}
 						i++;
@@ -331,24 +336,24 @@ char * krNcrEncode (char * str_o, int type)
 					break;
 				/* range of whole string */
 				default:
-					if ( 0x81 <= str_o[i] && str_o[i] <= 0xc8 ) {
-						if ( str_o[i+1] < 0x41 || str_o[i+1] > 0xfe ) { memmove (rc, "?", 1); }
-						else if ( 0x5a < str_o[i+1] && str_o[i+1] < 0x61 ) { memmove (rc, "?", 1); }
-						else if ( 0x7a < str_o[i+1] && str_o[i+1] < 0x81 ) { memmove (rc, "?", 1); }
+					if ( 0x81 <= c1 && c1 <= 0xc8 ) {
+						if ( c2 < 0x41 || c2 > 0xfe ) { memmove (rc, "?", 1); }
+						else if ( 0x5a < c2 && c2 < 0x61 ) { memmove (rc, "?", 1); }
+						else if ( 0x7a < c2 && c2 < 0x81 ) { memmove (rc, "?", 1); }
 						else {
-							if ( str_o[i+1] > 0x7a ) str_o[i+1] -= 6;
-							if ( str_o[i+1] > 0x5a ) str_o[i+1] -= 6;
-							ncr = (str_o[i] - 0x81) * 178 + (str_o[i+1] - 0x41);
+							if ( c2 > 0x7a ) c2 -= 6;
+							if ( c2 > 0x5a ) c2 -= 6;
+							ncr = (c1 - 0x81) * 178 + (c2 - 0x41);
 							sprintf(rc, "&#%d;", table_ksc5601[ncr]);
 						}
-					} else if ( 0xca <= str_o[i] && str_o[i] <= 0xfd ) {
-						if ( str_o[i+1] < 0xa1 || str_o[i+1] > 0xfe ) { memmove (rc, "?", 1); }
+					} else if ( 0xca <= c1 && c1 <= 0xfd ) {
+						if ( c2 < 0xa1 || c2 > 0xfe ) { memmove (rc, "?", 1); }
 						else {
-							ncr = (str_o[i] - 0xca) * 94 + (str_o[i+1] - 0xa1);
+							ncr = (c1 - 0xca) * 94 + (c2 - 0xa1);
 							sprintf(rc, "&#%d;", table_ksc5601_hanja[ncr]);
 						}
 					} else {
-						memset (rc, str_o[i], 1);
+						memset (rc, c1, 1);
 						memset (rc + 1, '\0', 1);
 					}
 
@@ -358,7 +363,7 @@ char * krNcrEncode (char * str_o, int type)
 		/* 1 byte charactor */
 		else
 	   	{
-			memset (rc, str_o[i], 1);
+			memset (rc, c1, 1);
 			memset (rc + 1, '\0', 1);
 	   	}
 
@@ -465,6 +470,7 @@ char * uniConv (char * str_o, int type, int subtype, char * start, char * end)
 	regex_t preg;
 	char regex[12] = "[0-9a-f]{4}";
 	char chkReg[5], conv[5], first[3], second[3];
+	UChar c1, c2;
 
 	if ( str_o == NULL ) { return NULL; }
 	else { len = strlen (str_o); }
@@ -550,25 +556,28 @@ char * uniConv (char * str_o, int type, int subtype, char * start, char * end)
 				break;
 			/* convert to unicode from euc-kr/cp949 */
 			default:
+				c1 = (UChar) str_o[i];
+				c2 = (UChar) str_o[i + 1];
+
 				/* if 2byte charactor */
-				if ( 0x81 <= str_o[i] && str_o[i] <= 0xc8 )
+				if ( 0x81 <= c1 && c1 <= 0xc8 )
 				{
-					if ( str_o[i+1] < 0x41 || str_o[i+1] > 0xfe ) { memmove (rc, "?", 1); }
-					else if ( 0x5a < str_o[i+1] && str_o[i+1] < 0x61 ) { memmove (rc, "?", 1); }
-					else if ( 0x7a < str_o[i+1] && str_o[i+1] < 0x81 ) { memmove (rc, "?", 1); }
+					if ( c2 < 0x41 || c2 > 0xfe ) { memmove (rc, "?", 1); }
+					else if ( 0x5a < c2 && c2 < 0x61 ) { memmove (rc, "?", 1); }
+					else if ( 0x7a < c2 && c2 < 0x81 ) { memmove (rc, "?", 1); }
 					else
 					{
-						if ( str_o[i+1] > 0x7a ) str_o[i+1] -= 6;
-						if ( str_o[i+1] > 0x5a ) str_o[i+1] -= 6;
-						aryno = (str_o[i] - 0x81) * 178 + (str_o[i+1] - 0x41);
+						if ( c2 > 0x7a ) c2 -= 6;
+						if ( c2 > 0x5a ) c2 -= 6;
+						aryno = (c1 - 0x81) * 178 + (c2 - 0x41);
 						sprintf (rc, "%s%X%s", start, table_ksc5601[aryno], end);
 						i++;
 					}
 				}
-				else if (0xca <= str_o[i] && str_o[i] <= 0xfd ) {
-					if ( str_o[i+1] < 0xa1 || str_o[i+1] > 0xfe ) { memmove (rc, "?", 1); }
+				else if (0xca <= c1 && c1 <= 0xfd ) {
+					if ( c2 < 0xa1 || c2 > 0xfe ) { memmove (rc, "?", 1); }
 					else {
-						aryno = (str_o[i] - 0xca) * 94 + (str_o[i+1] - 0xa1);
+						aryno = (c1 - 0xca) * 94 + (c2 - 0xa1);
 						sprintf (rc, "%s%X%s", start, table_ksc5601_hanja[aryno], end);
 						i++;
 					}
@@ -576,7 +585,7 @@ char * uniConv (char * str_o, int type, int subtype, char * start, char * end)
 				/* if 1byte charactor */
 				else
 				{
-					memset (rc, str_o[i], 1);
+					memset (rc, c1, 1);
 					memset (rc + 1, '\0', 1);
 				}
 		}
