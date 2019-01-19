@@ -338,13 +338,13 @@ PHP_FUNCTION(agentinfo_lib)
 PHP_FUNCTION(postposition_lib)
 {
 	char *str, *chkjosa[2] = { 0, };
-	char *chkstr = NULL, utfpost[4], post[3];
+	char *chkstr = NULL, utfpost[4] = { 0, }, post[3] = { 0, };
+	unsigned char josa[8] = { 0, };
 	int   position;
-	unsigned char josa[8];
 
-	char * string;
-	char * posts;
-	int    utf, slen, plen;
+	char * string = NULL;
+	char * posts = NULL;
+	int    utf = 0, slen = 0, plen = 0;
 
 	if ( kr_parameters ("ss|b", &string, &slen, &posts, &plen, &utf) == FAILURE )
 		return;
@@ -352,7 +352,7 @@ PHP_FUNCTION(postposition_lib)
 	if ( slen == 0 || plen == 0 )
 		RETURN_EMPTY_STRING ();
 
-	if ( utf == 0 && ! is_utf8 (string) )
+	if ( utf == 0 && is_utf8 (string) == 0 )
 		utf = 1;
 
 	str = emalloc (sizeof (char) * (slen * 6));
