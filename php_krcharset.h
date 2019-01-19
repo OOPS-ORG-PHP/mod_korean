@@ -25,9 +25,6 @@ PHP_FUNCTION(uniencode_lib);
 PHP_FUNCTION(unidecode_lib);
 PHP_FUNCTION(utf8encode_lib);
 PHP_FUNCTION(utf8decode_lib);
-PHP_FUNCTION(getutf8); 
-PHP_FUNCTION(getcharacterset);
-PHP_FUNCTION(getunicode);
 
 char * krNcrEncode (char * str_o, int type);
 char * krNcrDecode (char * str_o);
