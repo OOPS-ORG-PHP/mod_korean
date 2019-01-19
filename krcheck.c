@@ -145,15 +145,19 @@ int multibyte_check (char * str_o, int p) {
 	int    i,
 	       l,
 	       twobyte = 0;
+	UChar  c1, c2;
 
 	/* return 0 if point is 1st byte in string */
 	if ( p == 0 )
 		return 0;
 
-	if ( str_o[p] & 0x80 ||
+	c1 = (UChar) str_o[p - 1];
+	c2 = (UChar) str_o[p];
+
+	if ( c2 & 0x80 ||
 		/* check of 2byte charactor except KSX 1001 range */
-		(str_o[p-1] >= 0x81 && str_o[p-1] <= 0xa0 && str_o[p] >= 0x41 && str_o[p] <=0xfe) ||
-		(str_o[p-1] >= 0xa1 && str_o[p-1] <= 0xc6 && str_o[p] >= 0x41 && str_o[p] <=0xa0) )
+		(c1 >= 0x81 && c1 <= 0xa0 && c2 >= 0x41 && c2 <=0xfe) ||
+		(c1 >= 0xa1 && c1 <= 0xc6 && c2 >= 0x41 && c2 <=0xa0) )
    	{
 		/* if don't exist ' ' charactor */
 		if ( (start_p = strchr ((const char *) &str_o[p], ' ')) == NULL )
@@ -162,12 +166,15 @@ int multibyte_check (char * str_o, int p) {
 			l = start_p - str_o;
 
 		for ( i=p ; i<l ; i++ ) {
-			if ( str_o[i] & 0x80 ) {
+			c1 = str_o[i - 1];
+			c2 = str_o[i];
+
+			if ( c2 & 0x80 ) {
 				twobyte++;
 			/* 2th byte of 2 byte charactor is not KSX 1001 range */
 			} else if (
-				(str_o[i-1] >= 0x81 && str_o[i-1] <= 0xa0 && str_o[i] >= 0x41 && str_o[i] <= 0xfe) ||
-				(str_o[i-1] >= 0xa1 && str_o[i-1] <= 0xc6 && str_o[i] >= 0x41 && str_o[i] <= 0xa0)
+				(c1 >= 0x81 && c1 <= 0xa0 && c2 >= 0x41 && c2 <= 0xfe) ||
+				(c1 >= 0xa1 && c1 <= 0xc6 && c2 >= 0x41 && c2 <= 0xa0)
 			) {
 				twobyte++;
 			}

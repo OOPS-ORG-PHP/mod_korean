@@ -539,9 +539,11 @@ char * uniConv (char * str_o, int type, int subtype, char * start, char * end)
 
 					/* convert ncr code with outsize of EUC-KR range */
 					if ( subtype == 1 ) {
+						c1 = (UChar) rc[0];
+						c2 = (UChar) rc[1];
 						if (
-							(rc[0] >= 0x81 && rc[0] <= 0xa0 && rc[1] >= 0x41 && rc[1] <=0xfe) ||
-							(rc[0] >= 0xa1 && rc[0] <= 0xc6 && rc[1] >= 0x41 && rc[1] <=0xa0)
+							(c1 >= 0x81 && c1 <= 0xa0 && c2 >= 0x41 && c2 <=0xfe) ||
+							(c1 >= 0xa1 && c1 <= 0xc6 && c2 >= 0x41 && c2 <=0xa0)
 						) {
 							sprintf (rc, "&#%d;", hexv);
 						}
@@ -672,25 +674,23 @@ int is_utf8 (char * s)
 		return 1;
 
 	for ( i=0; i<len; i++ ) {
+		unsigned char c = (unsigned char) s[i];
+
 		// ASCII 영역은 건너띈다.
-		if ( ! (s[i] & 0x80) )
+		if ( ! (c & 0x80) )
 			continue;
 
 		ascii_status = 1;
 
 		// utf8 is must 110xxxxxxx
 		// 0x40 -> 01000000
-		if ( ! (s[i] & 0x40) )
+		if ( ! (c & 0x40) )
 			return 1;
 
-		{
-			unsigned char p = (unsigned char) s[i];
-
-			if ( (p >> 5) == 0x06 )      // 1st of 2byte utf8
-				check = 1;
-			else if ( (p >> 4) == 0x0e ) // 1st of 3byte utf8
-				check = 2;
-		}
+		if ( (c >> 5) == 0x06 )      // 1st of 2byte utf8
+			check = 1;
+		else if ( (c >> 4) == 0x0e ) // 1st of 3byte utf8
+			check = 2;
 
 		if ( (i + check) >= len )
 			return 1;

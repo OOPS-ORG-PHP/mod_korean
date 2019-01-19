@@ -700,10 +700,13 @@ int get_postposition (char * ss)
 	/* if 한 */
 	if ( first & 0x80 ) {
 		unsigned int ncr;
+		UChar c1, c2;
+		c1 = (UChar) str[0];
+		c2 = (UChar) str[1];
 
-		if ( str[1] > 0x7a ) str[1] -= 6;
-		if ( str[1] > 0x5a ) str[1] -= 6;
-		ncr = (str[0] - 0x81) * 178 + (str[1] - 0x41);
+		if ( c2 > 0x7a ) c2 -= 6;
+		if ( c2 > 0x5a ) c2 -= 6;
+		ncr = (c1 - 0x81) * 178 + (c2 - 0x41);
 
 		return ((table_ksc5601[ncr] - 16) % 28 == 0) ? 1 : 0;
 	}
