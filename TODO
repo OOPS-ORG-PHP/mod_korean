@@ -1,2 +1,0 @@
-sockmail_lib()
-  - ipaddress 로 발송할 때의 처리
