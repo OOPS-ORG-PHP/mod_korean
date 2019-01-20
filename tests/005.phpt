@@ -21,18 +21,23 @@ function result($v, $err = '') {
 		echo "OK\n";
 }
 
-imgresize_lib ('./document/img/php_logo.gif', 'jpg', 50, 32, './imgresizetest.jpg');
-if ( file_exists ('./imgresizetest.jpg') ) {
-    $new = getimagesize ('./imgresizetest.jpg');
-    if ( $new[0] == 50 && $new[1] == 32 )
-        $chk = true;
-    else
+if ( file_exists ('./tests/php_logo.gif') ) {
+    imgresize_lib ('./tests/php_logo.gif', 'jpg', 50, 32, './tests/imgresizetest.jpg');
+    if ( file_exists ('./tests/imgresizetest.jpg') ) {
+        $new = getimagesize ('./tests/imgresizetest.jpg');
+        if ( $new[0] == 50 && $new[1] == 32 )
+            $chk = true;
+        else
+            $chk = false;
+    } else
         $chk = false;
-} else
-    $chk = false;
-@unlink ('./imgresizetest.jpg');
-result ($chk);
 
+    @unlink ('./tests/imgresizetest.jpg');
+} else {
+	$chk = false;
+}
+
+result ($chk);
 ?>
 --EXPECT--
 OK
