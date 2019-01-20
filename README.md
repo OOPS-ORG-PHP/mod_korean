@@ -11,6 +11,8 @@ PHP 7 발표 이후, PHP extension 의 구조 변경 때문에, PHP 버전에 �
  * PHP 7 - [mod_korean 1.0.4](https://github.com/OOPS-ORG-PHP/mod_korean/releases/tag/1.0.4)
  * PHP 4 or PHP5 - [mod_korean 0.1.6](https://github.com/OOPS-ORG-PHP/mod_korean/releases/tag/0.1.6)
 
+현재 보고 있는 ```master branch```는 PHP 7 이상의 버전에 대한 코드를 관리 합니다. PHP 4/5 에 대한 코드는 ```v0 branch``` 를 이용 하십시오.
+
 ## Installation
 
 ```bash
@@ -19,6 +21,9 @@ PHP 7 발표 이후, PHP extension 의 구조 변경 때문에, PHP 버전에 �
 [root@host mod_korean-1.0.4]$ ./configure --with-libdir=lib64 --enable-korean --enable-korean-gd=builtin
 [root@host mod_korean-1.0.4]$ make
 ```
+
+___--with-libdir___ 옵션은 ___/usr/lib64___ 또는 ___/usr/local/lib64___ 를 탐색하도록 합니다.
+
 
 ## Test
 
@@ -58,7 +63,7 @@ PHP 의 extension build의 installation 은 phpize 에서 extension dir을 미�
 php.ini 에 다음의 설정을 추가해 줍니다.
 
 ```ini
-extension = korean.so
+extension = korean
 ```
 
 ## Reference
@@ -68,5 +73,5 @@ https://www.gitbook.com/book/joungkyun/php-mod_korean-extension-reference/detail
 ## Contributors
  * JoungKyun.Kim
  * HyunSoo Choi &lt;http://baby.web119.com&gt; - Donate UTF8 internal API code
- * ChangHyun Bang &lt;winchild at kldp.org&gt;
- * Junho Choi &lt;cjh at kr.freebsd.org&gt;
+ * ChangHyun Bang &lt;winchild&#x00040;kldp.org&gt;
+ * Junho Choi &lt;cjh&#x00040;kr.freebsd.org&gt;
