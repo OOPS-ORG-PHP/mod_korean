@@ -78,67 +78,67 @@ PHP_FUNCTION(substr_lib)
 	if ( utf == 0 && ! is_utf8 (str) )
 		utf = 1;
 
-		tmpstr = emalloc (sizeof(char) * (slen * 6));
+	tmpstr = emalloc (sizeof(char) * (slen * 6));
 
-		if ( utf )
-			XUCodeConv (tmpstr, slen * 6, XU_CONV_CP949, str, slen, XU_CONV_UTF8 );
-		else {
-			dechar = krNcrDecode (str);
-			strcpy (tmpstr, dechar);
-			kr_safe_efree (dechar);
-		}
-
-		l = l ? l : strlen (tmpstr);
-		lenth = strlen (tmpstr);
-
-		// if "from" position is negative, count start position from the end
-		// of the string
-		if ( f < 0 ) {
-			f += lenth;
-			if ( f < 0 )
-				f = 0;
-		}
-
-		// if "length" position is negative, set it to the length
-		// needed to stop that many chars from the end of the string
-		if (l < 0) {
-			l = (lenth - f) + l;
-			if ( l < 0 )
-				l = 0;
-		}
-
-		if ( f >= lenth )
-			RETURN_FALSE;
-
-		if ( (f + l) > lenth )
-			l = lenth - f;
-
-		// check multibyte whether start return charactor
-		if ( multibyte_check (tmpstr, f) ) {
-			f++;
-			l--;
-		} 
-
-		// check multibyte whether last return charactor
-		if ( multibyte_check (tmpstr, f + l) )
-			l++;
-
-		tmpstr[f+l] = 0;
-
-		if ( utf ) {
-			retstr = emalloc (sizeof (char) * strlen (tmpstr + f) * 6);
-			XUCodeConv (retstr, strlen (tmpstr + f) * 6, XU_CONV_UTF8, tmpstr + f, strlen (tmpstr + f), XU_CONV_CP949);
-			RETVAL_STRINGL(retstr, strlen (retstr));
-		}
-		else
-		{
-			retstr = krNcrEncode (tmpstr + f, 1);
-			RETVAL_STRINGL(retstr, strlen (retstr));
-		}
-		kr_safe_efree (retstr);
-		kr_safe_efree (tmpstr);
+	if ( utf )
+		XUCodeConv (tmpstr, slen * 6, XU_CONV_CP949, str, slen, XU_CONV_UTF8 );
+	else {
+		dechar = krNcrDecode (str);
+		strcpy (tmpstr, dechar);
+		kr_safe_efree (dechar);
 	}
-	/* }}} */
+
+	l = l ? l : strlen (tmpstr);
+	lenth = strlen (tmpstr);
+
+	// if "from" position is negative, count start position from the end
+	// of the string
+	if ( f < 0 ) {
+		f += lenth;
+		if ( f < 0 )
+			f = 0;
+	}
+
+	// if "length" position is negative, set it to the length
+	// needed to stop that many chars from the end of the string
+	if (l < 0) {
+		l = (lenth - f) + l;
+		if ( l < 0 )
+			l = 0;
+	}
+
+	if ( f >= lenth )
+		RETURN_FALSE;
+
+	if ( (f + l) > lenth )
+		l = lenth - f;
+
+	// check multibyte whether start return charactor
+	if ( multibyte_check (tmpstr, f) ) {
+		f++;
+		l--;
+	} 
+
+	// check multibyte whether last return charactor
+	if ( multibyte_check (tmpstr, f + l) )
+		l++;
+
+	tmpstr[f+l] = 0;
+
+	if ( utf ) {
+		retstr = emalloc (sizeof (char) * strlen (tmpstr + f) * 6);
+		XUCodeConv (retstr, strlen (tmpstr + f) * 6, XU_CONV_UTF8, tmpstr + f, strlen (tmpstr + f), XU_CONV_CP949);
+		RETVAL_STRINGL(retstr, strlen (retstr));
+	}
+	else
+	{
+		retstr = krNcrEncode (tmpstr + f, 1);
+		RETVAL_STRINGL(retstr, strlen (retstr));
+	}
+	kr_safe_efree (retstr);
+	kr_safe_efree (tmpstr);
+}
+/* }}} */
 
 /* {{{ proto array agentinfo_lib(void)
  *    Returns info of browser */
