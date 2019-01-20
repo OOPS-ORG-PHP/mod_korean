@@ -29,13 +29,13 @@ PHP 는 빌드된 모듈이 잘 작동하는지 test 를 할 수 있습니다.
 
 
 ```bash
-[root@host mod_korean-1.0.6]$ make test PHP_EXECUTABLE=/usr/bin/php
+[root@host mod_korean-0.1.6]$ make test PHP_EXECUTABLE=/usr/bin/php
 ```
 
 또는, install 전에 빌드한 extension을 직접 테스트 하려면 다음과 같이 가능 합니다.
 
 ```bash
-[root@host mod_korean-1.0.6]$ php -d "extension_dir=./modules/" -d "extension=korean.so" some.php
+[root@host mod_korean-0.1.6]$ php -d "extension_dir=./modules/" -d "extension=korean.so" some.php
 ```
 
 ## Installation
@@ -43,13 +43,13 @@ PHP 는 빌드된 모듈이 잘 작동하는지 test 를 할 수 있습니다.
 PHP 의 extension build의 installation 은 phpize 에서 extension dir을 미리 결정해 놓기 때문에 다음 명령으로 간단히 처리 됩니다.
 
 ```bash
-[root@host mod_korean-1.0.6]$ make install
+[root@host mod_korean-0.1.6]$ make install
 ```
 
 설치 시에, 테스트나 패키징을 위한 chroot 가 필요 하다면, 다음과 같이 사용 하십시오.
 
 ```bash
-[root@host mod_korean-1.0.6]$ make install DESTDIR="/want/path"
+[root@host mod_korean-0.1.6]$ make install DESTDIR="/want/path"
 ```
 
 또는, 그냥 ___modules___ 디렉토리에 있는 so file을 copy 하셔도 무방 합니다.
@@ -70,5 +70,5 @@ https://www.gitbook.com/book/joungkyun/php-mod_korean-extension-reference/detail
 ## Contributors
  * JoungKyun.Kim
  * HyunSoo Choi &lt;http://baby.web119.com&gt; - Donate UTF8 internal API code
- * ChangHyun Bang &lt;winchild at kldp.org&gt;
- * Junho Choi &lt;cjh at kr.freebsd.org&gt;
+ * ChangHyun Bang &lt;winchild&commat;kldp.org&gt;
+ * Junho Choi &lt;cjh&commat;kr.freebsd.org&gt;
