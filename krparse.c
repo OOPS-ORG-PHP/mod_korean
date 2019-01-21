@@ -716,12 +716,12 @@ int get_postposition (char * ss)
 	}
 	/* only 1 charactor */
 	else if ( first == second ) {
-		return (first == 114 || (first > 108 && first < 111)) ? 0 : 1;
+		return (first == 114 || (first > 107 && first < 111)) ? 0 : 1;
 	}
 	/* if 한a */
 	else if ( first != second && first > 127 && (second < 123 && second > 96) )
 	{
-		return (second == 114 || (second > 108 && second < 111)) ? 0 : 1;
+		return (second == 114 || (second > 107 && second < 111)) ? 0 : 1;
 	}
 	/* if aa */
 	else
