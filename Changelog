@@ -1,5 +1,11 @@
 PHP Korean Extexsions Changelog
 
+* 1.0.5
+--------------------------------------------------------------------------------
+Tue Jan 22 2019
+by JoungKyun.Kim <hostmaster@oops.org>
+	- fixed #21 postposition_lib api returns an incorrect search for alphabat L
+
 * 1.0.4
 --------------------------------------------------------------------------------
 Sat Jan 19 2019
