@@ -1,239 +1,244 @@
-<?
-# Agent ÀÇ Á¤º¸¸¦ °¡Á®¿È
+<?php
+# Agent ì˜ ì •ë³´ë¥¼ ê°€ì ¸ì˜´
 #
-function agentinfo_lib() {
-  $agent_env = $GLOBALS['HTTP_USER_AGENT'];
+function agentinfo_lib () {
+	$agent_env = $GLOBALS['HTTP_USER_AGENT'];
 
-  # $agent ¹è¿­ Á¤º¸ [br] ºê¶ó¿ìÁ® Á¾·ù
-  #                  [os] ¿î¿µÃ¼Á¦
-  #                  [ln] ¾ğ¾î (³İ½ºÄÉÀÌÇÁ)
-  #                  [vr] ºê¶ó¿ìÁ® ¹öÁ¯
-  #                  [co] ¿¹¿Ü Á¤º¸
-  if(preg_match("/MSIE/i", $agent_env)) {
-    $agent['br'] = "MSIE";
-    # OS º° ±¸ºĞ
-    if(preg_match("/NT/i", $agent_env)) $agent['os'] = "NT";
-    else if(preg_match("/Win/i", $agent_env)) $agent['os'] = "WIN";
-    else $agent['os'] = "OTHER";
-    # version Á¤º¸
-    $agent['vr'] = trim(preg_replace("/Mo.+MSIE ([^;]+);.+/i","\\1",$agent_env));
-    $agent['vr'] = preg_replace("/[a-z]/i","",$agent['vr']);
-    # È£È¯ Á¤º¸
-    $agent['co'] = "msie";
-  } else if(preg_match("/Opera/i", $agent_env)) {
-    $agent['br'] = "OPERA";
-    $agent['co'] = "msie";
-    # client OS
-    if (preg_match("/Linux/i", $agent_env)) $agent['os'] = "LINUX";
-    else if (preg_match("/2000|XP/i", $agent_env)) $agent['os'] = "NT";
-    else if (preg_match("/Win/i", $agent_env)) $agent['os'] = "WIN";
-    else $agent['os'] = "OTHER";
-    # version Á¤º¸
-    $agent['vr'] = preg_replace("/Opera\/([0-9.]+).*/i","\\1",$agent_env);
-    # language Á¤º¸
-    if (preg_match("/\[ko\]/i", $agent_env)) $agent['ln'] = "ko";
-    else if (preg_match("/\[en\]/i", $agent_env)) $agent['ln'] = "en";
-    else $agent['ln'] = "other";
-  } else if(preg_match("/Gecko|Galeon/i",$agent_env) && !preg_match("/Netscape/i",$agent_env)) {
-    echo $agent_env."\n";
-    $agent['br'] = "MOZL";
-    # client OS ±¸ºĞ
-    if(preg_match("/NT/i", $agent_env)) $agent['os'] = "NT";
-    else if(preg_match("/Win/i", $agent_env)) $agent['os'] = "WIN";
-    else if(preg_match("/Linux/i", $agent_env)) $agent['os'] = "LINUX";
-    else $agent['os'] = "OTHER";
-    # version Á¤º¸
-    $agent['vr'] = preg_replace("/Mozi[^(]+\([^;]+;[^;]+;[^;]+;[^;]+;([^)]+)\).*/i","\\1",$agent_env);
-    $agent['vr'] = trim(str_replace("rv:","",$agent['vr']));
-    #lang Á¤º¸
-    if (preg_match("/ ko|-KR/", $agent_env)) $agent['ln'] = "ko";
-    else if (preg_match("/ en|-US/", $agnet_env)) $agent['ln'] = "en";
-    else $agent['ln'] = "other";
-    # NS ¿ÍÀÇ °øÅë Á¤º¸
-    $agent['co'] = "mozilla";
-  } else if(preg_match("/Konqueror/i",$agent_env)) {
-    $agent['br'] = "KONQ";
-    $agent['co'] = "mozilla";
-    # os Á¤º¸
-    if (preg_match("/Linux/i", $agent_env)) $agent['os'] = "LINUX";
-    else if (preg_match("/FreeBSD/i", $agent_env)) $agent['os'] = "FreeBSD";
-    else $agent['os'] = "OTHER";
-    # version Á¤º¸
-    $agent['vr'] = preg_replace("/.*Konqueror\/([0-9.]+).*/i","\\1",$agent_env);
-  } else if(preg_match("/Lynx/i", $agent_env)) {
-    $agent['br'] = "LYNX";
-    $agent['co'] = "TextBR";
-    # version Á¤º¸
-    $agent['vr'] = preg_replace("/Lynx\/([^ ]+).*/i","\\1",$agent_env);
-  } else if(preg_match("/w3m/i", $agent_env)) {
-    $agent['br'] = "W3M";
-    $agent['co'] = "TextBR";
-    $agent['vr'] = preg_replace("/w3m\/([0-9.]+).*/i","\\1",$agent_env);
-  } else if(preg_match("/Links/i", $agent_env)) {
-    $agent['br'] = "LINKS";
-    $agent['co'] = "TextBR";
-    $agent['vr'] = preg_replace("/Links \(([^;]+);.*/i","\\1",$agent_env);
-    if (preg_match("/Linux/i", $agent_env)) {
-      $agent['os'] = "LINUX";
-    } elseif (preg_match("/FreeBSD/i", $agent_env)) {
-      $agent['os'] = "FreeBSD";
-    } else {
-      $agent['os'] = "OTHER";
-    }
-  } else if(preg_match("/^Mozilla/i", $agent_env)) {
-    $agent['br'] = "NS";
-    # client OS ±¸ºĞ
-    if(preg_match("/NT/i", $agent_env)) {
-      $agent['os'] = "NT";
-    } else if(preg_match("/Win/i", $agent_env)) {
-      $agent['os'] = "WIN";
-    } else if(preg_match("/Linux/i", $agent_env)) {
-      $agent['os'] = "LINUX";
-    } else $agent['os'] = "OTHER";
-    # language Á¤º¸
-    if(preg_match("/\[ko\]/i", $agent_env)) $agent['ln'] = "ko";
-    else if(preg_match("/\[en\]/i", $agent_env)) $agent['ln'] = "en";
-    else $agent['ln'] = "other";
-    # version Á¤º¸
-    if(preg_match("/Gecko/i",$agent_env)) $agent['vr'] = "6";
-    else $agent['vr'] = "4";
-    # Mozilla ¿ÍÀÇ °øÅë Á¤º¸
-    $agent['co'] = "mozilla";
-  } else {
-    $agent['br'] = "OTHER";
-    $agent['co'] = "OTHER";
-  }
+	# $agent ë°°ì—´ ì •ë³´ [br] ë¸Œë¼ìš°ì ¸ ì¢…ë¥˜
+	#                  [os] ìš´ì˜ì²´ì œ
+	#                  [ln] ì–¸ì–´ (ë„·ìŠ¤ì¼€ì´í”„)
+	#                  [vr] ë¸Œë¼ìš°ì ¸ ë²„ì ¼
+	#                  [co] ì˜ˆì™¸ ì •ë³´
+	if ( preg_match ("/MSIE/i", $agent_env) ) {
+		$agent['br'] = "MSIE";
+		# OS ë³„ êµ¬ë¶„
+		if ( preg_match ("/NT/i", $agent_env) ) $agent['os'] = "NT";
+		else if ( preg_match ("/Win/i", $agent_env) ) $agent['os'] = "WIN";
+		else $agent['os'] = "OTHER";
+		# version ì •ë³´
+		$agent['vr'] = trim (preg_replace ("/Mo.+MSIE ([^;]+);.+/i", "\\1", $agent_env));
+		$agent['vr'] = preg_replace ("/[a-z]/i", "", $agent['vr']);
+		# í˜¸í™˜ ì •ë³´
+		$agent['co'] = "msie";
+	} else if ( preg_match ("/Opera/i", $agent_env) ) {
+		$agent['br'] = "OPERA";
+		$agent['co'] = "msie";
+		# client OS
+		if ( preg_match ("/Linux/i", $agent_env) ) $agent['os'] = "LINUX";
+		else if ( preg_match ("/2000|XP/i", $agent_env) ) $agent['os'] = "NT";
+		else if ( preg_match ("/Win/i", $agent_env) ) $agent['os'] = "WIN";
+		else $agent['os'] = "OTHER";
+		# version ì •ë³´
+		$agent['vr'] = preg_replace ("/Opera\/([0-9.]+).*/i", "\\1", $agent_env);
+		# language ì •ë³´
+		if ( preg_match ("/\[ko\]/i", $agent_env) ) $agent['ln'] = "ko";
+		else if ( preg_match ("/\[en\]/i", $agent_env) ) $agent['ln'] = "en";
+		else $agent['ln'] = "other";
+	} else if ( preg_match ("/Gecko|Galeon/i", $agent_env) && !preg_match ("/Netscape/i", $agent_env) ) {
+		echo $agent_env."\n";
+		$agent['br'] = "MOZL";
+		# client OS êµ¬ë¶„
+		if ( preg_match ("/NT/i", $agent_env) ) $agent['os'] = "NT";
+		else if ( preg_match ("/Win/i", $agent_env) ) $agent['os'] = "WIN";
+		else if ( preg_match ("/Linux/i", $agent_env) ) $agent['os'] = "LINUX";
+		else $agent['os'] = "OTHER";
+		# version ì •ë³´
+		$agent['vr'] = preg_replace ("/Mozi[^(]+\([^;]+;[^;]+;[^;]+;[^;]+;([^)]+)\).*/i", "\\1", $agent_env);
+		$agent['vr'] = trim (str_replace ("rv:", "", $agent['vr']));
+		#lang ì •ë³´
+		if ( preg_match ("/ ko|-KR/", $agent_env) ) $agent['ln'] = "ko";
+		else if ( preg_match ("/ en|-US/", $agnet_env) ) $agent['ln'] = "en";
+		else $agent['ln'] = "other";
+		# NS ì™€ì˜ ê³µí†µ ì •ë³´
+		$agent['co'] = "mozilla";
+	} else if ( preg_match ("/Konqueror/i", $agent_env) ) {
+		$agent['br'] = "KONQ";
+		$agent['co'] = "mozilla";
+		# os ì •ë³´
+		if ( preg_match ("/Linux/i", $agent_env) ) $agent['os'] = "LINUX";
+		else if ( preg_match ("/FreeBSD/i", $agent_env) ) $agent['os'] = "FreeBSD";
+		else $agent['os'] = "OTHER";
+		# version ì •ë³´
+		$agent['vr'] = preg_replace ("/.*Konqueror\/([0-9.]+).*/i", "\\1", $agent_env);
+	} else if ( preg_match ("/Lynx/i", $agent_env) ) {
+		$agent['br'] = "LYNX";
+		$agent['co'] = "TextBR";
+		# version ì •ë³´
+		$agent['vr'] = preg_replace ("/Lynx\/([^ ]+).*/i", "\\1", $agent_env);
+	} else if ( preg_match ("/w3m/i", $agent_env) ) {
+		$agent['br'] = "W3M";
+		$agent['co'] = "TextBR";
+		$agent['vr'] = preg_replace ("/w3m\/([0-9.]+).*/i", "\\1", $agent_env);
+	} else if ( preg_match ("/Links/i", $agent_env) ) {
+		$agent['br'] = "LINKS";
+		$agent['co'] = "TextBR";
+		$agent['vr'] = preg_replace ("/Links \(([^;]+);.*/i", "\\1", $agent_env);
+		if ( preg_match ("/Linux/i", $agent_env) ) {
+			$agent['os'] = "LINUX";
+		} elseif ( preg_match ("/FreeBSD/i", $agent_env) ) {
+			$agent['os'] = "FreeBSD";
+		} else {
+			$agent['os'] = "OTHER";
+		}
+	} else if ( preg_match ("/^Mozilla/i", $agent_env) ) {
+		$agent['br'] = "NS";
+		# client OS êµ¬ë¶„
+		if ( preg_match ("/NT/i", $agent_env) ) {
+			$agent['os'] = "NT";
+		} else if ( preg_match ("/Win/i", $agent_env) ) {
+			$agent['os'] = "WIN";
+		} else if ( preg_match ("/Linux/i", $agent_env) ) {
+			$agent['os'] = "LINUX";
+		} else $agent['os'] = "OTHER";
+		# language ì •ë³´
+		if ( preg_match ("/\[ko\]/i", $agent_env) ) $agent['ln'] = "ko";
+		else if ( preg_match ("/\[en\]/i", $agent_env) ) $agent['ln'] = "en";
+		else $agent['ln'] = "other";
+		# version ì •ë³´
+		if ( preg_match ("/Gecko/i", $agent_env) ) $agent['vr'] = "6";
+		else $agent['vr'] = "4";
+		# Mozilla ì™€ì˜ ê³µí†µ ì •ë³´
+		$agent['co'] = "mozilla";
+	} else {
+		$agent['br'] = "OTHER";
+		$agent['co'] = "OTHER";
+	}
 
-  return $agent;
+	return $agent;
 }
 
-# ¹®¼­ ³»¿ë¿¡ ÀÖ´Â URLµéÀ» Ã£¾Æ³»¾î ÀÚµ¿À¸·Î ¸µÅ©¸¦ ±¸¼ºÇØÁÖ´Â ÇÔ¼ö
+# ë¬¸ì„œ ë‚´ìš©ì— ìˆëŠ” URLë“¤ì„ ì°¾ì•„ë‚´ì–´ ìë™ìœ¼ë¡œ ë§í¬ë¥¼ êµ¬ì„±í•´ì£¼ëŠ” í•¨ìˆ˜
 #
-# preg_replace  - ÆŞ Çü½ÄÀÇ Á¤±ÔÇ¥Çö½ÄÀ» ÀÌ¿ëÇÑ Ä¡È¯
+# preg_replace  - í„ í˜•ì‹ì˜ ì •ê·œí‘œí˜„ì‹ì„ ì´ìš©í•œ ì¹˜í™˜
 #                 http://www.php.net/manual/function.preg-replace.php
-function autolink_lib($str) {
+function autolink_lib ($str) {
 
-  $regex['file'] = "gz|tgz|tar|gzip|zip|rar|mpeg|mpg|exe|rpm|dep|rm|ram|asf|ace|viv|avi|mid|gif|jpg|png|bmp|eps|mov";
-  $regex['file'] = "(\.({$regex['file']})\") TARGET=\"_blank\"";
-  $regex['http'] = "(http|https|ftp|telnet|news|mms):\/\/(([\xA1-\xFEa-z0-9:_\-]+\.[\xA1-\xFEa-z0-9,:;&#=_~%\[\]?\/.,+\-]+)([.]*[\/a-z0-9\[\]]|=[\xA1-\xFE]+))";
-  $regex['mail'] = "([\xA1-\xFEa-z0-9_.-]+)@([\xA1-\xFEa-z0-9_-]+\.[\xA1-\xFEa-z0-9._-]*[a-z]{2,3}(\?[\xA1-\xFEa-z0-9=&\?]+)*)";
+	$regex['file'] = 'gz|tgz|tar|gzip|zip|rar|mpeg|mpg|exe|rpm|dep|rm|ram|asf|ace|viv|avi|mid|gif|jpg|png|bmp|eps|mov';
+	$regex['file'] = "(\.({$regex['file']})\") TARGET=\"_blank\"";
+	$regex['http'] = '(http|https|ftp|telnet|news|mms):\/\/(([\xA1-\xFEa-z0-9:_\-]+\.[\xA1-\xFEa-z0-9,:;&#=_~%\[\]?\/.,+\-]+)([.]*[\/a-z0-9\[\]]|=[\xA1-\xFE]+))';
+	$regex['mail'] = '([\xA1-\xFEa-z0-9_.-]+)@([\xA1-\xFEa-z0-9_-]+\.[\xA1-\xFEa-z0-9._-]*[a-z]{2,3}(\?[\xA1-\xFEa-z0-9=&\?]+)*)';
 
-  # &lt; ·Î ½ÃÀÛÇØ¼­ 3ÁÙµÚ¿¡ &gt; °¡ ³ª¿Ã °æ¿ì¿Í
-  # IMG tag ¿Í A tag ÀÇ °æ¿ì ¸µÅ©°¡ ¿©·¯ÁÙ¿¡ °ÉÃÄ ÀÌ·ç¾îÁ® ÀÖÀ» °æ¿ì
-  # ÀÌ¸¦ ÇÑÁÙ·Î ÇÕÄ§ (ÇÕÄ¡¸é¼­ ºÎ°¡ ¿É¼ÇµéÀº ¸ğµÎ »èÁ¦ÇÔ)
-  $src[] = "/<([^<>\n]*)\n([^<>\n]+)\n([^<>\n]*)>/i";
-  $tar[] = "<\\1\\2\\3>";
-  $src[] = "/<([^<>\n]*)\n([^\n<>]*)>/i";
-  $tar[] = "<\\1\\2>";
-  $src[] = "/<(A|IMG)[^>=]*(HREF|SRC)[^=]*=[ '\"\n]*({$regex['http']}|mailto:{$regex['mail']})[^>]*>/i";
-  $tar[] = "<\\1 \\2=\"\\3\">";
+	# &lt; ë¡œ ì‹œì‘í•´ì„œ 3ì¤„ë’¤ì— &gt; ê°€ ë‚˜ì˜¬ ê²½ìš°ì™€
+	# IMG tag ì™€ A tag ì˜ ê²½ìš° ë§í¬ê°€ ì—¬ëŸ¬ì¤„ì— ê±¸ì³ ì´ë£¨ì–´ì ¸ ìˆì„ ê²½ìš°
+	# ì´ë¥¼ í•œì¤„ë¡œ í•©ì¹¨ (í•©ì¹˜ë©´ì„œ ë¶€ê°€ ì˜µì…˜ë“¤ì€ ëª¨ë‘ ì‚­ì œí•¨)
+	$src[] = '/<([^<>\n]*)\n([^<>\n]+)\n([^<>\n]*)>/i';
+	$tar[] = '<\\1\\2\\3>';
+	$src[] = '/<([^<>\n]*)\n([^\n<>]*)>/i';
+	$tar[] = '<\\1\\2>';
+	$src[] = "/<(a|img)[^>=]*(href|src)[^=]*=[ '\"\n]*({$regex['http']}|mailto:{$regex['mail']})[^>]*>/i";
+	$tar[] = '<\\1 \\2="\\3">';
 
-  # email Çü½ÄÀÌ³ª URL ¿¡ Æ÷ÇÔµÉ °æ¿ì URL º¸È£¸¦ À§ÇØ @ À» Ä¡È¯
-  $src[] = "/(http|https|ftp|telnet|news|mms):\/\/([^ \n@]+)@/i";
-  $tar[] = "\\1://\\2_HTTPAT_\\3";
+	# email í˜•ì‹ì´ë‚˜ URL ì— í¬í•¨ë  ê²½ìš° URL ë³´í˜¸ë¥¼ ìœ„í•´ @ ì„ ì¹˜í™˜
+	$src[] = '/(http|https|ftp|telnet|news|mms):\/\/([^ \n@]+)@/i';
+	$tar[] = '\\1://\\2_HTTPAT_\\3';
 
-  # Æ¯¼ö ¹®ÀÚ¸¦ Ä¡È¯ ¹× html»ç¿ë½Ã link º¸È£
-  $src[] = "/&(quot|gt|lt)/i";
-  $tar[] = "!\\1";
-  $src[] = "/<a([^>]*)href=[\"' ]*({$regex['http']})[\"']*[^>]*>/i";
-  $tar[] = "<A\\1HREF=\"\\3_orig://\\4\" TARGET=\"_blank\">";
-  $src[] = "/href=[\"' ]*mailto:({$regex['mail']})[\"']*>/i";
-  $tar[] = "HREF=\"mailto:\\2#-#\\3\">";
-  $src[] = "/<([^>]*)(background|codebase|src)[ \n]*=[\n\"' ]*({$regex['http']})[\"']*/i";
-  $tar[] = "<\\1\\2=\"\\4_orig://\\5\"";
+	# íŠ¹ìˆ˜ ë¬¸ìë¥¼ ì¹˜í™˜ ë° htmlì‚¬ìš©ì‹œ link ë³´í˜¸
+	$src[] = '/&(quot|gt|lt)/i';
+	$tar[] = '!\\1';
+	$src[] = "/<a([^>]*)href=[\"' ]*({$regex['http']})[\"']*[^>]*>/i";
+	$tar[] = '<a\\1href="\\3_orig://\\4" target="_blank">';
+	$src[] = "/href=[\"' ]*mailto:({$regex['mail']})[\"']*>/i";
+	$tar[] = "href=\"mailto:\\2#-#\\3\">";
+	$src[] = "/<([^>]*)(background|codebase|src)[ \n]*=[\n\"' ]*({$regex['http']})[\"']*/i";
+	$tar[] = '<\\1\\2="\\4_orig://\\5"';
 
-  # ¸µÅ©°¡ ¾ÈµÈ url¹× email address ÀÚµ¿¸µÅ©
-  $src[] = "/((SRC|HREF|BASE|GROUND)[ ]*=[ ]*|[^=]|^)({$regex['http']})/i";
-  $tar[] = "\\1<A HREF=\"\\3\" TARGET=\"_blank\">\\3</a>";
-  $src[] = "/({$regex['mail']})/i";
-  $tar[] = "<A HREF=\"mailto:\\1\">\\1</a>";
-  $src[] = "/<A HREF=[^>]+>(<A HREF=[^>]+>)/i";
-  $tar[] = "\\1";
-  $src[] = "/<\/A><\/A>/i";
-  $tar[] = "</A>";
+	# ë§í¬ê°€ ì•ˆëœ urlë° email address ìë™ë§í¬
+	$src[] = "/((src|href|base|ground)[ ]*=[ ]*|[^=]|^)({$regex['http']})/i";
+	$tar[] = '\\1<a href="\\3" target="_blank">\\3</a>';
+	$src[] = "/({$regex['mail']})/i";
+	$tar[] = '<a href="mailto:\\1">\\1</a>';
+	$src[] = '/(<a href=[^>]+>)<a href=[^>]+>/i';
+	$tar[] = '\\1';
+	$src[] = '/<\/a><\/a>/i';
+	$tar[] = '</a>';
 
-  # º¸È£¸¦ À§ÇØ Ä¡È¯ÇÑ °ÍµéÀ» º¹±¸
-  $src[] = "/!(quot|gt|lt)/i";
-  $tar[] = "&\\1";
-  $src[] = "/(http|https|ftp|telnet|news|mms)_orig/i";
-  $tar[] = "\\1";
-  $src[] = "'#-#'";
-  $tar[] = "@";
-  $src[] = "/{$regex['file']}/i";
-  $tar[] = "\\1";
+	# ë³´í˜¸ë¥¼ ìœ„í•´ ì¹˜í™˜í•œ ê²ƒë“¤ì„ ë³µêµ¬
+	$src[] = '/!(quot|gt|lt)/i';
+	$tar[] = '&\\1';
+	$src[] = '/(http|https|ftp|telnet|news|mms)_orig/i';
+	$tar[] = '\\1';
+	$src[] = "'#-#'";
+	$tar[] = '@';
+	$src[] = "/{$regex['file']}/i";
+	$tar[] = '\\1';
 
-  # email ÁÖ¼Ò¸¦ º¯ÇüÇÑ µÚ URL ¼ÓÀÇ @ À» º¹±¸
-  $src[] = "/_HTTPAT_/";
-  $tar[] = "@";
+	# email ì£¼ì†Œë¥¼ ë³€í˜•í•œ ë’¤ URL ì†ì˜ @ ì„ ë³µêµ¬
+	$src[] = "/_HTTPAT_/";
+	$tar[] = "@";
 
-  # ÀÌ¹ÌÁö¿¡ º¸´õ°ª 0 À» »ğÀÔ
-  $src[] = "/<(IMG SRC=\"[^\"]+\")>/i";
-  $tar[] = "<\\1 BORDER=0>";
+	# ì´ë¯¸ì§€ì— ë³´ë”ê°’ 0 ì„ ì‚½ì…
+	$src[] = '/<(img src=\"[^\"]+\")>/i';
+	$tar[] = '<\\1 border="0">';
 
-  # IE °¡ ¾Æ´Ñ °æ¿ì embed tag ¸¦ »èÁ¦ÇÔ
-  if(!preg_match("/MSIE/i", $GLOBALS['HTTP_USER_AGENT'])) {
-    $src[] = "/<embed/i";
-    $tar[] = "&lt;embed";
-  }
+	# IE ê°€ ì•„ë‹Œ ê²½ìš° embed tag ë¥¼ ì‚­ì œí•¨
+	if (!preg_match ('/MSIE/i', $GLOBALS['HTTP_USER_AGENT'])) {
+		$src[] = '/<embed/i';
+		$tar[] = '&lt;embed';
+	}
 
-  $str = preg_replace($src,$tar,$str);
-  return $str;
+	$str = preg_replace ($src, $tar, $str);
+	return $str;
 }
 
-# À¥ ¼­¹ö Á¢¼ÓÀÚÀÇ IP ÁÖ¼Ò È¤Àº µµ¸ŞÀÎ¸íÀ» °¡Á®¿À´Â ÇÔ¼ö
+# ì›¹ ì„œë²„ ì ‘ì†ìì˜ IP ì£¼ì†Œ í˜¹ì€ ë„ë©”ì¸ëª…ì„ ê°€ì ¸ì˜¤ëŠ” í•¨ìˆ˜
 #
-function get_hostname_lib($reverse=0, $host=0)
-{ 
-  if(!$host) {
-    if($_SERVER['HTTP_VIA']) {
-      $tmp = array('HTTP_CLIENT_IP','HTTP_X_FORWARDED_FOR','HTTP_X_COMING_FROM',
-                   'HTTP_X_FORWARDED','HTTP_FORWARDED_FOR','HTTP_FORWARDED',
-                   'HTTP_COMING_FROM','HTTP_PROXY','HTTP_SP_HOST');
-      foreach($tmp AS $v) if($_SERVER[$v] != $_SERVER['REMOTE_ADDR']) break;
-      if($_SERVER[$v]) $host = preg_replace(array('/unknown,/i','/,.*/'),'',$_SERVER[$v]);
-      $host = ($host = trim($host)) ? $host : $_SERVER['REMOTE_ADDR'];
-    }
-    else $host = $_SERVER['REMOTE_ADDR'];
-  }
-  $check = $reverse ? @gethostbyaddr($host) : '';
-  
-  return $check ? $check : $host;
+function get_hostname_lib ($reverse = 0, $host = 0) { 
+	if ( ! $host ) {
+		if ( $_SERVER['HTTP_VIA'] ) {
+			$tmp = array (
+				'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_COMING_FROM',
+				'HTTP_X_FORWARDED', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED',
+				'HTTP_COMING_FROM', 'HTTP_PROXY', 'HTTP_SP_HOST'
+			);
+			foreach ( $tmp AS $v ) {
+				if ( $_SERVER[$v] != $_SERVER['REMOTE_ADDR'] )
+					break;
+			}
+			if ( $_SERVER[$v] )
+				$host = preg_replace (array ('/unknown,/i', '/,.*/'), '', $_SERVER[$v]);
+			$host = ($host = trim ($host)) ? $host : $_SERVER['REMOTE_ADDR'];
+		} else
+			$host = $_SERVER['REMOTE_ADDR'];
+	}
+	$check = $reverse ? @gethostbyaddr ($host) : '';
+
+	return $check ? $check : $host;
 }
 
-# ¿øÇÏ´Â ÆäÀÌÁö·Î ÀÌµ¿½ÃÅ°´Â ÇÔ¼ö
+# ì›í•˜ëŠ” í˜ì´ì§€ë¡œ ì´ë™ì‹œí‚¤ëŠ” í•¨ìˆ˜
 #
-function movepage_lib($path,$time = 0) {
-  $path = str_replace(" ","%20",$path);
-  echo "<META http-equiv=\"refresh\" content=\"$time;URL=$path\">";
+function movepage_lib ($path, $time = 0) {
+	$path = str_replace (" ", "%20", $path);
+	printf ('<meta http-equiv="refresh" content="%s;url=%s">', $time, $path);
 }
 
-# ¿¡·¯ ¸Ş¼¼Áö¸¦ Ãâ·ÂÇÏ´Â ÇÔ¼ö
+# ì—ëŸ¬ ë©”ì„¸ì§€ë¥¼ ì¶œë ¥í•˜ëŠ” í•¨ìˆ˜
 #
-function perror_lib($s,$java=0,$move='',$time=0) {
-  if(!$s) $s = "Error occurrence!";
+function perror_lib ($s, $java=0, $move='', $time=0) {
+	if ( ! $s ) $s = 'Error occurrence!';
 
-  $agent = agentinfo_lib();
-  if ($agent['co'] = "TextBR") $java = 0;
+	$agent = agentinfo_lib ();
+	if ( $agent['co'] = "TextBR")  $java = 0;
 
-  if($java) {
-    $src = array("/\n/i","/'|#/i");
-    $des = array("\\n","\\\\\\0");
-    $s = trim($s) ? preg_replace($src,$des,$s) : "Don\'t Specified Error Message";
-    echo "<SCRIPT>alert('$s');history.back()</SCRIPT>";
-  } else echo "ERROR: $s";
+	if ( $java ) {
+		$src = array ("/\n/i", "/'|#/i");
+		$des = array ("\\n", "\\\\\\0");
+		$s = trim ($s) ? preg_replace ($src, $des, $s) : "Don\'t Specified Error Message";
+		echo "<script>alert('{$s}');history.back()</script>";
+	} else echo "ERROR: {$s}";
 
-  if ($move) { movepage_lib($move,$time); }
-  exit;
+	if ( $move ) { movepage_lib ($move, $time); }
+	exit;
 }
 
-# °æ°í ¸Ş¼¼Áö¸¦ Ãâ·ÂÇÏ´Â ÇÔ¼ö
+# ê²½ê³  ë©”ì„¸ì§€ë¥¼ ì¶œë ¥í•˜ëŠ” í•¨ìˆ˜
 #
-function pnotice_lib($s='',$java=0) {
-  if($java) {
-    $src = array("/\n/i","/'|#/i");
-    $des = array("\\n","\\\\\\0");
-    $s = trim($s) ? preg_replace($src,$des,$s) : "Don\'t permit null string with pnotice_lib function";
-    echo "<SCRIPT>alert('$s')</SCRIPT>";
-  } else echo "ERROR: $s";
+function pnotice_lib ($s='', $java=0) {
+	if ( $java ) {
+		$src = array ("/\n/i", "/'|#/i");
+		$des = array ("\\n", "\\\\\\0");
+		$s = trim ($s) ? preg_replace ($src, $des, $s) : "Don\'t permit null string with pnotice_lib function";
+		echo "<script>alert('{$s}')</script>";
+	} else echo "ERROR: {$s}";
 }
 ?>

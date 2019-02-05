@@ -1,137 +1,153 @@
-<?
-# µğ·ºÅä¸®ÀÇ ÆÄÀÏ ¸®½ºÆ®¸¦ ¹Ş´Â ÇÔ¼ö
-# path  -> ÆÄÀÏ¸®½ºÆ®¸¦ ±¸ÇÒ µğ·ºÅä¸® °æ·Î
-# t     -> ¸®½ºÆ®¸¦ ¹ŞÀ» ¸ñ·Ï
-#          f  : ÁöÁ¤ÇÑ µğ·ºÅä¸®ÀÇ ÆÄÀÏ¸¸ ¹ŞÀ½
-#          d  : ÁöÁ¤ÇÑ µğ·ºÅä¸®ÀÇ µğ·ºÅä¸®¸¸ ¹ŞÀ½
-#          l  : ÁöÁ¤ÇÑ µğ·ºÅä¸®ÀÇ ¸µÅ©¸¸ ¹ŞÀ½
-#          fd : ÁöÁ¤ÇÑ µğ·ºÅä¸®ÀÇ ÆÄÀÏ°ú µğ·ºÅä¸®¸¸ ¹ŞÀ½
-#          fl : ÁöÁ¤ÇÑ µğ·ºÅä¸®ÀÇ ÆÄÀÏ°ú ¸µÅ©¸¸ ¹ŞÀ½
-#          dl : ÁöÁ¤ÇÑ µğ·ºÅä¸®ÀÇ µğ·ºÅä¸®¿Í ¸µÅ©¸¸ ¹ŞÀ½
-#          ¾Æ¹«°Íµµ ÁöÁ¤ÇÏÁö ¾Ê¾ÒÀ» °æ¿ì¿¡´Â fdl ¸ğµÎ ¹ŞÀ½
-# regex -> Ç¥Çö½ÄÀ» »ç¿ëÇÒ ¼ö ÀÖÀ¸¸ç, regex ¸¦ Á¤ÀÇÇÏ¸é t ´Â
-#          e ·Î Á¤ÀÇµÇ¾îÁü.
+<?php
+# ë””ë ‰í† ë¦¬ì˜ íŒŒì¼ ë¦¬ìŠ¤íŠ¸ë¥¼ ë°›ëŠ” í•¨ìˆ˜
+# path  -> íŒŒì¼ë¦¬ìŠ¤íŠ¸ë¥¼ êµ¬í•  ë””ë ‰í† ë¦¬ ê²½ë¡œ
+# t     -> ë¦¬ìŠ¤íŠ¸ë¥¼ ë°›ì„ ëª©ë¡
+#          f  : ì§€ì •í•œ ë””ë ‰í† ë¦¬ì˜ íŒŒì¼ë§Œ ë°›ìŒ
+#          d  : ì§€ì •í•œ ë””ë ‰í† ë¦¬ì˜ ë””ë ‰í† ë¦¬ë§Œ ë°›ìŒ
+#          l  : ì§€ì •í•œ ë””ë ‰í† ë¦¬ì˜ ë§í¬ë§Œ ë°›ìŒ
+#          fd : ì§€ì •í•œ ë””ë ‰í† ë¦¬ì˜ íŒŒì¼ê³¼ ë””ë ‰í† ë¦¬ë§Œ ë°›ìŒ
+#          fl : ì§€ì •í•œ ë””ë ‰í† ë¦¬ì˜ íŒŒì¼ê³¼ ë§í¬ë§Œ ë°›ìŒ
+#          dl : ì§€ì •í•œ ë””ë ‰í† ë¦¬ì˜ ë””ë ‰í† ë¦¬ì™€ ë§í¬ë§Œ ë°›ìŒ
+#          ì•„ë¬´ê²ƒë„ ì§€ì •í•˜ì§€ ì•Šì•˜ì„ ê²½ìš°ì—ëŠ” fdl ëª¨ë‘ ë°›ìŒ
+# regex -> í‘œí˜„ì‹ì„ ì‚¬ìš©í•  ìˆ˜ ìˆìœ¼ë©°, regex ë¥¼ ì •ì˜í•˜ë©´ t ëŠ”
+#          e ë¡œ ì •ì˜ë˜ì–´ì§.
 #
-function filelist_lib($path='./',$t='',$regex='') {
-  $t = $regex ? "e" : $t;
-  if(is_dir($path)) {
-    $p = opendir($path);
-    if (!$p) { exit; }
+function filelist_lib ($path='./', $t='', $regex='') {
+	$t = $regex ? "e" : $t;
 
-    $regex = str_replace("/", "\/", $regex);
+	if ( ! trim ($path) )
+		return false;
 
-    while($i = readdir($p)) {
-      switch($t) {
-        case 'e'  :
-          if($i != "." && $i != ".." && preg_match("/$regex/i",$i)) $file[] = $i;
-          break;
-        case 'f'  :
-          if(is_file("$path/$i") && !is_link("$path/$i")) $file[] = $i;
-          break;
-        case 'd'  :
-          if($i != "." && $i != ".." && is_dir("$path/$i")) $file[] = $i;
-          break;
-        case 'l'  :
-          if(is_link("$path/$i")) $file[] = $i;
-          break;
-        case 'fd' :
-          if($i != "." && $i != ".." && (is_dir("$path/$i") || is_file("$path/$i") && !is_link("$path/$i"))) $file[] = $i;
-          break;
-        case 'fl' :
-          if(is_file("$path/$i")) $file[] = $i;
-          break;
-        case 'dl' :
-          if($i != "." && $i != ".." && (is_dir("$path/$i") || is_link("$path/$i"))) $file[] = $i;
-          break;
-        default   :
-          if($i != "." && $i != "..") $file[] = $i;
-      }
-    }
-    closedir($p);
-  } else {
-    print_error_lib("$path is not directory");
-    return 0;
-  }
+	if( is_dir ($path) ) {
+		$p = opendir ($path);
+		if ( ! $p ) { exit; }
 
-  return $file;
+		$regex = str_replace ('/', '\/', $regex);
+
+		while( ($i = readdir($p)) ) {
+			$fpath = $path . '/' . $i;
+			switch ($t) {
+				case 'e'  :
+					if ( $i != "." && $i != ".." && ($regex && preg_match ("/{$regex}/i",$i)) )
+						$file[] = $i;
+					break;
+				case 'f'  :
+					if ( is_file ($fpath) && ! is_link ($fpath) )
+						$file[] = $i;
+					break;
+				case 'd'  :
+					if ( $i != "." && $i != ".." && is_dir ($fpath) )
+						$file[] = $i;
+					break;
+				case 'l'  :
+					if ( is_link ($fpath) ) $file[] = $i;
+					break;
+				case 'fd' :
+					if ( $i != "." && $i != ".." && (is_dir ($fpath) || is_file ($fpath) && ! is_link ($fpath)) )
+						$file[] = $i;
+					break;
+				case 'fl' :
+					if ( is_file ($fpath) ) $file[] = $i;
+					break;
+				case 'dl' :
+					if ( $i != "." && $i != ".." && (is_dir ($fpath) || is_link ($fpath)) ) $file[] = $i;
+					break;
+				default   :
+					if ( $i != "." && $i != ".." ) $file[] = $i;
+			}
+		}
+		closedir ($p);
+	} else {
+		trigger_error ("Can't open {$path} in read mode", E_USER_ERROR);
+		return false;
+	}
+
+	return $file;
 }
 
-# file ³»¿ëÀ» º¯¼ö·Î ¹Ş´Â ÇÔ¼ö
+# file ë‚´ìš©ì„ ë³€ìˆ˜ë¡œ ë°›ëŠ” í•¨ìˆ˜
 #
-function getfile_lib($filename,$size=0) {
-  $fp = fopen($filename,"r");
+function getfile_lib ($filename, $size=0) {
+	trigger_error ('Use file_get_contents function instead of getfile_lib', E_USER_DEPRECATED);
 
-  if ($fp) {
-    $size = trim($size) ? $size : filesize($filename);
-    $getfile = fread($fp,$size);
-    fclose($fp);
-  }
+	if ( strlen ($filename) < 1 )
+		return false;
 
-  return $getfile;
+	if ( ! file_exists ($filename) )
+		return false;
+
+	return file_get_contents ($filename, false, null, 0, $size);
 }
 
-# file ÀÇ È®ÀåÀÚ¸¦ °Ë»çÇÏ¿© file type À» ±¸ÇÔ
+# file ì˜ í™•ì¥ìë¥¼ ê²€ì‚¬í•˜ì—¬ file type ì„ êµ¬í•¨
 #
-function getfiletype_lib($filetype) {
-  $tail = preg_replace("/\.$/", "", $filetype);
-  $tail = substr(strrchr($tail,"."),1);
-  $tail = strtolower($tail);
-  return $tail;
+function getfiletype_lib ($filetype) {
+	$tail = preg_replace ('/\.$/', '', $filetype);
+	return substr (strrchr ($tail, '.'), 1);
 }
 
-function putfile_lib($filename, $str, $mode = 0) {
-  if ($mode) $mode = "ab";
-  else $mode = "wb";
+function putfile_lib ($filename, $str, $mode = 0) {
+	trigger_error ('Use file_put_contents function instead of putfile_lib', E_USER_DEPRECATED);
 
-  $fp = fopen($filename, $mode);
-  if ($fp) {
-    fwrite($fp, $str);
-    fclose($fp);
-  }
+	if ( $mode ) $mode = 'ab';
+	else $mode = 'wb';
+
+	$fp = fopen ($filename, $mode);
+	if ( $fp ) {
+		fwrite ($fp, $str);
+		fclose ($fp);
+	}
 }
 
-function sockhttp_lib($url) {
-  $purl = preg_replace("/^http:\/\//i","",$url);
-  $p = @fsockopen($purl, 80, &$errno, &$errstr);
+function sockhttp_lib ($url) {
+	if ( ! preg_match ('!^https?://!i', $url) )
+		$url = 'http://' . $url;
 
-  if ($p) {
-    fputs ($p, "GET $url\r\n");
-    while (!feof($p)) {
-      $text .= fgets($p,1024);
-    }
-    fclose($p);
-  }
+	$purl = (object) parse_url ($url);
+	$sock = @fsockopen ($purl->host, $purl->port ? $purl->port : 80, $errno, $errstr);
+	if ( ! is_resource ($sock) )
+		return false;
 
-  return $text;
+	fputs (
+		$sock,
+		"GET {$purl->path} HTTP/1.1\r\n" .
+		"HOST: {$prul->host}\r\n" .
+		"Connection: close\r\n\r\n"
+	);
+
+	while ( ! feof ($sock) )
+		$text .= fgets ($sock, 1024);
+	fclose ($sock);
+
+	return $test;
 }
 
 function readfile_lib($path, $ipath=0) {
-  ob_start();
-  readfile($path, $ipath);
-  $ret = ob_get_contents();
-  ob_end_clean();
+	if ( strlen ($path) < 1 )
+		return false;
 
-  return $ret;
+	if ( ! preg_match (';^https?://;i', $path) && ! file_exists ($path) ) {
+		trigger_error ('path is invalid or missing', E_USER_WARNING);
+		return false;
+	}
+
+	return file_get_contents ($path, $ipath ? true : false);
 }
 
 function pcregrep_lib($regex, $text, $opt=0) {
 
-  $buf = explode ("\n", $text);
+	$buf = explode ("\n", $text);
 
-  for ($i=0; $i<count($buf); $i++) {
-    if (!$opt) {
-      if (preg_match("$regex", $buf[$i])) {
-        $str .= "{$buf[$i]}\n";
-      }
-    } else {
-      if (!preg_match("$regex", $buf[$i])) {
-        $str .= "{$buf[$i]}\n";
-      }
-    }
-  }
+	for ( $i=0; $i<count ($buf); $i++ ) {
+		if ( ! $opt ) {
+			if ( preg_match ($regex, $buf[$i]) )
+				$str .= $buf[$i] . "\n";
+		} else {
+			if ( ! preg_match ($regex, $buf[$i]))
+				$str .= $buf[$i] . "\n";
+		}
+	}
 
-  $str = preg_replace("/\n$/", "", $str);
-
-  return $str;
+	return preg_replace ("/\n$/", '', $str);
 }
 ?>

@@ -24,8 +24,12 @@ function result($v, $err = '') {
 $old = 1239476;
 echo human_fsize_lib ($old, true, true, 1000). "\n";
 
-$old = "./";
-$new = filelist_lib ($old, 'f', '^php_[^.]+\.h');
+$oldpath = array ('./', '../');
+foreach ( $oldpath as $old ) {
+	$new = filelist_lib ($old, 'f', '^php_[^.]+\.h');
+	if ( is_array ($new) )
+		break;
+}
 sort ($new);
 print_r ($new);
 

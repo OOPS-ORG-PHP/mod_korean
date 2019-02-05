@@ -1,5 +1,24 @@
 
 Korean 확장 PHP code version 사용법
+===================================
+
+요구 사항:
+
+  이 library 를 사용하기 위해서는 oops/KSC5601 pear package 가 필요 합니다.
+
+  pear channel-discover pear.oops.org
+  pear install oops/KSC5601
+
+  명령으로 설치해 주십시오. 만약 pear로 관리하고 싶지 않거나, root 권한이 없다면
+  아래 URL에서 직접 다운로드 받아 임의의 디렉토리에 풀어 놓은 다음, include path
+  에 위치를 추가해 주시면 됩니다.
+
+  https://github.com/OOPS-ORG-PHP/KSC5601/releases
+
+  $incpath = ini_get ('include_path');
+  ini_set ('include_path', "/path/KSC5601:${incpath}");
+
+
 
 이 소스는 PHP korean 확장을 사용할 수 없을 경우, 대체를 하기 위하여 사용 합니다.
 이 소스 버전은 PHP korean 확장 보다 성능이 떨어진다는 것을 염두에 두고 사용 하십
@@ -38,11 +57,6 @@ https://joungkyun.gitbooks.io/php-mod_korean-extension-reference/content/
 
 문자셋 파서 api 의 decode 관련 api들은 속도가 상당히 느립니다. 문자셋 파서 api를
 사용해야 한다면 korean extension module 을 로딩하여 사용할 것을 권장합니다.
-
-문자셋 관련 함수는 iconv 를 이용하여 따로 구현을 하든지 또는 [KSC5601](https://github.com/OOPS-ORG-PHP/KSC5601) pear 패키지
-를 대신 사용할 수 있습니다. KSC5601 에 대해서는 다음 URL을 참고 하십시오.
-
-http://pear.oops.org/docs/KSC5601/KSC5601.html
 
 이 소스는 korean 확장을 사용 할 수 없는 경우 그 기능을 이용하기 위하여 동일한 기
 능을 구현하기 위하여 작성되었으며, 성능 또는 호율성에 대해서는 고려하지 않았습니

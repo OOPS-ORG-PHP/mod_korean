@@ -7,7 +7,6 @@ Makefile*
 build
 *.lo
 *.o
-run-tests.php
 tags
 libtool
 autom4*
