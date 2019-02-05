@@ -1,9 +1,9 @@
 PHP Script of PHP Korean extension 
 
-ÀÌ ¼Ò½º´Â php korean extension (http://devel.oops.org) ÀÇ php script ¹öÀü
-ÀÌ´Ù. ÀÌ ¼Ò½º´Â php korean extension À» »ç¿ëÇÏ±â Èûµç À¯ÀúµéÀ» À§ÇÏ¿© ½ºÅ©
-¸³Æ® ¹öÀüÀ¸·Î Á¦°øÀ» ÇÏ¸ç, php korean extension ÀÇ ÃÖ½Å ¹öÀüÀÇ ±â´ÉÀ» µ¿ÀÏ
-ÇÏ°Ô ±¸ÇöÀ» ÇÏ´Â °ÍÀ» ¸ñÀûÀ¸·Î ÇÑ´Ù.
+ì´ ì†ŒìŠ¤ëŠ” php korean extension (https://github.com/OOPS-ORG-PHP/mod_korean/)
+ì˜ pure php ë²„ì „ìž…ë‹ˆë‹¤. ì´ ì†ŒìŠ¤ëŠ” php korean extension ì„ ì‚¬ìš©í•˜ê¸° íž˜ë“  ì‚¬ìš©
+ìžë“¤ì„ ìœ„í•˜ì—¬ PHP code ë¡œì œê³µì„ í•˜ë©°, php korean extension ì˜ ìµœì‹  ë²„ì „ì˜ ê¸°
+ëŠ¥ì„ ë™ì¼ í•˜ê²Œ êµ¬í˜„ì„ í•˜ëŠ” ê²ƒì„ ëª©ì ìœ¼ë¡œ í•©ë‹ˆë‹¤.
 
-¶ÇÇÑ ½Ã½ºÅÛÀÇ PHP¿¡ korean extenstion ÀÌ loading µÇ¾î ÀÖÀ» °æ¿ì, Ãæµ¹À» ¹æ
-ÁöÇÏ±â À§ÇÏ¿©  ÀÚµ¿À¸·Î include ¸¦ ÇÏÁö ¾Ê´Â´Ù.
+ë˜í•œ ì‹œìŠ¤í…œì˜ PHPì— korean extenstion ì´ loading ë˜ì–´ ìžˆì„ ê²½ìš°, ì¶©ëŒì„ ë°©ì§€
+í•˜ê¸° ìœ„í•˜ì—¬  ìžë™ìœ¼ë¡œ include ë¥¼ í•˜ì§€ ì•Šë„ë¡ ìž‘ì„± ë©ë‹ˆë‹¤.

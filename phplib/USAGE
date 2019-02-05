@@ -1,56 +1,50 @@
 
-Script of korean extension »ç¿ë¹ı
+Korean í™•ì¥ PHP code version ì‚¬ìš©ë²•
 
-korean extension scrit version ÀÇ »ç¿ë¹ıÀº Å©°Ô 2°¡Áö·Î root ÀÇ ±ÇÇÑÀ» °¡Áö°í
-ÀÛ¾÷À» ÇÒ ¼ö ÀÖÀ» °æ¿ì¿Í ±×·¸Áö ¾ÊÀ» °æ¿ì·Î ÀÛ¾÷À» ÇÒ ¼ö ÀÖ´Ù. ¸¸¾à ÀÌ ¸»ÀÌ ¹«
-½¼ ¸»ÀÎÁö ¸ğ¸£°Ú´Ù¸é 2. ÀÏ¹İ °èÁ¤¿¡¼­ÀÇ »ç¿ë¹ıÀ» µû¶ó ÇÏµµ·Ï ÇÑ´Ù.
+ì´ ì†ŒìŠ¤ëŠ” PHP korean í™•ì¥ì„ ì‚¬ìš©í•  ìˆ˜ ì—†ì„ ê²½ìš°, ëŒ€ì²´ë¥¼ í•˜ê¸° ìœ„í•˜ì—¬ ì‚¬ìš© í•©ë‹ˆë‹¤.
+ì´ ì†ŒìŠ¤ ë²„ì „ì€ PHP korean í™•ì¥ ë³´ë‹¤ ì„±ëŠ¥ì´ ë–¨ì–´ì§„ë‹¤ëŠ” ê²ƒì„ ì—¼ë‘ì— ë‘ê³  ì‚¬ìš© í•˜ì‹­
+ì‹œì˜¤.
 
-1. Root ÀÇ ±ÇÇÑÀ» °¡Áö°í ÀÖÀ» ¶§
+ì‚¬ìš©ë²•:
 
-  1) ÀÓÀÇÀÇ °æ·Î¿¡ phplib µğ·ºÅä¸®¸¦ »ı¼ºÇÑ´Ù.
-     mkdir -p /usr/include/phplib
+1. ì„ì˜ì˜ ê²½ë¡œì— korean_libë””ë ‰í† ë¦¬ë¥¼ ìƒì„± í•©ë‹ˆë‹¤. ë””ë ‰í† ë¦¬ ì´ë¦„ì€ ë§ˆìŒëŒ€ë¡œ ì‘ì„±
+   í•´ë„ ë¬´ë°© í•©ë‹ˆë‹¤.
 
-  2) ¼Ò½º¸¦ »ı¼ºÇÑ µğ·ºÅä¸®¿¡ º¹»çÇÑ´Ù.
-     mv * /usr/include/phplib
+   mkdir -p /path/korean_lib
 
-  3) php.ini ÀÇ include_path ¿¡ »ı¼ºÇÑ µğ·ºÅä¸® °æ·Î¸¦ Ãß°¡ÇÑ´Ù.
-     include_path = "./:/usr/include/phplib"
+2. korean_lib ë””ë ‰í† ë¦¬ì— ë‹¤ìš´ë¡œë“œ ë°›ì€ ì†ŒìŠ¤ë¥¼ ì˜®ê²¨ ë†“ìŠµë‹ˆë‹¤.
 
-  4) À¥¼­¹ö¸¦ Àç½ÃÀÛ ÇÑ´Ù.
+   mv * /path/korean_lib/
 
-  5) ¾Æ·¡¿Í °°ÀÌ function_header.php ¸¦ È£ÃâÇÏ¿© »ç¿ëÀ» ÇÑ´Ù.
-     include "function_header.php";
+3. ì‹¤í–‰í•  PHP code ì œì¼ ìƒë‹¨ì— ë‹¤ìŒì˜ ì½”ë“œë¥¼ ì‚½ì… í•©ë‹ˆë‹¤.
 
-  ÁÖÀÇÇÒ »çÇ×Àº Àı´ë $krext_dlpath ¶ó´Â º¯¼ö ÀÌ¸§À» »ç¿ëÇÏÁö ¾Ê¾Æ¾ß ÇÑ´Ù.
+   set_include_path ('/path/korean_lib');
+   include_once 'function_header.php';
 
-2. ÀÏ¹İ °èÁ¤¿¡¼­ÀÇ »ç¿ë¹ı
+   ë§Œì•½, PHP 4.2 ë˜ëŠ” ê·¸ ì´í•˜ì˜ ë²„ì „ì„ ì‚¬ìš©í•œë‹¤ë©´, set_include_path ëŒ€ì‹  ini_set
+   ì„ ì´ìš©í•´ì•¼ í•©ë‹ˆë‹¤.
 
-  °èÁ¤ ÀÌ¸§Àº oops ¶ó°í °¡Á¤À» ÇÑ´Ù.
+   $incpath = ini_get ('include_path');
+   ini_set ('include_path', "/path/korean_lib:${incpath}");
+   include_once 'function_header.php';
 
-  1) ÀÓÀÇÀÇ °æ·Î¿¡ phplib µğ·ºÅä¸®¸¦ »ı¼ºÇÑ´Ù.
-     mkdir -p /home/oops/phplib
+   ì™€ ê°™ì´ ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 
-  2) ¼Ò½º¸¦ »ı¼ºÇÑ µğ·ºÅä¸®¿¡ º¹»çÇÑ´Ù.
-     mv * /home/oops/phplib
+ê° APIì˜ ì‚¬ìš©ë²•ì€ ë‹¤ìŒ ë ˆí¼ëŸ°ìŠ¤ë¥¼ ì°¸ê³  í•˜ì‹­ì‹œì˜¤.
 
-  3) È£ÃâÀ» ÇÒ µğ·ºÅä¸®¿¡ °¡Àå »ó´Ü¿¡ ´ÙÀ½ÀÇ ·çÆ¾À» Æ÷ÇÔÇÑ´Ù.
+https://joungkyun.gitbooks.io/php-mod_korean-extension-reference/content/
 
-     $krext_extdir = "/home/oops/phplib";
-     $krext_relapath = relapath("./");
-     $krext_len = strlen(preg_replace("/[^\/]/", "", $krext_realpath));
-     for ($i=0; $i<$krext_len; $i++) $krext_dotpath .= "/..";
-     $krext_dlpath = str_replace("//", "/", "{$kr_ext_dotpath}{$krext_extdir}/");
-     include "{$krext_dlpath}function_header.ph";
+* ì£¼ì˜ì‚¬í•­
 
-ÇÔ¼öÀÇ »ç¿ë¹ıÀº http://devel.oops.org/manual/korean/ À» Âü°íÇÑ´Ù.
+ë¬¸ìì…‹ íŒŒì„œ api ì˜ decode ê´€ë ¨ apië“¤ì€ ì†ë„ê°€ ìƒë‹¹íˆ ëŠë¦½ë‹ˆë‹¤. ë¬¸ìì…‹ íŒŒì„œ apië¥¼
+ì‚¬ìš©í•´ì•¼ í•œë‹¤ë©´ korean extension module ì„ ë¡œë”©í•˜ì—¬ ì‚¬ìš©í•  ê²ƒì„ ê¶Œì¥í•©ë‹ˆë‹¤.
 
-* ÁÖÀÇ»çÇ×
+ë¬¸ìì…‹ ê´€ë ¨ í•¨ìˆ˜ëŠ” iconv ë¥¼ ì´ìš©í•˜ì—¬ ë”°ë¡œ êµ¬í˜„ì„ í•˜ë“ ì§€ ë˜ëŠ” [KSC5601](https://github.com/OOPS-ORG-PHP/KSC5601) pear íŒ¨í‚¤ì§€
+ë¥¼ ëŒ€ì‹  ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤. KSC5601 ì— ëŒ€í•´ì„œëŠ” ë‹¤ìŒ URLì„ ì°¸ê³  í•˜ì‹­ì‹œì˜¤.
 
-¹®ÀÚ¼Â parse °ü·Ã ÇÔ¼ö¸¦ »ç¿ëÇÒ °æ¿ì decode °ü·Ã ÇÔ¼öµéÀº ¼Óµµ°¡ »ó´çÈ÷ ´À¸®´Ù.
-¹®ÀÚ¼Â parse °ü·Ã ÇÔ¼ö¸¦ »ç¿ëÇØ¾ß ÇÑ´Ù¸é korean extension module À» ·ÎµùÇÏ¿© »ç
-¿ëÇÒ °ÍÀ» ±ÇÀåÇÑ´Ù.
+http://pear.oops.org/docs/KSC5601/KSC5601.html
 
-ÀÌ ¼Ò½º´Â korean extension À» »ç¿ëÇÏ´Â Áß, ¾îÂ¿ ¼ö ¾øÀÌ korean extension À» »ç
-¿ëÇÏÁö ¸øÇÏ°Ô µÉ °æ¿ì, ÃÖ¼ÒÇÑ ±â´ÉÀ» ±¸ÇöÀ» ÇÏ±â À§ÇØ ÀÛ¼ºµÈ ¼Ò½ºÀÌ´Ù. Áï, È¿À²
-¼ºÀº °í·Á¸¦ ÇÏÁö ¾Ê¾ÒÀ½À» °í·ÁÇØ¾ß ÇÑ´Ù.
+ì´ ì†ŒìŠ¤ëŠ” korean í™•ì¥ì„ ì‚¬ìš© í•  ìˆ˜ ì—†ëŠ” ê²½ìš° ê·¸ ê¸°ëŠ¥ì„ ì´ìš©í•˜ê¸° ìœ„í•˜ì—¬ ë™ì¼í•œ ê¸°
+ëŠ¥ì„ êµ¬í˜„í•˜ê¸° ìœ„í•˜ì—¬ ì‘ì„±ë˜ì—ˆìœ¼ë©°, ì„±ëŠ¥ ë˜ëŠ” í˜¸ìœ¨ì„±ì— ëŒ€í•´ì„œëŠ” ê³ ë ¤í•˜ì§€ ì•Šì•˜ìŠµë‹ˆ
+ë‹¤.
 
