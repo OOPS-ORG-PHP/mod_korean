@@ -1,5 +1,5 @@
-.*
-.libs
+.deps
+.libs/
 *.swp
 Makefile*
 *.diff
@@ -12,7 +12,6 @@ libtool
 autom4*
 modules
 include
-.deps
 ac*.m4
 config.guess
 config.h*
