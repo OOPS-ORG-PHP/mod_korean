@@ -1,5 +1,11 @@
 # mod_korean
 
+[![PHP license](https://img.shields.io/badge/license-PHP-blue.svg)](https://raw.githubusercontent.com/php/php-src/master/LICENSE)
+![GitHub download](https://img.shields.io/github/downloads/OOPS-ORG-PHP/mod_korean/total.svg)
+[![GitHub last release](https://img.shields.io/github/release/OOPS-ORG-PHP/mod_korean.svg)](https://github.com/OOPS-ORG-PHP/mod_korean/releases)
+[![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/OOPS-ORG-PHP/mod_korean.svg)](https://github.com/OOPS-ORG-PHP/mod_korean/issues?q=is%3Aissue+is%3Aclosed)
+[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/OOPS-ORG-PHP/mod_korean.svg)](https://github.com/OOPS-ORG-PHP/mod_korean/pulls?q=is%3Apr+is%3Aclosed)
+
 ## Description
 
 mod_korean 확장은 한국어 환경에서 PHP 개발을 위한 여러가지 PHP api를 제공 합니다.
