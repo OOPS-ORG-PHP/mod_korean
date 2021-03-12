@@ -3,8 +3,8 @@
 if ( ! extension_loaded ('korean') ) {
 
 	class KOREAN_LIB {
-		const BUILDNO = "201902051824";
-		const BUILDVER = "1.0.5";
+		const BUILDNO = "202103130156";
+		const BUILDVER = "1.0.6";
 
 		const REG_KR_U = '\x{1100}-\x{11FF}\x{3130}-\x{318F}\x{AC00}-\x{D7AF}';
 		const REG_KR   = '\xA1-\xFE';

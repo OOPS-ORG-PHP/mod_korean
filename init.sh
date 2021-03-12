@@ -1,7 +1,82 @@
-if [ -f Makefile ]; then
-	make distclean
-fi
-rm -rf autom4te.cache/ build/ include/ modules/ .deps
-rm -f Makefile.global ac*.m4 config.guess config.h* config.nice config.sub configure*
-rm -f install-sh ltmain.sh missing mkinstalldirs scan_makefile_in.awk run-tests.php tags
-rm -f tests/*.{diff,exp,log,out,php,sh,mem}
+#!/bin/bash
+
+source /usr/share/annyung-release/functions.d/bash/functions
+
+errmsg () {
+	echo "$*" 1>&2
+}
+
+usage () {
+	echo "Usage: $0 [clean|pack|test [php-version]]"
+	exit 1
+}
+
+opts=$(getopt -u -o h -l help -- "$@")
+[ $? != 0 ] && usage
+
+set -- ${opts}
+for i
+do
+	case "$i" in
+		-h|--help)
+			usage
+			shift
+			;;
+		--)
+			shift
+			break
+			;;
+	esac
+done
+
+mode="${1}"
+
+case "${mode}" in
+	clean)
+		cat <<-EOL
+			[ -f Makefile ] && make distclean
+			rm -rf autom4te.cache build include modules
+			rm -f .deps Makefile* ac*.m4 compile
+			rm -f config.h* config.nice configure* config.sub config.guess
+			rm -f install-sh ltmain.sh missing mkinstalldirs run-tests.php
+
+			rm -f package.xml
+			find ./tests ! -name '*.phpt' -a ! -name '*.txt' -a -type f
+			----->
+		EOL
+
+		[ -f Makefile ] && make distclean
+		rm -rf autom4te.cache build include modules
+		rm -f .deps Makefile* ac*.m4 compile
+		rm -f config.h* config.nice configure* config.sub config.guess
+		rm -f install-sh ltmain.sh missing mkinstalldirs run-tests.php
+		rm -f tests/*.{diff,exp,log,out,php,sh,mem}
+		;;
+	pack)
+		rel="$( awk '/^#define BUILDVER / { print gensub(/"/, "", "g", $NF); }' php_korean.h )"
+
+		[[ -d ../mod_korean-${rel} ]] && rm -rf ../mod_korean-${rel}
+		mkdir -p ../mod_korean-${rel}
+		cp -af charset/ libgd/ tests/ ../mod_korean-${rel}
+		cp -af CREDITS Changelog README.md ../mod_korean-${rel}
+		cp -af *.m4 *.dsp *.c *.h ../mod_korean-${rel}
+		cd ..
+		tar cvfpJ mod_korean-${rel}.tar.xz mod_korean-${rel}
+		cd -
+		mv ../mod_korean-${rel}.tar.xz ./
+		[[ -d ../mod_korean-${rel} ]] && rm -rf ../mod_korean-${rel}
+
+		;;
+	test)
+		./manage.sh clean
+		echo "phpize${2} ./configure"
+		phpize${2} && ./configure --with-libdir=lib64 && make -j8 || exit 0
+		echo "make test PHP_EXECUTABLE=/usr/bin/php${2}"
+		make test PHP_EXECUTABLE=/usr/bin/php${2} <<< n
+		;;
+	*)
+		errmsg "Unsupport mode '${1}'"
+		exit 1
+esac
+
+exit 0

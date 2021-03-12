@@ -15,5 +15,5 @@ printf ("%s\n", buildno_lib());
 printf ("%s\n", version_lib());
 ?>
 --EXPECT--
-201902051824
-1.0.5
+202103130156
+1.0.6
