@@ -31,7 +31,7 @@ error_reporting (E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE);
 
 $old = '8.8.8.8';
 $new = get_hostname_lib (true, $old);
-result (($new == 'google-public-dns-a.google.com'));
+result (($new == 'dns.google'));
 
 $old = readfile_lib ('https://people.kldp.org/robots.txt', false);
 result ((preg_match ('/Disallow:/', $old) ? true : false));
