@@ -68,9 +68,16 @@ case "${mode}" in
 
 		;;
 	test)
-		./manage.sh clean
-		echo "phpize${2} ./configure"
-		phpize${2} && ./configure --with-libdir=lib64 && make -j8 || exit 0
+		if [[ -f tests/${3}.php ]]; then
+			/usr/bin/php${2} -d "extension_dir=./modules/" -d "extension=korean.so" tests/${3}.php
+			exit $?
+		fi
+
+		if [[ -z $3 ]]; then
+			./manage.sh clean
+			echo "phpize${2} ./configure"
+			phpize${2} && ./configure --with-libdir=lib64 && make -j8 || exit 0
+		fi
 		echo "make test PHP_EXECUTABLE=/usr/bin/php${2}"
 		make test PHP_EXECUTABLE=/usr/bin/php${2} <<< n
 		;;

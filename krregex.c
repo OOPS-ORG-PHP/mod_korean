@@ -46,12 +46,12 @@ char * kr_regex_replace (char * regex_o, char * replace_o, char * str_o) // {{{
 
 	char        * sval;
 
-	regex = ze_string_init (regex_o, STRLEN (regex_o), 0);
-	subject = ze_string_init (str_o, STRLEN (str_o), 0);
+	regex = ze_string_init (regex_o, 0);
+	subject = ze_string_init (str_o, 0);
 #if PHP_VERSION_ID < 70200
 	ZVAL_STRINGL (&replaces, replace_o, STRLEN (replace_o));
 #else
-	replaces = ze_string_init (replace_o, STRLEN (replace_o), 0);
+	replaces = ze_string_init (replace_o, 0);
 #endif
 
 	buf = php_pcre_replace (
@@ -97,14 +97,14 @@ char * kr_regex_replace_arr (char * regex_o[], char * replace_o[], char * str_o,
 
 	char        * sval;
 
-	subject = ze_string_init (str_o, STRLEN (str_o), 0);
+	subject = ze_string_init (str_o, 0);
 
 	for ( i=0; i<regex_no ; i++ ) {
-		regex = ze_string_init (regex_o[i], STRLEN (regex_o[i]), 0);
+		regex = ze_string_init (regex_o[i], 0);
 #if PHP_VERSION_ID < 70200
 		ZVAL_STRINGL (&rep, replace_o[i], STRLEN (replace_o[i]));
 #else
-		rep = ze_string_init (replace_o[i], STRLEN (replace_o[i]), 0);
+		rep = ze_string_init (replace_o[i], 0);
 #endif
 
 		if ( i != 0 ) {
@@ -181,7 +181,7 @@ int pcre_match (char * regex, char * subject) // {{{
 	zend_long          start_offset = 0; /* Where the new search starts */
 	int                return_val = -1;
 
-	regex_string = ze_string_init (regex, STRLEN (regex), 0);
+	regex_string = ze_string_init (regex, 0);
 
 #if PHP_VERSION_ID < 70300
 	if ( ZEND_SIZE_T_INT_OVFL (STRLEN (subject))) {
@@ -192,6 +192,7 @@ int pcre_match (char * regex, char * subject) // {{{
 
 	/* Compile regex or get it from cache. */
 	if ( (pce = pcre_get_compiled_regex_cache (regex_string) ) == NULL) {
+		zend_string_release (regex_string);
 		return -1;
 	}
 
@@ -199,9 +200,19 @@ int pcre_match (char * regex, char * subject) // {{{
 	matches = safe_emalloc (pce->capture_count + 1, sizeof (zval), 0);
 
 	pce->refcount++;
+#if PHP_VERSION_ID >= 70400
+	{
+		zend_string * zsubject = ze_string_init (subject, 0);
+		php_pcre_match_impl (
+			pce, zsubject, matches, subpats, 0, 0, 0, start_offset
+		);
+		zend_string_release (zsubject);
+	}
+#else
 	php_pcre_match_impl (
 		pce, subject, STRLEN (subject), matches, subpats, 0, 0, 0, start_offset
 	);
+#endif
 	pce->refcount--;
 
 	if ( Z_TYPE_P (matches) != IS_LONG ) {

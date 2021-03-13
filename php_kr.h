@@ -55,7 +55,7 @@
 #endif
 
 #define STRLEN(x) strlen((char *) x)
-#define ze_string_init(x,y,z) zend_string_init((char *)x, (size_t)y, z);
+#define ze_string_init(x,z) zend_string_init((char *)x, STRLEN(x), z);
 
 #endif	/* PHP_KR_H */
 

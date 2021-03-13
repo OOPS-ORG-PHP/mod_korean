@@ -4,6 +4,8 @@ PHP Korean Extexsions Changelog
 --------------------------------------------------------------------------------
 Sat Mar 13 2021
 by JoungKyun.Kim <hostmaster@oops.org>
+	- fixed #25 failed test 007
+	- fixed #26 support 7.4
 
 
 * 1.0.5

@@ -85,13 +85,18 @@ PHPAPI zend_string *php_pcre_replace(zend_string *regex, zend_string *subject_st
 PHPAPI zend_string *php_pcre_replace(zend_string *regex, zend_string *subject_str, char *subject, int subject_len, zend_string *replace_str, int limit, int *replace_count);
 #endif
 PHPAPI void  php_pcre_match_impl(  pcre_cache_entry *pce, char *subject, int subject_len, zval *return_value,
-		    zval *subpats, int global, int use_flags, zend_long flags, zend_long start_offset);
+		zval *subpats, int global, int use_flags, zend_long flags, zend_long start_offset);
 
 #else
 
 PHPAPI zend_string *php_pcre_replace(zend_string *regex, zend_string *subject_str, char *subject, size_t subject_len, zend_string *replace_str, size_t limit, size_t *replace_count);
+#if PHP_VERSION_ID < 70400
 PHPAPI void  php_pcre_match_impl(  pcre_cache_entry *pce, char *subject, size_t subject_len, zval *return_value,
-		    zval *subpats, int global, int use_flags, zend_long flags, zend_off_t start_offset);
+		zval *subpats, int global, int use_flags, zend_long flags, zend_off_t start_offset);
+#else
+PHPAPI void  php_pcre_match_impl(pcre_cache_entry *pce, zend_string *subject_str, zval *return_value,
+		zval *subpats, int global, int use_flags, zend_long flags, zend_off_t start_offset);
+#endif
 
 #endif
 
