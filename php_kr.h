@@ -1,8 +1,6 @@
 /*
   +----------------------------------------------------------------------+
-  | PHP Version 7                                                        |
-  +----------------------------------------------------------------------+
-  | Copyright (c) 1997-2019 The PHP Group                                |
+  | Copyright (c) 2021 The PHP Group                                     |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
@@ -44,20 +42,6 @@
 #endif
 
 /* open_basedir and safe_mode checks */
-#if PHP_VERSION_ID < 50400
-#define PHP_KR_CHECK_OPEN_BASEDIR(x)                                               \
-	do {                                                                           \
-		char *p = NULL;                                                            \
-		if ( strlen((char *)x) > 0 ) { p = estrdup((char *) x); }                  \
-		if (!p || php_check_open_basedir(p TSRMLS_CC) ||                           \
-			(PG(safe_mode) && !php_checkuid(p, NULL, CHECKUID_CHECK_FILE_AND_DIR)) \
-		) {                                                                        \
-			php_error (E_ERROR, "restriction OPEN_BASE_DIR(%s)", p);               \
-			kr_safe_efree(p); RETURN_FALSE;                                        \
-		}                                                                          \
-		kr_safe_efree(p);                                                          \
-	} while (0)
-#else
 #define PHP_KR_CHECK_OPEN_BASEDIR(x)                                               \
 	do {                                                                           \
 		char *p = NULL;                                                            \
@@ -69,7 +53,6 @@
 		}                                                                          \
 		kr_safe_efree(p);                                                          \
 	} while (0)
-#endif
 
 #define kr_parameters(...) \
 	zend_parse_parameters (ZEND_NUM_ARGS() TSRMLS_CC, __VA_ARGS__)

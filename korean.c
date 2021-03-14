@@ -2,7 +2,7 @@
  * Project: mod_korean::
  * File:    korean.c
  *
- * Copyright (c) 2019 JoungKyun.Kim
+ * Copyright (c) 2021 JoungKyun.Kim
  *
  * LICENSE: GPL
  *
