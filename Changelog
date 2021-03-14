@@ -4,9 +4,12 @@ PHP Korean Extexsions Changelog
 --------------------------------------------------------------------------------
 Sat Mar 13 2021
 by JoungKyun.Kim <hostmaster@oops.org>
+	- fixed #24 update libgd with PHP 8.0.3
 	- fixed #25 failed test 007
-	- fixed #26 support 7.4
-
+	- fixed #26 support PHP 7.4
+	- fixed #27 support PHP 8
+	- fixed #28 enhanced "with-libdir" issue on 64bit environment
+	- fixed #29 remove leacy code before PHP 7
 
 * 1.0.5
 --------------------------------------------------------------------------------

@@ -47,7 +47,7 @@ case "${mode}" in
 
 		[ -f Makefile ] && make distclean
 		rm -rf autom4te.cache build include modules
-		rm -f .deps Makefile* ac*.m4 compile
+		rm -f .deps Makefile* ac*.m4 compile tags
 		rm -f config.h* config.nice configure* config.sub config.guess
 		rm -f install-sh ltmain.sh missing mkinstalldirs run-tests.php
 		rm -f tests/*.{diff,exp,log,out,php,sh,mem}
