@@ -53,10 +53,15 @@ if test "$PHP_KOREAN" != "no"; then
     with_zlib_dir=no
   fi
 
-  if test -z "$PHP_LIBDIR"; then
+  if test "$with_libdir" != "$PHP_LIBDIR"; then
     parch=`uname -m`
-    test "$parch" == "x86_64" && PHP_LIBDIR="lib64" || PHP_LIBDIR="lib"
+    if test "$parch" == "x86_64"; then
+        if test -d /usr/lib64 || test -d /usr/local/lib64; then
+          PHP_LIBDIR="lib64"
+        fi
+    fi
   fi
+  test -z "$PHP_LIBDIR" && PHP_LIBDIR="lib"
 
   dnl In this case given --enable-korean-gd option
   dnl
