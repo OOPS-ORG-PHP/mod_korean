@@ -262,7 +262,7 @@ PHP_FUNCTION(is_url_lib)
 }
 /* }}} */
 
-/* {{{ proto string is_hangul_lib(char charactor)
+/* {{{ proto boolean is_hangul_lib(char charactor)
  *    check first 1byte is hangul or not. if it is hangul, return true nor return false */
 PHP_FUNCTION(is_hangul_lib)
 {
@@ -275,7 +275,7 @@ PHP_FUNCTION(is_hangul_lib)
 		RETURN_FALSE;
 
 	if ( ZSTR_VAL (input)[0] >= 0xffffffa1 && ZSTR_VAL (input)[0] <= 0xfffffffe )
-		RETURN_LONG (1);
+		RETURN_TRUE;
 
 	RETURN_FALSE;
 }

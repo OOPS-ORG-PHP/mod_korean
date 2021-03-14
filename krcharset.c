@@ -29,12 +29,13 @@
 
 #include "php.h"
 #include "php_ini.h"
+#include "SAPI.h"
+#include "php_kr.h"
+
 #include "php_krcharset.h"
 #include "php_krcheck.h"
 #include "krregex.h"
 #include "php_krparse.h"
-#include "SAPI.h"
-#include "php_kr.h"
 
 /* include charset */
 #include "charset/iso8859.h"

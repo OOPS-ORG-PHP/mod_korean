@@ -395,7 +395,7 @@ PHP_FUNCTION(agentinfo_lib)
 /* }}} */
 
 /* {{{ proto string postposition_lib(string str, string postposition, int utf)
- *   make a decision about kreaon postposition */
+ *   make a decision about korean postposition */
 PHP_FUNCTION(postposition_lib)
 {
 	char        * str, * chkjosa[2] = { 0, };

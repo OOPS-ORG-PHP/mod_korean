@@ -19,8 +19,32 @@
 #ifndef PHP_KR_H
 #define PHP_KR_H
 
+#if PHP_VERSION_ID < 70000
+#error "************ PHP version dependency problems *******************"
+#error "This package requires over php 7.0.0 !!"
+#error "If you build with php under 7.0.0, use mod_korean 0.1.x version"
+#error "You can download mod_korean 0.1.x at https://github.com/OOPS-ORG-PHP/mod_korean/releases"
+#endif
+
+#if PHP_VERSION_ID >= 80000
+#define TSRMLS_CC
+#define TSRMLS_C
+#define TSRMLS_FETCH()
+#endif
+
+#if PHP_VERSION_ID < 80000
+#if PHP_VERSION_ID < 70200
+#undef ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX
+#define ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(name, return_reference, required_num_args, type, allow_null) \
+	static const zend_internal_arg_info name[] = { \
+		{ (const char*)(zend_uintptr_t)(required_num_args), NULL, type, return_reference, allow_null, 0 },
+#endif
+#define ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(pass_by_ref, name, type_hint, allow_null, default_value) \
+		ZEND_ARG_TYPE_INFO(pass_by_ref, name, type_hint, allow_null)
+#endif
+
 /* open_basedir and safe_mode checks */
-#if PHP_MAJOR_VERSION < 5 || (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION < 4)
+#if PHP_VERSION_ID < 50400
 #define PHP_KR_CHECK_OPEN_BASEDIR(x)                                               \
 	do {                                                                           \
 		char *p = NULL;                                                            \

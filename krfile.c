@@ -49,7 +49,7 @@ struct stat filestat;
 #define E_DEPRECATED E_WARNING
 #endif
 
-/* {{{ proto int human_fsize_lib(int filesize, int sub, int unit, int cunit)
+/* {{{ proto string human_fsize_lib(int filesize, int sub, int unit, int cunit)
  * filesize => init value (byte or bit)
  * sub      => whether print origianl value (ex: 7.5 MB (7,500,000 bytes))
  * unit     => bit or byte (0: byte, 1: bit)

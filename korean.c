@@ -39,13 +39,6 @@
 #include "php_krmail.h"
 #include "php_krcharset.h"
 
-#if PHP_API_VERSION < 20151012
-#error "************ PHP version dependency problems *******************"
-#error "This package requires over php 7.0.0 !!"
-#error "If you build with php under 7.0.0, use mod_korean 0.1.x version"
-#error "You can download mod_korean 0.1.x at http://mirror.oops.org/pub/oops/php/extensions/mod_korean"
-#endif
-
 /* If you declare any globals in php_korean.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(korean)
 */
@@ -58,46 +51,7 @@ ZEND_DECLARE_MODULE_GLOBALS(korean)
  *
  * Every user visible function must have an entry in korean_functions[].
  */
-const zend_function_entry korean_functions[] = {
-	PHP_FE(buildno_lib,			NULL)
-	PHP_FE(version_lib,			NULL)
-	PHP_FE(ncrencode_lib,		NULL)
-	PHP_FE(ncrdecode_lib,		NULL)
-	PHP_FE(uniencode_lib,		NULL)
-	PHP_FE(unidecode_lib,		NULL)
-	PHP_FE(utf8encode_lib,		NULL)
-	PHP_FE(utf8decode_lib,		NULL)
-	PHP_FE(postposition_lib,	NULL)
-	PHP_FE(check_uristr_lib,	NULL)
-	PHP_FALIAS(check_filename_lib, check_uristr_lib, NULL)
-	PHP_FE(check_htmltable_lib,	NULL)
-	PHP_FE(is_iis_lib,			NULL)
-	PHP_FE(is_windows_lib,		NULL)
-	PHP_FE(is_email_lib,		NULL)
-	PHP_FE(is_url_lib,			NULL)
-	PHP_FE(is_hangul_lib,		NULL)
-	PHP_FE(autolink_lib,		NULL)
-	PHP_FE(substr_lib,			NULL)
-	PHP_FE(perror_lib,			NULL)
-	PHP_FE(pnotice_lib,			NULL)
-	PHP_FE(movepage_lib,		NULL)
-	PHP_FE(human_fsize_lib,		NULL)
-	PHP_FE(get_microtime_lib,	NULL)
-	PHP_FE(getfiletype_lib,		NULL)
-	PHP_FE(pcregrep_lib,		NULL)
-	PHP_FE(getfile_lib,			NULL)
-	PHP_FE(putfile_lib,			NULL)
-	PHP_FE(filelist_lib,		NULL)
-	PHP_FE(agentinfo_lib,		NULL)
-	PHP_FE(get_hostname_lib,	NULL)
-	PHP_FE(readfile_lib,		NULL)
-#if HAVE_KRLIBGD
-	PHP_FE(imgresize_lib,		NULL)
-#endif
-	PHP_FE(mailsource_lib,		NULL)
-	PHP_FE(sockmail_lib,		NULL)
-	{NULL, NULL, NULL}
-};
+#include "korean_arginfo.h"
 /* }}} */
 
 /* {{{ korean_module_entry
@@ -167,7 +121,7 @@ PHP_FUNCTION(version_lib)
 }
 /* }}} */
 
-/* {{{ proto void movepage_lib(string url, int timeout)
+/* {{{ proto bool movepage_lib(string url, int timeout)
  *  print move action to url */
 PHP_FUNCTION(movepage_lib)
 {

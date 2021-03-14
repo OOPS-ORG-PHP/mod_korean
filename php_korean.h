@@ -25,9 +25,7 @@
 #define PHP_KOREAN_API
 #endif
 
-#ifdef ZTS
 #include "TSRM.h"
-#endif
 
 extern zend_module_entry korean_module_entry;
 #define korean_module_ptr &korean_module_entry
