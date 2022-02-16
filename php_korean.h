@@ -1,6 +1,6 @@
 /*
   +----------------------------------------------------------------------+
-  | Copyright (c) 2021 The PHP Group                                     |
+  | Copyright 2022. JoungKyun.Kim All rights reserved.                   |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
@@ -65,8 +65,8 @@ ZEND_END_MODULE_GLOBALS(korean)
 #define KOREAN_G(v) (korean_globals.v)
 #endif
 
-#define BUILDNO "202103130156"
-#define BUILDVER "1.0.6"
+#define BUILDNO "202202170159"
+#define BUILDVER "1.0.7"
 
 #define phpext_korean_ptr korean_module_ptr
 

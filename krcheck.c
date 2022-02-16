@@ -2,7 +2,7 @@
  * Project: mod_korean ::
  * File:    krcheck.c
  *
- * Copyright (c) 2021 JoungKyun.Kim
+ * Copyright 2022. JoungKyun.Kim All rights reserved.
  *
  * LICENSE: GPL
  *
