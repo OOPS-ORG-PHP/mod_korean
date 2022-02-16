@@ -35,6 +35,8 @@ ctrlModule () {
 	esac
 }
 
+mod_name="$( grep "^ZEND_GET_MODULE" *.c | grep -Po '(?<=\()[a-z]+(?=\))' )"
+
 opts=$(getopt -u -o h -l help -- "$@")
 [ $? != 0 ] && usage
 
@@ -77,18 +79,18 @@ case "${mode}" in
 		rm -f tests/*.{diff,exp,log,out,php,sh,mem}
 		;;
 	pack)
-		rel="$( awk '/^#define BUILDVER / { print gensub(/"/, "", "g", $NF); }' php_korean.h )"
+		rel="$( awk '/^#define BUILDVER / { print gensub(/"/, "", "g", $NF); }' php_${mod_name}.h )"
 
-		[[ -d ../mod_korean-${rel} ]] && rm -rf ../mod_korean-${rel}
-		mkdir -p ../mod_korean-${rel}
-		cp -af charset/ libgd/ tests/ ../mod_korean-${rel}
-		cp -af CREDITS Changelog README.md ../mod_korean-${rel}
-		cp -af *.m4 *.dsp *.c *.h ../mod_korean-${rel}
+		[[ -d ../mod_${mod_name}-${rel} ]] && rm -rf ../mod_${mod_name}-${rel}
+		mkdir -p ../mod_${mod_name}-${rel}
+		cp -af charset/ libgd/ tests/ ../mod_${mod_name}-${rel}
+		cp -af CREDITS Changelog README.md ../mod_${mod_name}-${rel}
+		cp -af *.m4 *.dsp *.c *.h ../mod_${mod_name}-${rel}
 		cd ..
-		tar cvfpJ mod_korean-${rel}.tar.xz mod_korean-${rel}
+		tar cvfpJ mod_${mod_name}-${rel}.tar.xz mod_${mod_name}-${rel}
 		cd -
-		mv ../mod_korean-${rel}.tar.xz ./
-		[[ -d ../mod_korean-${rel} ]] && rm -rf ../mod_korean-${rel}
+		mv ../mod_${mod_name}-${rel}.tar.xz ./
+		[[ -d ../mod_${mod_name}-${rel} ]] && rm -rf ../mod_${mod_name}-${rel}
 
 		;;
 	test)
@@ -107,9 +109,9 @@ case "${mode}" in
 		ctrlModule add ${2}
 
 		if (( $2 > 71 )); then
-			PHP_OPT+=" -d 'extension_dir=./modules/' -d 'extension=korean.so'"
+			PHP_OPT+=" -d 'extension_dir=./modules/' -d 'extension=${mod_name}.so'"
 		else
-			PHP_OPT+=" -d 'track_errors=1' -d 'extension_dir=./modules/' -d 'extension=korean.so'"
+			PHP_OPT+=" -d 'track_errors=1' -d 'extension_dir=./modules/' -d 'extension=${mod_name}.so'"
 		fi
 
 		if [[ -f /opt/php-qa/php${2}/modules/iconv.so ]];then
@@ -165,7 +167,7 @@ case "${mode}" in
 			exit 1
 		fi
 		phpcmd="/usr/bin/php80"
-		perl -pi -e 's/ext_functions/korean_functions/g' build/gen_stub.php
+		perl -pi -e 's/ext_functions/${mod_name}_functions/g' build/gen_stub.php
 		${phpcmd} build/gen_stub.php -f *.stub.php
 		;;
 	*)
