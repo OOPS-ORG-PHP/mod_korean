@@ -11,6 +11,30 @@ usage () {
 	exit 1
 }
 
+ctrlModule () {
+	local mode=$1
+	local ver=$2
+	local m
+
+	case "${mode}" in
+		add)
+			for m in ${NEED_MODULES}
+			do
+				if [[ -f /opt/php-qa/php${ver}/modules/${m}.so ]]; then
+					if [[ ! -L ./modules/${m}.so ]]; then
+						ln -sf /opt/php-qa/php${ver}/modules/${m}.so ./modules/${m}.so
+					fi
+				fi
+			done
+			;;
+		*)
+			for m in ${NEED_MODULES}
+			do
+				[[ -L ./modules/${m}.so ]] && rm -f ./modules/${m}.so
+			done
+	esac
+}
+
 opts=$(getopt -u -o h -l help -- "$@")
 [ $? != 0 ] && usage
 
@@ -72,6 +96,7 @@ case "${mode}" in
 		PHPIZE=/opt/php-qa/php${2}/bin/phpize
 		PHPCONFIG=/opt/php-qa/php${2}/bin/php-config
 		PHP_OPT="-n"
+		NEED_MODULES="iconv openssl"
 
 		if [[ $# == 2 ]]; then
 			./manage.sh clean
@@ -79,10 +104,16 @@ case "${mode}" in
 			${PHPIZE} && ./configure && make -j8 || exit 0
 		fi
 
+		ctrlModule add ${2}
+
 		if (( $2 > 71 )); then
-			PHP_OPT+=" -d 'extension_dir=./modules/' -d 'extension=magic.so'"
+			PHP_OPT+=" -d 'extension_dir=./modules/' -d 'extension=korean.so'"
 		else
-			PHP_OPT+=" -d 'track_errors=1' -d 'extension_dir=./modules/' -d 'extension=magic.so'"
+			PHP_OPT+=" -d 'track_errors=1' -d 'extension_dir=./modules/' -d 'extension=korean.so'"
+		fi
+
+		if [[ -f /opt/php-qa/php${2}/modules/iconv.so ]];then
+			PHP_OPT+=" -d 'extension=/opt/php-qa/php${2}/modules/iconv.so'"
 		fi
 
 		if [[ -f tests/${3}.php ]]; then
@@ -95,6 +126,7 @@ case "${mode}" in
 
 			EOL
 			${PHPBIN} ${PHP_OPT} test/${3}.php
+			#ctrlModule remove ${2}
 			exit $?
 		elif [[ -f ${3} ]]; then
 			cat <<-EOL
@@ -106,6 +138,7 @@ case "${mode}" in
 
 			EOL
 			eval "${PHPBIN} ${PHP_OPT} ${3}"
+			#ctrlModule remove ${2}
 			exit $?
 		fi
 
@@ -119,6 +152,7 @@ case "${mode}" in
 
 		EOL
 		make test PHP_EXECUTABLE=${PHPBIN} <<< n
+		#ctrlModule remove ${2}
 		;;
 	stub)
 		# stub tagging

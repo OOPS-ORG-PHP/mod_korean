@@ -9,6 +9,7 @@ if ( ! extension_loaded ('korean') ) {
 --POST--
 --GET--
 --INI--
+extension=iconv.so
 --FILE--
 <?php
 function result($v, $err = '') {

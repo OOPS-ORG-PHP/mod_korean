@@ -15,6 +15,7 @@ if ( ! $iniget ('allow_url_fopen') ) {
 --POST--
 --GET--
 --INI--
+extension=openssl.so
 --FILE--
 <?php
 function result($v, $err = '') {
